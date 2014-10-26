@@ -13,6 +13,14 @@ header{
   height: 48px;
 }
 
+.rowHeight {
+  height: 32px;
+}
+
+.headerHeight {
+  height: 48px;
+}
+
 .fullWidth {
   width: 100%;
 }
@@ -27,15 +35,58 @@ div h1{
   width: 100%;
 }
 
-nav {
+section h2{
+  line-height: 32px;
+  height: 32px;
+  width: 100%;
+}
+
+article div.chargeInput,
+article div.chargeFixed{
+  margin-left: auto;
+  margin-right: auto;
+  width: 95%;
+  height: 32px;
+  line-height: 32px;
+}
+
+article div.invoice_total {
+  display:inline-block;
+  background-color: #40B0F9;
+}
+
+nav,
+button {
   height: 100%;
 }
 
-.horizontalLine {
-  width: 100%;
-  background-color: white;
-  height: 1px;
+button {
+  margin-right: -5px;
 }
+
+section.helperBar > div{
+  height:100%;
+}
+
+#invoiceMaker_saveEdit{
+  width: 40%;
+}
+
+#invoiceMaker_invoiceDetails {
+  width:60%;
+}
+
+#invoiceMaker_invoiceDetails > div{
+  display: inline;
+  line-height: 32px;
+  float: right;
+  width: 40%;
+}
+
+div#invoiceMaker_saveEdit > button {
+  width: 30%;
+}
+
 
 ul#navList > li a:first-child {
   line-height: 48px;

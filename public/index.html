@@ -13,7 +13,7 @@
     	<div class="mainBackground">
         	<header class="fullWidth"> 
                 <div>
-                    <h1 class="fullWidth"> Hobbies of Asia </h1>   
+                    <h1 class="fullWidth">Hobbies of Asia </h1>   
                 </div>           
                 <nav>
                         <ul id="navList" class="nav-bar">
@@ -34,96 +34,300 @@
             <!-- Main Content -->
             <section>
                 <!-- Helper bar -->
-                <section class="helperBar fullWidth">
-                    <div>
-                        <button>
-                            Save as Draft
-                        </button>
-                        <button>
-                            Edit
+                <section class="helperBar fullWidth rowHeight">
+                    <div id="invoiceMaker_saveEdit" class="rowHeight">
+                        <button class="button button-rightBordered">
+                                Save as Draft
+                            </button>
+                            <button class="button button-rightBordered">
+                                Edit
                         </button>
                     </div>
 
-                    <div>
-                        <label> Tenant </label>
-                        <input type="text" placeholder="Select tenant">
+                    <div id="invoiceMaker_invoiceDetails">
+                        <div id="invoiceMaker_tenantName">
+                            <label> Tenant </label>
+                            <input type="text" placeholder="Select tenant">
+                        </div>
+
+                        <div id="invoiceMaker_invoiceDate">
+                            <label> Date </label>
+                            <input type="text" placeholder="Select statement date">
+                        </div>
                     </div>
                 </section>
+                <div class="horizontalLine"> 
+                </div>
+                <br>
                 <!-- Previous charges -->
                 <section>
                     <h2>
                             Previous Charges
                     </h2>
-                    <article class="chargesNoTitle">
-                        <h3>
-                            Previous charges
-                        </h3>
+                    <!-- Charges wrapper -->
+                    <!-- Previous charges -->
+                    <article class="charges">
+                        <div class="charges charges-noTitle">
+                            <h3>
+                                Previous charges
+                            </h3>
+                            
+                            <!-- Previous Charges -->
+                            <div class="chargeInput">
+                                <label for="previousCharges">previous charges</label>
+                                <input id="previousCharges" type="text" placeholder="Input unpaid amount">
+                            </div>
+                            <!-- Other charges -->
+                            <div class="chargeInput">
+                                <label for="otherCharges">other charges</label>
+                                <input id="otherCharges" type="text" placeholder="Input other charges">
+                            </div>
+
+                        </div>
+
+                        <br>
                         
-                        <div class="fixedLabel">
-                            <input type="text" value="Previous charges">
-                            <input type="text" placeholder="Input unpaid amount">
+                        <!-- Total for previous charges -->
+                        <div class="invoiceMaker_total">
+                                <p>Unpaid total <span class="invoiceMaker_subAmount">Amount</span></p>
                         </div>
-
-                        <div class="fixedLabel">
-                            <input type="text" value="Other charges">
-                            <input type="text" placeholder="Input other charges">
-                        </div>
-
-                        <div>
-                            <p>Unpaid total</p>
-                            <p>Amount</p>
-                        </div>
-
                     </article>
                 </section>
+                
+                <br>
+                <div class="horizontalLine"> 
+                </div>
 
+                <br>
                 <section>
                     <h2>
                         This Month's Charges
                     </h2>
-                    <article class="chargesWithTitle">
-                        <h3>
-                            Rent
-                        </h3>
-                        <div class="fixedLabel">
-                            <input type="text" value="Base rent">
-                            <input type="text" placeholder="Input base rent">
+
+                    <!-- Rent Charges wrapper -->
+                    <article class="charges">
+                        <div class="charges">
+
+                            <h3>
+                                Rent
+                            </h3>
+
+                            <!-- Base rent input -->
+                            <div class="chargeInput">
+                                <label for="baseRent">
+                                    base rent
+                                </label>
+                                
+                                <input id="baseRent" type="text" placeholder="Input base rent">
+                            </div>
+                            
+                            <!-- Tax for rent input -->
+                            <div class="chargeInput">
+                                <div class="variableLabel">
+                                    <input class="variableLabel" type="text" placeholder="Input tax label">
+                                </div>
+                                <input type="text" placeholder="Input tax value">
+                            </div>
+
+                            <!-- Auto-input: rent subtotal -->
+                            <div class="chargeInput">
+                                <p class="autoInputLabel">rent subtotal</p>
+                                <p class="autoInputValue" id="consumption">
+                                    23520
+                                </p>
+                            </div>
+
                         </div>
+
+                        <br>
+                        <!-- Rent total calculated -->
+                        <div class="invoiceMaker_total">
+                            <p>
+                                Rent Total <span class="invoiceMaker_subAmount">23520</span>
+                            </p>
+                        </div>
+
+                    </article>
+                    
+                    <br>
+
+                    <!-- Electricity charges wrapper -->
+                    <article class="charges"> 
+                        <div class="charges">
+                            <h3>
+                                Electricity
+                            </h3>
+                            
+                            <!-- Meter number input -->
+                            <div class="chargeInput">
+                                <label for="electricityMeterNumber">meter number</label>
+                                <input id="electricityMeterNumber" type="text" placeholder="Input meter number">
+                            </div>
+
+                            <!-- Billing period input -->
+                            <div class="chargeInput">
+                                <label for="billingPeriod">billing period</label>
+                                <input id="billingPeriod" type="text"
+                                placeholder="Input billing period">
+                            </div>
+                            
+                            <!-- Previous reading auto-input -->
+                            <div class="chargeInput">
+                                <p class="autoInputLabel">previous reading</p>
+                                <p class="autoInputValue" id="previousElectricityReading">
+                                    previous
+                                </p>
+                            </div>
+
+                            <!-- Current reading -->
+                            <div class="chargeInput">
+                                <label for="currentReading">current reading</label>
+                                <input id="currentReading" type="text"  placeholder="Input current meter reading">
+                                
+                            </div>
+
+                            <!-- Multiplier -->
+                            <div class="chargeInput">
+                                <label for="multiplier">multiplier</label>
+                                <input id="multiplier" type="text"  placeholder="Input multiplier">
+                            </div>
+
+                            <!-- Auto-input: kw used-->
+                            <div class="chargeInput">
+                                <p class="autoInputLabel">kw used</p>
+                                <p class="autoInputValue" id="kwUsed">
+                                    106
+                                </p>
+                            </div>
+                            
+                            <!-- Auto-input: Gross kw usage -->
+                            <div class="chargeInput">
+                                <p class="autoInputLabel">gross kw usage</p>
+                                <p class="autoInputValue" id="grossKwUsage">
+                                    106
+                                </p>
+                            </div>
+
+                            <!-- Auto-input: Gross kw usage -->
+                            <div class="chargeInput">
+                                <p class="autoInputLabel">consumption</p>
+                                <p class="autoInputValue" id="electricityConsumption">
+                                    1700.08
+                                </p>
+                            </div>
+                        </div>
+                        <br>
                         
-                        <div class="variableLabel">
-                            <input type="text" placeholder="Input tax label">
-                            <input type="text" placeholder="Input tax value">
+                         <!-- Rent total calculated -->
+                        <div class="invoiceMaker_total">
+                            <p>
+                                Electricity total<span class="invoiceMaker_subAmount">1715</span>
+                            </p>
                         </div>
 
-                        <div id="subtotal" class="fixedLabel">
-                            <input type="text" value="Subtotal">
-                            <input type="text" value="--">
+                    </article>
+
+                    <br>
+                    
+                    <!-- Water Charges wrapper -->
+                    <article class="charges">
+                        <div class="charges">
+
+                            <h3>
+                                Water
+                            </h3>
+
+                            <!-- Input: meter number -->
+                            <div class="chargeInput">
+                                <label for="waterMeterNumber">
+                                    meter number
+                                </label>
+                                
+                                <input id="waterMeterNumber" type="text" placeholder="Input meter number">
+                            </div>
+                            
+                            <!-- Input: billing period  -->
+                            <div class="chargeInput">
+                                <label for="waterBillingPeriod">
+                                    billing period
+                                </label>
+                                
+                                <input id="waterBillingPeriod" type="text" placeholder="Input billing period">
+                            </div>
+
+                            <!-- Auto-input: previous reading -->
+                            <div class="chargeInput">
+                                <p class="autoInputLabel"> previous reading</p>
+                                <p class="autoInputValue" id="waterPreviousReading">
+                                    23520
+                                </p>
+                            </div>
+                            
+                            <!-- Input: current reading  -->
+                            <div class="chargeInput">
+                                <label for="waterCurrentReading">
+                                    current reading
+                                </label>
+                                
+                                <input id="waterCurrentReading" type="text" placeholder="Input current reading">
+                            </div>
+
+                            <!-- Input: cu. m usage -->
+                            <div class="chargeInput">
+                                <label for="waterRateCuMUsage">
+                                    rate cu m usage
+                                </label>
+                                
+                                <input id="waterRateCuMUsage" type="text" placeholder="input rate per cu. m">
+                            </div>
+
+                            <!-- Auto-input: gross cu. m usage -->
+                            <div class="chargeInput">
+                                <p class="autoInputLabel"> gross cu m usage</p>
+                                <p class="autoInputValue" id="grossCuMUsage">
+                                    23520
+                                </p>
+                            </div>
+
+                            <!-- Auto-input: water subtotal -->
+                            <div class="chargeInput">
+                                <p class="autoInputLabel"> consumption</p>
+                                <p class="autoInputValue" id="waterConsumption">
+                                    23520
+                                </p>
+                            </div>
                         </div>
 
-                        <div>
-                            <p>Rent Total</p>
-                            <p>Amount</p>
+                        <br>
+                        <!-- water total calculated -->
+                        <div class="invoiceMaker_total">
+                            <p>
+                                Water Total <span class="invoiceMaker_subAmount">23520</span>
+                            </p>
                         </div>
-                    </article>
-                    <br>
-                    <article class="electricityCharges"> 
-                        <h3>
-                            Electricity
-                        </h3>
-                    </article>
-                    <br>
-                    <article class="waterCharges">
-                        <h3>
-                            Water
-                        </h3>
+
                     </article>  
+                        
+                    <br>
+
+                    <article class="charges">
+                        <button id="addCategory" class="button button-unbordered">
+                            Add a category
+                        </button>
+                    </article>
+
+                    <br>
+
+                    <article class="charges">
+                        <!-- water total calculated -->
+                        <div class="invoiceMaker_total">
+                            <p>
+                                Total amount due <span class="invoiceMaker_subAmount">23520</span>
+                            </p>
+                        </div>
+                    </article>
                 </section>
             </section>
-
-    
-                
-                
-        
             <br>
             <footer>
             	Footer goes here if any

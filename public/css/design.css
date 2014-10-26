@@ -5,6 +5,10 @@
 /* Red color - #F45750 */
 /* Blue color - #40B0F9 */
 
+html {
+  font-family: titles;
+}
+
 body {
   background-color: #DADADA;
 }
@@ -15,19 +19,80 @@ header {
 
 h1 {
   font-family: titlesLight;
+  text-transform: uppercase;
+  font-size: 32px;
+  letter-spacing: 2px;
   color: white;
+}
+
+h2, h3 {
+  font-family: titles
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+h2 {
+  font-size: 18px;
+}
+
+h3 {
+  font-size: 16px;
 }
 
 nav {
   background-color: #DADADA;
 }
 
+.button {
+  font-family: titles;
+  font-size: 12px
+  text-align: center;
+  text-transform: uppercase;
+  line-height: 32px;
+  background-color: #DADADA;
+}
+
+.button-rightBordered {
+  border-top: none;
+  border-left: none;
+  border-bottom: none;
+  border-right: solid white 1px;
+}
+
+.button-bordered {
+  border: solid white 1px;
+}
+
+.button-unbordered {
+  border: none;
+}
+
+label {
+  font-family: titles;
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 12px;
+  margin-right: 2px;
+}
+
+input[type="text"] {
+  font-family: bodyRegular;
+  font-size: 12px;
+}
+
 ul#navList {
   font-family: titles;
+  font-size: 16px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
 
 ul#navList > li {
   border-left: 1px solid white;
+}
+
+ul#navList a {
+  text-decoration: none;
 }
 
 ul#navList > li a:first-child {
@@ -35,18 +100,83 @@ ul#navList > li a:first-child {
   color: white;
 }
 
-h1 {
-  font-size: 32px;
-  letter-spacing: 2px;
-  text-align: center;
+article.charges {
+    border: solid 1px white;
+    margin-left: auto;
+    margin-right: auto;
+    width: 95%;
 }
 
-ul#navList {
-  font-size: 16px;
-  letter-spacing: 1px;
+div.charges {
+  width: 95%;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 12px 12px 0px 12px;
+}
+
+div.chargeInput label {
+  display:inline-block;
+  width: 20%;
+  text-align: left;
+}
+
+#addCategory{
+  width: 100%;
+}
+
+div.chargeInput input[type="text"]{
+  width:70%
+}
+
+div.chargeInput div.variableLabel {
+  width:20%;
+  display: inline-block;
+}
+
+div.chargeInput p{
+  display:inline-block;
+  font-family: titles;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+p.autoInputValue {
+  width:70%;
+}
+
+p.autoInputLabel {
+    width: 20%;
+}
+
+
+.invoiceMaker_total {
+  height: 32px;
+  line-height: 32px;
+  padding-left: 4px;
+  padding-right: 4px;
+  background-color: #40B0F9;
+}
+
+.invoiceMaker_total p {
+  font-family: titles;
+  color: white;
   text-transform: uppercase;
 }
 
-ul#navList a {
-  text-decoration: none;
+.invoiceMaker_subAmount {
+  float: right;
+}
+
+.charges-noTitle {
+
+}
+
+.charges-withTitle {
+
+}
+
+.horizontalLine {
+  width: 100%;
+  background-color: white;
+  height: 1px;
 }

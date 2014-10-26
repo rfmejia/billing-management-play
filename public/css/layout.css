@@ -20,3 +20,8 @@ ul#navList > li a:first-child {
   display: inline-block;
 }
 
+div#invoiceMaker_invoiceDetails {
+  float: right;
+}
+
+
