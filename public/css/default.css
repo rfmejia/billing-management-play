@@ -41,15 +41,6 @@ section h2{
   width: 100%;
 }
 
-article div.chargeInput,
-article div.chargeFixed{
-  margin-left: auto;
-  margin-right: auto;
-  width: 95%;
-  height: 32px;
-  line-height: 32px;
-}
-
 article div.invoice_total {
   display:inline-block;
   background-color: #40B0F9;

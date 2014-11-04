@@ -100,40 +100,20 @@ ul#navList > li a:first-child {
   color: white;
 }
 
-article.charges {
-    border: solid 1px white;
-    margin-left: auto;
-    margin-right: auto;
-    width: 95%;
-}
-
-div.charges {
-  width: 95%;
-  margin-left: auto;
-  margin-right: auto;
-  padding: 12px 12px 0px 12px;
-}
-
-div.chargeInput label {
-  display:inline-block;
-  width: 20%;
-  text-align: left;
+article.bordered {
+  border:solid 1px white;
 }
 
 #addCategory{
   width: 100%;
 }
 
-div.chargeInput input[type="text"]{
-  width:70%
-}
-
-div.chargeInput div.variableLabel {
+div.centeredRow div.variableLabel {
   width:20%;
   display: inline-block;
 }
 
-div.chargeInput p{
+div.centeredRow span{
   display:inline-block;
   font-family: titles;
   text-transform: uppercase;
@@ -150,10 +130,6 @@ p.autoInputLabel {
 
 
 .invoiceMaker_total {
-  height: 32px;
-  line-height: 32px;
-  padding-left: 4px;
-  padding-right: 4px;
   background-color: #40B0F9;
 }
 

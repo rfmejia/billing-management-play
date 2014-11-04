@@ -1,0 +1,35 @@
+article.boxedContainer {
+  width: 95%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+article.boxedContainer div.paddedChild {
+  width: 100%;
+  padding: 12px 12px 0px 12px;
+}
+
+article.boxedContainer .fullChild {
+  height: 32px;
+  line-height: 32px;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+div.centeredRow{
+  margin-left: auto;
+  margin-right: auto;
+  width: 95%;
+  height: 32px;
+  line-height: 32px;
+}
+
+div.centeredRow .col2Element1 {
+  display:inline-block;
+  width: 20%;
+  text-align: left;
+}
+
+div.centeredRow .col2Element2{
+  width: 70%;
+}
