@@ -12,15 +12,15 @@
         <!-- Page Container -->
     	<div class="mainBackground">
         	<header class="fullWidth"> 
-                <div>
-                    <h1 class="fullWidth">Hobbies of Asia </h1>   
-                </div>           
-                <nav>
+                <span class="fullWidth paddingLeft">
+                    <h1>Hobbies of Asia </h1> 
+                    <nav>
                         <ul id="navList" class="nav-bar">
                             <li><a href="#">Workspace</a></li>
-                            <li><a href="tenantcreate.html">Settings</a></li>
+                            <li><a href="#">Settings</a></li>
                         </ul>
-                </nav>
+                    </nav>  
+                </span>           
             </header>
             
             <!-- Sidebar -->
@@ -34,34 +34,40 @@
             <!-- Main Content -->
             <section>
                 <!-- Helper bar -->
-                <section class="helperBar fullWidth rowHeight">
-                    <div id="invoiceMaker_saveEdit" class="rowHeight">
+                <section class="helperBar fullWidth">
+                <div class="rowHeight paddingLeft">
+                    <h3>
+                        Create new tenant
+                    </h3>
+                </div>
+                    
+                <div class="horizontalLine"> 
+                </div>
+                    <div id="invoiceMaker_controls" class="rowHeight">
                         <button class="button button-rightBordered">
-                                Save as Draft
-                            </button>
-                            <button class="button button-rightBordered">
-                                Edit
+                                    Save as Draft
                         </button>
+                        <button class="button button-rightBordered">
+                                    Edit
+                        </button>
+
+                        <div class="invoiceMaker_textbox">
+                            <label for="tenant">tenant</label>
+                            <input id="tenant" type="text" placeholder="Select tenant">
+
+                            <label for="date">previous charges</label>
+                            <input id="date" type="text" placeholder="Select date">
+                        </div>
+                    
                     </div>
 
-                    <div id="invoiceMaker_invoiceDetails">
-                        <div id="invoiceMaker_tenantName">
-                            <label> Tenant </label>
-                            <input type="text" placeholder="Select tenant">
-                        </div>
-
-                        <div id="invoiceMaker_invoiceDate">
-                            <label> Date </label>
-                            <input type="text" placeholder="Select statement date">
-                        </div>
-                    </div>
                 </section>
                 <div class="horizontalLine"> 
                 </div>
                 <br>
                 <!-- Previous charges -->
-                <section>
-                    <h2>
+                <section >
+                    <h2 class="paddingLeft">
                             Previous Charges
                     </h2>
                     <!-- Charges wrapper -->
@@ -75,12 +81,13 @@
                             <!-- Previous Charges -->
                             <div class="centeredRow">
                                 <label for="previousCharges" class="col2Element1">previous charges</label>
-                                <input id="previousCharges" class="col2Element2" type="text" placeholder="Input unpaid amount">
+                                <input id="previousCharges" class="col2Element2 fullHeight" type="text" placeholder="Input unpaid amount">
                             </div>
+                            <br>
                             <!-- Other charges -->
                             <div class="centeredRow">
                                 <label for="otherCharges" class="col2Element1">other charges</label>
-                                <input id="otherCharges" type="text" placeholder="Input other charges" class="col2Element2">
+                                <input id="otherCharges" type="text" placeholder="Input other charges" class="col2Element2 fullHeight">
                             </div>
 
                         </div>
@@ -100,7 +107,7 @@
 
                 <br>
                 <section>
-                    <h2>
+                    <h2 class="paddingLeft">
                         This Month's Charges
                     </h2>
 
@@ -118,16 +125,19 @@
                                     base rent
                                 </label>
                                 
-                                <input id="baseRent" type="text" placeholder="Input base rent" class="col2Element2">
+                                <input id="baseRent" type="text" placeholder="Input base rent" class="col2Element2 fullHeight">
                             </div>
                             
+                            <br>
                             <!-- Tax for rent input -->
                             <div class="centeredRow">
-                                <div class="col2Element1">
-                                    <input class="variableLabel" type="text" placeholder="Input tax label">
+                                <div class="col2Element1 fullHeight">
+                                    <input class="variableLabel fullHeight" type="text" placeholder="Input tax label">
                                 </div>
-                                <input type="text" placeholder="Input tax value" class="col2Element2">
+                                <input type="text" placeholder="Input tax value" class="col2Element2 fullHeight">
                             </div>
+
+                            <br>
 
                             <!-- Auto-input: rent subtotal -->
                             <div class="centeredRow">
@@ -161,15 +171,19 @@
                             <!-- Meter number input -->
                             <div class="centeredRow">
                                 <label for="electricityMeterNumber" class="col2Element1">meter number</label>
-                                <input id="electricityMeterNumber" type="text" placeholder="Input meter number" class="col2Element2">
+                                <input id="electricityMeterNumber" type="text" placeholder="Input meter number" class="col2Element2 fullHeight">
                             </div>
+
+                            <br>
 
                             <!-- Billing period input -->
                             <div class="centeredRow">
                                 <label for="billingPeriod" class="col2Element1">billing period</label>
                                 <input id="billingPeriod" type="text"
-                                placeholder="Input billing period" class="col2Element2">
+                                placeholder="Input billing period" class="col2Element2 fullHeight">
                             </div>
+
+                            <br>
                             
                             <!-- Previous reading auto-input -->
                             <div class="centeredRow">
@@ -179,18 +193,24 @@
                                 </span>
                             </div>
 
+                            <br>
+
                             <!-- Current reading -->
                             <div class="centeredRow">
                                 <label for="currentReading" class="col2Element1">current reading</label>
-                                <input id="currentReading" type="text"  placeholder="Input current meter reading" class="col2Element2">
+                                <input id="currentReading" type="text"  placeholder="Input current meter reading" class="fullHeight col2Element2">
                                 
                             </div>
+
+                            <br>
 
                             <!-- Multiplier -->
                             <div class="centeredRow">
                                 <label for="multiplier" class="col2Element1">multiplier</label>
-                                <input id="multiplier" type="text"  placeholder="Input multiplier" class="col2Element2">
+                                <input id="multiplier" type="text"  placeholder="Input multiplier" class="col2Element2 fullHeight">
                             </div>
+
+                            <br>
 
                             <!-- Auto-input: kw used-->
                             <div class="centeredRow">
@@ -200,6 +220,8 @@
                                 </span>
                             </div>
                             
+                            <br>
+
                             <!-- Auto-input: Gross kw usage -->
                             <div class="centeredRow">
                                 <span class="col2Element1">gross kw usage</span>
@@ -207,6 +229,8 @@
                                     106
                                 </span>
                             </div>
+
+                            <br>
 
                             <!-- Auto-input: Gross kw usage -->
                             <div class="centeredRow">
@@ -231,7 +255,7 @@
                     
                     <!-- Water Charges wrapper -->
                     <article class="boxedContainer bordered">
-                        <div class="charges">
+                        <div class="paddedChild">
 
                             <h3>
                                 Water
@@ -243,17 +267,21 @@
                                     meter number
                                 </label>
                                 
-                                <input id="waterMeterNumber" type="text" placeholder="Input meter number" class="col2Element2">
+                                <input id="waterMeterNumber" type="text" placeholder="Input meter number" class="col2Element2 fullHeight">
                             </div>
                             
+                            <br>
+
                             <!-- Input: billing period  -->
                             <div class="centeredRow">
                                 <label for="waterBillingPeriod" class="col2Element1">
                                     billing period
                                 </label>
                                 
-                                <input id="waterBillingPeriod" type="text" placeholder="Input billing period" class="col2Element2">
+                                <input id="waterBillingPeriod" type="text" placeholder="Input billing period" class="col2Element2 fullHeight">
                             </div>
+
+                            <br>
 
                             <!-- Auto-input: previous reading -->
                             <div class="centeredRow">
@@ -263,14 +291,18 @@
                                 </span>
                             </div>
                             
+                            <br>
+
                             <!-- Input: current reading  -->
                             <div class="centeredRow">
                                 <label for="waterCurrentReading" class="col2Element1">
                                     current reading
                                 </label>
                                 
-                                <input id="waterCurrentReading" type="text" placeholder="Input current reading" class="col2Element2">
+                                <input id="waterCurrentReading" type="text" placeholder="Input current reading" class="fullHeight col2Element2">
                             </div>
+                            
+                            <br>
 
                             <!-- Input: cu. m usage -->
                             <div class="centeredRow">
@@ -278,8 +310,10 @@
                                     rate cu m usage
                                 </label>
                                 
-                                <input id="waterRateCuMUsage" type="text" placeholder="input rate per cu. m" class="col2Element2">
+                                <input id="waterRateCuMUsage" type="text" placeholder="input rate per cu. m" class="fullHeight col2Element2">
                             </div>
+                                
+                            <br>
 
                             <!-- Auto-input: gross cu. m usage -->
                             <div class="centeredRow">
@@ -288,6 +322,8 @@
                                     23520
                                 </span>
                             </div>
+                            
+                            <br>
 
                             <!-- Auto-input: water subtotal -->
                             <div class="centeredRow">
@@ -329,9 +365,6 @@
                 </section>
             </section>
             <br>
-            <footer>
-            	Footer goes here if any
-            </footer>
     
         </div>
     	    

@@ -36,7 +36,7 @@
                 <!-- Helper bar -->
                 <section class="helperBar fullWidth rowHeight horizontalPadding">
                     <h3>
-                        Create new tenant
+                        invite new user
                     </h3>
                 </section>
                 <div class="horizontalLine"> 
@@ -46,45 +46,59 @@
                 <article class="mainContainer">
                     <div class="paddedChild">
                         <div class="centeredRow">
-                            <label for="tenantName" class="col2Element1">tenant name</label>
-                            <input id="tenantName" class="col2Element2 fullHeight" type="text" placeholder="Enter tenant name">
-                        </div>
-
-                        <br>
-
-                        <div class="centeredRow">
-                            <label for="tenantAddress" class="col2Element1">address</label>
-                            <input id="tenantAddress" class="col2Element2 fullHeight" type="text" placeholder="Enter address">
-                        </div>
-
-                        <br>
-
-                        <div class="centeredRow">
-                            <label for="tenantContactPerson" class="col2Element1">contact person</label>
-                            <input id="tenantContactPerson" class="col2Element2 fullHeight" type="text" placeholder="Enter name of contact person">
-                        </div>
-
-                        <br>
-
-                        <div class="centeredRow">
-                            <label for="tenantTelNumber" class="col2Element1">telephone number</label>
-                            <input id="tenantTelNumber" class="col2Element2 fullHeight" type="text" placeholder="Enter telephone number">
-                        </div>
-
-                        <br>
-
-                        <div class="centeredRow">
-                            <label for="tenantEmail" class="col2Element1">e-mail</label>
-                            <input id="tenantEmail" class="col2Element2 fullHeight" type="text" placeholder="Enter e-mail address">
+                            <label for="userEmail" class="col2Element1">user e-mail</label>
+                            <input id="userEmail" class="col2Element2 fullHeight" type="text" placeholder="Input user e-mail">
                         </div>
 
                         <br>
                         
+                        <div class="centeredRow">
+                            <div class="col2Element1 standAloneLabel">
+                                roles
+                            </div>
+                            <span class="col2Element2 checkboxWrapper">
+                                <label class="checkbox"><input type="checkbox" /> Encoder</label>
+                            </span>
+                        </div>
+                        <br>
+                        <div class="centeredRow">
+                            <div class="col2Element1">
+                            
+                            </div>
+                            <span class="col2Element2 checkboxWrapper">
+                                <label class="checkbox"><input type="checkbox" /> Checker</label>
+                            </span>
+                        </div>
+                        <br>
+                        <div class="centeredRow">
+                            <div class="col2Element1">
+                              
+                            </div class="col2Element2">
+                            <span class="col2Element2 checkboxWrapper">
+                                <label class="checkbox"><input type="checkbox" /> Approver </label>
+                            </span>
+                        </div>
+                        <br>
+                        <div class="centeredRow">
+                            <div class="col2Element1 standAloneLabel">
+                                Administrator:
+                            </div class="col2Element2">
+                            
+                            <div class="form-inline radioInline col2Element2">
+                                <label class="radio inline primary primaryRadio">
+                                <input type="radio" value="1" checked="checked" name="adminisrator">
+                                    NO
+                                </label><label class="radio inline secondary secondaryRadio">
+                                  <input type="radio" value="2" name="adminisrator">
+                                  YES
+                                </label>
+                            </div>
+                        </div>
                     </div>
                     <div class="bottomAligned fullWidth rowHeight">
                         <span class="splitButton">
                             <button class="button button-blue primary">
-                                Save
+                                Submit
                             </button><button class="button button-red secondary">
                                 Cancel
                             </button>
@@ -94,6 +108,6 @@
                 </article>
 
             </section>
-        </div>
+
     </body>
 </html>

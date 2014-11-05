@@ -11,6 +11,7 @@ html {
 
 body {
   background-color: #DADADA;
+  min-height: 600px;  
 }
 
 header {
@@ -49,6 +50,18 @@ nav {
   text-align: center;
   text-transform: uppercase;
   line-height: 32px;
+}
+
+.button-blue {
+  background-color: #40B0F9;
+}
+
+.button-red {
+  background-color: #F45750;
+}
+
+.button-gray {
+
   background-color: #DADADA;
 }
 
@@ -75,9 +88,33 @@ label {
   margin-right: 2px;
 }
 
+.standAloneLabel {
+  font-family: titles;
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
 input[type="text"] {
   font-family: bodyRegular;
   font-size: 12px;
+  box-sizing: border-box;
+  vertical-align: middle;
+  border:none;
+}
+
+label.checkbox {
+  display: inline-block;
+  width: 100%;
+  text-align: left;
+  background-color: white;
+  margin-left: 2px;
+  padding-left: 2px;
+  box-sizing: border-box;
+}
+
+span.col2Element2 {
+  box-sizing: border-box;
 }
 
 ul#navList {
@@ -87,8 +124,26 @@ ul#navList {
   text-transform: uppercase;
 }
 
+
 ul#navList > li {
   border-left: 1px solid white;
+}
+
+div.radioInline {
+  display: inline-block;
+  box-sizing: border-box;
+}
+
+label.primaryRadio {
+  background-color: white;
+  text-align: left;
+  margin:0px;
+}
+
+label.secondaryRadio {
+  background-color: white;
+  text-align: left;
+  margin:0px;
 }
 
 ul#navList a {

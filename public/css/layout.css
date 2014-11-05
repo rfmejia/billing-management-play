@@ -1,27 +1,20 @@
 /* Layout of pages */
 
-section.helperBar > div, 
 header div,
-header nav,
-#navList > li {
+header nav{
   display: inline-block;
 }
 
-nav {
-  float: right;
-}
-
-.navList > li {
-  min-height: 48px;
-}
-
-div h1,
-ul#navList > li a:first-child {
+div h1{
   display: inline-block;
 }
 
-div#invoiceMaker_invoiceDetails {
-  float: right;
+.bottomAligned{
+  position: absolute;
+  bottom: 0;
 }
 
+.containerMain {
+  position: relative;
+}
 

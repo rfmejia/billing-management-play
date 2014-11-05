@@ -11,10 +11,12 @@ body {
 header{
   width: 100%;
   height: 48px;
+  
 }
 
 .rowHeight {
   height: 32px;
+  line-height: 32px;
 }
 
 .headerHeight {
@@ -25,13 +27,31 @@ header{
   width: 100%;
 }
 
-header div {
-  width: 35%;
+.fullHeight {
   height: 100%;
+  line-height: 100%;
 }
 
-div h1{
+.horizontalPadding {
+  padding-left: 12px;
+  padding-right: 12px
+}
+
+.paddingLeft {
+  padding-left: 12px;
+}
+
+span h1{
   line-height: 48px;
+  width: 60%;
+}
+
+span nav {
+  float: right;
+  width: 40%;
+}
+
+span nav ul#navList {
   width: 100%;
 }
 
@@ -51,48 +71,40 @@ button {
   height: 100%;
 }
 
-button {
-  margin-right: -5px;
+/* invoice maker top controls */
+#invoiceMaker_controls button{
+  width: 20%;
 }
 
-section.helperBar > div{
-  height:100%;
-}
-
-#invoiceMaker_saveEdit{
-  width: 40%;
-}
-
-#invoiceMaker_invoiceDetails {
-  width:60%;
-}
-
-#invoiceMaker_invoiceDetails > div{
-  display: inline;
-  line-height: 32px;
-  float: right;
-  width: 40%;
-}
-
-div#invoiceMaker_saveEdit > button {
-  width: 30%;
-}
-
-
-ul#navList > li a:first-child {
-  line-height: 48px;
+#invoiceMaker_controls {
   width: 100%;
+  display: inline-block;
+}
+
+.invoiceMaker_textbox {
+  display: inline-block;
+  padding-left: 2px;
+  float: right;
+  padding-right: 20px;
+}
+
+/* header navigation list */
+ul#navList > li a{
+  height: 100%;
+  line-height: 48px;
+  display: block;
 }
 
 ul#navList > li {
-  width: 150px;
+  display: inline-block;
+  width: 48%;
 }
 
 /* Navigation list should have no borders */
 ul#navList{
 	list-style: none;
 	list-style-type: none;
-  display: inline;
+  display: inline-block;
 }
 
 .hidden{
