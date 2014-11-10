@@ -25,7 +25,8 @@ object Application extends Controller {
         Some("List of invites"))
       .withLink("hoa:users", routes.Users.list().absoluteURL(),
         Some("List of users"))
-
+      .withLink("hoa:webapp", routes.Assets.at("index.html").absoluteURL(),
+        Some("Web application"))
     Ok(obj.asJsValue)
   }
 

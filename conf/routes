@@ -29,7 +29,8 @@ PUT     /users/:username            controllers.Users.edit(username: String)
 DELETE  /users/:username            controllers.Users.delete(username: String)
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.at(path="/public", file)
+GET     /webapp                     controllers.Assets.at(path="/public", file="index.html")
+GET     /webapp/*file               controllers.Assets.at(path="/public", file)
 
 GET     /setupTestEnvironment       controllers.TestEnvironment.setup
 GET     /testFail                   controllers.TestEnvironment.fail
