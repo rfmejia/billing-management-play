@@ -1,0 +1,35 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET     /                           controllers.Application.index
+GET     /docs                       controllers.Application.documentation
+
+# Tenants
+GET     /tenants                    controllers.Tenants.list(offset: Int ?= 0, limit: Int ?= 10)
+GET     /tenants/:id                controllers.Tenants.show(id: Int)
+POST    /tenants                    controllers.Tenants.create
+PUT     /tenants/:id                controllers.Tenants.edit(id: Int)
+DELETE  /tenants/:id                controllers.Tenants.delete(id: Int)
+
+# Invitations
+GET     /invites                    controllers.Invites.list(offset: Int ?= 0, limit: Int ?= 10)
+GET     /invites/:username          controllers.Invites.show(username: String)
+POST    /invites                    controllers.Invites.create
+PUT     /invites/:username          controllers.Invites.edit(username: String)
+DELETE  /invites/:username          controllers.Invites.delete(username: String)
+
+# Users
+GET     /users                      controllers.Users.list(offset: Int ?= 0, limit: Int ?= 10)
+GET     /users/:username            controllers.Users.show(username: String)
+#POST    /users/:username            controllers.Users.create(username: String)
+POST    /users/:username            controllers.Users.createViaInvite(username: String)
+PUT     /users/:username            controllers.Users.edit(username: String)
+DELETE  /users/:username            controllers.Users.delete(username: String)
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.at(path="/public", file)
+
+GET     /setupTestEnvironment       controllers.TestEnvironment.setup
+GET     /testFail                   controllers.TestEnvironment.fail

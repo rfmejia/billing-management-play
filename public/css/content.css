@@ -1,0 +1,27 @@
+/* CSS Document */
+
+html {
+	white-space:nowrap;
+}
+button {
+	min-width:64px;
+	margin: 0;
+	border-style:none;
+}
+
+.button-plain {
+	background-color: #EEEEEE;
+}
+
+.button-emphasis {
+	background-color: #19B5FE;
+}
+
+.button-warning {
+	background-color: #E74C3C;
+}
+	
+
+.mainBackground {
+	background-color:blue;
+}
