@@ -108,7 +108,7 @@ article div.invoice_total {
 }
 
 .headerButton {
-  sheight: 48px;
+  height: 48px;
   line-height: 48px;
 }
 
@@ -142,9 +142,9 @@ article div.invoice_total {
 }
 
 .hidden{
-	display: none;
+    display: none;
 }
 
 .visible{
-	display: normal;
+    display: normal;
 }
