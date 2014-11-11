@@ -25,9 +25,12 @@ p.autoInputLabel {
 /*Default styles no design data. This stylesheet should only
  layout styles
 */
-
+h3 {
+  padding:0;
+}
 body {
   width: 960px;
+  height: 600px;
   margin: 0 auto;
 }
 
@@ -126,10 +129,6 @@ article div.invoice_total {
   padding-left: 12px;
 }
 
-
-.bottomAligned {
-  width: 100%;
-}
 
 .primary {
   display: inline-block;

@@ -29,6 +29,12 @@ header {
   background-color: white;
   height: 1px;
 }
+
+.verticalLine {
+  height: 100%;
+  background-color: white;
+  width: 1px;
+}
 /* 
 
   General styles -- end

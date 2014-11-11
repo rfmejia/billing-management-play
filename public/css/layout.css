@@ -7,8 +7,11 @@ div h1{
 .bottomAligned{
   position: absolute;
   bottom: 0;
+  left: 0;
 }
 
-.containerMain {
+div.mainContainer {
   position: relative;
+  background-color: blue;
+  height: 100%;
 }

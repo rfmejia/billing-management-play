@@ -41,11 +41,9 @@ div.centeredRow .col2Element2{
 }
 
 /* Row container for buttons */
-span.splitButton {
+div.splitButton {
   width: 100%;
   display: inline-block;
-  height: 100%;
-  line-height: 100%
   box-sizing:border-box;
 }
 
@@ -98,4 +96,57 @@ button {
 /* Search suggestions last row */
 .searchSuggestions li:last-child {
   border-bottom: none;
+}
+
+/* Side bar */
+.sidebar {
+  width: 20%;
+  display: inline-block;
+  height: 100%;
+  float: left;
+  background-color: #DADADA;
+  border-right: solid 1px white;
+  box-sizing: border-box;
+}
+
+#sidebarButtons button {
+  width: 50%;
+}
+
+#sidebarContent {
+  padding-top: 6px;
+}
+
+.tenantRow {
+  width: 100%;
+  height: 32px;
+  line-height: 32px;
+  padding-left: 4px;
+  padding-right: 4px;
+  box-sizing: border-box;
+}
+
+.tenantRow:hover {
+  background-color: #40B0F9;
+}
+
+.tenantRow:active {
+  background-color: red;
+}
+
+.tenantRow[state="active"] {
+  background-color: #40B0F9;
+}
+
+.testContent {
+  width:80%;
+  float: right;
+  position: relative;
+  background-color: #DADADA;
+}
+
+.testContainer {
+  display: inline-block;
+  height: 100%;
+  width: 100%;
 }

@@ -10,7 +10,7 @@
         
     <body class="containerMain">
         <!-- Page Container -->
-        <div class="mainBackground">
+        <div class="fullHeight">
             <header class="fullWidth"> 
                 <h1 class="paddingLeft">Hobbies of Asia </h1>   
                 
@@ -22,78 +22,114 @@
                         </button>     
                 </div>
             </header>
-            
-            <!-- Sidebar -->
-            <section>
- 
-            </section>
 
-            <div class="horizontalLine"> 
-            </div>
-
-            <!-- Main content -->
-            <section>
-                <!-- Helper bar -->
-                <section class="helperBar fullWidth rowHeight horizontalPadding">
-                    <h3>
-                        Create new tenant
-                    </h3>
-                </section>
-                <div class="horizontalLine"> 
-                </div>
-                <br>  
-                
-                <article class="mainContainer">
-                    <div class="paddedChild">
-                        <div class="centeredRow">
-                            <label for="tenantName" class="col2Element1">tenant name</label>
-                            <input id="tenantName" class="col2Element2 fullHeight" type="text" placeholder="Enter tenant name">
-                        </div>
-
-                        <br>
-
-                        <div class="centeredRow">
-                            <label for="tenantAddress" class="col2Element1">address</label>
-                            <input id="tenantAddress" class="col2Element2 fullHeight" type="text" placeholder="Enter address">
-                        </div>
-
-                        <br>
-
-                        <div class="centeredRow">
-                            <label for="tenantContactPerson" class="col2Element1">contact person</label>
-                            <input id="tenantContactPerson" class="col2Element2 fullHeight" type="text" placeholder="Enter name of contact person">
-                        </div>
-
-                        <br>
-
-                        <div class="centeredRow">
-                            <label for="tenantTelNumber" class="col2Element1">telephone number</label>
-                            <input id="tenantTelNumber" class="col2Element2 fullHeight" type="text" placeholder="Enter telephone number">
-                        </div>
-
-                        <br>
-
-                        <div class="centeredRow">
-                            <label for="tenantEmail" class="col2Element1">e-mail</label>
-                            <input id="tenantEmail" class="col2Element2 fullHeight" type="text" placeholder="Enter e-mail address">
-                        </div>
-
-                        <br>
-                        
+            <div class="testContainer fullHeight">
+                <!-- Sidebar -->
+                <div  class="mainBackground sidebar fullHeight">
+                    <div class="horizontalLine"> 
                     </div>
-                    <div class="bottomAligned fullWidth rowHeight">
-                        <span class="splitButton">
-                            <button class="button button-blue primary">
-                                Save
-                            </button><button class="button button-red secondary">
-                                Cancel
-                            </button>
-                        </span>
+                    <div id="sidebarButtons"class="fullWidth rowHeight">
+                        <button id="inboxButton" class="button">
+                                    Tenants
+                        </button><button indbox="tennantButton" class="button button-leftBordered ">
+                            inbox
+                        </button>  
+                    </div>
+                     
+                    <div class="horizontalLine"> 
                     </div>
                     
-                </article>
+                    <div id="sidebarContent">
+                        <div class="tenantRow" state="active">
+                            <span>
+                                Mossimo
+                            </span>
+                        </div>
+                        <div class="tenantRow">
+                            <span>
+                                Mossimo
+                            </span>
+                        </div>
+                    </div>
+                    
 
-            </section>
+                    
+                </div>
+
+                <div class="mainBackground testContent fullHeight">
+                    <div class="horizontalLine"> 
+                    </div>
+                    <!-- Main content -->
+                    <section class="fullHeight">
+                        <!-- Helper bar -->
+                        <section class="helperBar fullWidth rowHeight horizontalPadding">
+                            <h3>
+                                Create new tenant
+                            </h3>
+                        </section>
+                        <div class="horizontalLine"> 
+                        </div>
+                        <br>  
+                        
+                        <article >
+                            <div class="paddedChild">
+                                <div class="centeredRow">
+                                    <label for="tenantName" class="col2Element1">tenant name</label>
+                                    <input id="tenantName" class="col2Element2 fullHeight" type="text" placeholder="Enter tenant name">
+                                </div>
+
+                                <br>
+
+                                <div class="centeredRow">
+                                    <label for="tenantAddress" class="col2Element1">address</label>
+                                    <input id="tenantAddress" class="col2Element2 fullHeight" type="text" placeholder="Enter address">
+                                </div>
+
+                                <br>
+
+                                <div class="centeredRow">
+                                    <label for="tenantContactPerson" class="col2Element1">contact person</label>
+                                    <input id="tenantContactPerson" class="col2Element2 fullHeight" type="text" placeholder="Enter name of contact person">
+                                </div>
+
+                                <br>
+
+                                <div class="centeredRow">
+                                    <label for="tenantTelNumber" class="col2Element1">telephone number</label>
+                                    <input id="tenantTelNumber" class="col2Element2 fullHeight" type="text" placeholder="Enter telephone number">
+                                </div>
+
+                                <br>
+
+                                <div class="centeredRow">
+                                    <label for="tenantEmail" class="col2Element1">e-mail</label>
+                                    <input id="tenantEmail" class="col2Element2 fullHeight" type="text" placeholder="Enter e-mail address">
+                                </div>
+
+                                <br>
+                                
+                                </div>
+                            <div class="rowHeight">
+                                <div class="splitButton bottomAligned">
+                                    <button class="button button-blue primary">
+                                        Save
+                                    </button><button class="button button-red secondary">
+                                        Cancel
+                                    </button>
+                                </div>
+                            </div>
+                            
+                        </article>
+                        
+                    </section>
+                    
+                </div>
+
+            </div>
+            
+            
+
+            
         </div>
     </body>
 </html>
