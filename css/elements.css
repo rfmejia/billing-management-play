@@ -1,14 +1,17 @@
+/* Article that has container with padding on the sides */
 article.boxedContainer {
   width: 95%;
   margin-left: auto;
   margin-right: auto;
 }
 
+/* Boxed container's div with padding  */
 article.boxedContainer div.paddedChild {
   width: 100%;
   padding: 12px 12px 0px 12px;
 }
 
+/* Boxed container with a child that has no padding */
 article.boxedContainer .fullChild {
   height: 32px;
   line-height: 32px;
@@ -16,6 +19,7 @@ article.boxedContainer .fullChild {
   padding-right: 4px;
 }
 
+/* Div centered */
 div.centeredRow{
   margin-left: auto;
   margin-right: auto;
@@ -24,16 +28,19 @@ div.centeredRow{
   line-height: 32px;
 }
 
+/* Centered div, first element that takes 20% of the row */
 div.centeredRow .col2Element1 {
   display:inline-block;
   width: 20%;
   text-align: left;
 }
 
+/* Centered div, second element that takes 70% of the row */
 div.centeredRow .col2Element2{
   width: 70%;
 }
 
+/* Row container for buttons */
 span.splitButton {
   width: 100%;
   display: inline-block;
@@ -42,24 +49,53 @@ span.splitButton {
   box-sizing:border-box;
 }
 
-.bottomAligned {
-  width: 100%;
-}
-
-.primary {
-  display: inline-block;
-  width: 70%;
-}
-
-.secondary {
-  display: inline-block;
-    width:30%;
-}
-
 button {
   border: none;
   text-align: center;
   text-transform: uppercase;
   font-size: 12px;
   color: white;
+}
+
+/* Search suggestions text box */
+.searchWithSuggestions {
+  position: relative;
+  display: inline-block;
+}
+
+/* http://cssdeck.com/labs/search-box-with-suggestions-dropdown */
+/* Search suggestions */
+.searchWithSuggestions input:focus + .searchSuggestions {
+  display:block;
+}
+
+/*  Search suggestions */
+.searchWithSuggestions .searchSuggestions {
+  display: none;
+  position: absolute;
+  top: 30px;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  padding: 0;
+  margin: 0;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #cbcfe2 #c8cee7 #c4c7d7;
+  border-radius: 3px;
+  background-color: #fdfdfd;
+}
+
+/* Search suggestions row */
+.searchSuggestions li {
+  height: 32px;
+  border-bottom: solid 1px #40B0F9;
+  font-family: bodyRegular;
+  font-size: 12px;
+  line-height: 32px;
+}
+
+/* Search suggestions last row */
+.searchSuggestions li:last-child {
+  border-bottom: none;
 }

@@ -12,15 +12,15 @@
         <!-- Page Container -->
     	<div class="mainBackground">
         	<header class="fullWidth"> 
-                <span class="fullWidth paddingLeft">
-                    <h1>Hobbies of Asia </h1> 
-                    <nav>
-                        <ul id="navList" class="nav-bar">
-                            <li><a href="#">Workspace</a></li>
-                            <li><a href="#">Settings</a></li>
-                        </ul>
-                    </nav>  
-                </span>           
+                <h1 class="paddingLeft">Hobbies of Asia </h1>   
+                
+                <div>
+                    <button class="headerButton button-leftBordered">
+                                    Save as Draft
+                        </button><button class="headerButton button-leftBordered ">
+                                    Edit
+                        </button>     
+                </div>
             </header>
             
             <!-- Sidebar -->
@@ -46,14 +46,21 @@
                     <div id="invoiceMaker_controls" class="rowHeight">
                         <button class="button button-rightBordered">
                                     Save as Draft
-                        </button>
-                        <button class="button button-rightBordered">
+                        </button><button class="button button-rightBordered">
                                     Edit
                         </button>
 
                         <div class="invoiceMaker_textbox">
-                            <label for="tenant">tenant</label>
-                            <input id="tenant" type="text" placeholder="Select tenant">
+                        
+                            <form id="searchTenants"class="searchWithSuggestions">
+                                <label for="tenant">tenant</label>
+                                <input id="tenant" type="text" placeholder="Select tenant">
+                                <ul id="searchTenantsResults" class="searchSuggestions">
+                                    <li class="horizontalPadding"> Search result #1</li>
+                                    <li class="horizontalPadding"> Search result #2</li>
+                                    <li class="horizontalPadding"> Search result #3</li>
+                                </ul>
+                            </form>
 
                             <label for="date">previous charges</label>
                             <input id="date" type="text" placeholder="Select date">

@@ -1,10 +1,5 @@
 /* Layout of pages */
 
-header div,
-header nav{
-  display: inline-block;
-}
-
 div h1{
   display: inline-block;
 }

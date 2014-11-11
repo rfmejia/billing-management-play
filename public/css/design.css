@@ -1,12 +1,18 @@
-/* Design stylings */
+/* Design styles */
 
 /* Light gray color - #DADADA */
 /* Dark gray color - #666666 */
 /* Red color - #F45750 */
 /* Blue color - #40B0F9 */
 
+/* 
+
+  General styles 
+
+*/
 html {
   font-family: titles;
+  background-color: white;
 }
 
 body {
@@ -17,6 +23,18 @@ body {
 header {
   background-color: #40B0F9;
 }
+
+.horizontalLine {
+  width: 100%;
+  background-color: white;
+  height: 1px;
+}
+/* 
+
+  General styles -- end
+  Header styles 
+
+*/
 
 h1 {
   font-family: titlesLight;
@@ -40,16 +58,23 @@ h3 {
   font-size: 16px;
 }
 
-nav {
-  background-color: #DADADA;
+/* 
+
+  Header styles -- end
+  General button styles 
+
+*/
+.headerButton {
+  font-family: titles;
+  display: inline-block;
+  font-size: 12px;
 }
 
 .button {
   font-family: titles;
-  font-size: 12px
   text-align: center;
   text-transform: uppercase;
-  line-height: 32px;
+  font-size: 12px;
 }
 
 .button-blue {
@@ -72,6 +97,20 @@ nav {
   border-right: solid white 1px;
 }
 
+.button-leftBordered {
+  border-top: none;
+  border-left: solid white 1px;
+  border-bottom: none;
+  border-right: none;
+}
+
+.button-leftRightBordered {
+  border-top: none;
+  border-left: solid white 1px;
+  border-bottom: none;
+  border-right: solid white 1px;
+}
+
 .button-bordered {
   border: solid white 1px;
 }
@@ -79,6 +118,13 @@ nav {
 .button-unbordered {
   border: none;
 }
+
+/* 
+  
+  General button styles -- end
+  Label styles
+
+*/
 
 label {
   font-family: titles;
@@ -95,14 +141,6 @@ label {
   font-size: 12px;
 }
 
-input[type="text"] {
-  font-family: bodyRegular;
-  font-size: 12px;
-  box-sizing: border-box;
-  vertical-align: middle;
-  border:none;
-}
-
 label.checkbox {
   display: inline-block;
   width: 100%;
@@ -110,27 +148,6 @@ label.checkbox {
   background-color: white;
   margin-left: 2px;
   padding-left: 2px;
-  box-sizing: border-box;
-}
-
-span.col2Element2 {
-  box-sizing: border-box;
-}
-
-ul#navList {
-  font-family: titles;
-  font-size: 16px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-}
-
-
-ul#navList > li {
-  border-left: 1px solid white;
-}
-
-div.radioInline {
-  display: inline-block;
   box-sizing: border-box;
 }
 
@@ -143,29 +160,31 @@ label.primaryRadio {
 label.secondaryRadio {
   background-color: white;
   text-align: left;
-  margin:0px;
+  margin: 0px;
 }
 
-ul#navList a {
-  text-decoration: none;
+/* 
+  
+  Label styles -- end
+  Input styles
+
+*/
+
+input[type="text"] {
+  font-family: bodyRegular;
+  font-size: 12px;
+  box-sizing: border-box;
+  vertical-align: middle;
+  border:none;
 }
 
-ul#navList > li a:first-child {
-  text-align: center;
-  color: white;
+div.radioInline {
+  display: inline-block;
+  box-sizing: border-box;
 }
 
 article.bordered {
   border:solid 1px white;
-}
-
-#addCategory{
-  width: 100%;
-}
-
-div.centeredRow div.variableLabel {
-  width:20%;
-  display: inline-block;
 }
 
 div.centeredRow span{
@@ -175,15 +194,7 @@ div.centeredRow span{
   font-size: 12px;
 }
 
-p.autoInputValue {
-  width:70%;
-}
-
-p.autoInputLabel {
-    width: 20%;
-}
-
-
+/* Invoice maker */
 .invoiceMaker_total {
   background-color: #40B0F9;
 }
@@ -192,22 +203,4 @@ p.autoInputLabel {
   font-family: titles;
   color: white;
   text-transform: uppercase;
-}
-
-.invoiceMaker_subAmount {
-  float: right;
-}
-
-.charges-noTitle {
-
-}
-
-.charges-withTitle {
-
-}
-
-.horizontalLine {
-  width: 100%;
-  background-color: white;
-  height: 1px;
 }
