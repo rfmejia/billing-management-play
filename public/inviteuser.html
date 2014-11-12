@@ -10,104 +10,143 @@
         
     <body class="containerMain">
         <!-- Page Container -->
-        <div class="mainBackground">
+        <div id="inviteUserContainer" class="fullHeight">
             <header class="fullWidth"> 
                 <h1 class="paddingLeft">Hobbies of Asia </h1>   
                 
                 <div>
-                    <button class="headerButton button-leftBordered">
+                    <button class="headerButton button-gray button-leftBordered">
                                     Save as Draft
-                        </button><button class="headerButton button-leftBordered ">
+                        </button><button class="headerButton button-gray button-leftBordered ">
                                     Edit
                         </button>     
                 </div>
             </header>
             
-            <!-- Sidebar -->
-            <section>
- 
-            </section>
-
-            <div class="horizontalLine"> 
-            </div>
-
-            <!-- Main content -->
-            <section>
-                <!-- Helper bar -->
-                <section class="helperBar fullWidth rowHeight horizontalPadding">
-                    <h3>
-                        invite new user
-                    </h3>
-                </section>
-                <div class="horizontalLine"> 
-                </div>
-                <br>  
-                
-                <article class="mainContainer">
-                    <div class="paddedChild">
-                        <div class="centeredRow">
-                            <label for="userEmail" class="col2Element1">user e-mail</label>
-                            <input id="userEmail" class="col2Element2 fullHeight" type="text" placeholder="Input user e-mail">
-                        </div>
-
-                        <br>
-                        
-                        <div class="centeredRow">
-                            <div class="col2Element1 standAloneLabel">
-                                roles
-                            </div>
-                            <span class="col2Element2 checkboxWrapper">
-                                <label class="checkbox"><input type="checkbox" /> Encoder</label>
-                            </span>
-                        </div>
-                        <br>
-                        <div class="centeredRow">
-                            <div class="col2Element1">
-                            
-                            </div>
-                            <span class="col2Element2 checkboxWrapper">
-                                <label class="checkbox"><input type="checkbox" /> Checker</label>
-                            </span>
-                        </div>
-                        <br>
-                        <div class="centeredRow">
-                            <div class="col2Element1">
-                              
-                            </div class="col2Element2">
-                            <span class="col2Element2 checkboxWrapper">
-                                <label class="checkbox"><input type="checkbox" /> Approver </label>
-                            </span>
-                        </div>
-                        <br>
-                        <div class="centeredRow">
-                            <div class="col2Element1 standAloneLabel">
-                                Administrator:
-                            </div class="col2Element2">
-                            
-                            <div class="form-inline radioInline col2Element2">
-                                <label class="radio inline primary primaryRadio">
-                                <input type="radio" value="1" checked="checked" name="adminisrator">
-                                    NO
-                                </label><label class="radio inline secondary secondaryRadio">
-                                  <input type="radio" value="2" name="adminisrator">
-                                  YES
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bottomAligned fullWidth rowHeight">
-                        <span class="splitButton">
-                            <button class="button button-blue primary">
-                                Submit
-                            </button><button class="button button-red secondary">
-                                Cancel
-                            </button>
-                        </span>
+            <div class="testContainer fullHeight">
+                 <!-- Sidebar -->
+                <div id="tenantCreateContainer" class="mainBackground sidebar fullHeight">
+                    
+                    <div class="horizontalLine"> 
                     </div>
                     
-                </article>
+                    <div id="sidebarButtons" class="fullWidth">
+                        <button id="inboxButton" class="button button-gray">
+                                    inbox
+                        </button><button indbox="tennantButton" state="active" class="button button-gray button-leftBordered ">
+                            tenants
+                        </button>  
+                    </div>
 
-            </section>
+                    <div class="horizontalLine"> 
+                    </div>
+                    
+                    <div id="sidebarContent">
+                        <div class="tenantRow" state="active">
+                            <span class="tenantField">
+                                Mossimo
+                            </span>
+                        </div>
+                        <div class="tenantRow">
+                            <span class="tenantField">
+                                Mossimo
+                            </span>
+                        </div>
+                    </div>
+                    
+                </div>
+                <!-- Main content -->
+
+                <div class="mainBackground testContent fullHeight">
+
+                    <div class="horizontalLine"> 
+                    </div>
+
+                    <section class="fullHeight">
+                        <section class="helperBar fullWidth rowHeight horizontalPadding">
+                            <h3 class="pageTitle">
+                                invite new user
+                            </h3>
+                        </section>
+
+                        <div class="horizontalLine"> 
+                            </div>
+
+
+                        <br> 
+
+                        <article>
+                            <div class="paddedChild">
+                                <div class="centeredRow">
+                                    <label for="userEmail" class="col2Element1">user e-mail</label>
+                                    <input id="userEmail" class="col2Element2 fullHeight" type="text" placeholder="Input user e-mail">
+                                </div>
+
+                                <br>
+                                
+                                <div class="centeredRow">
+                                    <div class="col2Element1 standAloneLabel">
+                                        roles
+                                    </div>
+                                    <span class="col2Element2 checkboxWrapper">
+                                        <label class="checkbox"><input type="checkbox" /> Encoder</label>
+                                    </span>
+                                </div>
+
+                                <br>
+                                
+                                <div class="centeredRow">
+                                    <div class="col2Element1">
+                                    
+                                    </div>
+                                    <span class="col2Element2 checkboxWrapper">
+                                        <label class="checkbox"><input type="checkbox" /> Checker</label>
+                                    </span>
+                                </div>
+
+                                <br>
+                                
+                                <div class="centeredRow">
+                                    <div class="col2Element1">
+                                      
+                                    </div class="col2Element2">
+                                    <span class="col2Element2 checkboxWrapper">
+                                        <label class="checkbox"><input type="checkbox" /> Approver </label>
+                                    </span>
+                                </div>
+
+                                <br>
+                                
+                                <div class="centeredRow">
+                                    <div class="col2Element1 standAloneLabel">
+                                        Administrator:
+                                    </div class="col2Element2">
+                                    
+                                    <div class="form-inline radioInline col2Element2">
+                                        <label class="radio inline primary primaryRadio">
+                                        <input type="radio" value="1" checked="checked" name="adminisrator">
+                                            NO
+                                        </label><label class="radio inline secondary secondaryRadio">
+                                          <input type="radio" value="2" name="adminisrator">
+                                          YES
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="rowHeight">
+                                <div class="splitButton bottomAligned">
+                                    <button class="button button-blue primary">
+                                        Submit
+                                    </button><button class="button button-red secondary">
+                                        Cancel
+                                    </button>
+                                </div>
+                            </div>
+                        </article>
+                    </section>
+                </div>
+            </div>
 
     </body>
 </html>

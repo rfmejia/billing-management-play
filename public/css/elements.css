@@ -113,6 +113,10 @@ button {
   width: 50%;
 }
 
+#sidebarButtons button[state="active"]{
+ background-color: #40B0F9;
+}
+
 #sidebarContent {
   padding-top: 6px;
 }
@@ -126,15 +130,19 @@ button {
   box-sizing: border-box;
 }
 
+.tenantField {
+  font-family: titles;
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
 .tenantRow:hover {
-  background-color: #40B0F9;
+  background-color: #666666;
 }
 
+.tenantRow[state="active"],
 .tenantRow:active {
-  background-color: red;
-}
-
-.tenantRow[state="active"] {
   background-color: #40B0F9;
 }
 
