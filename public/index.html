@@ -1,25 +1,25 @@
 <!DOCTYPE html>
-<html>
-    <head>
+<html ng-app>
+    <head>1
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-        <link rel="stylesheet" type="text/css" href="webapp/css/external.css"/>
-        <title>Hobbies of Asia: Invoice Workspace</title>
-
+        <link rel="stylesheet" type="text/css" href="css/external.css"/>
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.2/angular.min.js"></script>
+        <title>Billing Management System</title>
     </head>
 
     <body class="containerMain">
         <!-- Page Container -->
         <div class="mainBackground">
-            <header class="fullWidth"> 
-                <h1 class="paddingLeft">Hobbies of Asia </h1>   
-                
+            <header class="fullWidth">
+                <h1 class="paddingLeft">Hobbies of Asia </h1>
+
                 <div>
                     <button class="headerButton button-leftBordered">
                                     Save as Draft
                         </button><button class="headerButton button-leftBordered ">
                                     Edit
-                        </button>     
+                        </button>
                 </div>
             </header>
 
@@ -40,8 +40,8 @@
                         Create new tenant
                     </h3>
                 </div>
-                    
-                <div class="horizontalLine"> 
+
+                <div class="horizontalLine">
                 </div>
                     <div id="invoiceMaker_controls" class="rowHeight">
                         <button class="button button-rightBordered">
@@ -51,7 +51,7 @@
                         </button>
 
                         <div class="invoiceMaker_textbox">
-                        
+
                             <form id="searchTenants"class="searchWithSuggestions">
                                 <label for="tenant">tenant</label>
                                 <input id="tenant" type="text" placeholder="Select tenant">
@@ -65,11 +65,11 @@
                             <label for="date">previous charges</label>
                             <input id="date" type="text" placeholder="Select date">
                         </div>
-                    
+
                     </div>
 
                 </section>
-                <div class="horizontalLine"> 
+                <div class="horizontalLine">
                 </div>
                 <br>
                 <!-- Previous charges -->
@@ -84,7 +84,7 @@
                             <h3>
                                 Previous charges
                             </h3>
-                            
+
                             <!-- Previous Charges -->
                             <div class="centeredRow">
                                 <label for="previousCharges" class="col2Element1">previous charges</label>
@@ -99,16 +99,16 @@
                         </div>
 
                         <br>
-                        
+
                         <!-- Total for previous charges -->
                         <div class="fullChild invoiceMaker_total">
                                 <p>Unpaid total <span class="invoiceMaker_subAmount">Amount</span></p>
                         </div>
                     </article>
                 </section>
-                
+
                 <br>
-                <div class="horizontalLine"> 
+                <div class="horizontalLine">
                 </div>
 
                 <br>
@@ -130,10 +130,10 @@
                                 <label for="baseRent" class="col2Element1">
                                     base rent
                                 </label>
-                                
+
                                 <input id="baseRent" type="text" placeholder="Input base rent" class="col2Element2 fullHeight">
                             </div>
-                            
+
                             <br>
                             <!-- Tax for rent input -->
                             <div class="centeredRow">
@@ -164,16 +164,16 @@
                         </div>
 
                     </article>
-                    
+
                     <br>
 
                     <!-- Electricity charges wrapper -->
-                    <article class="boxedContainer bordered"> 
+                    <article class="boxedContainer bordered">
                         <div class="paddedChild">
                             <h3>
                                 Electricity
                             </h3>
-                            
+
                             <!-- Meter number input -->
                             <div class="centeredRow">
                                 <label for="electricityMeterNumber" class="col2Element1">meter number</label>
@@ -190,7 +190,7 @@
                             </div>
 
                             <br>
-                            
+
                             <!-- Previous reading auto-input -->
                             <div class="centeredRow">
                                 <span class="col2Element1">previous reading</span>
@@ -205,7 +205,7 @@
                             <div class="centeredRow">
                                 <label for="currentReading" class="col2Element1">current reading</label>
                                 <input id="currentReading" type="text"  placeholder="Input current meter reading" class="fullHeight col2Element2">
-                                
+
                             </div>
 
                             <br>
@@ -225,7 +225,7 @@
                                     106
                                 </span>
                             </div>
-                            
+
                             <br>
 
                             <!-- Auto-input: Gross kw usage -->
@@ -247,7 +247,7 @@
                             </div>
                         </div>
                         <br>
-                        
+
                          <!-- Rent total calculated -->
                         <div class="fullChild invoiceMaker_total">
                             <p>
@@ -258,7 +258,7 @@
                     </article>
 
                     <br>
-                    
+
                     <!-- Water Charges wrapper -->
                     <article class="boxedContainer bordered">
                         <div class="paddedChild">
@@ -272,10 +272,10 @@
                                 <label for="waterMeterNumber" class="col2Element1">
                                     meter number
                                 </label>
-                                
+
                                 <input id="waterMeterNumber" type="text" placeholder="Input meter number" class="col2Element2 fullHeight">
                             </div>
-                            
+
                             <br>
 
                             <!-- Input: billing period  -->
@@ -283,7 +283,7 @@
                                 <label for="waterBillingPeriod" class="col2Element1">
                                     billing period
                                 </label>
-                                
+
                                 <input id="waterBillingPeriod" type="text" placeholder="Input billing period" class="col2Element2 fullHeight">
                             </div>
 
@@ -296,7 +296,7 @@
                                     23520
                                 </span>
                             </div>
-                            
+
                             <br>
 
                             <!-- Input: current reading  -->
@@ -304,10 +304,10 @@
                                 <label for="waterCurrentReading" class="col2Element1">
                                     current reading
                                 </label>
-                                
+
                                 <input id="waterCurrentReading" type="text" placeholder="Input current reading" class="fullHeight col2Element2">
                             </div>
-                            
+
                             <br>
 
                             <!-- Input: cu. m usage -->
@@ -315,10 +315,10 @@
                                 <label for="waterRateCuMUsage" class="col2Element1">
                                     rate cu m usage
                                 </label>
-                                
+
                                 <input id="waterRateCuMUsage" type="text" placeholder="input rate per cu. m" class="fullHeight col2Element2">
                             </div>
-                                
+
                             <br>
 
                             <!-- Auto-input: gross cu. m usage -->
@@ -328,7 +328,7 @@
                                     23520
                                 </span>
                             </div>
-                            
+
                             <br>
 
                             <!-- Auto-input: water subtotal -->
@@ -348,10 +348,10 @@
                             </p>
                         </div>
 
-                    </article>  
-                        
+                    </article>
+
                     <br>
- 
+
                     <article class="boxedContainer bordered">
                         <button id="addCategory" class="button button-unbordered">
                             Add a category
@@ -371,8 +371,7 @@
                 </section>
             </section>
             <br>
-    
+
         </div>
-            
     </body>
 </html>
