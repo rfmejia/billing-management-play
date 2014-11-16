@@ -1,0 +1,40 @@
+body {
+	padding-top: 70px;
+}
+
+.navbar-brand {
+	font-family: titles;
+	font-size: 24px;
+}
+
+.tenant-info div {
+	height: 30px;
+	margin: 15px;
+}
+
+.tenant-info label {
+	display: inline-block;
+	width: 160px;
+	text-align: left;
+	text-transform: uppercase;
+	font-family: titles;
+}
+
+input.transformable {
+	width: 70%;
+	font-size: 16px;
+	padding: 5px;
+	font-family: titles;
+}
+
+input.transformable:disabled  {
+	background: none;
+	border: none;
+}
+
+div.tab-pane {
+	border-left: 1px solid #dddddd;
+	border-right: 1px solid #dddddd;
+	border-bottom: 1px solid #dddddd;
+	padding: 15px;
+}

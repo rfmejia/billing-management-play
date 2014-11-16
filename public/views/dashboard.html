@@ -1,77 +1,152 @@
 <!DOCTYPE html>
 <html ng-app="BillingManagementApp">
 <head>
-    <title>Home - Billing Management System</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <base href="../" />
+  <title>Home - Billing Management System</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <base href="../" />
 
-    <link rel="stylesheet" type="text/css" href="css/external.css"/>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+  <!--   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css"> -->
+  <link rel="stylesheet" href="css/cerulean-theme.min.css">
+  <link rel="stylesheet" type="text/css" href="css/fonts.css"/>
+  <link rel="stylesheet" type="text/css" href="css/main.css"/>
+  <!-- <link rel="stylesheet" type="text/css" href="css/external.css"/> -->
 </head>
 
-<body class="containerMain">
-    <!-- Page Container -->
-    <div class="mainBackground" ng-controller="TenantController">
-        <header class="fullWidth">
-            <h1 class="paddingLeft">Hobbies of Asia</h1>
-            <div>
-                <button class="headerButton button-leftBordered">Save as Draft</button><button class="headerButton button-leftBordered ">Edit</button>
-            </div>
-        </header>
+<body>
+  <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">Billing Management System</a>
+      </div>
 
-        <div id="tenantCreateContainer" class="mainBackground sidebar fullHeight">
-            <div class="horizontalLine">
-            </div>
-
-            <div id="sidebarButtons" class="fullWidth">
-                <button id="inboxButton" class="button button-gray" hidden>Inbox</button>
-                <button indbox="tennantButton" state="active" class="button button-gray button-leftBordered ">Tenants</button>
-            </div>
-
-            <div class="horizontalLine">
-            </div>
-
-            <ul id="sidebarContent">
-                <li class="tenantRow" ng-repeat="tenant in tenantList" ng-click="setSelectedTenant(tenant)">
-                    <span class="tenantField">{{tenant.tradeName}}</span>
-                </li>
+      <div class="navbar-collapse collapse" role="navigation">
+        <ul class="nav navbar-nav navbar-right">
+          <!-- <li><a href="#"></li> -->
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="glyphicon glyphicon-user"></span> Test User</a></a>
+            <ul class="dropdown-menu" role="menu">
+              <li class="disabled"><a href>Settings</a></li>
+              <li class="disabled"><a href>Help</a></li>
+              <li class="divider"></li>
+              <li><a href="#">Logout</a></li>
             </ul>
-        </div>
+          </li>
+        </ul>
+      </div><!-- /.navbar-collapse -->
+    </div>
+  </div>
 
-        <div class="testContent">
-            <section class="helperBar fullWidth rowHeight horizontalPadding">
-                <h3 class="pageTitle">Tenant Information</h3>
-            </section>
-            <div class="horizontalLine">
-            </div>
+  <!-- Page Container -->
+  <div class="container container-main" ng-controller="TenantController">
+    <div class="row">
+      <div id="sidebarNav" class="col-md-4">
+        <tabset>
+          <tab heading="Mailbox">
+            <accordion close-others="false">
 
-            <article class="tenantInfo paddedChild">
-                <div>
-                    <span class="label">Trade name</span><span class="value">{{selectedTenant.tradeName}}</span>
-                </div>
-                <div>
-                    <span class="label">Address</span><span class="value">{{selectedTenant.address}}</span>
-                </div>
-                <div>
-                    <span class="label">Contact person</span><span class="value">{{selectedTenant.contactPerson}}</span>
-                </div>
-                <div>
-                    <span class="label">Contact Number</span><span class="value">{{selectedTenant.contactNumber}}</span>
-                </div>
-                <div>
-                    <span class="label">Email</span><span class="value">{{selectedTenant.email}}</span>
-                </div>
-            </article>
-        </div>
+            <accordion-group heading="Pending" is-open="true">
+            <ul class="nav nav-pills nav-stacked" collapse="pendingCollapse">
+              <li class="disabled"><a>Drafting</a></li>
+              <li class="disabled"><a>For checking</a></li>
+              <li class="disabled"><a>For approval</a></li>
+            </ul>
+            </accordion-group>
+            <accordion-group heading="Delivered" is-open="true">
+              <ul class="nav nav-pills nav-stacked">
+                <li class="disabled"><a>Unpaid</a></li>
+                <li class="disabled"><a>Paid</a></li>
+              </ul>
+            </accordion-group>
+
+            </accordion>
+          </tab>
+          <tab heading="Tenants" active=true>
+              <input type="text" ng-model="tenantFilter" placeholder="Filter tenants" class="form-control">
+              <br>
+              <div class="list-group">
+                <a class="list-group-item" ng-repeat="tenant in tenantList | filter:tenantFilter" ng-click="showTenant(tenant)">
+                  {{tenant.tradeName}}
+                </a>
+              </div>
+              <hr>
+              <button class="btn btn-primary" ng-click="setupNewTenant()"><span class="glyphicon glyphicon-plus-sign"></span> New tenant</button>
+          </tab>
+        </tabset>
+      </div>
+
+      <!-- tenantPage -->
+      <div class="col-md-8" id="tenantPage">
+        <div class="tenant-info container-fluid" ng-show="selectedTenant">
+          <header>
+            <h3>Tenant Information &nbsp;&nbsp;<small><a ng-show="controls.editToggle" ng-click="setControls('edit')">Edit</a></small></h3>
+          </header>
+          <hr>
+
+          <article>
+            <form>
+              <div>
+                <label>Trade name</label>
+                <input class="transformable" ng-disabled="!controls.transformable" ng-model="selectedTenant.tradeName" />
+              </div>
+              <div>
+                <label>Address</label>
+                <input class="transformable" ng-disabled="!controls.transformable" ng-model="selectedTenant.address" />
+              </div>
+              <div>
+                <label>Contact person</label>
+                <input class="transformable" ng-disabled="!controls.transformable" ng-model="selectedTenant.contactPerson" />
+              </div>
+              <div>
+                <label>Contact numbers</label>
+                <input class="transformable" ng-disabled="!controls.transformable" ng-model="selectedTenant.contactNumber" />
+              </div>
+              <div>
+                <label>Email</label>
+                <input class="transformable" ng-disabled="!controls.transformable" ng-model="selectedTenant.email" />
+              </div>
+
+              <!-- Creation controls -->
+              <div ng-show="controls.creationTools">
+                <button class="btn btn-primary" ng-click="addNewTenant()">Create</button>
+                <button class="btn btn-default" ng-click="setControls('none'); selectedTenant=null">Cancel</button>
+              </div>
+
+              <!-- Editing controls -->
+              <div ng-show="controls.editingTools">
+                <button class="btn btn-primary" ng-click="setControls('show'); selectedTenant.update()">Save changes</button>
+                <button class="btn btn-default" ng-click="setControls('show'); selectedTenant.reload()">Cancel</button>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <button class="btn btn-danger" ng-really-message="Are you sure you want to delete this tenant?" ng-really-click="setControls('show'); selectedTenant.delete()">Delete</button>
+              </div>
+            </form>
+          </article>
+        </div><!-- /.tenant-info -->
+      </div><!-- /.tenantPage -->
+
     </div>
 
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.2/angular.js"></script>
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.2/angular-cookies.js"></script>
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.2/angular-resource.js"></script>
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.2/angular-route.js"></script>
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.2/angular-sanitize.js"></script>
+    <hr>
+    <footer id="main">
+      &copy; Copyright 2014 Nooovle | All rights reserved.
+    </footer>
+  </div> <!-- /.container -->
 
-    <script type="text/javascript" src="../js/URI.js"></script>
-    <script type="text/javascript" src="../js/app.js"></script>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.2/angular.js"></script>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.2/angular-cookies.js"></script>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.2/angular-resource.js"></script>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.2/angular-route.js"></script>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.2/angular-sanitize.js"></script>
+  <script type="text/javascript" src="js/ui-bootstrap-tpls-0.11.2.min.js"></script>
+
+  <script type="text/javascript" src="../js/URI.js"></script>
+  <script type="text/javascript" src="../js/app.js"></script>
 
 </body>
 </html>

@@ -41,7 +41,7 @@ object Tenants extends Controller {
 
   def list(offset: Int = 0, limit: Int = 10) = Action { implicit request =>
     val (ts, total) = ConnectionFactory.connect withSession { implicit session =>
-      val ts = tenants.drop(offset).take(limit).list
+      val ts = tenants.drop(offset).take(limit).sortBy(_.tradeName).list
       val total = tenants.length.run
       (ts, total)
     }
