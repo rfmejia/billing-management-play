@@ -51,9 +51,9 @@ object TestEnvironment extends Controller {
     (for (u <- users) yield u).delete
     val data = Seq(
       (User("admin", "techsupport@nooovle.com", "a1b2c3d4f5".getBytes,
-        "Administrator", ""), Set("administrator")),
+        "System", "Administrator"), Set("administrator")),
       (User("testuser1", "testuser1@email.com", "testpass1".getBytes,
-        "Julius", "Amador"), Set("encoder")))
+        "Julius", "Amador"), Set("encoder", "checker")))
     data foreach (d => User.insertWithRoles(d._1, d._2))
   }
 
@@ -61,7 +61,7 @@ object TestEnvironment extends Controller {
     (for (i <- invites) yield i).delete
     val date = DateTime.parse("2014-11-30")
     val data = Seq(
-      (Invite("testuser2", "testuser2@email.com", date), Set("encoder", "checker")),
+      (Invite("testuser2", "testuser2@email.com", date), Set("encoder")),
       (Invite("testuser3", "testuser3@email.com", date), Set("approver")))
     data foreach (d => Invite.insertWithRoles(d._1, d._2))
   }

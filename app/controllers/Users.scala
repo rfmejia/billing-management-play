@@ -14,7 +14,7 @@ import scala.slick.driver.H2Driver.simple._
 import scala.util.{ Try, Success, Failure }
 
 object Users extends Controller {
-  def show(username: String) = HTTPBasicAuthAction { implicit request =>
+  def show(username: String) = Action { implicit request =>
     User.findByUsernameWithRoles(username) match {
       case Some((u, rs)) =>
         val self = routes.Users.show(username)
@@ -34,7 +34,7 @@ object Users extends Controller {
     }
   }
 
-  def list(offset: Int = 0, limit: Int = 10) = HTTPBasicAuthAction { implicit request =>
+  def list(offset: Int = 0, limit: Int = 10) = Action { implicit request =>
     val (us, total) = ConnectionFactory.connect withSession { implicit session =>
       val us = users.drop(offset).take(limit).list
       val total = users.length.run
@@ -45,7 +45,7 @@ object Users extends Controller {
       val link = routes.Users.show(u.username)
       val obj = HalJsObject.create(link.absoluteURL())
         .withLink("profile", "hoa:user")
-        .withField("email", u.email)
+        .withField("username", u.username)
         .withField("firstName", u.firstName)
         .withField("lastName", u.lastName)
       obj.asJsValue
@@ -67,7 +67,7 @@ object Users extends Controller {
     Ok(x.asJsValue)
   }
 
-  def createViaInvite(username: String) = HTTPBasicAuthAction(parse.json) { implicit request =>
+  def createViaInvite(username: String) = Action(parse.json) { implicit request =>
     val json = request.body
     ((json \ "firstName").asOpt[String], (json \ "lastName").asOpt[String],
       (json \ "password").asOpt[String], (json \ "validationCode").asOpt[String]) match {
@@ -98,7 +98,7 @@ object Users extends Controller {
       }
   }
 
-  def edit(username: String) = HTTPBasicAuthAction(parse.json) { implicit request =>
+  def edit(username: String) = Action(parse.json) { implicit request =>
     // Check existence under ID
     User.findByUsername(username) match {
       case None => NotFound
@@ -125,7 +125,7 @@ object Users extends Controller {
     }
   }
 
-  def delete(username: String) = HTTPBasicAuthAction { implicit request =>
+  def delete(username: String) = Action { implicit request =>
     val deleted = ConnectionFactory.connect withSession { implicit session =>
       val query = for (u <- users if u.username === username) yield u
       query.delete

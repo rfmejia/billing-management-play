@@ -44,7 +44,7 @@
   </div>
 
   <!-- Page Container -->
-  <div class="container container-main" ng-controller="TenantController">
+  <div class="container container-main" ng-controller="MainController">
     <div class="row">
       <div id="sidebarNav" class="col-md-4">
         <tabset>
@@ -67,7 +67,8 @@
 
             </accordion>
           </tab>
-          <tab heading="Tenants" active=true>
+
+          <tab heading="Tenants" select="setControls('none'); refreshTenantList()" active=true>
               <input type="text" ng-model="tenantFilter" placeholder="Filter tenants" class="form-control">
               <br>
               <div class="list-group">
@@ -78,12 +79,22 @@
               <hr>
               <button class="btn btn-primary" ng-click="setupNewTenant()"><span class="glyphicon glyphicon-plus-sign"></span> New tenant</button>
           </tab>
+
+          <tab heading="Users" select="setControls('none'); refreshUserList()">
+              <div class="list-group">
+                <a class="list-group-item" ng-repeat="user in userList" ng-click="showUser(user)">
+                  {{user.lastName}}, {{user.firstName}}
+                </a>
+              </div>
+              <hr>
+              <button class="btn btn-primary" ng-click="openInvitations()"><span class="glyphicon glyphicon-list-alt"></span> Manage invitations</button>
+          </tab>
         </tabset>
-      </div>
+      </div><!-- /.sidebarNav -->
 
       <!-- tenantPage -->
-      <div class="col-md-8" id="tenantPage">
-        <div class="tenant-info container-fluid" ng-show="selectedTenant">
+      <div class="col-md-8" id="tenantPage" ng-show="selectedTenant">
+        <div class="tenant-info container-fluid">
           <header>
             <h3>Tenant Information &nbsp;&nbsp;<small><a ng-show="controls.editToggle" ng-click="setControls('edit')">Edit</a></small></h3>
           </header>
@@ -115,20 +126,103 @@
               <!-- Creation controls -->
               <div ng-show="controls.creationTools">
                 <button class="btn btn-primary" ng-click="addNewTenant()">Create</button>
-                <button class="btn btn-default" ng-click="setControls('none'); selectedTenant=null">Cancel</button>
+                <button class="btn btn-default" ng-click="setControls('none')">Cancel</button>
               </div>
 
               <!-- Editing controls -->
               <div ng-show="controls.editingTools">
-                <button class="btn btn-primary" ng-click="setControls('show'); selectedTenant.update()">Save changes</button>
+                <button class="btn btn-primary" ng-click="setControls('show'); selectedTenant.update(); refreshTenantList()">Save changes</button>
                 <button class="btn btn-default" ng-click="setControls('show'); selectedTenant.reload()">Cancel</button>
                 &nbsp;&nbsp;&nbsp;&nbsp;
-                <button class="btn btn-danger" ng-really-message="Are you sure you want to delete this tenant?" ng-really-click="setControls('show'); selectedTenant.delete()">Delete</button>
+                <button class="btn btn-danger" ng-really-message="Are you sure you want to delete this tenant?" ng-really-click="setControls('show'); selectedTenant.delete(); refreshTenantList()">Delete</button>
               </div>
             </form>
           </article>
         </div><!-- /.tenant-info -->
       </div><!-- /.tenantPage -->
+
+      <!-- userPage -->
+      <div class="col-md-8" id="userPage" ng-show="selectedUser">
+        <div class="tenant-info container-fluid">
+          <header>
+            <h3>User Information<!--  &nbsp;&nbsp;<small><a ng-show="controls.editToggle" ng-click="setControls('edit')">Edit</a></small> --></h3>
+          </header>
+          <hr>
+
+          <article>
+            <form>
+              <div>
+                <label>Username</label>
+                <input class="transformable" ng-disabled="!controls.transformable" ng-model="selectedUser.username" />
+              </div>
+              <div>
+                <label>Name</label>
+                <input class="transformable" ng-disabled="!controls.transformable" ng-model="selectedUser.firstName" style="width: 34%" />
+                <input class="transformable" ng-disabled="!controls.transformable" ng-model="selectedUser.lastName" style="width: 34%" />
+              </div>
+              <div>
+                <label>Email</label>
+                <input class="transformable" ng-disabled="!controls.transformable" ng-model="selectedUser.email" />
+              </div>
+              <div>
+                <label>Roles</label>
+                <input class="transformable" ng-disabled="!controls.transformable" ng-model="selectedUser.roles" />
+              </div>
+
+              <!-- Creation controls -->
+              <div ng-show="controls.creationTools">
+                <button class="btn btn-primary" ng-click="addNewUser()">Create</button>
+                <button class="btn btn-default" ng-click="setControls('none');">Cancel</button>
+              </div>
+
+              <!-- Editing controls -->
+              <div ng-show="controls.editingTools">
+                <button class="btn btn-primary" ng-click="setControls('show'); selectedUser.update(); refreshUserList()">Save changes</button>
+                <button class="btn btn-default" ng-click="setControls('show'); selectedUser.reload(); refreshUserList()">Cancel</button>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <button class="btn btn-danger" ng-really-message="Are you sure you want to delete this user?" ng-really-click="setControls('show'); selectedUser.delete(); refreshUserList()">Delete</button>
+              </div>
+            </form>
+          </article>
+        </div><!-- /.tenant-info -->
+      </div><!-- /.userPage -->
+
+      <div id="invitationsModal">
+        <script type="text/ng-template" id="myModalContent.html">
+          <div class="modal-header">
+              <h3 class="modal-title">Invites</h3>
+          </div>
+          <div class="modal-body">
+              <table class="table table-hover">
+                <tr>
+                  <th>Username</th>
+                  <th>Email</th>
+                  <th>Valid until</th>
+                </tr>
+                <tr ng-repeat="invite in inviteList">
+                  <td>{{ invite.username }}</td>
+                  <td>{{ invite.email }}</td>
+                  <td>{{ invite.validUntil | date }}</td>
+                </tr>
+              </table>
+
+              <h4>Invite a new user</h4>
+              <input type="text" name="email" placeholder="Email" class="form-control" ng-model="inviteEmail">
+              <input type="text" name="email" placeholder="Username" class="form-control" ng-model="inviteUsername">
+              <p class="input-group">
+                <input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="inviteValidUntil" is-open="opened" min-date="minDate" ng-required="true" close-text="Close" placeholder="Valid until"/>
+                <span class="input-group-btn">
+                <button type="button" class="btn btn-default" ng-click="openCalendar($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+              </span>
+              </p>
+              <button class="btn btn-primary" ng-click="inviteViaEmail()">Invite via email</button>
+          </div>
+          <div class="modal-footer">
+              <button class="btn btn-primary" ng-click="ok()">OK</button>
+              <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+          </div>
+        </script>
+      </div><!-- /.invitationsModal -->
 
     </div>
 
