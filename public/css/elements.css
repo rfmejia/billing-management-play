@@ -158,3 +158,25 @@ button {
   height: 100%;
   width: 100%;
 }
+
+.paddedChild {
+  width: 100%;
+  padding: 12px 12px 0px 12px;
+}
+
+.label {
+  font-family: titles;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+.tenantInfo div {
+  height: 30px;
+}
+
+.tenantInfo .label {
+  display: inline-block;
+  width: 140px;
+  text-align: left;
+  text-transform: uppercase;
+}

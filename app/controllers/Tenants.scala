@@ -13,7 +13,7 @@ import scala.slick.driver.H2Driver.simple._
 import scala.util.{ Try, Success, Failure }
 
 object Tenants extends Controller {
-  def show(id: Int) = HTTPBasicAuthAction { implicit request =>
+  def show(id: Int) = Action { implicit request =>
     val result = ConnectionFactory.connect withSession { implicit session =>
       val query = for (t <- tenants if t.id === id) yield t
       query.firstOption
@@ -39,7 +39,7 @@ object Tenants extends Controller {
     }
   }
 
-  def list(offset: Int = 0, limit: Int = 10) = HTTPBasicAuthAction { implicit request =>
+  def list(offset: Int = 0, limit: Int = 10) = Action { implicit request =>
     val (ts, total) = ConnectionFactory.connect withSession { implicit session =>
       val ts = tenants.drop(offset).take(limit).list
       val total = tenants.length.run
@@ -69,7 +69,7 @@ object Tenants extends Controller {
     Ok(x.asJsValue)
   }
 
-  def create() = HTTPBasicAuthAction(parse.json) { implicit request =>
+  def create() = Action(parse.json) { implicit request =>
     val json = request.body
     ((json \ "tradeName").asOpt[String],
       (json \ "address").asOpt[String],
@@ -94,7 +94,7 @@ object Tenants extends Controller {
       }
   }
 
-  def edit(id: Int) = HTTPBasicAuthAction(parse.json) { implicit request =>
+  def edit(id: Int) = Action(parse.json) { implicit request =>
     // Check existence under ID
     val t = ConnectionFactory.connect withSession { implicit session =>
       val query = for (t <- tenants if t.id === id) yield t
@@ -127,7 +127,7 @@ object Tenants extends Controller {
     }
   }
 
-  def delete(id: Int) = HTTPBasicAuthAction { implicit request =>
+  def delete(id: Int) = Action { implicit request =>
     val deleted = ConnectionFactory.connect withSession { implicit session =>
       val query = for (t <- tenants if t.id === id) yield t
       query.delete

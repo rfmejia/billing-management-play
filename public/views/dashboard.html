@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html ng-app="BillingManagementApp">
+<head>
+    <title>Home - Billing Management System</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <base href="../" />
+
+    <link rel="stylesheet" type="text/css" href="css/external.css"/>
+</head>
+
+<body class="containerMain">
+    <!-- Page Container -->
+    <div class="mainBackground" ng-controller="TenantController">
+        <header class="fullWidth">
+            <h1 class="paddingLeft">Hobbies of Asia</h1>
+            <div>
+                <button class="headerButton button-leftBordered">Save as Draft</button><button class="headerButton button-leftBordered ">Edit</button>
+            </div>
+        </header>
+
+        <div id="tenantCreateContainer" class="mainBackground sidebar fullHeight">
+            <div class="horizontalLine">
+            </div>
+
+            <div id="sidebarButtons" class="fullWidth">
+                <button id="inboxButton" class="button button-gray" hidden>Inbox</button>
+                <button indbox="tennantButton" state="active" class="button button-gray button-leftBordered ">Tenants</button>
+            </div>
+
+            <div class="horizontalLine">
+            </div>
+
+            <ul id="sidebarContent">
+                <li class="tenantRow" ng-repeat="tenant in tenantList" ng-click="setSelectedTenant(tenant)">
+                    <span class="tenantField">{{tenant.tradeName}}</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="testContent">
+            <section class="helperBar fullWidth rowHeight horizontalPadding">
+                <h3 class="pageTitle">Tenant Information</h3>
+            </section>
+            <div class="horizontalLine">
+            </div>
+
+            <article class="tenantInfo paddedChild">
+                <div>
+                    <span class="label">Trade name</span><span class="value">{{selectedTenant.tradeName}}</span>
+                </div>
+                <div>
+                    <span class="label">Address</span><span class="value">{{selectedTenant.address}}</span>
+                </div>
+                <div>
+                    <span class="label">Contact person</span><span class="value">{{selectedTenant.contactPerson}}</span>
+                </div>
+                <div>
+                    <span class="label">Contact Number</span><span class="value">{{selectedTenant.contactNumber}}</span>
+                </div>
+                <div>
+                    <span class="label">Email</span><span class="value">{{selectedTenant.email}}</span>
+                </div>
+            </article>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.2/angular.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.2/angular-cookies.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.2/angular-resource.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.2/angular-route.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.2/angular-sanitize.js"></script>
+
+    <script type="text/javascript" src="../js/URI.js"></script>
+    <script type="text/javascript" src="../js/app.js"></script>
+
+</body>
+</html>
