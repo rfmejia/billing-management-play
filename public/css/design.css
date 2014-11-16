@@ -7,9 +7,9 @@
 /* Blue color - #40B0F9 */
 /* Darker blue color - #2980b9 */
 
-/* 
+/*
 
-  General styles 
+  General styles
 
 */
 html {
@@ -19,11 +19,12 @@ html {
 
 body {
   background-color: #DADADA;
-  min-height: 600px;  
+  min-height: 600px;
 }
 
 header {
   background-color: #40B0F9;
+  border-bottom: solid 1px white;
 }
 
 .horizontalLine {
@@ -37,10 +38,10 @@ header {
   background-color: white;
   width: 1px;
 }
-/* 
+/*
 
   General styles -- end
-  Header styles 
+  Header styles
 
 */
 
@@ -66,10 +67,10 @@ h3 {
   font-size: 16px;
 }
 
-/* 
+/*
 
   Header styles -- end
-  General button styles 
+  General button styles
 
 */
 .headerButton {
@@ -85,13 +86,13 @@ h3 {
   font-size: 12px;
 }
 
-.button-blue {
+/*.button-blue {
   background-color: #40B0F9;
 }
 
 .button-blue:hover{
   background-color: #2980b9;
-}
+}*/
 
 .button-red,
 .button-red:active  {
@@ -112,7 +113,7 @@ h3 {
 }
 
 .button-gray:focus,
-.button-red:focus, 
+.button-red:focus,
 .button-blue:focus   {
  outline: 0px solid transparent;
 }
@@ -146,8 +147,8 @@ h3 {
   border: none;
 }
 
-/* 
-  
+/*
+
   General button styles -- end
   Label styles
 
@@ -190,8 +191,8 @@ label.secondaryRadio {
   margin: 0px;
 }
 
-/* 
-  
+/*
+
   Label styles -- end
   Input styles
 

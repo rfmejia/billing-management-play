@@ -1,4 +1,8 @@
 /* Article that has container with padding on the sides */
+body {
+  font-family: titles;
+}
+
 article.boxedContainer {
   width: 95%;
   margin-left: auto;
@@ -47,7 +51,7 @@ div.splitButton {
   box-sizing:border-box;
 }
 
-button {
+.headerButton {
   border: none;
   text-align: center;
   text-transform: uppercase;
@@ -127,11 +131,11 @@ button {
   line-height: 32px;
   padding-left: 4px;
   padding-right: 4px;
+  overflow: hidden;
   box-sizing: border-box;
 }
 
 .tenantField {
-  font-family: titles;
   text-align: center;
   text-transform: uppercase;
   font-size: 12px;
@@ -158,3 +162,15 @@ button {
   height: 100%;
   width: 100%;
 }
+
+.paddedChild {
+  width: 100%;
+  padding: 12px 12px 0px 12px;
+}
+
+.label {
+  font-family: titles;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+

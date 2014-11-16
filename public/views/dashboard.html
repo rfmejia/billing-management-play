@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html ng-app="BillingManagementApp">
+<head>
+  <title>Home - Billing Management System</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <base href="../" />
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+  <!--   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css"> -->
+  <link rel="stylesheet" href="css/cerulean-theme.min.css">
+  <link rel="stylesheet" type="text/css" href="css/fonts.css"/>
+  <link rel="stylesheet" type="text/css" href="css/main.css"/>
+  <!-- <link rel="stylesheet" type="text/css" href="css/external.css"/> -->
+</head>
+
+<body>
+  <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">Billing Management System</a>
+      </div>
+
+      <div class="navbar-collapse collapse" role="navigation">
+        <ul class="nav navbar-nav navbar-right">
+          <!-- <li><a href="#"></li> -->
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="glyphicon glyphicon-user"></span> Test User</a></a>
+            <ul class="dropdown-menu" role="menu">
+              <li class="disabled"><a href>Settings</a></li>
+              <li class="disabled"><a href>Help</a></li>
+              <li class="divider"></li>
+              <li><a href="#">Logout</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div><!-- /.navbar-collapse -->
+    </div>
+  </div>
+
+  <!-- Page Container -->
+  <div class="container container-main" ng-controller="MainController">
+    <div class="row">
+      <div id="sidebarNav" class="col-md-4">
+        <tabset>
+          <tab heading="Mailbox">
+            <accordion close-others="false">
+
+            <accordion-group heading="Pending" is-open="true">
+            <ul class="nav nav-pills nav-stacked" collapse="pendingCollapse">
+              <li class="disabled"><a>Drafting</a></li>
+              <li class="disabled"><a>For checking</a></li>
+              <li class="disabled"><a>For approval</a></li>
+            </ul>
+            </accordion-group>
+            <accordion-group heading="Delivered" is-open="true">
+              <ul class="nav nav-pills nav-stacked">
+                <li class="disabled"><a>Unpaid</a></li>
+                <li class="disabled"><a>Paid</a></li>
+              </ul>
+            </accordion-group>
+
+            </accordion>
+          </tab>
+
+          <tab heading="Tenants" select="setControls('none'); refreshTenantList()" active=true>
+              <input type="text" ng-model="tenantFilter" placeholder="Filter tenants" class="form-control">
+              <br>
+              <div class="list-group">
+                <a class="list-group-item" ng-repeat="tenant in tenantList | filter:tenantFilter" ng-click="showTenant(tenant)">
+                  {{tenant.tradeName}}
+                </a>
+              </div>
+              <hr>
+              <button class="btn btn-primary" ng-click="setupNewTenant()"><span class="glyphicon glyphicon-plus-sign"></span> New tenant</button>
+          </tab>
+
+          <tab heading="Users" select="setControls('none'); refreshUserList()">
+              <div class="list-group">
+                <a class="list-group-item" ng-repeat="user in userList" ng-click="showUser(user)">
+                  {{user.lastName}}, {{user.firstName}}
+                </a>
+              </div>
+              <hr>
+              <button class="btn btn-primary" ng-click="openInvitations()"><span class="glyphicon glyphicon-list-alt"></span> Manage invitations</button>
+          </tab>
+        </tabset>
+      </div><!-- /.sidebarNav -->
+
+      <!-- tenantPage -->
+      <div class="col-md-8" id="tenantPage" ng-show="selectedTenant">
+        <div class="tenant-info container-fluid">
+          <header>
+            <h3>Tenant Information &nbsp;&nbsp;<small><a ng-show="controls.editToggle" ng-click="setControls('edit')">Edit</a></small></h3>
+          </header>
+          <hr>
+
+          <article>
+            <form>
+              <div>
+                <label>Trade name</label>
+                <input class="transformable" ng-disabled="!controls.transformable" ng-model="selectedTenant.tradeName" />
+              </div>
+              <div>
+                <label>Address</label>
+                <input class="transformable" ng-disabled="!controls.transformable" ng-model="selectedTenant.address" />
+              </div>
+              <div>
+                <label>Contact person</label>
+                <input class="transformable" ng-disabled="!controls.transformable" ng-model="selectedTenant.contactPerson" />
+              </div>
+              <div>
+                <label>Contact numbers</label>
+                <input class="transformable" ng-disabled="!controls.transformable" ng-model="selectedTenant.contactNumber" />
+              </div>
+              <div>
+                <label>Email</label>
+                <input class="transformable" ng-disabled="!controls.transformable" ng-model="selectedTenant.email" />
+              </div>
+
+              <!-- Creation controls -->
+              <div ng-show="controls.creationTools">
+                <button class="btn btn-primary" ng-click="addNewTenant()">Create</button>
+                <button class="btn btn-default" ng-click="setControls('none')">Cancel</button>
+              </div>
+
+              <!-- Editing controls -->
+              <div ng-show="controls.editingTools">
+                <button class="btn btn-primary" ng-click="setControls('show'); selectedTenant.update(); refreshTenantList()">Save changes</button>
+                <button class="btn btn-default" ng-click="setControls('show'); selectedTenant.reload()">Cancel</button>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <button class="btn btn-danger" ng-really-message="Are you sure you want to delete this tenant?" ng-really-click="setControls('show'); selectedTenant.delete(); refreshTenantList()">Delete</button>
+              </div>
+            </form>
+          </article>
+        </div><!-- /.tenant-info -->
+      </div><!-- /.tenantPage -->
+
+      <!-- userPage -->
+      <div class="col-md-8" id="userPage" ng-show="selectedUser">
+        <div class="tenant-info container-fluid">
+          <header>
+            <h3>User Information<!--  &nbsp;&nbsp;<small><a ng-show="controls.editToggle" ng-click="setControls('edit')">Edit</a></small> --></h3>
+          </header>
+          <hr>
+
+          <article>
+            <form>
+              <div>
+                <label>Username</label>
+                <input class="transformable" ng-disabled="!controls.transformable" ng-model="selectedUser.username" />
+              </div>
+              <div>
+                <label>Name</label>
+                <input class="transformable" ng-disabled="!controls.transformable" ng-model="selectedUser.firstName" style="width: 34%" />
+                <input class="transformable" ng-disabled="!controls.transformable" ng-model="selectedUser.lastName" style="width: 34%" />
+              </div>
+              <div>
+                <label>Email</label>
+                <input class="transformable" ng-disabled="!controls.transformable" ng-model="selectedUser.email" />
+              </div>
+              <div>
+                <label>Roles</label>
+                <input class="transformable" ng-disabled="!controls.transformable" ng-model="selectedUser.roles" />
+              </div>
+
+              <!-- Creation controls -->
+              <div ng-show="controls.creationTools">
+                <button class="btn btn-primary" ng-click="addNewUser()">Create</button>
+                <button class="btn btn-default" ng-click="setControls('none');">Cancel</button>
+              </div>
+
+              <!-- Editing controls -->
+              <div ng-show="controls.editingTools">
+                <button class="btn btn-primary" ng-click="setControls('show'); selectedUser.update(); refreshUserList()">Save changes</button>
+                <button class="btn btn-default" ng-click="setControls('show'); selectedUser.reload(); refreshUserList()">Cancel</button>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <button class="btn btn-danger" ng-really-message="Are you sure you want to delete this user?" ng-really-click="setControls('show'); selectedUser.delete(); refreshUserList()">Delete</button>
+              </div>
+            </form>
+          </article>
+        </div><!-- /.tenant-info -->
+      </div><!-- /.userPage -->
+
+      <div id="invitationsModal">
+        <script type="text/ng-template" id="myModalContent.html">
+          <div class="modal-header">
+              <h3 class="modal-title">Invites</h3>
+          </div>
+          <div class="modal-body">
+              <table class="table table-hover">
+                <tr>
+                  <th>Username</th>
+                  <th>Email</th>
+                  <th>Valid until</th>
+                </tr>
+                <tr ng-repeat="invite in inviteList">
+                  <td>{{ invite.username }}</td>
+                  <td>{{ invite.email }}</td>
+                  <td>{{ invite.validUntil | date }}</td>
+                </tr>
+              </table>
+
+              <h4>Invite a new user</h4>
+              <input type="text" name="email" placeholder="Email" class="form-control" ng-model="inviteEmail">
+              <input type="text" name="email" placeholder="Username" class="form-control" ng-model="inviteUsername">
+              <p class="input-group">
+                <input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="inviteValidUntil" is-open="opened" min-date="minDate" ng-required="true" close-text="Close" placeholder="Valid until"/>
+                <span class="input-group-btn">
+                <button type="button" class="btn btn-default" ng-click="openCalendar($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+              </span>
+              </p>
+              <button class="btn btn-primary" ng-click="inviteViaEmail()">Invite via email</button>
+          </div>
+          <div class="modal-footer">
+              <button class="btn btn-primary" ng-click="ok()">OK</button>
+              <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+          </div>
+        </script>
+      </div><!-- /.invitationsModal -->
+
+    </div>
+
+    <hr>
+    <footer id="main">
+      &copy; Copyright 2014 Nooovle | All rights reserved.
+    </footer>
+  </div> <!-- /.container -->
+
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.2/angular.js"></script>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.2/angular-cookies.js"></script>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.2/angular-resource.js"></script>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.2/angular-route.js"></script>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.2/angular-sanitize.js"></script>
+  <script type="text/javascript" src="js/ui-bootstrap-tpls-0.11.2.min.js"></script>
+
+  <script type="text/javascript" src="../js/URI.js"></script>
+  <script type="text/javascript" src="../js/app.js"></script>
+
+</body>
+</html>

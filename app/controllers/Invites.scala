@@ -14,7 +14,7 @@ import scala.slick.driver.H2Driver.simple._
 import scala.util.{ Try, Success, Failure }
 
 object Invites extends Controller {
-  def show(username: String) = HTTPBasicAuthAction { implicit request =>
+  def show(username: String) = Action { implicit request =>
     Invite.findByUsernameWithRoles(username) match {
       case Some((i, rs)) =>
         val self = routes.Invites.show(username)
@@ -36,7 +36,7 @@ object Invites extends Controller {
     }
   }
 
-  def list(offset: Int = 0, limit: Int = 10) = HTTPBasicAuthAction { implicit request =>
+  def list(offset: Int = 0, limit: Int = 10) = Action { implicit request =>
     val (is, total) = ConnectionFactory.connect withSession { implicit session =>
       val is = invites.drop(offset).take(limit).list
       val total = invites.length.run
@@ -67,7 +67,7 @@ object Invites extends Controller {
     Ok(x.asJsValue)
   }
 
-  def create() = HTTPBasicAuthAction(parse.json) { implicit request =>
+  def create() = Action(parse.json) { implicit request =>
     val json = request.body
     ((json \ "username").asOpt[String], (json \ "email").asOpt[String], (json \ "roles").asOpt[Seq[String]], (json \ "validUntil").asOpt[DateTime]) match {
       case (Some(username), Some(email), Some(rs), Some(validUntil)) =>
@@ -87,7 +87,7 @@ object Invites extends Controller {
     }
   }
 
-  def edit(username: String) = HTTPBasicAuthAction(parse.json) { implicit request =>
+  def edit(username: String) = Action(parse.json) { implicit request =>
     // Check existence under ID
     Invite.findByUsername(username) match {
       case None => NotFound
@@ -110,7 +110,7 @@ object Invites extends Controller {
     }
   }
 
-  def delete(username: String) = HTTPBasicAuthAction { implicit request =>
+  def delete(username: String) = Action { implicit request =>
     val deleted = ConnectionFactory.connect withSession { implicit session =>
       val query = for (i <- invites if i.username === username) yield i
       query.delete
