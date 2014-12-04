@@ -1,0 +1,36 @@
+#header {
+  border-radius: 0px;
+}
+
+#mainContent {
+  padding-top: 70px;  
+}
+
+.glyphicon-btn { margin-right:5px; }
+
+.glyphicon-vert-centered {vertical-align: middle;}
+
+.icon-button {
+
+}
+
+.icon-button:hover{
+  color: #e51c23;
+}
+
+.icon-button:active {
+  color: #666;
+}
+
+.colored-header-primary {
+  background-color: #2196F3;
+}
+
+.colored-header-primary h1,
+.colored-header-primary h2,
+.colored-header-primary h3,
+.colored-header-primary h4,
+.colored-header-primary h5,
+.colored-header-primary h6 {
+  color: white;
+}

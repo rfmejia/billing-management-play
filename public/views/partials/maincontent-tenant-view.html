@@ -1,0 +1,29 @@
+<div class="well-sm">
+    <btn class="btn btn-default btn-sm" ng-click="onBackClicked()">back</btn>
+</div>
+<br/>
+<div >
+    <legend>{{selectedTenant.tradeName}}
+        <btn type="button" class="btn btn-default btn-sm pull-right" ng-click="toggleInfo()">
+            <span ng-class="{true : 'glyphicon glyphicon-chevron-up', false : 'glyphicon glyphicon-chevron-down'}[isInfoOpen]"></span> Info
+        </btn>
+    </legend>
+    <div collapse="!isInfoOpen">
+        <div class="row" ng-repeat="value in values">
+            <h6 class="col-xs-4">{{value.prompt}}</h6> <h6 class="col-xs-1">:</h6> <h6>{{value.entry}}</h6>
+        </div>
+        <br/>
+        <btn type="button" class="btn btn-primary btn-sm" ng-click="onEditClicked()">
+            <span class="glyphicon glyphicon-btn glyphicon-pencil"></span> edit
+        </btn>
+            <hr/>
+    </div>
+    
+    <h6>Billing Statements</h6>
+
+    <div class="list-group">
+      <a ng-repeat="billing in billings" class="list-group-item" ng-class="billing.isActive">
+        {{billing.date}} <span ng-class="{true : 'glyphicon glyphicon-ok', false : 'glyphicon glyphicon-remove'}[billing.isPaid]"class="pull-right"></span>
+      </a>
+    </div>
+</div>

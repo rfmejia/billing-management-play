@@ -1,0 +1,37 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h4 class="panel-title">Mailbox</h4>
+  </div>
+      <div class="panel-body">
+            <div class="list-group">
+                <a href="{{sidebarLink.link}}" ng-class="linkClass(sidebarLink)" sidebarLink="sidebarLink" class="list-group-item" ng-repeat="sidebarLink in sidebarItems | sidebarListFilter: 'Mailbox'" id="{{sidebarLink.id}}" ng-click="setSelectedLink(sidebarLink)">{{sidebarLink.title}}</a>
+            </div>
+      </div>
+</div>  <!-- end mailbox -->
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h4 class="panel-title">Management</h4>
+  </div>
+  <div class="panel-body">
+    <div class="list-group">
+                <a href="{{sidebarLink.link}}" ng-class="linkClass(sidebarLink)" link="sidebarLink" class="list-group-item" ng-repeat="sidebarLink in sidebarItems | sidebarListFilter: 'Management'" id="{{sidebarLink.id}}" ng-click="setSelectedLink(sidebarLink)">{{sidebarLink.title}}</a>
+    </div>
+  </div>
+</div>
+<!-- end - accordion end -->
+
+<!-- <accordion close-others="false">
+    <accordion-group heading="Mailbox" is-open="status.isOpen" is-disabled="status.isFirstDisabled">
+        test 1
+    </accordion-group>
+</accordion>
+
+<div class="well well-lg">Tenants</div>
+<hr/>
+
+<accordion close-others="false">
+    <accordion-group heading="Users" is-open="status.isOpen" is-disabled="status.isFirstDisabled">
+        test 1
+    </accordion-group>
+</accordion> -->

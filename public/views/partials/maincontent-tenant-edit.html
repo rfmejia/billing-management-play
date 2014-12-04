@@ -1,0 +1,29 @@
+<div>
+   <h5>Edit Tenant</h5>
+   <hr/>
+
+    <form name="editTenantForm">
+        <div class="form-group">
+            <label class="control-label" for="{{title.name}}">{{title.prompt}}</label>
+               <input type="text" id="{{title.name}}" dynamic-name="title.name" class="form-control" ng-model="editedData[title.name]" placeholder="Input tenant {{title.prompt}}" "title.isRequired"/>
+        </div>
+        <div ng-repeat="data in controlData">
+            <div class="form-group">
+               <label class="control-label" for="{{data.name}}">{{data.prompt}}</label>
+               <input type="text" id="{{data.name}}" dynamic-name="data.name" ng-model="editedData[data.name]" class="form-control" value="{{data.value}}" placeholder="Input tenant {{data.prompt}}">
+            </div>
+        </div>
+    </form>
+
+    <br/>
+    
+    <div>
+        <div class="btn-group">
+            <button type="submit" class="btn btn-primary" ng-click="onSubmitClicked(editedData)">Save</button>
+            <button class="btn btn-default" ng-click="onCancelClicked()">Cancel</button>
+        </div>
+        <button class="btn btn-danger pull-right"> Delete Tenant</button> 
+    </div>
+    </br>
+</div>
+
