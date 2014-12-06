@@ -34,3 +34,55 @@
 .colored-header-primary h6 {
   color: white;
 }
+
+.borderless a{
+  border: none;
+}
+
+#loginJumbotron {
+  text-align: center;
+  width: 30rem;
+  border-radius: 0.5rem;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  position: absolute;
+  margin: 4rem auto;
+  background-color: #fff;
+  padding: 2rem;
+}
+
+.container #loginLogo {
+  font-size: 10rem;
+  margin-top: 3rem;
+  color: #2196F3;
+}
+
+#loginHeader {
+  opacity: .54;
+}
+
+.loginInput {
+  width: 100%;
+  margin-bottom: 1.4rem;
+  padding: 1rem;
+  border-radius: 0.2rem;
+  border: none;
+}
+
+#loginButton {
+  border-radius: 0.2rem;
+  font-size: 3rem;
+  color: #fff;
+}
+
+.full-width {
+  width: 100%;
+  -webkit-border-top-right-radius: 0;
+  -webkit-border-bottom-right-radius: 0;
+  -moz-border-radius-topright: 0;
+  -moz-border-radius-bottomright: 0;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}

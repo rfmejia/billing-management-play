@@ -1,5 +1,18 @@
 var hoaServices = angular.module('hoaServices', ["ngResource"]);
 
+hoaServices.service("HOAMainService", ["$resource",
+    function($resource) {
+        var topUrl = "http://hoa-play-scala.herokuapp.com/api";
+        var resource = $resource(topUrl, {}, {
+            get   : {method: "GET", isArray: false}
+        });    
+
+        this.getLinks = function() {
+            return resource;
+        }
+    }
+])
+
 hoaServices.service("TenantsService", ["$resource", 
     function($resource){
         var topUrl;
@@ -36,7 +49,6 @@ hoaServices.service("TenantsService", ["$resource",
         
         this.editTenant = function(id, tenantDetails) {
             console.log("edit tenant");
-            console.log(tenantDetails);
         } 
        
 }]);

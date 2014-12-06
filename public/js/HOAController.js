@@ -1,55 +1,55 @@
 var hoaControllers = angular.module("hoaControllers", []);
 hoaControllers.value('entrypoint', "http://hoa-play-scala.herokuapp.com/api");
 
-hoaControllers.controller('mainController', ['$rootScope', '$scope', "$http", "$state",  "entrypoint",
-    function ($rootScope, $scope, $http, $state, entrypoint) {
-        $http.get(entrypoint).success(function(data) {
-            $state.go("root");
-            if(data._links) {
-                if(data._links["hoa:users"]) {
-                    $scope.usersTop = data._links["hoa:users"];
-                    $rootScope.$broadcast("userLinksReady", null);
-                }
-                if(data._links["hoa:tenants"]){
-                    $scope.tenantsTop = data._links["hoa:tenants"];
-                    $rootScope.$broadcast("tenantsLinksReady", null);
-                }
-                if(data._links["hoa:invites"]) {
-                    $scope.invitesTop = data._links["hoa:invites"];
-                    $rootScope.$broadcast("invitesLinksReady", null);
-                }
-
-            }
-        });
+hoaControllers.controller("rootController", ["$state", 
+    function($state) {
+    console.log("loaded on page load");
+    $state.go("authenticate");
+    //check credentials, 
+    //true go to workspace state,
+    //false go to auhtenticate state
 }]);
 
-hoaControllers.controller("contentController", ["$rootScope", "$scope", "TenantsService", "UsersService", "InvitesService",
-    function($rootScope, $scope, TenantsService, UsersService, InvitesService) {
-        $scope.$on("tenantsLinksReady", function(event, args) {
-            $scope.isUsersUpdated = false;
-            TenantsService.setTopUrl($scope.tenantsTop);
-            TenantsService.getList().query(function(data) {
-                $scope.tenants = data._embedded.item;
-            });
-        });
+hoaControllers.controller("authenticateController", ["$scope", "$state", 
+function($scope, $state) {
+    console.log($scope);
+    $scope.verifyCredentials = function() {
+        $state.go("workspace");
+    }
+}]);
 
-        $scope.$on("userLinksReady", function(event, args) {
-            UsersService.setTopUrl($scope.usersTop);
-        });
+hoaControllers.controller("verifyController", [function() {
 
-        $scope.$on("invitesLinksReady", function(event, args) {
-            InvitesService.setTopUrl($scope.invitesTop);
-        });
+}]);
 
-    }]);
+hoaControllers.controller('workspaceController', ['$rootScope', '$scope', "$http", "$state",  "entrypoint", "TenantsService", "UsersService", "InvitesService", "r_hoaLinks",  "r_hoaMainService",
+    function ($rootScope, $scope, $http, $state, entrypoint, TenantsService, UsersService, InvitesService, r_hoaLinks, r_hoaMainService) {
+        var data = r_hoaLinks;
+        console.log(r_hoaMainService);
+        console.log(r_hoaLinks._links);
+        if(data._links) {
+            if(data._links["hoa:users"]) {
+                UsersService.setTopUrl(data._links["hoa:users"]);
+                console.log(data._links["hoa:users"])
+            }
+            if(data._links["hoa:tenants"]){
+                TenantsService.setTopUrl(data._links["hoa:tenants"]);
+            }
+            if(data._links["hoa:invites"]) {
+                InvitesService.setTopUrl(data._links["hoa:invites"]);
+            }
+        }
+}]);
 
 hoaControllers.controller('sidebarController', ['$scope', "$location", "$state",
 function ($scope, $location, $state) {
+    console.log("sidebar");
     $scope.sidebarItems = [
-        {link : "#/delivered", header : "Mailbox", name : "Delivered", title : "Delivered",  id : "deliveredLink", state : "root.delivered"},
-        {link : "#/pending", header : "Mailbox", name : "Pending", title : "Pending" , id : "pendingLink", state : "root.pending"},
-        {link : "#/tenants", header : "Management", name: "Tenants", title : "Tenants List", id : "tenantsLink", state : "root.tenants"},
-        {link : "#/users", header : "Management", name : "Users", title: "Users List", id: "usersLink", state : "root.users"}
+        {link : "#/inbox", header : "Mailbox", name : "Inbox", title : "Inbox" , id : "inboxLink", state : "workspace.inbox"},
+        {link : "#/delivered", header : "Mailbox", name : "Delivered", title : "Delivered",  id : "deliveredLink", state : "workspace.delivered"},
+        {link : "#/pending", header : "Mailbox", name : "Pending", title : "Pending" , id : "pendingLink", state : "workspace.pending"},
+        {link : "#/tenants", header : "Management", name: "Tenants", title : "Tenants List", id : "tenantsLink", state : "workspace.tenants"},
+        {link : "#/users", header : "Management", name : "Users", title: "Users List", id: "usersLink", state : "workspace.users"}
     ];
 
     var path = $location.path();
@@ -75,20 +75,36 @@ function ($scope, $location, $state) {
             }
         }
 }]);
+
+
+
+
+// Inbox related controllers
+hoaControllers.controller("inboxController", [
+   function() {
+        console.log("inbox");
+   } 
+]);
+// end - Inbox related controllers
+
+
+
 // Tenant related controllers
-hoaControllers.controller("tenantsListController", ["$scope", "$state", "TenantsService",
-  function ($scope, $state, TenantsService) {
+hoaControllers.controller("tenantsListController", ["$scope", "$state", "TenantsService", "r_tenantTop",
+  function ($scope, $state, TenantsService, r_tenantTop) {
+    console.log(r_tenantTop);
+    $scope.tenants = r_tenantTop._embedded.item;
     $scope.onTenantClick = function(tenant) {
         var tempTenant = TenantsService.getTenant(tenant.id);
         
         if(tempTenant.sameTenant) {
             $scope.tenant = tempTenant.tenant;
-            $state.go("root.tenants.tenantView", {"id" : $scope.tenant.id});
+            $state.go("workspace.tenants.tenantView", {"id" : $scope.tenant.id});
         }
         else tempTenant.tenant.query({id : tenant.id}, function(data) {
             $scope.tenant = data;
             TenantsService.setTenant(data);
-            $state.go("root.tenants.tenantView", {"id" : data.id});
+            $state.go("workspace.tenants.tenantView", {"id" : data.id});
         });
         
     }
@@ -113,18 +129,17 @@ hoaControllers.controller("tenantsViewController", ["$scope", "$state", "$stateP
         }
 
         $scope.onEditClicked = function() {
-            $state.go("root.tenants.tenantView.edit");
+            $state.go("workspace.tenants.tenantView.edit");
         }
 
         $scope.onBackClicked = function() {
-            $state.go("root.tenants");
+            $state.go("workspace.tenants");
        }
     }]);
 
-hoaControllers.controller("tenantsEditController", ["$scope", "$state", "tenant", "TenantsService",
-    function($scope, $state, tenant, TenantsService) {
-        console.log(tenant);
-        var tenantData = tenant._template.edit.data;
+hoaControllers.controller("tenantsEditController", ["$scope", "$state", "r_tenant", "TenantsService",
+    function($scope, $state, r_tenant, TenantsService) {
+        var tenantData = r_tenant._template.edit.data;
         $scope.controlData = [];
         $scope.editedData = {};
         $scope.title = {};
@@ -137,7 +152,7 @@ hoaControllers.controller("tenantsEditController", ["$scope", "$state", "tenant"
                 var pushData = {
                     "name"         : tenantData[0][i].name,
                     "prompt"       : tenantData[0][i].prompt,
-                    "value"        : tenant[tenantData[0][i].name],
+                    "value"        : r_tenant[tenantData[0][i].name],
                     "isRequired"   : tenantData[0][i].required
                 };
                 $scope.editedData[pushData.name] = pushData.value;
@@ -150,7 +165,7 @@ hoaControllers.controller("tenantsEditController", ["$scope", "$state", "tenant"
         }
 
         $scope.onCancelClicked = function() {
-            $state.go("root.tenants.tenantView", {"id" : tenant.id});
+            $state.go("workspace.tenants.tenantView", {"id" : tenant.id});
         }
 
         $scope.onSubmitClicked = function(newData) {
@@ -163,22 +178,22 @@ hoaControllers.controller("tenantsEditController", ["$scope", "$state", "tenant"
 // end- Tenant related controllers
 
 // User related controllers
-hoaControllers.controller('usersListController', ["$scope", "$state", "$modal", "UsersService", "usersRoot", "invitesRoot",
-    function ($scope, $state, $modal, UsersService, usersRoot, invitesRoot) {
+hoaControllers.controller('usersListController', ["$scope", "$state", "$modal", "UsersService", "r_usersRoot", "r_invitesRoot",
+    function ($scope, $state, $modal, UsersService, r_usersRoot, r_invitesRoot) {
     $scope.onUserClick = function(user) {
         console.log(user);
     }
 
     $scope.onInviteClick = function() {
         console.log("invite clicked");
-        // $state.go("root.users.inviteUser");
+        // $state.go("workspace.users.inviteUser");
 
         $scope.opts = {
             scope       : $scope,
             templateUrl : "../views/partials/maincontent-users-invite.html",
             controller  : "usersInviteController",
             resolve     : {
-                inviteTemplate : function(UsersService) {
+                r_inviteTemplate : function(UsersService) {
                     return UsersService.getList().query().$promise;
             }
         }};
@@ -203,8 +218,8 @@ hoaControllers.controller('usersListController', ["$scope", "$state", "$modal", 
         console.log("cancel invitation");
     }
 
-    $scope.pendingUsers = invitesRoot._embedded.item;
-    $scope.users = usersRoot._embedded.item;
+    $scope.pendingUsers = r_invitesRoot._embedded.item;
+    $scope.users = r_usersRoot._embedded.item;
 }]);
 
 hoaControllers.controller('usersViewController', ['$scope', "$stateParams", "$state", "UsersService", 
@@ -212,17 +227,17 @@ hoaControllers.controller('usersViewController', ['$scope', "$stateParams", "$st
     $scope.selectedUser = UsersService.getUser($stateParams.username).user;
     console.log($scope.selectedUser);
     $scope.onBackClicked = function() {
-        $state.go("root.users");
+        $state.go("workspace.users");
     }
 }]);
 
-hoaControllers.controller('usersInviteController', ['$scope', "$modalInstance", "inviteTemplate", "UsersService",
-    function ($scope, $modalInstance, inviteTemplate, UsersService) {
+hoaControllers.controller('usersInviteController', ['$scope', "$modalInstance", "r_inviteTemplate", "UsersService",
+    function ($scope, $modalInstance, r_inviteTemplate, UsersService) {
 
         $scope.roles = ["Administrator", "Approver", "Checker", "Encoder"];
         $scope.editedData = {};
 
-        var template = inviteTemplate._template.create.data;
+        var template = r_inviteTemplate._template.create.data;
         $scope.controlData = [];
         $scope.editedData = {};
 

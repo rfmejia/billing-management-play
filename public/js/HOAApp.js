@@ -11,55 +11,103 @@ hoaApp.config(["$stateProvider", "$urlRouterProvider",
     function($stateProvider, $urlRouterProvider) {
 
         $stateProvider
-            .state("root",  {
+            .state("authenticate", {
                 views : {
-                    "sidebar@"  : {
-                        templateUrl : "../views/partials/sidebar.html",
-                        controller  : "sidebarController"
+                    "rootView@"  : {
+                        templateUrl     : "../views/partials/root-authenticate.html",
+                        controller      : "authenticateController"
                     }
                 }
             })
-                .state("root.delivered", {
+                .state("authenticate.verify", {
+                    views   : {
+                        "authenticateBox@"  : {
+                            templateUrl     : "../views/partials/verifyBox.html",
+                            controller      : "verifyController"
+                        }
+                    }
+                })
+            .state("workspace",  {
+                resolve     : {
+                    r_hoaMainService    : "HOAMainService",
+                    r_hoaLinks          : function(r_hoaMainService) {
+                        console.log(r_hoaMainService.getLinks().get());
+                        return r_hoaMainService.getLinks().get().$promise;
+                    }
+                },
+                views : {
+                    "rootView@" : {
+                        templateUrl     : "../views/partials/root-workspace.html",
+                        controller      : "workspaceController"
+                    },
+                    "sidebar@workspace" : {
+                        templateUrl : "../views/partials/sidebar.html",
+                        controller  : "sidebarController"
+                    }, 
+                    "contentArea@workspace" : {
+                        templateUrl : "../views/partials/maincontent-inbox.html",
+                        controller  : "inboxController"
+                    }
+                }
+            })
+                .state("workspace.inbox", {
+                    url         :"/inbox",
+                    views       : { 
+                        "contentArea@workspace"  : {
+                            templateUrl : "../views/partials/maincontent-inbox.html",
+                            controller  : "inboxController"
+                        }
+                    }
+                })
+                .state("workspace.delivered", {
                         url: "/delivered",
                         views: {
-                            "contentArea@"  : {
+                            "contentArea@workspace"  : {
                             template    : "delivered"
                         }}
                 })
-                .state("root.pending", {
+                .state("workspace.pending", {
                         url: "/pending",
                         views: {
-                            "contentArea@"  : {
+                            "contentArea@workspace"  : {
                             template    : "pending"
                         }}
                 })
-                .state("root.tenants", {
+                .state("workspace.tenants", {
                         url: "/tenants",
                         views: {
-                            "contentArea@"  : {
-                            templateUrl     : "../views/partials/maincontent-tenants-list.html",
-                            controller      : "tenantsListController"
-                        }}
+                            "contentArea@workspace"  : {
+                                templateUrl     : "../views/partials/maincontent-tenants-list.html",
+                                controller      : "tenantsListController"
+                            }
+                        },
+                        resolve : {
+                            r_tenantsService : "TenantsService",
+                            r_tenantTop     : function(r_tenantsService) {
+                                var tenantApi = r_tenantsService.getList();
+                                return tenantApi.query().$promise;
+                            }
+                        }
                 })
-                    .state("root.tenants.tenantView", {
+                    .state("workspace.tenants.tenantView", {
                         url      : "/tenant-view/:id", 
                         resolve  :  {
-                            tenantId : function($stateParams) {
+                            r_TenantId : function($stateParams) {
                                 return $stateParams.id;
                             }
                         },
                         views    : {
-                            "contentArea@" : {
+                            "contentArea@workspace" : {
                                 templateUrl     : "../views/partials/maincontent-tenant-view.html",
                                 controller      : "tenantsViewController"
                             }
                         }
                     })
-                        .state("root.tenants.tenantView.edit", {
+                        .state("workspace.tenants.tenantView.edit", {
                             url: "/tenant-edit",
                             resolve : {
-                                tenantService : "TenantsService",
-                                tenant : function(tenantService, tenantId) {
+                                r_tenantService : "TenantsService",
+                                r_tenant : function(r_tenantService, tenantId) {
                                      var tempTenant = tenantService.getTenant(tenantId);
                                      if(tempTenant.sameTenant) return tempTenant.tenant;
                                      else {
@@ -68,56 +116,56 @@ hoaApp.config(["$stateProvider", "$urlRouterProvider",
                                 }
                             },
                             views : {
-                                "contentArea@" : {
+                                "contentArea@workspace" : {
                                     templateUrl     : "../views/partials/maincontent-tenant-edit.html",
                                     controller      : "tenantsEditController"
                                 }
                             }
                         })
-                .state("root.users", {
+                .state("workspace.users", {
                         url: "/users",
                         resolve : {
-                            usersService     : "UsersService",
-                            invitesService  : "InvitesService",
-                            usersRoot       : function(usersService) {
-                                return usersService.getList().query().$promise;
+                            r_usersService      : "UsersService",
+                            r_invitesService    : "InvitesService",
+                            r_usersRoot       : function(r_usersService) {
+                                return r_usersService.getList().query().$promise;
                             },
-                            invitesRoot     : function(invitesService) {
-                                return invitesService.getRootAPI().query().$promise;
+                            r_invitesRoot     : function(r_invitesService) {
+                                return r_invitesService.getRootAPI().query().$promise;
                             }
                         },
                         views: {
-                            "contentArea@"  : {
+                            "contentArea@workspace"  : {
                             templateUrl : "../views/partials/maincontent-users-list.html",
                             controller  : "usersListController"
                         }}
                 })
-                    .state("root.users.userView", {
+                    .state("workspace.users.userView", {
                         url     : "/users-view/:username",
                         resolve : {
-                            userName: function($stateParams) {
+                            r_userName: function($stateParams) {
                                 return $stateParams.username;
                             },
-                            usersService : function(usersService) {
-                                return usersService;
+                            r_usersService : function(r_usersService) {
+                                return r_usersService;
                             }
                         },
                         views   : {
-                            "contentArea@"  : {
+                            "contentArea@workspace"  : {
                                 templateUrl     : "../views/partials/maincontent-users-view.html",
                                 controller      : "usersViewController"
                             }
                         }
                     })
-                    .state("root.users.inviteUser", {
+                    .state("workspace.users.inviteUser", {
                         url     :"/invite-user",
                         resolve : {
-                            inviteTemplate : function(usersService) {
-                                return usersService.getList().query().$promise;
+                            r_inviteTemplate : function(r_usersService) {
+                                return r_usersService.getList().query().$promise;
                             }
                         },
                         views   : {
-                            "contentArea@"  : {
+                            "contentArea@workspace"  : {
                                 templateUrl     : "../views/partials/maincontent-users-invite.html",
                                 controller      : "usersInviteController"
                             }
