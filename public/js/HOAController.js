@@ -4,8 +4,10 @@ hoaControllers.value('entrypoint', "http://hoa-play-scala.herokuapp.com/api");
 hoaControllers.controller("rootController", ["$state", 
     function($state) {
     console.log("loaded on page load");
-    $state.go("authenticate");
+    $state.go("authenticate")
     //check credentials, 
+    // if(!auth) $state.go("authenticate");
+
     //true go to workspace state,
     //false go to auhtenticate state
 }]);
@@ -24,26 +26,14 @@ hoaControllers.controller("verifyController", [function() {
 
 hoaControllers.controller('workspaceController', ['$rootScope', '$scope', "$http", "$state",  "entrypoint", "TenantsService", "UsersService", "InvitesService", "r_hoaLinks",  "r_hoaMainService",
     function ($rootScope, $scope, $http, $state, entrypoint, TenantsService, UsersService, InvitesService, r_hoaLinks, r_hoaMainService) {
-        var data = r_hoaLinks;
-        console.log(r_hoaMainService);
-        console.log(r_hoaLinks._links);
-        if(data._links) {
-            if(data._links["hoa:users"]) {
-                UsersService.setTopUrl(data._links["hoa:users"]);
-                console.log(data._links["hoa:users"])
-            }
-            if(data._links["hoa:tenants"]){
-                TenantsService.setTopUrl(data._links["hoa:tenants"]);
-            }
-            if(data._links["hoa:invites"]) {
-                InvitesService.setTopUrl(data._links["hoa:invites"]);
-            }
-        }
+        r_hoaMainService.setLinks(r_hoaLinks);
+        TenantsService.buildRequest();
+        UsersService.buildRequest();
+        InvitesService.buildRequest();
 }]);
 
 hoaControllers.controller('sidebarController', ['$scope', "$location", "$state",
 function ($scope, $location, $state) {
-    console.log("sidebar");
     $scope.sidebarItems = [
         {link : "#/inbox", header : "Mailbox", name : "Inbox", title : "Inbox" , id : "inboxLink", state : "workspace.inbox"},
         {link : "#/delivered", header : "Mailbox", name : "Delivered", title : "Delivered",  id : "deliveredLink", state : "workspace.delivered"},
@@ -82,7 +72,6 @@ function ($scope, $location, $state) {
 // Inbox related controllers
 hoaControllers.controller("inboxController", [
    function() {
-        console.log("inbox");
    } 
 ]);
 // end - Inbox related controllers

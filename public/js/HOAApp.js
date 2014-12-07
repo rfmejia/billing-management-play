@@ -31,7 +31,9 @@ hoaApp.config(["$stateProvider", "$urlRouterProvider",
                 resolve     : {
                     r_hoaMainService    : "HOAMainService",
                     r_hoaLinks          : function(r_hoaMainService) {
-                        console.log(r_hoaMainService.getLinks().get());
+                        console.log("request");
+                        var list = r_hoaMainService.getLinks().get();
+                        console.log(list);
                         return r_hoaMainService.getLinks().get().$promise;
                     }
                 },
