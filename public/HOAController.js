@@ -154,12 +154,12 @@ hoaControllers.controller("tenantsEditController", ["$scope", "$state", "r_tenan
         }
 
         $scope.onCancelClicked = function() {
-            $state.go("workspace.tenants.tenantView", {"id" : tenant.id});
+            $state.go("workspace.tenants.tenantView", {"id" : r_tenant.id});
         }
 
         $scope.onSubmitClicked = function(newData) {
             $scope.editedData = angular.copy(newData);
-            TenantsService.editTenant(tenant.id, $scope.editedData);
+            TenantsService.editTenant(r_tenant.id, $scope.editedData);
         }
 
         $scope.resetData();
@@ -174,12 +174,9 @@ hoaControllers.controller('usersListController', ["$scope", "$state", "$modal", 
     }
 
     $scope.onInviteClick = function() {
-        console.log("invite clicked");
-        // $state.go("workspace.users.inviteUser");
-
         $scope.opts = {
             scope       : $scope,
-            templateUrl : "../views/partials/maincontent-users-invite.html",
+            templateUrl : "app/components/users/maincontent-users-invite.html",
             controller  : "usersInviteController",
             resolve     : {
                 r_inviteTemplate : function(UsersService) {
@@ -199,7 +196,6 @@ hoaControllers.controller('usersListController', ["$scope", "$state", "$modal", 
 
     $scope.isPendingInvitesOpen = true;
     $scope.togglePendingInfo = function() {
-        console.log($scope.isPendingInvitesOpen);
         $scope.isPendingInvitesOpen = !$scope.isPendingInvitesOpen;
     }
 

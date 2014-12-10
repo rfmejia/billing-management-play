@@ -1,7 +1,6 @@
 var hoaApp = angular.module('hoaApp', [
     "ui.bootstrap",
     "ui.router",
-    "ui.bootstrap.showErrors",
     "hoaFilters",
     "hoaServices",
     "hoaControllers",
@@ -14,7 +13,7 @@ hoaApp.config(["$stateProvider", "$urlRouterProvider",
             .state("authenticate", {
                 views : {
                     "rootView@"  : {
-                        templateUrl     : "../views/partials/root-authenticate.html",
+                        templateUrl     : "app/shared/content/authentication/root-authenticate.html",
                         controller      : "authenticateController"
                     }
                 }
@@ -22,7 +21,7 @@ hoaApp.config(["$stateProvider", "$urlRouterProvider",
                 .state("authenticate.verify", {
                     views   : {
                         "authenticateBox@"  : {
-                            templateUrl     : "../views/partials/verifyBox.html",
+                            templateUrl     : "app/shared/content/authentication/verifyBox.html",
                             controller      : "verifyController"
                         }
                     }
@@ -39,15 +38,15 @@ hoaApp.config(["$stateProvider", "$urlRouterProvider",
                 },
                 views : {
                     "rootView@" : {
-                        templateUrl     : "../views/partials/root-workspace.html",
+                        templateUrl     : "app/shared/content/dashboard/root-workspace.html",
                         controller      : "workspaceController"
                     },
                     "sidebar@workspace" : {
-                        templateUrl : "../views/partials/sidebar.html",
+                        templateUrl : "app/shared/sidebar/sidebar.html",
                         controller  : "sidebarController"
                     }, 
                     "contentArea@workspace" : {
-                        templateUrl : "../views/partials/maincontent-inbox.html",
+                        templateUrl : "app/components/mailbox/maincontent-inbox.html",
                         controller  : "inboxController"
                     }
                 }
@@ -56,7 +55,7 @@ hoaApp.config(["$stateProvider", "$urlRouterProvider",
                     url         :"/inbox",
                     views       : { 
                         "contentArea@workspace"  : {
-                            templateUrl : "../views/partials/maincontent-inbox.html",
+                            templateUrl : "app/components/mailbox/maincontent-inbox.html",
                             controller  : "inboxController"
                         }
                     }
@@ -79,7 +78,7 @@ hoaApp.config(["$stateProvider", "$urlRouterProvider",
                         url: "/tenants",
                         views: {
                             "contentArea@workspace"  : {
-                                templateUrl     : "../views/partials/maincontent-tenants-list.html",
+                                templateUrl     : "app/components/tenants/maincontent-tenants-list.html",
                                 controller      : "tenantsListController"
                             }
                         },
@@ -94,13 +93,13 @@ hoaApp.config(["$stateProvider", "$urlRouterProvider",
                     .state("workspace.tenants.tenantView", {
                         url      : "/tenant-view/:id", 
                         resolve  :  {
-                            r_TenantId : function($stateParams) {
+                            r_tenantId : function($stateParams) {
                                 return $stateParams.id;
                             }
                         },
                         views    : {
                             "contentArea@workspace" : {
-                                templateUrl     : "../views/partials/maincontent-tenant-view.html",
+                                templateUrl     : "app/components/tenants/maincontent-tenant-view.html",
                                 controller      : "tenantsViewController"
                             }
                         }
@@ -109,17 +108,17 @@ hoaApp.config(["$stateProvider", "$urlRouterProvider",
                             url: "/tenant-edit",
                             resolve : {
                                 r_tenantService : "TenantsService",
-                                r_tenant : function(r_tenantService, tenantId) {
-                                     var tempTenant = tenantService.getTenant(tenantId);
+                                r_tenant : function(r_tenantService, r_tenantId) {
+                                     var tempTenant = r_tenantService.getTenant(r_tenantId);
                                      if(tempTenant.sameTenant) return tempTenant.tenant;
                                      else {
-                                        return tempTenant.tenant.query({id : tenantId}).$promise;
+                                        return tempTenant.tenant.query({id : r_tenantId}).$promise;
                                      }
                                 }
                             },
                             views : {
                                 "contentArea@workspace" : {
-                                    templateUrl     : "../views/partials/maincontent-tenant-edit.html",
+                                    templateUrl     : "app/components/tenants/maincontent-tenant-edit.html",
                                     controller      : "tenantsEditController"
                                 }
                             }
@@ -138,7 +137,7 @@ hoaApp.config(["$stateProvider", "$urlRouterProvider",
                         },
                         views: {
                             "contentArea@workspace"  : {
-                            templateUrl : "../views/partials/maincontent-users-list.html",
+                            templateUrl : "app/components/users/maincontent-users-list.html",
                             controller  : "usersListController"
                         }}
                 })
@@ -154,7 +153,7 @@ hoaApp.config(["$stateProvider", "$urlRouterProvider",
                         },
                         views   : {
                             "contentArea@workspace"  : {
-                                templateUrl     : "../views/partials/maincontent-users-view.html",
+                                templateUrl     : "app/components/users/maincontent-users-view.html",
                                 controller      : "usersViewController"
                             }
                         }
@@ -168,10 +167,11 @@ hoaApp.config(["$stateProvider", "$urlRouterProvider",
                         },
                         views   : {
                             "contentArea@workspace"  : {
-                                templateUrl     : "../views/partials/maincontent-users-invite.html",
+                                templateUrl     : "app/components/users/maincontent-users-invite.html",
                                 controller      : "usersInviteController"
                             }
                         }
                     });
+
     }
 ]);
