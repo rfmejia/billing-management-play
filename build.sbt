@@ -17,7 +17,6 @@ val jodaTimeDependencies = Seq(
 val repositoryDependencies = Seq(
   "com.typesafe.play.plugins" %% "play-plugins-mailer" % "2.3.1",
   "ws.securesocial" %% "securesocial" % "2.1.4",
-  //"org.apache.shiro" % "shiro-core" % "1.2.3",
   "com.typesafe.slick" %% "slick" % "2.1.0",
   "org.slf4j" % "slf4j-nop" % "1.6.4"
 ) ++ jodaTimeDependencies

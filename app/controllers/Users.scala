@@ -11,8 +11,11 @@ import play.api.mvc.{ Action, Controller }
 import play.api.mvc.BodyParsers._
 import scala.slick.driver.H2Driver.simple._
 import scala.util.{ Try, Success, Failure }
+import securesocial.core.{ Identity, Authorization }
 
-object Users extends Controller {
+
+
+object Users extends Controller with securesocial.core.SecureSocial {
   def show(username: String) = Action { implicit request =>
     User.findByUsernameWithRoles(username) match {
       case Some((u, rs)) =>
@@ -33,7 +36,7 @@ object Users extends Controller {
     }
   }
 
-  def list(offset: Int = 0, limit: Int = 10) = Action { implicit request =>
+  def list(offset: Int = 0, limit: Int = 10) = SecuredAction(ajaxCall = true) { implicit request =>
     val (us, total) = ConnectionFactory.connect withSession { implicit session =>
       val us = users.drop(offset).take(limit).list
       val total = users.length.run
