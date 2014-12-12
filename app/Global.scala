@@ -1,7 +1,5 @@
 
 import filters._
-import org.apache.shiro.config.IniSecurityManagerFactory
-import org.apache.shiro.SecurityUtils
 import org.locker47.json.play.HalJsObject
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json._
@@ -14,9 +12,6 @@ import scala.concurrent.Future
 object Global extends WithFilters(CorsFilter, new GzipFilter()) with GlobalSettings {
 
   override def onStart(app: Application) = {
-    val factory = new IniSecurityManagerFactory("classpath:shiro.ini");
-    val securityManager = factory.getInstance();
-    SecurityUtils.setSecurityManager(securityManager);
   }
 
   override def onError(request: RequestHeader, ex: Throwable) = {

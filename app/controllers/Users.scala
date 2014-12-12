@@ -1,7 +1,6 @@
 package controllers
 
 import com.nooovle._
-import com.nooovle.security.HTTPBasicAuthAction
 import com.nooovle.slick.models.{ modelInfo, users }
 import com.nooovle.slick.ConnectionFactory
 import org.joda.time.DateTime

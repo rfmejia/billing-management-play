@@ -1,7 +1,6 @@
 package controllers
 
 import com.nooovle._
-import com.nooovle.security.HTTPBasicAuthAction
 import com.nooovle.slick.models.{ modelInfo, tenants }
 import com.nooovle.slick.ConnectionFactory
 import org.locker47.json.play._

@@ -34,5 +34,5 @@ GET     /api/testFail                   controllers.TestEnvironment.fail
 # ----
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /                               controllers.Assets.at(path="/public", file="views/dashboard.html")
+GET     /                               controllers.Assets.at(path="/public", file="index.html")
 GET     /*file                          controllers.Assets.at(path="/public", file)

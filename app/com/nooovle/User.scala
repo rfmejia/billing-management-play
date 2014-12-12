@@ -1,6 +1,5 @@
 package com.nooovle
 
-import com.nooovle.security.SecurityTools
 import com.nooovle.slick.ConnectionFactory
 import com.nooovle.slick.models.{ roles, users, userRoles }
 import org.joda.time.DateTime
@@ -14,8 +13,10 @@ object User extends ((String, String, Array[Byte], Array[Byte], String, String) 
   with HasModelInfo {
 
   def apply(username: String, email: String, password: Array[Byte], firstName: String, lastName: String): User = {
-    val salt = SecurityTools.generateSalt()
-    val passwdHash = SecurityTools.hashPassword(password, salt)
+    // val salt = SecurityTools.generateSalt()
+    // val passwdHash = SecurityTools.hashPassword(password, salt)
+    val salt = "".getBytes
+    val passwdHash = "".getBytes
     User(username, email, passwdHash, salt, firstName, lastName)
   }
 
