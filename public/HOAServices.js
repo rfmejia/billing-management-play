@@ -1,61 +1,22 @@
 var hoaServices = angular.module('hoaServices', ["ngResource"]);
 
-hoaServices.service("HOAMainService", ["$resource", "$q",
-    function($resource, $q) {
-        var topUrl = "http://hoa-play-scala.herokuapp.com/api";
-        var resource = $resource(topUrl, {}, {
-            get   : {method: "GET", isArray: false}
-        });    
-
-        var usersLink = null;
-        var tenantsLink = null;
-        var invitesLink = null;
-        var currentUserLink = null;
-
-        //TODO: change name to get resource
-        this.getLinks = function() {
-            return resource;
-        }
-
-        //accepts the top level data then sets the necessary links
-        this.setLinks = function(data) {
-            usersLink       = data._links["hoa:users"].href;
-            tenantsLink     = data._links["hoa:tenants"].href;
-            invitesLink     = data._links["hoa:invites"].href; 
-            console.log("Links set");
-        }
-        this.getUserLink = function() {
-            return usersLink;
-        }
-        this.getTenantsLinks = function() {
-            return tenantsLink;
-        }
-        this.getInvitesLink = function() {
-            return invitesLink;
-        }
-        this.getCurrentUserLink = function() {
-            return currentUserLink;
-        }
-    }
-])
-
-hoaServices.service("TenantsService", ["$resource", "HOAMainService", 
-    function($resource, HOAMainService){
+hoaServices.service("TenantsService", ["$resource", "service.hoalinks", 
+    function($resource, hoalinks){
         var topUrl = null; 
         var resource = null; 
 
         var currentTenant= {};
         var currentTenantId;
-        var currentTenantDetails= {};
 
-        this.buildRequest = function() {
-            topUrl = HOAMainService.getTenantsLinks() + "/:id";
+        this.buildRequest = function(url) {
+            topUrl = url + "/:id";
+            console.log(topUrl);
             resource = $resource(topUrl, {}, {
                 query   : {method: "GET", isArray: false},
                 get     : {method: "GET", isArray: false},
                 edit    : {method: "PUT", isArray: false}
             });
-            console.log(HOAMainService.getTenantsLinks());
+            console.log(hoalinks);
         }
 
         this.getList = function() {
@@ -81,13 +42,13 @@ hoaServices.service("TenantsService", ["$resource", "HOAMainService",
        
 }]);
 
-hoaServices.service('InvitesService', ["$resource", "HOAMainService", 
-    function ($resource, HOAMainService) {
+hoaServices.service('InvitesService', ["$resource", "service.hoalinks", 
+    function ($resource, hoalinks) {
     var topUrl      = null;
     var resource    = null;
 
     this.buildRequest = function() {
-        topUrl      = HOAMainService.getInvitesLink();
+        topUrl      = hoalinks.getInvitesLink();
         resource    = $resource(topUrl, {}, {
                 query          : {method : "GET", isArray : false},
                 sendUserInvite : {method : "PUT", isArray : false}
@@ -99,8 +60,8 @@ hoaServices.service('InvitesService', ["$resource", "HOAMainService",
     }
 }]);
 
-hoaServices.service("UsersService", ["$resource", "HOAMainService",
-    function ($resource, HOAMainService) {
+hoaServices.service("UsersService", ["$resource", "service.hoalinks",
+    function ($resource, hoalinks) {
         var topUrl      = null;
         var resource    = null;
 
@@ -109,7 +70,7 @@ hoaServices.service("UsersService", ["$resource", "HOAMainService",
         var currentUserDetails = {};
 
         this.buildRequest = function() {
-            topUrl      = HOAMainService.getUserLink() + "/:username";
+            topUrl      = hoalinks.getUserLink() + "/:username";
             resource    = $resource(topUrl, {}, {
                     query   : {method : "GET", isArray: false},
                     edit    : {method : "PUT", isArray: false}

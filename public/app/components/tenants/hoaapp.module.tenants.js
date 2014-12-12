@@ -1,5 +1,6 @@
 var app = angular.module("module.tenants", [
         "ui.router",
+        "service.tenants",
         "hoaFilters",
         "hoaServices",
         "hoaControllers",
@@ -17,18 +18,19 @@ app.config(["$stateProvider", "$urlRouterProvider",
                 }
             },
             resolve : {
-                r_tenantsService : "TenantsService",
+                r_tenantsService : "service.hoatenants",
                 r_tenantTop     : function(r_tenantsService) {
-                    var tenantApi = r_tenantsService.getList();
-                    return tenantApi.query().$promise;
+                    return r_tenantsService.getList();
                 }
             }
         };
         var tenantsView = {
             url         : "/tenant-view/:id",
             resolve     : {
-                r_tenantId      : function($stateParams) {
-                    return $stateParams.id;
+                r_tenantsService     : "service.hoatenants",
+                r_tenant            : function(r_tenantsService, $stateParams) {
+                    console.log($stateParams.id);
+                    return r_tenantsService.getTenant($stateParams.id);
                 }
             },
             views    : {

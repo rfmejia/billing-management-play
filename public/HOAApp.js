@@ -1,12 +1,13 @@
 var hoaApp = angular.module('hoaApp', [
     "ui.bootstrap", "ui.router",
     "module.tenants", "module.mailbox", "module.users",
+    "service.dashboard", "service.tenants", 
     "hoaFilters",
     "hoaServices",
     "hoaControllers",
     "hoaDirectives"]);
 
-hoaApp.config(["$stateProvider", "$urlRouterProvider",
+hoaApp.config(["$stateProvider", "$urlRouterProvider", "$locationProvider", 
     function($stateProvider, $urlRouterProvider) {
 
         var authenticate = {
@@ -29,12 +30,10 @@ hoaApp.config(["$stateProvider", "$urlRouterProvider",
 
         var workspace    = {
             resolve     : {
-                r_hoaMainService    : "HOAMainService",
-                r_hoaLinks          : function(r_hoaMainService) {
-                    console.log("request");
-                    var list = r_hoaMainService.getLinks().get();
-                    console.log(list);
-                    return r_hoaMainService.getLinks().get().$promise;
+                r_linkService       : "service.hoalinks",
+                r_tenantsService    : "service.hoatenants",
+                r_hoaLinks          : function(r_linkService, r_tenantsService) {
+                    return r_linkService.getLinks();
                 }
             },
             views       : {
