@@ -14,8 +14,6 @@ object TestEnvironment extends Controller {
 
   def setup() = Action { implicit request =>
     ConnectionFactory.connect withSession { implicit session =>
-      buildTables
-
       insertModelInfos
       insertUserData
       insertTenantData

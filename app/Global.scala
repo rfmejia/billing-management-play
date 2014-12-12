@@ -1,4 +1,5 @@
 
+import com.nooovle.slick.ConnectionFactory
 import filters._
 import org.locker47.json.play.HalJsObject
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
@@ -12,6 +13,9 @@ import scala.concurrent.Future
 object Global extends WithFilters(CorsFilter, new GzipFilter()) with GlobalSettings {
 
   override def onStart(app: Application) = {
+    ConnectionFactory.connect withSession { implicit session =>
+      com.nooovle.slick.models.buildTables
+    }
   }
 
   override def onError(request: RequestHeader, ex: Throwable) = {
