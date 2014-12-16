@@ -16,6 +16,7 @@ hoaControllers.controller("authenticateController", ["$scope", "$state",
 function($scope, $state) {
     console.log($scope);
     $scope.verifyCredentials = function() {
+        console.log("clicked");
         $state.go("workspace");
     }
 }]);
@@ -24,12 +25,9 @@ hoaControllers.controller("verifyController", [function() {
 
 }]);
 
-hoaControllers.controller('workspaceController', ['$rootScope', '$scope', "$http", "$state",  "entrypoint", "TenantsService", "UsersService", "InvitesService", "r_hoaLinks",  "r_hoaMainService",
-    function ($rootScope, $scope, $http, $state, entrypoint, TenantsService, UsersService, InvitesService, r_hoaLinks, r_hoaMainService) {
-        r_hoaMainService.setLinks(r_hoaLinks);
-        TenantsService.buildRequest();
-        UsersService.buildRequest();
-        InvitesService.buildRequest();
+hoaControllers.controller('workspaceController', ['$rootScope', '$scope', "$http", "$state",  "$location", "entrypoint", "TenantsService", "UsersService", "InvitesService", "r_hoaLinks", "service.hoalinks", 
+    function ($rootScope, $scope, $http, $state, $location, entrypoint, TenantsService, UsersService, InvitesService, r_hoaLinks, hoalinks) {
+        console.log($location.path());
 }]);
 
 hoaControllers.controller('sidebarController', ['$scope', "$location", "$state",
@@ -79,23 +77,13 @@ hoaControllers.controller("inboxController", [
 
 
 // Tenant related controllers
-hoaControllers.controller("tenantsListController", ["$scope", "$state", "TenantsService", "r_tenantTop",
-  function ($scope, $state, TenantsService, r_tenantTop) {
+hoaControllers.controller("tenantsListController", ["$scope", "$state", "$filter", "service.hoatenants", "r_tenantTop",
+  function ($scope, $state, $filter, hoatenants, r_tenantTop) {
     console.log(r_tenantTop);
     $scope.tenants = r_tenantTop._embedded.item;
+    console.log($scope.tenants);
     $scope.onTenantClick = function(tenant) {
-        var tempTenant = TenantsService.getTenant(tenant.id);
-        
-        if(tempTenant.sameTenant) {
-            $scope.tenant = tempTenant.tenant;
-            $state.go("workspace.tenants.tenantView", {"id" : $scope.tenant.id});
-        }
-        else tempTenant.tenant.query({id : tenant.id}, function(data) {
-            $scope.tenant = data;
-            TenantsService.setTenant(data);
-            $state.go("workspace.tenants.tenantView", {"id" : data.id});
-        });
-        
+        $state.go("workspace.tenants.tenantView", {"id" : tenant.id});
     }
 }]);
 
