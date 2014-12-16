@@ -5,6 +5,7 @@ import com.nooovle.slick.models.{ roles, users, userRoles }
 import org.joda.time.DateTime
 import scala.slick.driver.H2Driver.simple._
 import scala.util.Try
+import securesocial.core._
 
 case class User(username: String, email: String, password: Array[Byte], salt: Array[Byte],
   firstName: String, lastName: String)

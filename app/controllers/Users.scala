@@ -7,16 +7,14 @@ import org.joda.time.DateTime
 import org.locker47.json.play._
 import play.api.libs.json._
 import play.api._
-import play.api.mvc.{ Action, Controller }
+import play.api.mvc.Controller
 import play.api.mvc.BodyParsers._
 import scala.slick.driver.H2Driver.simple._
 import scala.util.{ Try, Success, Failure }
 import securesocial.core.{ Identity, Authorization }
 
-
-
 object Users extends Controller with securesocial.core.SecureSocial {
-  def show(username: String) = Action { implicit request =>
+  def show(username: String) = SecuredAction { implicit request =>
     User.findByUsernameWithRoles(username) match {
       case Some((u, rs)) =>
         val self = routes.Users.show(username)
@@ -69,7 +67,7 @@ object Users extends Controller with securesocial.core.SecureSocial {
     Ok(x.asJsValue)
   }
 
-  def createViaInvite(username: String) = Action(parse.json) { implicit request =>
+  def createViaInvite(username: String) = SecuredAction(parse.json) { implicit request =>
     val json = request.body
     ((json \ "firstName").asOpt[String], (json \ "lastName").asOpt[String],
       (json \ "password").asOpt[String], (json \ "validationCode").asOpt[String]) match {
@@ -100,7 +98,7 @@ object Users extends Controller with securesocial.core.SecureSocial {
       }
   }
 
-  def edit(username: String) = Action(parse.json) { implicit request =>
+  def edit(username: String) = SecuredAction(parse.json) { implicit request =>
     // Check existence under ID
     User.findByUsername(username) match {
       case None => NotFound
@@ -127,7 +125,7 @@ object Users extends Controller with securesocial.core.SecureSocial {
     }
   }
 
-  def delete(username: String) = Action { implicit request =>
+  def delete(username: String) = SecuredAction { implicit request =>
     val deleted = ConnectionFactory.connect withSession { implicit session =>
       val query = for (u <- users if u.username === username) yield u
       query.delete
