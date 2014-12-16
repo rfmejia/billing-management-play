@@ -1,18 +1,20 @@
 var hoaControllers = angular.module("hoaControllers", []);
 hoaControllers.value('entrypoint', "http://hoa-play-scala.herokuapp.com/api");
 
-hoaControllers.controller("rootController", ["$state", 
-    function($state) {
+hoaControllers.controller("rootController", ["$state", "$cookies",
+    function($state, $cookies) {
     console.log("loaded on page load");
     $state.go("authenticate")
-    //check credentials, 
+    //check credentials,
     // if(!auth) $state.go("authenticate");
+
+    console.log($cookies.id);
 
     //true go to workspace state,
     //false go to auhtenticate state
 }]);
 
-hoaControllers.controller("authenticateController", ["$scope", "$state", 
+hoaControllers.controller("authenticateController", ["$scope", "$state",
 function($scope, $state) {
     console.log($scope);
     $scope.verifyCredentials = function() {
@@ -72,7 +74,7 @@ function ($scope, $location, $state) {
 // Inbox related controllers
 hoaControllers.controller("inboxController", [
    function() {
-   } 
+   }
 ]);
 // end - Inbox related controllers
 
@@ -85,7 +87,7 @@ hoaControllers.controller("tenantsListController", ["$scope", "$state", "Tenants
     $scope.tenants = r_tenantTop._embedded.item;
     $scope.onTenantClick = function(tenant) {
         var tempTenant = TenantsService.getTenant(tenant.id);
-        
+
         if(tempTenant.sameTenant) {
             $scope.tenant = tempTenant.tenant;
             $state.go("workspace.tenants.tenantView", {"id" : $scope.tenant.id});
@@ -95,7 +97,7 @@ hoaControllers.controller("tenantsListController", ["$scope", "$state", "Tenants
             TenantsService.setTenant(data);
             $state.go("workspace.tenants.tenantView", {"id" : data.id});
         });
-        
+
     }
 }]);
 
@@ -112,7 +114,7 @@ hoaControllers.controller("tenantsViewController", ["$scope", "$state", "$stateP
         var data = $scope.selectedTenant._template.edit.data;
         for(var i = 0; i < data[0].length; i++) {
             $scope.values.push({"prompt" : data[0][i].prompt, "entry": $scope.selectedTenant[data[0][i].name]});
-        }   
+        }
         $scope.toggleInfo = function() {
             $scope.isInfoOpen = !$scope.isInfoOpen;
         }
@@ -207,7 +209,7 @@ hoaControllers.controller('usersListController', ["$scope", "$state", "$modal", 
     $scope.users = r_usersRoot._embedded.item;
 }]);
 
-hoaControllers.controller('usersViewController', ['$scope', "$stateParams", "$state", "UsersService", 
+hoaControllers.controller('usersViewController', ['$scope', "$stateParams", "$state", "UsersService",
     function ($scope, $stateParams, $state, UsersService) {
     $scope.selectedUser = UsersService.getUser($stateParams.username).user;
     console.log($scope.selectedUser);
@@ -280,7 +282,7 @@ hoaControllers.controller('usersInviteController', ['$scope', "$modalInstance", 
 // end - User releated controllers
 
 hoaControllers.controller('mailboxController', ['$scope', function ($scope) {
-    
+
 }]);
 
 

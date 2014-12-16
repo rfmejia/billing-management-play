@@ -1,7 +1,7 @@
 'use strict';
 
 var hoaApp = angular.module("BillingManagementApp", [
-    "ngRoute", "ngResource", "ngSanitize", "ui.bootstrap"
+    "ngRoute", "ngResource", "ngSanitize", "ui.bootstrap", "ngCookies"
 ]);
 hoaApp.value("entryPoint", URI(window.location.protocol + "//" + window.location.host + "/api"));
 hoaApp.value("token", "dGVzdHVzZXIxOnRlc3RwYXNzMQ==")
@@ -98,9 +98,11 @@ hoaApp.factory('User', ["$http", "entryPoint", function($http, entryPoint) {
 
 // ---- Controllers ---- //
 
-hoaApp.controller("MainController", ["$scope", "$http", "$modal", "Tenant", "User", "entryPoint",
-    function($scope, $http, $modal, Tenant, User, entryPoint) {
+hoaApp.controller("MainController", ["$scope", "$http", "$modal", "Tenant", "User", "entryPoint", "$cookies",
+    function($scope, $http, $modal, Tenant, User, entryPoint, $cookies) {
         $http.get(entryPoint + "/setupTestEnvironment");
+
+
 
         $scope.controls = {};
         $scope.setControls = function(mode) {
