@@ -24,7 +24,7 @@ dashboard.service("service.hoalinks", ["$resource", "$q",
             return deferred.promise;
         };
 
-        this.getUserLink = function() {
+        this.getUsersLinks = function() {
             return usersLink;
         }
         this.getTenantsLinks = function() {

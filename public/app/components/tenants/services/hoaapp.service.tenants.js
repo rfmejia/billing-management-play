@@ -2,8 +2,9 @@ var tenants = angular.module("service.tenants", ["ngResource"]);
 
 tenants.service("service.hoatenants", ["$resource", "$q", "service.hoalinks",
     function($resource, $q, hoalinks){
-        var resource = null;
-
+        var resource       = null;
+        var tenantsList    = [];                            
+       
         var createResource = function(url){
             resource = $resource(url, {}, {
                     get     : {method: "GET", isArray: false},
@@ -11,28 +12,17 @@ tenants.service("service.hoatenants", ["$resource", "$q", "service.hoalinks",
             });
         };
 
-        var getData = function(dataId) {
+         var getData        = function(dataId) {
             var deferred = $q.defer();
-            console.log(dataId);
-            var query;
-            if(dataId) {
-                query = function(){
-                    resource.get({id : dataId}).$promise.then(
-                    function(data) {
-                        deferred.resolve(data);
+            var tempId   = (dataId != null) ? {id : dataId} : dataId;
+            var query    = function(){
+                    resource.get(tempId).$promise.then(
+                    function(tenantsData) {
+                        deferred.resolve(tenantsData);
 
                     });
-                } 
-            }
-            else {console.log("here");
-                query = function() {
-                    resource.get().$promise.then(
-                        function(data){
-                            deferred.resolve(data);
-                            console.log(data);
-                        });
-                }
-            }
+                };
+            
             if(resource != null) query();
             else {
                 hoalinks.getLinks().then(
@@ -50,12 +40,8 @@ tenants.service("service.hoatenants", ["$resource", "$q", "service.hoalinks",
             createResource(topUrl);
         }
 
-        this.getList = function() {
-            return getData(null);
-        }
-
-        this.getTenant = function(tenantId) {
-            return getData(tenantId);
+        this.queryApi = function(id) {
+            return getData(id);
         }
 
         this.editTenant = function(id, tenantDetails) {

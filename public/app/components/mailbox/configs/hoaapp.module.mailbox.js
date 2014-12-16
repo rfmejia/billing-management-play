@@ -1,7 +1,6 @@
 var app = angular.module("module.mailbox", [
     "ui.bootstrap",
     "ui.router",
-    "hoaServices",
     "hoaControllers"]);
 
 app.config(["$stateProvider", "$urlRouterProvider", 
@@ -10,7 +9,7 @@ app.config(["$stateProvider", "$urlRouterProvider",
             url         : "/inbox",
             views       : {
                 "contentArea@workspace"     : {
-                    templateUrl         : "app/components/mailbox/maincontent-inbox.html",
+                    templateUrl         : "app/components/mailbox/views/maincontent-inbox.html",
                     controller          : "inboxController"
                 }
             } 

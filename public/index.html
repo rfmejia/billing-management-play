@@ -27,20 +27,34 @@
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="assets/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.1/angular.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0/angular-route.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0/angular-resource.js"></script>
     <script src="assets/js/ui-bootstrap-tpls-0.12.0.min.js"></script>
     <script src="assets/bower_components/angular-ui-router/release/angular-ui-router.js"></script>
     <script src="hoaapp.js"></script>
-    <script src="app/components/tenants/hoaapp.module.tenants.js"></script>
-    <script src="app/components/mailbox/hoaapp.module.mailbox.js"></script>
-    <script src="app/components/users/hoaapp.module.users.js"></script>
-    <script src="app/shared/content/dashboard/hoaapp.service.dashboard.js"></script>
-    <script src="app/components/tenants/hoaapp.service.tenants.js"></script>
+    
+    <!-- components.tenants -->
+    <script src="app/components/tenants/configs/hoaapp.module.tenants.js"></script>
+    <script src="app/components/tenants/services/hoaapp.service.tenants.js"></script>
+    <script src="app/components/tenants/controllers/hoaapp.controller.tenantslist.js"></script>
+    <script src="app/components/tenants/controllers/hoaapp.controller.tenantview.js"></script>
+    <script src="app/components/tenants/controllers/hoaapp.controller.tenantedit.js"></script>
+    <script src="app/components/tenants/controllers/hoaapp.controller.tenantcreate.js"></script>
+    <!-- end.compnents.tenants -->
+    <!-- components.users/invites -->
+    <script src="app/components/users/services/hoaapp.service.users.js"></script>
+    <script src="app/components/users/services/hoaapp.service.invites.js"></script>
+    <script src="app/components/users/configs/hoaapp.module.users.js"></script>
+    <script src="app/components/users/controllers/hoaapp.controller.completeusers.js"></script>
+    <script src="app/components/users/controllers/hoaapp.controller.userview.js"></script>
+    <script src="app/components/users/controllers/hoaapp.controller.inviteuser.js"></script>
+    <!-- end.components.users -->
+    <script src="app/components/mailbox/configs/hoaapp.module.mailbox.js"></script>
+    
+    <script src="app/shared/content/dashboard/services/hoaapp.service.dashboard.js"></script>
+    
     <script src="HOADirectives.js"></script>
-    <script src="HOAServices.js"></script>
     <script src="HOAController.js"></script>
     <script src="HOAFilters.js"></script>
   </body>
