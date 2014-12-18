@@ -20,8 +20,8 @@ object Application extends Controller {
       .withCurie("hoa", Application.defaultCurie)
       .withLink("hoa:tenants", routes.Tenants.list().absoluteURL(),
         Some("List of registered tenants"))
-      // .withLink("hoa:documents", routes.Documents.list().absoluteURL(),
-      //   Some("List of documents"))
+      .withLink("hoa:documents", routes.Documents.list().absoluteURL(),
+        Some("List of documents"))
       .withLink("hoa:users", routes.Users.list().absoluteURL(),
         Some("List of users"))
       .withLink("hoa:webapp", routes.Assets.at("index.html").absoluteURL(),

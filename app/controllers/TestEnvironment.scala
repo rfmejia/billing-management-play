@@ -27,6 +27,7 @@ object TestEnvironment extends Controller {
   def insertModelInfos(implicit session: Session) = {
     Tenant.modelInfo foreach (modelInfo.insertOrUpdate(_))
     User.modelInfo foreach (modelInfo.insertOrUpdate(_))
+    Document.modelInfo foreach (modelInfo.insertOrUpdate(_))
   }
 
   def insertTenantData(implicit session: Session) = {

@@ -122,14 +122,14 @@ class DocumentsModel(tag: Tag) extends Table[Document](tag, "DOCUMENTS") {
   def docType = column[String]("DOC_TYPE", O.NotNull)
   def mailbox = column[String]("MAILBOX", O.NotNull)
   def created = column[DateTime]("CREATED", O.NotNull)
-  def _creator = column[String]("CREATOR", O.NotNull)
-  def _assigned = column[Option[String]]("ASSIGNED")
+  def creator = column[String]("CREATOR", O.NotNull)
+  def assigned = column[Option[String]]("ASSIGNED")
   def body = column[JsObject]("BODY", O.NotNull)
 
-  def creator = foreignKey("CREATOR_FK", _creator, models.users)(_.username)
-  def assigned = foreignKey("ASSIGNED_FK", _assigned, models.users)(_.username)
+  def _creator = foreignKey("CREATOR_FK", creator, models.users)(_.username)
+  def _assigned = foreignKey("ASSIGNED_FK", assigned, models.users)(_.username)
 
-  def * = (id, serialId, title, docType, mailbox, created, _creator, _assigned, body) <>
+  def * = (id, serialId, title, docType, mailbox, created, creator, assigned, body) <>
     (Document.tupled, Document.unapply)
 }
 
