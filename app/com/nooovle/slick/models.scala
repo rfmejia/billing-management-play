@@ -2,7 +2,9 @@ package com.nooovle.slick
 
 import com.github.tototoshi.slick.H2JodaSupport._
 import com.nooovle._
+import java.util.UUID
 import org.joda.time.DateTime
+import play.api.libs.json._
 import scala.slick.driver.H2Driver.simple._
 import scala.slick.jdbc.meta.MTable
 import scala.util.{ Try, Success }
@@ -14,6 +16,7 @@ object models {
   val tenants = TableQuery[TenantsModel]
   val users = TableQuery[UsersModel]
   val invites = TableQuery[InvitesModel]
+  val documents = TableQuery[DocumentsModel]
 
   val userRoles = TableQuery[UserRolesModel]
   val inviteRoles = TableQuery[InviteRolesModel]
@@ -23,7 +26,8 @@ object models {
    *  !Note that this does not upgrade a table schema if they are changed.
    */
   def buildTables(implicit session: Session): List[Try[String]] = {
-    val tables = List(modelInfo, roles, settings, tenants, users, invites, userRoles, inviteRoles)
+    val tables = List(modelInfo, roles, settings, tenants, users, invites, documents,
+      userRoles, inviteRoles)
     tables.map(t => {
       val tableName = t.baseTableRow.tableName
       if (MTable.getTables(tableName).list.isEmpty) {
@@ -36,6 +40,14 @@ object models {
       }
     })
   }
+
+  implicit val uuidToString = MappedColumnType.base[UUID, String](_.toString, UUID.fromString(_))
+  implicit val jsToString = MappedColumnType.base[JsObject, String](_.toString, {
+    Json.parse(_) match {
+      case o: JsObject => o
+      case _ => throw new IllegalStateException("Stored string is not a JSON object")
+    }
+  })
 }
 
 class SettingsModel(tag: Tag) extends Table[(String, String)](tag, "SETTINGS") {
@@ -124,5 +136,23 @@ class InviteRolesModel(tag: Tag) extends Table[(String, String)](tag, "INVITE_RO
   def * = (username, roleName)
 }
 
-// class DocumentsModel(tag: Tag) extends Table[Document](tag, "DOCUMENTS") {}
+class DocumentsModel(tag: Tag) extends Table[Document](tag, "DOCUMENTS") {
+  import models.{ jsToString, uuidToString }
+  def id = column[UUID]("ID", O.PrimaryKey)
+  def serialId = column[Option[String]]("SERIAL_ID")
+  def title = column[String]("TITLE", O.NotNull)
+  def docType = column[String]("DOC_TYPE", O.NotNull)
+  def mailbox = column[String]("MAILBOX", O.NotNull)
+  def created = column[DateTime]("CREATED", O.NotNull)
+  def _creator = column[String]("CREATOR", O.NotNull)
+  def _assigned = column[Option[String]]("ASSIGNED")
+  def body = column[JsObject]("BODY", O.NotNull)
+
+  def creator = foreignKey("CREATOR_FK", _creator, models.users)(_.username)
+  def assigned = foreignKey("ASSIGNED_FK", _assigned, models.users)(_.username)
+
+  def * = (id, serialId, title, docType, mailbox, created, _creator, _assigned, body) <>
+    (Document.tupled, Document.unapply)
+}
+
 // class LogEntriesModel(tag: Tag) extends Table[LogEntry](tag, "LOG_ENTRIES") {}

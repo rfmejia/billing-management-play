@@ -19,5 +19,8 @@ object ModelInfo extends ((String, String, String, Boolean, Boolean, Boolean, Op
       o3
     }
   }
+}
 
+trait HasModelInfo {
+  val modelInfo: Seq[ModelInfo]
 }
