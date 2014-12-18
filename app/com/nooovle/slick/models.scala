@@ -15,19 +15,17 @@ object models {
   val settings = TableQuery[SettingsModel]
   val tenants = TableQuery[TenantsModel]
   val users = TableQuery[UsersModel]
-  val invites = TableQuery[InvitesModel]
   val documents = TableQuery[DocumentsModel]
 
   val userRoles = TableQuery[UserRolesModel]
-  val inviteRoles = TableQuery[InviteRolesModel]
 
   /**
    *  Builds tables one by one if they do not exist.
    *  !Note that this does not upgrade a table schema if they are changed.
    */
   def buildTables(implicit session: Session): List[Try[String]] = {
-    val tables = List(modelInfo, roles, settings, tenants, users, invites, documents,
-      userRoles, inviteRoles)
+    val tables = List(modelInfo, roles, settings, tenants, users, documents,
+      userRoles)
     tables.map(t => {
       val tableName = t.baseTableRow.tableName
       if (MTable.getTables(tableName).list.isEmpty) {
@@ -55,16 +53,6 @@ class SettingsModel(tag: Tag) extends Table[(String, String)](tag, "SETTINGS") {
   def value = column[String]("VALUE", O.NotNull)
 
   def * = (key, value)
-}
-
-class InvitesModel(tag: Tag) extends Table[Invite](tag, "INVITES") {
-  def username = column[String]("USERNAME", O.PrimaryKey)
-  def email = column[String]("EMAIL", O.NotNull)
-  def validUntil = column[DateTime]("VALID_UNTIL", O.NotNull)
-  def validationCode = column[String]("VALIDATION_CODE", O.NotNull)
-
-  def * = (username, email, validUntil, validationCode) <>
-    (Invite.tupled, Invite.unapply)
 }
 
 class ModelInfosModel(tag: Tag) extends Table[ModelInfo](tag,
@@ -121,16 +109,6 @@ class UserRolesModel(tag: Tag) extends Table[(String, String)](tag, "USER_ROLES"
 
   def pk = primaryKey("PK", (username, roleName))
   def user = foreignKey("USER_FK", username, models.users)(_.username)
-  def role = foreignKey("ROLE_FK", roleName, models.roles)(_.name)
-
-  def * = (username, roleName)
-}
-
-class InviteRolesModel(tag: Tag) extends Table[(String, String)](tag, "INVITE_ROLES") {
-  def username = column[String]("USERNAME", O.NotNull)
-  def roleName = column[String]("ROLE_NAME", O.NotNull)
-
-  // def user = foreignKey("USER_FK", username, models.users)(_.username)
   def role = foreignKey("ROLE_FK", roleName, models.roles)(_.name)
 
   def * = (username, roleName)

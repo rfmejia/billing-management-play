@@ -67,37 +67,6 @@ object Users extends Controller with securesocial.core.SecureSocial {
     Ok(x.asJsValue)
   }
 
-  def createViaInvite(username: String) = SecuredAction(parse.json) { implicit request =>
-    val json = request.body
-    ((json \ "firstName").asOpt[String], (json \ "lastName").asOpt[String],
-      (json \ "password").asOpt[String], (json \ "validationCode").asOpt[String]) match {
-        case (Some(firstName), Some(lastName), Some(password), Some(validationCode)) =>
-          Invite.findByUsernameWithRoles(username) match {
-            case Some((invite, rs)) =>
-              val now = new DateTime()
-              if (!now.isBefore(invite.validUntil)) BadRequest("Invite has expired")
-              else if (invite.validationCode != validationCode) BadRequest("Invalid validation code")
-              else {
-                val newUser = User(invite.username, invite.email,
-                  password.getBytes, firstName, lastName)
-                val result = User.insertWithRoles(newUser, rs)
-
-                result match {
-                  case Success(id) =>
-                    val link = routes.Users.show(id).absoluteURL()
-                    Created.withHeaders("Location" -> link)
-                  case Failure(err) => err match {
-                    case e: IllegalStateException => BadRequest(s"The username '${username}' already exists.")
-                    case e: Throwable => throw e
-                  }
-                }
-              }
-            case None => NotFound
-          }
-        case _ => BadRequest("Some required values are missing. Please check your request.")
-      }
-  }
-
   def edit(username: String) = SecuredAction(parse.json) { implicit request =>
     // Check existence under ID
     User.findByUsername(username) match {

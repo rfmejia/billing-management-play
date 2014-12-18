@@ -13,18 +13,9 @@ POST    /api/tenants                    controllers.Tenants.create
 PUT     /api/tenants/:id                controllers.Tenants.edit(id: Int)
 DELETE  /api/tenants/:id                controllers.Tenants.delete(id: Int)
 
-# Invitations
-GET     /api/invites                    controllers.Invites.list(offset: Int ?= 0, limit: Int ?= 10)
-GET     /api/invites/:username          controllers.Invites.show(username: String)
-POST    /api/invites                    controllers.Invites.create
-PUT     /api/invites/:username          controllers.Invites.edit(username: String)
-DELETE  /api/invites/:username          controllers.Invites.delete(username: String)
-
 # Users
 GET     /api/users                      controllers.Users.list(offset: Int ?= 0, limit: Int ?= 10)
 GET     /api/users/:username            controllers.Users.show(username: String)
-#POST    /api/users/:username            controllers.Users.create(username: String)
-POST    /api/users/:username            controllers.Users.createViaInvite(username: String)
 PUT     /api/users/:username            controllers.Users.edit(username: String)
 DELETE  /api/users/:username            controllers.Users.delete(username: String)
 

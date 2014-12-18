@@ -17,7 +17,6 @@ object TestEnvironment extends Controller {
       insertModelInfos
       insertUserData
       insertTenantData
-      insertInviteData
 
       import play.api.Play.current
       val ds = play.api.db.DB.getDataSource()
@@ -28,7 +27,6 @@ object TestEnvironment extends Controller {
   def insertModelInfos(implicit session: Session) = {
     Tenant.modelInfo foreach (modelInfo.insertOrUpdate(_))
     User.modelInfo foreach (modelInfo.insertOrUpdate(_))
-    Invite.modelInfo foreach (modelInfo.insertOrUpdate(_))
   }
 
   def insertTenantData(implicit session: Session) = {
@@ -53,15 +51,6 @@ object TestEnvironment extends Controller {
       (User("testuser1", "testuser1@email.com", "testpass1".getBytes,
         "Julius", "Amador"), Set("encoder", "checker")))
     data foreach (d => User.insertWithRoles(d._1, d._2))
-  }
-
-  def insertInviteData(implicit session: Session) = {
-    (for (i <- invites) yield i).delete
-    val date = DateTime.parse("2014-11-30")
-    val data = Seq(
-      (Invite("testuser2", "testuser2@email.com", date), Set("encoder")),
-      (Invite("testuser3", "testuser3@email.com", date), Set("approver")))
-    data foreach (d => Invite.insertWithRoles(d._1, d._2))
   }
 
   def fail = Action {
