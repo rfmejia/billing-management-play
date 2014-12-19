@@ -7,84 +7,98 @@ import scala.slick.driver.H2Driver.simple._
 import scala.util.Try
 import securesocial.core._
 
-case class User(username: String, email: String, password: Array[Byte], salt: Array[Byte],
-  firstName: String, lastName: String)
+case class User(userId: String,
+  providerId: String,
+  firstName: String,
+  lastName: String,
+  email: Option[String],
+  hasher: String,
+  password: String,
+  salt: Option[String]) extends Identity {
+  val identityId = IdentityId(userId, providerId)
+  val fullName = s"${firstName} ${lastName}"
+  val authMethod = AuthenticationMethod.UserPassword
+  val avatarUrl = None
+  val oAuth1Info = None
+  val oAuth2Info = None
+  val passwordInfo = Option(PasswordInfo(hasher, password, salt))
+}
 
-object User extends ((String, String, Array[Byte], Array[Byte], String, String) => User)
+object User extends ((String, String, String, String, Option[String], String, String, Option[String]) => User)
   with HasModelInfo {
 
-  def apply(username: String, email: String, password: Array[Byte], firstName: String, lastName: String): User = {
-    // val salt = SecurityTools.generateSalt()
-    // val passwdHash = SecurityTools.hashPassword(password, salt)
-    val salt = "".getBytes
-    val passwdHash = "".getBytes
-    User(username, email, passwdHash, salt, firstName, lastName)
-  }
-
-  def findByUsername(username: String): Option[User] = {
-    val query = for (u <- users if u.username === username) yield u
+  def findByIdentityId(id: IdentityId): Option[User] =
     ConnectionFactory.connect withSession { implicit session =>
-      query.firstOption
+      (for (
+        u <- users if u.userId === id.userId &&
+          u.providerId === id.providerId
+      ) yield u).firstOption
     }
+
+  def fromIdentity(i: Identity): User = {
+    val hasher = i.passwordInfo.map(_.hasher) getOrElse ""
+    val password = i.passwordInfo.map(_.password) getOrElse ""
+    val salt = i.passwordInfo.map(_.salt) getOrElse None
+    User(i.identityId.userId, i.identityId.providerId, i.firstName, i.lastName,
+      i.email, hasher, password, salt)
   }
 
-  def findByUsernameWithRoles(username: String): Option[(User, Set[String])] = {
-    ConnectionFactory.connect withSession { implicit session =>
-      val user = for (u <- users if u.username === username) yield u
-      val rs = for {
-        ur <- userRoles if ur.username === username
-        rs <- roles if rs.name === ur.roleName
-      } yield rs
-      user.firstOption map (u => (u, rs.list.toSet))
-    }
-  }
+  // def findByUsernameWithRoles(username: String): Option[(User, Set[String])] =
+  //   ConnectionFactory.connect withSession { implicit session =>
+  //     val user = for (u <- users if u.username === username) yield u
+  //     val rs = for {
+  //       ur <- userRoles if ur.username === username
+  //       rs <- roles if rs.name === ur.roleName
+  //     } yield rs
+  //     user.firstOption map (u => (u, rs.list.toSet))
+  //   }
 
-  def insertWithRoles(user: User, rs: Set[String]): Try[String] = Try {
-    ConnectionFactory.connect withTransaction { implicit transaction =>
-      try {
-        val query = for (u <- users if u.username === user.username) yield u
-        val _username = if (query.exists.run) {
-          throw new IllegalStateException
-        } else {
-          users += user
-          user.username
-        }
-        rs foreach (role => roles.insertOrUpdate(role))
-        // The following does not use insertOrUpdate because id is an
-        // auto-incrementing foreign key (bug exists)
-        rs foreach (role => userRoles += ((_username, role)))
-        _username
-      } catch {
-        case t: Throwable =>
-          transaction.rollback
-          throw t
-      }
-    }
-  }
+  // def insertWithRoles(user: User, rs: Set[String]): Try[String] = Try {
+  //   ConnectionFactory.connect withTransaction { implicit transaction =>
+  //     try {
+  //       val query = for (u <- users if u.username === user.username) yield u
+  //       val _username = if (query.exists.run) {
+  //         throw new IllegalStateException
+  //       } else {
+  //         users += user
+  //         user.username
+  //       }
+  //       rs foreach (role => roles.insertOrUpdate(role))
+  //       // The following does not use insertOrUpdate because id is an
+  //       // auto-incrementing foreign key (bug exists)
+  //       rs foreach (role => userRoles += ((_username, role)))
+  //       _username
+  //     } catch {
+  //       case t: Throwable =>
+  //         transaction.rollback
+  //         throw t
+  //     }
+  //   }
+  // }
 
-  def updateWithRoles(user: User, rs: Set[String]): Try[String] = Try {
-    ConnectionFactory.connect withTransaction { implicit transaction =>
-      try {
-        val query = for (u <- users if u.username === user.username) yield u
+  // def updateWithRoles(user: User, rs: Set[String]): Try[String] = Try {
+  //   ConnectionFactory.connect withTransaction { implicit transaction =>
+  //     try {
+  //       val query = for (u <- users if u.username === user.username) yield u
 
-        val _username: String = if (!query.exists.run) { // Insert user
-          throw new IndexOutOfBoundsException
-        } else { // Update user
-          query.update(user)
-          query.first.username
-        }
-        rs foreach (role => roles.insertOrUpdate(role))
-        // The following does not use insertOrUpdate because username is an
-        // auto-incrementing foreign key (bug exists)
-        rs foreach (role => userRoles += ((_username, role)))
-        _username
-      } catch {
-        case t: Throwable =>
-          transaction.rollback
-          throw t
-      }
-    }
-  }
+  //       val _username: String =
+  //         if (!query.exists.run) throw new IndexOutOfBoundsException
+  //         else { // Update user
+  //           query.update(user)
+  //           query.first.username
+  //         }
+  //       rs foreach (role => roles.insertOrUpdate(role))
+  //       // The following does not use insertOrUpdate because username is an
+  //       // auto-incrementing foreign key (bug exists)
+  //       rs foreach (role => userRoles += ((_username, role)))
+  //       _username
+  //     } catch {
+  //       case t: Throwable =>
+  //         transaction.rollback
+  //         throw t
+  //     }
+  //   }
+  // }
 
   lazy val modelInfo = Seq(
     ModelInfo("USERS", "username", "String", false, false, true, Some("Username")),

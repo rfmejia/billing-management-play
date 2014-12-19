@@ -1,18 +1,20 @@
 var hoaControllers = angular.module("hoaControllers", []);
 hoaControllers.value('entrypoint', "http://hoa-play-scala.herokuapp.com/api");
 
-hoaControllers.controller("rootController", ["$state", 
-    function($state) {
+hoaControllers.controller("rootController", ["$state", "$cookies",
+    function($state, $cookies) {
     console.log("loaded on page load");
     $state.go("authenticate")
-    //check credentials, 
+    //check credentials,
     // if(!auth) $state.go("authenticate");
+
+    console.log($cookies.id);
 
     //true go to workspace state,
     //false go to auhtenticate state
 }]);
 
-hoaControllers.controller("authenticateController", ["$scope", "$state", 
+hoaControllers.controller("authenticateController", ["$scope", "$state",
 function($scope, $state) {
     console.log($scope);
     $scope.verifyCredentials = function() {
@@ -25,7 +27,7 @@ hoaControllers.controller("verifyController", [function() {
 
 }]);
 
-hoaControllers.controller('workspaceController', ['$rootScope', '$scope', "$http", "$state",  "$location", "entrypoint", "r_hoaLinks", "service.hoalinks", 
+hoaControllers.controller('workspaceController', ['$rootScope', '$scope', "$http", "$state",  "$location", "entrypoint", "r_hoaLinks", "service.hoalinks",
     function ($rootScope, $scope, $http, $state, $location, entrypoint, r_hoaLinks, hoalinks) {
 }]);
 
@@ -69,7 +71,7 @@ function ($scope, $location, $state) {
 // Inbox related controllers
 hoaControllers.controller("inboxController", [
    function() {
-   } 
+   }
 ]);
 // end - Inbox related controllers
 
@@ -77,12 +79,11 @@ hoaControllers.controller("inboxController", [
 
 hoaControllers.controller('usersInviteController', ['$scope', "$modalInstance", "r_inviteTemplate",
     function ($scope, $modalInstance, r_inviteTemplate) {
-        
 }]);
 // end - User releated controllers
 
 hoaControllers.controller('mailboxController', ['$scope', function ($scope) {
-    
+
 }]);
 
 

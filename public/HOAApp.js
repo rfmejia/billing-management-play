@@ -1,4 +1,5 @@
 var hoaApp = angular.module('hoaApp', [
+    "ngCookies",
     "ui.bootstrap", "ui.router",
     "module.tenants", "module.mailbox", "module.users",
     "service.dashboard", "service.tenants", "service.invites", "service.users",
@@ -45,7 +46,7 @@ hoaApp.config(["$stateProvider", "$urlRouterProvider", "$locationProvider",
                 "sidebar@workspace"     : {
                     templateUrl     : "app/shared/sidebar/views/sidebar.html",
                     controller      : "sidebarController"
-                }, 
+                },
                 "contentArea@workspace" : {
                     templateUrl     : "app/components/mailbox/views/maincontent-inbox.html",
                     controller      : "inboxController"

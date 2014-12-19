@@ -1,41 +1,29 @@
 package com.nooovle.security
 
+import com.nooovle.slick.ConnectionFactory
+import com.nooovle.slick.models.users
+import com.nooovle.User
 import play.api.{ Logger, Application }
+import scala.slick.driver.H2Driver.simple._
 import securesocial.core._
 import securesocial.core.providers.Token
-import securesocial.core.IdentityId
 
-/**
- * A Sample In Memory user service in Scala
- *
- * IMPORTANT: This is just a sample and not suitable for a production environment since
- * it stores everything in memory.
- */
 class UserService(application: Application) extends UserServicePlugin(application) {
-  private var users = Map[String, Identity]()
   private var tokens = Map[String, Token]()
 
-  def find(id: IdentityId): Option[Identity] = {
-    if (Logger.isDebugEnabled) {
-      Logger.debug("users = %s".format(users))
-    }
-    users.get(id.userId + id.providerId)
-  }
+  def find(id: IdentityId): Option[Identity] = User.findByIdentityId(id)
 
-  def findByEmailAndProvider(email: String, providerId: String): Option[Identity] = {
-    if (Logger.isDebugEnabled) {
-      Logger.debug("users = %s".format(users))
+  def findByEmailAndProvider(email: String, providerId: String): Option[Identity] =
+    ConnectionFactory.connect withSession { implicit session =>
+      (for (u <- users if u.email === Option(email)) yield u).firstOption
+        .filter(u => u.providerId == providerId)
     }
-    users.values.find(u => u.email.map(e => e == email && u.identityId.providerId == providerId).getOrElse(false))
-  }
 
-  def save(user: Identity): Identity = {
-    users = users + (user.identityId.userId + user.identityId.providerId -> user)
-    // this sample returns the same user object, but you could return an instance of your own class
-    // here as long as it implements the Identity trait. This will allow you to use your own class in the protected
-    // actions and event callbacks. The same goes for the find(id: IdentityId) method.
-    user
-  }
+  def save(user: Identity): Identity =
+    ConnectionFactory.connect withSession { implicit session =>
+      users += User.fromIdentity(user)
+      user
+    }
 
   def save(token: Token) {
     tokens += (token.uuid -> token)
