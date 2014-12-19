@@ -1,9 +1,10 @@
 var hoaApp = angular.module('hoaApp', [
     "ui.bootstrap", "ui.router",
     "module.tenants", "module.mailbox", "module.users",
-    "service.dashboard", "service.tenants", 
+    "service.dashboard", "service.tenants", "service.invites", "service.users",
+    "controller.tenantslist", "controller.tenantview", "controller.tenantedit", "controller.tenantcreate",
+    "controller.completeusers", "controller.userview", "controller.inviteuser",
     "hoaFilters",
-    "hoaServices",
     "hoaControllers",
     "hoaDirectives"]);
 
@@ -13,7 +14,7 @@ hoaApp.config(["$stateProvider", "$urlRouterProvider", "$locationProvider",
         var authenticate = {
             views       : {
                 "rootView@"  : {
-                    templateUrl     : "app/shared/content/authentication/root-authenticate.html",
+                    templateUrl     : "app/shared/content/authentication/views/root-authenticate.html",
                     controller      : "authenticateController"
                 }
             }
@@ -22,7 +23,7 @@ hoaApp.config(["$stateProvider", "$urlRouterProvider", "$locationProvider",
         var verification = {
             views   : {
                 "authenticateBox@"  : {
-                    templateUrl     : "app/shared/content/authentication/verifyBox.html",
+                    templateUrl     : "app/shared/content/authentication/views/verifyBox.html",
                     controller      : "verifyController"
                 }
             }
@@ -38,15 +39,15 @@ hoaApp.config(["$stateProvider", "$urlRouterProvider", "$locationProvider",
             },
             views       : {
                 "rootView@"             : {
-                    templateUrl     : "app/shared/content/dashboard/root-workspace.html",
+                    templateUrl     : "app/shared/content/dashboard/views/root-workspace.html",
                     controller      : "workspaceController"
                 },
                 "sidebar@workspace"     : {
-                    templateUrl     : "app/shared/sidebar/sidebar.html",
+                    templateUrl     : "app/shared/sidebar/views/sidebar.html",
                     controller      : "sidebarController"
                 }, 
                 "contentArea@workspace" : {
-                    templateUrl     : "app/components/mailbox/maincontent-inbox.html",
+                    templateUrl     : "app/components/mailbox/views/maincontent-inbox.html",
                     controller      : "inboxController"
                 }
             }
