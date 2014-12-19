@@ -1,9 +1,12 @@
 package com.nooovle.security
 
+import com.nooovle.slick.ConnectionFactory
+import com.nooovle.slick.models.users
 import play.api.{ Logger, Application }
+import scala.slick.driver.H2Driver.simple._
 import securesocial.core._
-import securesocial.core.providers.Token
 import securesocial.core.IdentityId
+import securesocial.core.providers.Token
 
 /**
  * A Sample In Memory user service in Scala

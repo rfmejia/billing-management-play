@@ -15,13 +15,7 @@ import scala.util.{ Try, Success, Failure }
 
 object Documents extends Controller {
   def show(id: String) = Action { implicit request =>
-    val _id = UUID.fromString(id)
-    val result = ConnectionFactory.connect withSession { implicit session =>
-      val query = for (d <- documents if d.id === _id) yield d
-      query.firstOption
-    }
-
-    result match {
+    Document.findById(UUID.fromString(id)) match {
       case Some(d) =>
         val self = routes.Documents.show(id)
         val obj = HalJsObject.create(self.absoluteURL())
@@ -88,36 +82,20 @@ object Documents extends Controller {
       (json \ "docType").asOpt[String],
       (json \ "body").asOpt[JsObject]) match {
         case (Some(title), Some(docType), Some(body)) =>
-          val id = UUID.randomUUID()
-          val created = new DateTime()
-          val creator = "To implement"
-
-          val newDoc = Document(id, None, title, docType, Workflow.start, created,
-            creator, None, body)
-          val result = ConnectionFactory.connect withSession { implicit session =>
-            Try {
-              // Returns ID of newly inserted tenant
-              (documents returning documents.map(_.id)) += newDoc
-            }
-          }
-          result match {
+          Document.insert(title, docType, body) match {
             case Success(id) =>
               val link = routes.Documents.show(id.toString).absoluteURL()
               Created.withHeaders("Location" -> link)
-            case Failure(err) => InternalServerError(err.getMessage)
+            case Failure(err) =>
+              err.printStackTrace
+              InternalServerError(err.getMessage)
           }
         case _ => BadRequest("Some required values are missing. Please check your request.")
       }
   }
 
   def edit(id: String) = Action(parse.json) { implicit request =>
-    val _id = UUID.fromString(id)
-    // Check existence under ID
-    val d = ConnectionFactory.connect withSession { implicit session =>
-      val query = for (d <- documents if d.id === _id) yield d
-      query.firstOption
-    }
-    d match {
+    Document.findById(UUID.fromString(id)) match {
       case None => NotFound
       case Some(d) =>
         val json = request.body
@@ -128,14 +106,7 @@ object Documents extends Controller {
             case (Some(title), Some(body), Some(mailbox), assigned) =>
               val newDoc = Document(d.id, d.serialId, title, d.docType, mailbox,
                 d.created, d.creator, assigned, body)
-              val result = ConnectionFactory.connect withSession { implicit session =>
-                Try {
-                  val doc = for (_d <- documents if _d.id === _id)
-                    yield (_d.title, _d.mailbox, _d.assigned, _d.body)
-                  doc.update(title, mailbox, assigned, body)
-                }
-              }
-              result match {
+              Document.update(newDoc) match {
                 case Success(id) => NoContent
                 case Failure(err) => InternalServerError(err.getMessage)
               }

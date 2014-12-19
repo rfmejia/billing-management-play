@@ -21,14 +21,12 @@ object User extends ((String, String, Array[Byte], Array[Byte], String, String) 
     User(username, email, passwdHash, salt, firstName, lastName)
   }
 
-  def findByUsername(username: String): Option[User] = {
-    val query = for (u <- users if u.username === username) yield u
+  def findByUsername(username: String): Option[User] =
     ConnectionFactory.connect withSession { implicit session =>
-      query.firstOption
+      (for (u <- users if u.username === username) yield u).firstOption
     }
-  }
 
-  def findByUsernameWithRoles(username: String): Option[(User, Set[String])] = {
+  def findByUsernameWithRoles(username: String): Option[(User, Set[String])] =
     ConnectionFactory.connect withSession { implicit session =>
       val user = for (u <- users if u.username === username) yield u
       val rs = for {
@@ -37,7 +35,6 @@ object User extends ((String, String, Array[Byte], Array[Byte], String, String) 
       } yield rs
       user.firstOption map (u => (u, rs.list.toSet))
     }
-  }
 
   def insertWithRoles(user: User, rs: Set[String]): Try[String] = Try {
     ConnectionFactory.connect withTransaction { implicit transaction =>
@@ -67,12 +64,12 @@ object User extends ((String, String, Array[Byte], Array[Byte], String, String) 
       try {
         val query = for (u <- users if u.username === user.username) yield u
 
-        val _username: String = if (!query.exists.run) { // Insert user
-          throw new IndexOutOfBoundsException
-        } else { // Update user
-          query.update(user)
-          query.first.username
-        }
+        val _username: String =
+          if (!query.exists.run) throw new IndexOutOfBoundsException
+          else { // Update user
+            query.update(user)
+            query.first.username
+          }
         rs foreach (role => roles.insertOrUpdate(role))
         // The following does not use insertOrUpdate because username is an
         // auto-incrementing foreign key (bug exists)

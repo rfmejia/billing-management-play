@@ -20,11 +20,11 @@ PUT     /api/users/:username            controllers.Users.edit(username: String)
 DELETE  /api/users/:username            controllers.Users.delete(username: String)
 
 # Documents
-GET     /api/users                      controllers.Documents.list(offset: Int ?= 0, limit: Int ?= 10)
-GET     /api/users/:id                  controllers.Documents.show(id: String)
-POST    /api/users                      controllers.Documents.create
-PUT     /api/users/:id                  controllers.Documents.edit(id: String)
-DELETE  /api/users/:id                  controllers.Documents.delete(id: String)
+GET     /api/documents                      controllers.Documents.list(offset: Int ?= 0, limit: Int ?= 10)
+GET     /api/documents/:id                  controllers.Documents.show(id: String)
+POST    /api/documents                      controllers.Documents.create
+PUT     /api/documents/:id                  controllers.Documents.edit(id: String)
+DELETE  /api/documents/:id                  controllers.Documents.delete(id: String)
 
 GET     /api/setupTestEnvironment       controllers.TestEnvironment.setup
 GET     /api/testFail                   controllers.TestEnvironment.fail
