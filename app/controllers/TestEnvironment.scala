@@ -15,7 +15,6 @@ object TestEnvironment extends Controller {
   def setup() = Action { implicit request =>
     ConnectionFactory.connect withSession { implicit session =>
       insertModelInfos
-      insertUserData
       insertTenantData
 
       import play.api.Play.current
@@ -42,16 +41,6 @@ object TestEnvironment extends Controller {
       Tenant("Accolade Trading Corp.", "14 Zaragoza St. San Lorenzo Village, Makati",
         "Issa Santos", "987-4321", "isantos@email.com"))
     data foreach (tenants.insertOrUpdate(_))
-  }
-
-  def insertUserData(implicit session: Session) = {
-    (for (u <- users) yield u).delete
-    val data = Seq(
-      (User("admin", "techsupport@nooovle.com", "a1b2c3d4f5".getBytes,
-        "System", "Administrator"), Set("administrator")),
-      (User("testuser1", "testuser1@email.com", "testpass1".getBytes,
-        "Julius", "Amador"), Set("encoder", "checker")))
-    data foreach (d => User.insertWithRoles(d._1, d._2))
   }
 
   def fail = Action {
