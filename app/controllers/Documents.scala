@@ -1,7 +1,7 @@
 package controllers
 
 import com.nooovle._
-import com.nooovle.slick.models.{ modelInfo, documents }
+import com.nooovle.slick.models.{ modelTemplates, documents }
 import com.nooovle.slick.ConnectionFactory
 import java.util.UUID
 import org.joda.time.DateTime
@@ -129,7 +129,7 @@ object Documents extends Controller {
     val fields = ModelInfo.toJsonArray {
       ConnectionFactory.connect withSession { implicit session =>
         val query = for (
-          i <- modelInfo if i.modelName === "DOCUMENTS"
+          i <- modelTemplates if i.modelName === "DOCUMENTS"
             && i.createForm
         ) yield i
         query.list
@@ -142,7 +142,7 @@ object Documents extends Controller {
     val fields = ModelInfo.toJsonArray {
       ConnectionFactory.connect withSession { implicit session =>
         val query = for (
-          i <- modelInfo if i.modelName === "DOCUMENTS"
+          i <- modelTemplates if i.modelName === "DOCUMENTS"
             && i.editForm
         ) yield i
         query.list

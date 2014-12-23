@@ -11,7 +11,7 @@ import scala.util.{ Try, Success }
 import securesocial.core.{ IdentityId, PasswordInfo }
 
 object models {
-  val modelInfo = TableQuery[ModelInfosModel]
+  val modelTemplates = TableQuery[ModelInfosModel]
   val roles = TableQuery[RolesModel]
   val settings = TableQuery[SettingsModel]
   val tenants = TableQuery[TenantsModel]
@@ -24,7 +24,7 @@ object models {
    *  !Note that this does not upgrade a table schema if they are changed.
    */
   def buildTables(implicit session: Session): List[Try[String]] = {
-    val tables = List(modelInfo, roles, settings, tenants, users, documents,
+    val tables = List(modelTemplates, roles, settings, tenants, users, documents,
       userRoles)
     tables.map(t => {
       val tableName = t.baseTableRow.tableName

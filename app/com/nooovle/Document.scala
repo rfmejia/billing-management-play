@@ -19,7 +19,7 @@ case class Document(
   assigned: Option[String], // Which user is working on this now?
   body: JsObject)
 
-object Document extends ((UUID, Option[String], String, String, String, DateTime, String, Option[String], JsObject) => Document) with HasModelInfo {
+object Document extends ((UUID, Option[String], String, String, String, DateTime, String, Option[String], JsObject) => Document) with ModelTemplate {
 
   def findById(id: UUID): Option[Document] =
     ConnectionFactory.connect withSession { implicit session =>
@@ -53,7 +53,8 @@ object Document extends ((UUID, Option[String], String, String, String, DateTime
     }
   }
 
-  lazy val modelInfo = Seq(
+  val modelName = "DOCUMENTS"
+  lazy val modelInfos = Seq(
     ModelInfo("DOCUMENTS", "id", "UUID", false, false, true, Some("ID")),
     ModelInfo("DOCUMENTS", "serialId", "String", false, false, true, Some("Serial ID")),
     ModelInfo("DOCUMENTS", "title", "String", true, true, true, Some("Title")),

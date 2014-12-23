@@ -25,7 +25,7 @@ case class User(userId: String,
 }
 
 object User extends ((String, String, String, String, Option[String], String, String, Option[String]) => User)
-  with HasModelInfo {
+  with ModelTemplate {
 
   def findByIdentityId(id: IdentityId): Option[User] =
     ConnectionFactory.connect withSession { implicit session =>
@@ -100,7 +100,8 @@ object User extends ((String, String, String, String, Option[String], String, St
   //   }
   // }
 
-  lazy val modelInfo = Seq(
+  val modelName = "USERS"
+  lazy val modelInfos = Seq(
     ModelInfo("USERS", "username", "String", false, false, true, Some("Username")),
     ModelInfo("USERS", "password", "String", true, true, true, Some("Password")),
     ModelInfo("USERS", "email", "String", false, true, true, Some("Email")),

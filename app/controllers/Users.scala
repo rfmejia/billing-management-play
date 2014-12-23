@@ -1,7 +1,7 @@
 package controllers
 
 import com.nooovle._
-import com.nooovle.slick.models.{ modelInfo, users }
+import com.nooovle.slick.models.{ modelTemplates, users }
 import com.nooovle.slick.ConnectionFactory
 import org.joda.time.DateTime
 import org.locker47.json.play._
@@ -111,7 +111,7 @@ object Users extends Controller with securesocial.core.SecureSocial {
     val fields = ModelInfo.toJsonArray {
       ConnectionFactory.connect withSession { implicit session =>
         val query = for (
-          i <- modelInfo if i.modelName === "USERS"
+          i <- modelTemplates if i.modelName === "USERS"
             && i.createForm
         ) yield i
         query.list
@@ -124,7 +124,7 @@ object Users extends Controller with securesocial.core.SecureSocial {
     val fields = ModelInfo.toJsonArray {
       ConnectionFactory.connect withSession { implicit session =>
         val query = for (
-          i <- modelInfo if i.modelName === "USERS"
+          i <- modelTemplates if i.modelName === "USERS"
             && i.editForm
         ) yield i
         query.list
