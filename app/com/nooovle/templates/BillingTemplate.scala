@@ -5,9 +5,10 @@ import com.nooovle.ModelTemplate
 import play.api.libs.json._
 
 object BillingTemplate {
-  val asJsValue: JsValue = Json.obj(
-    "id" -> "billing_template-1",
-    "name" -> "Billing template 1",
+  val asJsObject: JsObject = Json.obj(
+    "docType" -> "statement-of-account-1",
+    "name" -> "Statement of Account 1",
+    "title" -> "Statement of Account",
     "sections" -> Json.arr(
       Json.obj(
         "name" -> "Previous Charges",

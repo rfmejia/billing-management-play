@@ -11,29 +11,35 @@ import scala.util.{ Try, Success, Failure }
 import securesocial.core.{ Identity, Authorization }
 
 object Templates extends Controller with securesocial.core.SecureSocial {
-  def show(id: String) = Action { implicit request =>
-    id match {
-      case "billing_template-1" => Ok(BillingTemplate.asJsValue)
-      case _ => NotFound
+  val templates = Seq(BillingTemplate.asJsObject)
+
+  def show(docType: String) = Action { implicit request =>
+    templates find { template =>
+      (template \ "docType").as[String] == docType
+    } match {
+      case Some(template) =>
+        Ok {
+          val link = routes.Templates.show(docType)
+          HalJsObject.create(link.absoluteURL())
+            .withLink("profile", "hoa:template")
+            .asJsValue ++ template
+        }
+      case None => NotFound
     }
   }
 
   def list(offset: Int = 0, limit: Int = 10) = Action { implicit request =>
-    val templates = Seq(BillingTemplate.asJsValue)
-
     val objs = templates map { t =>
-      val id = (t \ "id") match {
-        case JsString(value) => value
-        case _ => (t \ "id").toString
-      }
-      val link = routes.Templates.show(id)
+      val docType = (t \ "docType").as[String]
+      val link = routes.Templates.show(docType)
       val obj = HalJsObject.create(link.absoluteURL())
         .withLink("profile", "hoa:template")
+        .withField("docType", t \ "docType")
         .withField("name", t \ "name")
       obj.asJsValue
     }
 
-    val self = routes.Users.list(offset, limit)
+    val self = routes.Templates.list(offset, limit)
     val blank = HalJsObject.create(self.absoluteURL())
       .withCurie("hoa", Application.defaultCurie)
       .withLink("profile", "collection")

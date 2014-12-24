@@ -28,7 +28,7 @@ DELETE  /api/documents/:id          controllers.Documents.delete(id: String)
 
 # Documents
 GET     /api/templates              controllers.Templates.list(offset: Int ?= 0, limit: Int ?= 10)
-GET     /api/templates/:id          controllers.Templates.show(id: String)
+GET     /api/templates/:docType     controllers.Templates.show(docType: String)
 
 GET     /api/setupTestEnvironment   controllers.TestEnvironment.setup
 GET     /api/testFail               controllers.TestEnvironment.fail
