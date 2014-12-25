@@ -104,8 +104,9 @@ object Documents extends Controller {
           (json \ "mailbox").asOpt[String],
           (json \ "assigned").asOpt[String]) match {
             case (Some(title), Some(body), Some(mailbox), assigned) =>
-              val newDoc = Document(d.id, d.serialId, title, d.docType, mailbox,
-                d.created, d.creator, assigned, body)
+              // TODO: Get user responsible for this request
+              val newDoc = d.copy(title = title, mailbox = mailbox, body = body,
+                assigned = assigned)
               Document.update(newDoc) match {
                 case Success(id) => NoContent
                 case Failure(err) => InternalServerError(err.getMessage)

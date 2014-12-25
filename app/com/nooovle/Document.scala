@@ -14,12 +14,19 @@ case class Document(
   title: String,
   docType: String, // Type of subdocument
   mailbox: String,
-  created: DateTime,
   creator: String,
-  assigned: Option[String], // Which user is working on this now?
-  body: JsObject)
+  created: DateTime,
+  body: JsObject,
+  preparedBy: Option[String] = None,
+  preparedOn: Option[DateTime] = None,
+  checkedBy: Option[String] = None,
+  checkedOn: Option[DateTime] = None,
+  approvedBy: Option[String] = None,
+  approvedOn: Option[DateTime] = None,
+  assigned: Option[String] = None // Which user is working on this now?
+  )
 
-object Document extends ((UUID, Option[String], String, String, String, DateTime, String, Option[String], JsObject) => Document) with ModelTemplate {
+object Document extends ((UUID, Option[String], String, String, String, String, DateTime, JsObject, Option[String], Option[DateTime], Option[String], Option[DateTime], Option[String], Option[DateTime], Option[String]) => Document) with ModelTemplate {
 
   def findById(id: UUID): Option[Document] =
     ConnectionFactory.connect withSession { implicit session =>
@@ -30,8 +37,8 @@ object Document extends ((UUID, Option[String], String, String, String, DateTime
     val id = UUID.randomUUID()
     val created = new DateTime()
     val creator = "To implement"
-    val newDoc = Document(id, None, title, docType, Workflow.start, created,
-      creator, None, body)
+    val newDoc = Document(id, None, title, docType, Workflow.start, creator,
+      created, body)
     ConnectionFactory.connect withSession { implicit session =>
       Try {
         // Returns ID of newly inserted tenant

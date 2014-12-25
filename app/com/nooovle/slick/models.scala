@@ -125,15 +125,22 @@ class DocumentsModel(tag: Tag) extends Table[Document](tag, "DOCUMENTS") {
   def title = column[String]("TITLE", O.NotNull)
   def docType = column[String]("DOC_TYPE", O.NotNull)
   def mailbox = column[String]("MAILBOX", O.NotNull)
-  def created = column[DateTime]("CREATED", O.NotNull)
   def creator = column[String]("CREATOR", O.NotNull)
-  def assigned = column[Option[String]]("ASSIGNED")
+  def created = column[DateTime]("CREATED", O.NotNull)
   def body = column[JsObject]("BODY", O.NotNull)
 
-  // def _creator = foreignKey("CREATOR_FK", creator, models.users)(_.username)
-  // def _assigned = foreignKey("ASSIGNED_FK", assigned, models.users)(_.username)
+  def preparedBy = column[Option[String]]("PREPARED_BY")
+  def preparedOn = column[Option[DateTime]]("PREPARED_ON")
+  def checkedBy = column[Option[String]]("CHECKED_BY")
+  def checkedOn = column[Option[DateTime]]("CHECKED_ON")
+  def approvedBy = column[Option[String]]("APPROVED_BY")
+  def approvedOn = column[Option[DateTime]]("APPROVED_ON")
+  def assigned = column[Option[String]]("ASSIGNED")
 
-  def * = (id, serialId, title, docType, mailbox, created, creator, assigned, body) <>
+  def _creator = foreignKey("CREATOR_FK", creator, models.users)(_.userId)
+  def _assigned = foreignKey("ASSIGNED_FK", assigned, models.users)(_.userId)
+
+  def * = (id, serialId, title, docType, mailbox, creator, created, body, preparedBy, preparedOn, checkedBy, checkedOn, approvedBy, approvedOn, assigned) <>
     (Document.tupled, Document.unapply)
 }
 
