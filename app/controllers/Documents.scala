@@ -68,6 +68,8 @@ object Documents extends Controller {
       .withLink("profile", "collection")
       .withLink("up", routes.Application.index().absoluteURL())
       .withLink("create", routes.Documents.create().absoluteURL())
+      .withLink("hoa:templates", routes.Templates.list().absoluteURL(),
+        Some("List of document templates"))
       .withField("_template", createForm)
       .withField("count", ds.length)
       .withField("total", total)

@@ -8,7 +8,6 @@ import play.api.libs.json._
 import scala.slick.driver.H2Driver.simple._
 import scala.slick.jdbc.meta.MTable
 import scala.util.{ Try, Success }
-import securesocial.core.{ IdentityId, PasswordInfo }
 
 object models {
   val modelTemplates = TableQuery[ModelInfosModel]

@@ -8,9 +8,8 @@ import play.api._
 import play.api.mvc.{ Action, Controller }
 import scala.slick.driver.H2Driver.simple._
 import scala.util.{ Try, Success, Failure }
-import securesocial.core.{ Identity, Authorization }
 
-object Templates extends Controller with securesocial.core.SecureSocial {
+object Templates extends Controller {
   val templates = Seq(BillingTemplate.asJsObject)
 
   def show(docType: String) = Action { implicit request =>

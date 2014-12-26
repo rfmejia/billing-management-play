@@ -5,7 +5,6 @@ import com.nooovle.slick.models.{ roles, users, userRoles }
 import org.joda.time.DateTime
 import scala.slick.driver.H2Driver.simple._
 import scala.util.Try
-import securesocial.core._
 
 case class User(userId: String,
   providerId: String,
@@ -14,34 +13,34 @@ case class User(userId: String,
   email: Option[String],
   hasher: String,
   password: String,
-  salt: Option[String]) extends Identity {
-  val identityId = IdentityId(userId, providerId)
-  val fullName = s"${firstName} ${lastName}"
-  val authMethod = AuthenticationMethod.UserPassword
-  val avatarUrl = None
-  val oAuth1Info = None
-  val oAuth2Info = None
-  val passwordInfo = Option(PasswordInfo(hasher, password, salt))
+  salt: Option[String]) {
+  // val identityId = IdentityId(userId, providerId)
+  // val fullName = s"${firstName} ${lastName}"
+  // val authMethod = AuthenticationMethod.UserPassword
+  // val avatarUrl = None
+  // val oAuth1Info = None
+  // val oAuth2Info = None
+  // val passwordInfo = Option(PasswordInfo(hasher, password, salt))
 }
 
 object User extends ((String, String, String, String, Option[String], String, String, Option[String]) => User)
   with ModelTemplate {
 
-  def findByIdentityId(id: IdentityId): Option[User] =
-    ConnectionFactory.connect withSession { implicit session =>
-      (for (
-        u <- users if u.userId === id.userId &&
-          u.providerId === id.providerId
-      ) yield u).firstOption
-    }
+  // def findByIdentityId(id: IdentityId): Option[User] =
+  //   ConnectionFactory.connect withSession { implicit session =>
+  //     (for (
+  //       u <- users if u.userId === id.userId &&
+  //         u.providerId === id.providerId
+  //     ) yield u).firstOption
+  //   }
 
-  def fromIdentity(i: Identity): User = {
-    val hasher = i.passwordInfo.map(_.hasher) getOrElse ""
-    val password = i.passwordInfo.map(_.password) getOrElse ""
-    val salt = i.passwordInfo.map(_.salt) getOrElse None
-    User(i.identityId.userId, i.identityId.providerId, i.firstName, i.lastName,
-      i.email, hasher, password, salt)
-  }
+  // def fromIdentity(i: Identity): User = {
+  //   val hasher = i.passwordInfo.map(_.hasher) getOrElse ""
+  //   val password = i.passwordInfo.map(_.password) getOrElse ""
+  //   val salt = i.passwordInfo.map(_.salt) getOrElse None
+  //   User(i.identityId.userId, i.identityId.providerId, i.firstName, i.lastName,
+  //     i.email, hasher, password, salt)
+  // }
 
   // def findByUsernameWithRoles(username: String): Option[(User, Set[String])] =
   //   ConnectionFactory.connect withSession { implicit session =>
