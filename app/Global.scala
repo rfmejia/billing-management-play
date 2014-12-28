@@ -1,16 +1,17 @@
 
+import com.mohiva.play.silhouette.core.{ Logger, SecuredSettings }
 import com.nooovle.slick.ConnectionFactory
 import filters._
 import org.locker47.json.play.HalJsObject
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json._
-import play.api.mvc.Results.InternalServerError
+import play.api.mvc.Results.{ InternalServerError, Unauthorized }
 import play.api.mvc.{ RequestHeader, WithFilters }
 import play.api.{ Application, GlobalSettings }
 import play.filters.gzip.GzipFilter
 import scala.concurrent.Future
 
-object Global extends WithFilters(CorsFilter, new GzipFilter()) with GlobalSettings {
+object Global extends WithFilters(CorsFilter, new GzipFilter()) with GlobalSettings with SecuredSettings with Logger {
 
   override def onStart(app: Application) = {
     ConnectionFactory.connect withSession { implicit session =>
@@ -33,5 +34,9 @@ object Global extends WithFilters(CorsFilter, new GzipFilter()) with GlobalSetti
         obj.asJsValue
       }
     }
+  }
+
+  override def onNotAuthenticated(request: RequestHeader, lang: Lang) = {
+    Some(Future.successful(Unauthorized("Secure domain")))
   }
 }
