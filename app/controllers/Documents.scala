@@ -65,11 +65,16 @@ object Documents extends Controller {
     }
   }
 
-  def list(offset: Int = 0, limit: Int = 10) = Action { implicit request =>
+  def list(offset: Int = 0, limit: Int = 10, mailbox: String = "") = Action { implicit request =>
     val (ds, total) = ConnectionFactory.connect withSession { implicit session =>
-      val ds = documents.drop(offset).take(limit).sortBy(_.created.desc).list
-      val total = documents.length.run
-      (ds, total)
+      val ds = {
+        if (mailbox.isEmpty) {
+          documents.drop(offset).take(limit).sortBy(_.created.desc)
+        } else {
+          documents.filter(d => d.mailbox === mailbox).drop(offset).take(limit).sortBy(_.created.desc)
+        }
+      }
+      (ds.list, ds.length.run)
     }
 
     val objs = ds map { d =>
@@ -96,9 +101,17 @@ object Documents extends Controller {
       .withField("_template", createForm)
       .withField("count", ds.length)
       .withField("total", total)
-    val x = blank.withEmbedded(HalJsObject.empty.withField("item", objs))
 
-    Ok(x.asJsValue)
+    val withList = blank.withEmbedded(HalJsObject.empty.withField("item", objs))
+
+    val withSubsections = withList
+      .withLink("subsection", routes.Documents.list(offset, limit, "Drafts").absoluteURL())
+      .withLink("subsection", routes.Documents.list(offset, limit, "For checking").absoluteURL())
+      .withLink("subsection", routes.Documents.list(offset, limit, "For approval").absoluteURL())
+      .withLink("subsection", routes.Documents.list(offset, limit, "Unpaid").absoluteURL())
+      .withLink("subsection", routes.Documents.list(offset, limit, "Paid").absoluteURL())
+
+    Ok(withSubsections.asJsValue)
   }
 
   def create() = Action(parse.json) { implicit request =>
