@@ -14,19 +14,12 @@ object TestEnvironment extends Controller {
 
   def setup() = Action { implicit request =>
     ConnectionFactory.connect withSession { implicit session =>
-      insertModelInfos
       insertTenantData
 
       import play.api.Play.current
       val ds = play.api.db.DB.getDataSource()
       Ok("Created test session in " + ds.toString)
     }
-  }
-
-  def insertModelInfos(implicit session: Session) = {
-    Tenant.modelInfos foreach (modelTemplates.insertOrUpdate(_))
-    User.modelInfos foreach (modelTemplates.insertOrUpdate(_))
-    Document.modelInfos foreach (modelTemplates.insertOrUpdate(_))
   }
 
   def insertTenantData(implicit session: Session) = {

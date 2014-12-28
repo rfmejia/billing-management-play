@@ -2,7 +2,6 @@ package com.nooovle.slick
 
 import com.github.tototoshi.slick.H2JodaSupport._
 import com.nooovle._
-import java.util.UUID
 import org.joda.time.DateTime
 import play.api.libs.json._
 import scala.slick.driver.H2Driver.simple._
@@ -38,7 +37,7 @@ object models {
     })
   }
 
-  implicit val uuidToString = MappedColumnType.base[UUID, String](_.toString, UUID.fromString(_))
+  // implicit val uuidToString = MappedColumnType.base[UUID, String](_.toString, UUID.fromString(_))
   implicit val jsToString = MappedColumnType.base[JsObject, String](_.toString, {
     Json.parse(_) match {
       case o: JsObject => o
@@ -118,14 +117,16 @@ class UserRolesModel(tag: Tag) extends Table[(String, String)](tag, "USER_ROLES"
 }
 
 class DocumentsModel(tag: Tag) extends Table[Document](tag, "DOCUMENTS") {
-  import models.{ jsToString, uuidToString }
-  def id = column[UUID]("ID", O.PrimaryKey)
+  import models._
+  def id = column[Int]("ID", O.PrimaryKey, O.AutoInc)
   def serialId = column[Option[String]]("SERIAL_ID")
   def title = column[String]("TITLE", O.NotNull)
   def docType = column[String]("DOC_TYPE", O.NotNull)
   def mailbox = column[String]("MAILBOX", O.NotNull)
   def creator = column[String]("CREATOR", O.NotNull)
   def created = column[DateTime]("CREATED", O.NotNull)
+  def forTenant = column[Int]("FOR_TENANT", O.NotNull)
+  def forMonth = column[DateTime]("FOR_MONTH", O.NotNull)
   def body = column[JsObject]("BODY", O.NotNull)
 
   def preparedBy = column[Option[String]]("PREPARED_BY")
@@ -136,10 +137,10 @@ class DocumentsModel(tag: Tag) extends Table[Document](tag, "DOCUMENTS") {
   def approvedOn = column[Option[DateTime]]("APPROVED_ON")
   def assigned = column[Option[String]]("ASSIGNED")
 
-  def _creator = foreignKey("CREATOR_FK", creator, models.users)(_.userId)
-  def _assigned = foreignKey("ASSIGNED_FK", assigned, models.users)(_.userId)
+  //def _creator = foreignKey("CREATOR_FK", creator, models.users)(_.userId)
+  //def _assigned = foreignKey("ASSIGNED_FK", assigned, models.users)(_.userId)
 
-  def * = (id, serialId, title, docType, mailbox, creator, created, body, preparedBy, preparedOn, checkedBy, checkedOn, approvedBy, approvedOn, assigned) <>
+  def * = (id, serialId, title, docType, mailbox, creator, created, forTenant, forMonth, body, preparedBy, preparedOn, checkedBy, checkedOn, approvedBy, approvedOn, assigned) <>
     (Document.tupled, Document.unapply)
 }
 

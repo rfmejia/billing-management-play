@@ -6,6 +6,9 @@ object Workflow {
 
   val start = "Drafts"
 
+  def exists(box: String): Option[String] =
+    (pending ++ delivered).find(_ == box)
+
   def next(box: String): Option[String] = box match {
     case "Drafts" => Some("For checking")
     case "For checking" => Some("For approval")

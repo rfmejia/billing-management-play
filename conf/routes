@@ -20,11 +20,14 @@ PUT     /api/users/:userId        controllers.Users.edit(userId: String)
 DELETE  /api/users/:userId        controllers.Users.delete(userId: String)
 
 # Documents
+POST    /api/documents/:id/:box     controllers.Documents.moveMailbox(id: Int, box: String)
+
 GET     /api/documents              controllers.Documents.list(offset: Int ?= 0, limit: Int ?= 10)
-GET     /api/documents/:id          controllers.Documents.show(id: String)
+GET     /api/documents/:id          controllers.Documents.show(id: Int)
 POST    /api/documents              controllers.Documents.create
-PUT     /api/documents/:id          controllers.Documents.edit(id: String)
-DELETE  /api/documents/:id          controllers.Documents.delete(id: String)
+PUT     /api/documents/:id          controllers.Documents.edit(id: Int)
+DELETE  /api/documents/:id          controllers.Documents.delete(id: Int)
+
 
 # Documents
 GET     /api/templates              controllers.Templates.list(offset: Int ?= 0, limit: Int ?= 10)

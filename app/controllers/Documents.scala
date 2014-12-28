@@ -3,7 +3,6 @@ package controllers
 import com.nooovle._
 import com.nooovle.slick.models.{ modelTemplates, documents }
 import com.nooovle.slick.ConnectionFactory
-import java.util.UUID
 import org.joda.time.DateTime
 import org.locker47.json.play._
 import play.api.libs.json._
@@ -14,8 +13,8 @@ import scala.slick.driver.H2Driver.simple._
 import scala.util.{ Try, Success, Failure }
 
 object Documents extends Controller {
-  def show(id: String) = Action { implicit request =>
-    Document.findById(UUID.fromString(id)) match {
+  def show(id: Int) = Action { implicit request =>
+    Document.findById(id) match {
       case Some(d) =>
         val self = routes.Documents.show(id)
         val obj = HalJsObject.create(self.absoluteURL())
@@ -35,8 +34,28 @@ object Documents extends Controller {
           .withField("next", Workflow.next(d.mailbox))
           .withField("prev", Workflow.prev(d.mailbox))
           .withField("body", d.body)
-        Ok(obj.asJsValue)
+
+        val obj1 = Workflow.next(d.mailbox) map { box =>
+          obj.withLink("next", routes.Documents.moveMailbox(id, box).absoluteURL())
+        } getOrElse obj
+        val obj2 = Workflow.prev(d.mailbox) map { box =>
+          obj1.withLink("prev", routes.Documents.moveMailbox(id, box).absoluteURL())
+        } getOrElse obj1
+
+        Ok(obj2.asJsValue)
       case None => NotFound
+    }
+  }
+
+  def moveMailbox(id: Int, mailbox: String) = Action {
+    (Document.findById(id), Workflow.exists(mailbox)) match {
+      case (Some(d), Some(box)) =>
+        Document.update(d.copy(mailbox = box)) match {
+          case Success(d) => NoContent
+          case Failure(err) => InternalServerError(err.getMessage)
+        }
+      case (None, _) => NotFound("Document cannot be found")
+      case (_, None) => NotFound("Mailbox cannot be found")
     }
   }
 
@@ -48,7 +67,7 @@ object Documents extends Controller {
     }
 
     val objs = ds map { d =>
-      val link = routes.Documents.show(d.id.toString)
+      val link = routes.Documents.show(d.id)
       val obj = HalJsObject.create(link.absoluteURL())
         .withLink("profile", "hoa:document")
         .withField("id", d.id)
@@ -82,11 +101,13 @@ object Documents extends Controller {
     val json = request.body
     ((json \ "title").asOpt[String],
       (json \ "docType").asOpt[String],
+      (json \ "forTenant").asOpt[Int],
+      (json \ "forMonth").asOpt[DateTime],
       (json \ "body").asOpt[JsObject]) match {
-        case (Some(title), Some(docType), Some(body)) =>
-          Document.insert(title, docType, body) match {
+        case (Some(title), Some(docType), Some(forTenant), Some(forMonth), Some(body)) =>
+          Document.insert(title, docType, forTenant, forMonth, body) match {
             case Success(id) =>
-              val link = routes.Documents.show(id.toString).absoluteURL()
+              val link = routes.Documents.show(id).absoluteURL()
               Created.withHeaders("Location" -> link)
             case Failure(err) =>
               err.printStackTrace
@@ -96,8 +117,8 @@ object Documents extends Controller {
       }
   }
 
-  def edit(id: String) = Action(parse.json) { implicit request =>
-    Document.findById(UUID.fromString(id)) match {
+  def edit(id: Int) = Action(parse.json) { implicit request =>
+    Document.findById(id) match {
       case None => NotFound
       case Some(d) =>
         val json = request.body
@@ -118,10 +139,9 @@ object Documents extends Controller {
     }
   }
 
-  def delete(id: String) = Action { implicit request =>
-    val _id = UUID.fromString(id)
+  def delete(id: Int) = Action { implicit request =>
     val deleted = ConnectionFactory.connect withSession { implicit session =>
-      val query = for (d <- documents if d.id === _id) yield d
+      val query = for (d <- documents if d.id === id) yield d
       query.delete
     }
     if (deleted == 0) NotFound
