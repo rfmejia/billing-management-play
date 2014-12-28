@@ -107,14 +107,14 @@ class RolesModel(tag: Tag) extends Table[String](tag, "ROLES") {
 }
 
 class UserRolesModel(tag: Tag) extends Table[(String, String)](tag, "USER_ROLES") {
-  def username = column[String]("USERNAME", O.NotNull)
+  def userId = column[String]("USERNAME", O.NotNull)
   def roleName = column[String]("ROLE_NAME", O.NotNull)
 
-  def pk = primaryKey("PK", (username, roleName))
-  // def user = foreignKey("USER_FK", username, models.users)(_.username)
+  def pk = primaryKey("PK", (userId, roleName))
+  // def user = foreignKey("USER_FK", userId, models.users)(_.userId)
   def role = foreignKey("ROLE_FK", roleName, models.roles)(_.name)
 
-  def * = (username, roleName)
+  def * = (userId, roleName)
 }
 
 class DocumentsModel(tag: Tag) extends Table[Document](tag, "DOCUMENTS") {

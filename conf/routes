@@ -15,9 +15,9 @@ DELETE  /api/tenants/:id            controllers.Tenants.delete(id: Int)
 
 # Users
 GET     /api/users                  controllers.Users.list(offset: Int ?= 0, limit: Int ?= 10)
-GET     /api/users/:username        controllers.Users.show(username: String)
-PUT     /api/users/:username        controllers.Users.edit(username: String)
-DELETE  /api/users/:username        controllers.Users.delete(username: String)
+GET     /api/users/:userId        controllers.Users.show(userId: String)
+PUT     /api/users/:userId        controllers.Users.edit(userId: String)
+DELETE  /api/users/:userId        controllers.Users.delete(userId: String)
 
 # Documents
 GET     /api/documents              controllers.Documents.list(offset: Int ?= 0, limit: Int ?= 10)
