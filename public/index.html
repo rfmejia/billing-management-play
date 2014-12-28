@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap 101 Template</title>
+
+    <!-- Bootstrap -->
+    <!-- Optional theme -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.0/paper/bootstrap.min.css" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="assets/css/HOAmods.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body ng-app="hoaApp" ng-controller="rootController">
+    <div ui-view="rootView">
+
+    </div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.1/angular.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0/angular-cookies.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0/angular-route.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0/angular-resource.js"></script>
+    <script src="assets/js/ui-bootstrap-tpls-0.12.0.min.js"></script>
+    <script src="assets/bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+    <script src="HOAApp.js"></script>
+    <!-- components.tenants -->
+    <script src="app/components/tenants/configs/hoaapp.module.tenants.js"></script>
+    <script src="app/components/tenants/services/hoaapp.service.tenants.js"></script>
+    <script src="app/components/tenants/controllers/hoaapp.controller.tenantslist.js"></script>
+    <script src="app/components/tenants/controllers/hoaapp.controller.tenantview.js"></script>
+    <script src="app/components/tenants/controllers/hoaapp.controller.tenantedit.js"></script>
+    <script src="app/components/tenants/controllers/hoaapp.controller.tenantcreate.js"></script>
+    <!-- end.compnents.tenants -->
+    <!-- components.users/invites -->
+    <script src="app/components/users/services/hoaapp.service.users.js"></script>
+    <script src="app/components/users/services/hoaapp.service.invites.js"></script>
+    <script src="app/components/users/configs/hoaapp.module.users.js"></script>
+    <script src="app/components/users/controllers/hoaapp.controller.completeusers.js"></script>
+    <script src="app/components/users/controllers/hoaapp.controller.userview.js"></script>
+    <script src="app/components/users/controllers/hoaapp.controller.inviteuser.js"></script>
+    <!-- end.components.users -->
+    <script src="app/components/mailbox/configs/hoaapp.module.mailbox.js"></script>
+    <script src="app/shared/content/dashboard/services/hoaapp.service.dashboard.js"></script>
+    <script src="HOADirectives.js"></script>
+    <script src="HOAController.js"></script>
+    <script src="HOAFilters.js"></script>
+  </body>
+</html>

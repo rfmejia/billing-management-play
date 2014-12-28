@@ -19,5 +19,9 @@ object ModelInfo extends ((String, String, String, Boolean, Boolean, Boolean, Op
       o3
     }
   }
+}
 
+trait ModelTemplate {
+  val modelName: String
+  val modelInfos: Seq[ModelInfo]
 }

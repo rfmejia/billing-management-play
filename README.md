@@ -5,7 +5,7 @@ Nooovle's web application solution for Hobbies of Asia, Inc.
 
 ## System Requirements
 
-- Java Runtime 6 or higher
+- Java Runtime 8 or higher
 - Scala 2.10.x or higher
 
 ## Developer's Installation

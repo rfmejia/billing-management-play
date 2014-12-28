@@ -1,0 +1,16 @@
+<div class="well-sm">
+    <btn class="btn btn-sm" ng-click="onCreateTenantClicked()">Create new tenant</btn>
+    <div class="pull-right">
+        <input type="text" class="form-control" placeholder="Filter tenants" ng-model="query">
+
+    </div >
+</div>
+<br/>
+<div>
+    <div class="list-group">
+        <a class="list-group-item" ng-repeat="tenant in tenants | filter: query" tenant="tenant" id="{{tenant.id}}" ng-click="onTenantClick(tenant)">
+            {{tenant.tradeName}}
+        </a>
+    </div>
+    <br/>
+</div> <!-- end -->

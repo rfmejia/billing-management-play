@@ -1,0 +1,33 @@
+<div class="well-sm">
+    <btn class="btn btn-sm" ng-click="onInviteClicked()">Invite user</btn>
+    <div class="pull-right">
+        <input type="text" class="form-control" placeholder="Filter users" ng-model="query">
+
+    </div >
+</div>
+<br/>
+<div>
+    <div>
+        <legend>Registered users</legend>
+        <div ng-view="root.userList.content">
+            <div class="list-group">
+                <a class="list-group-item" ng-repeat="user in users | filter: query" user="user" id="{{user.username}}" ng-click="onUserClick(user)">
+                    {{user.firstName}} {{user.lastName}}
+                </a>
+            </div>
+            <br/>
+        </div>
+    </div>
+</div>
+<div>
+    <legend>Pending invites
+        <btn type="button" class="btn btn-default btn-sm pull-right" ng-click="togglePendingInfo()">
+            <span ng-class="{true : 'glyphicon glyphicon-chevron-up', false : 'glyphicon glyphicon-chevron-down'}[isPendingInvitesOpen]"></span> List
+        </btn>
+    </legend>
+    <div class="list-group" collapse="!isPendingInvitesOpen">
+        <a ng-repeat="user in pendingUsers  " class="list-group-item">
+          {{user.username}} <span class="pull-right glyphicon glyphicon-remove icon-button" ng-click="cancelInvitation(user)"></span>
+        </a>
+    </div>
+</div>

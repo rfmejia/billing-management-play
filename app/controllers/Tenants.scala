@@ -1,8 +1,7 @@
 package controllers
 
 import com.nooovle._
-import com.nooovle.security.HTTPBasicAuthAction
-import com.nooovle.slick.models.{ modelInfo, tenants }
+import com.nooovle.slick.models.{ modelTemplates, tenants }
 import com.nooovle.slick.ConnectionFactory
 import org.locker47.json.play._
 import play.api.libs.json._
@@ -110,7 +109,6 @@ object Tenants extends Controller {
           (json \ "contactNumber").asOpt[String],
           (json \ "email").asOpt[String]) match {
             case (Some(tradeName), Some(address), Some(contactPerson), Some(contactNumber), Some(email)) =>
-              // val newTenant = Tenant(tradeName, address, contactPerson, contactNumber, email)
               val result = ConnectionFactory.connect withSession { implicit session =>
                 Try {
                   val tenant = for (t <- tenants if t.id === id)
@@ -140,7 +138,7 @@ object Tenants extends Controller {
     val fields = ModelInfo.toJsonArray {
       ConnectionFactory.connect withSession { implicit session =>
         val query = for (
-          i <- modelInfo if i.modelName === "TENANTS"
+          i <- modelTemplates if i.modelName === "TENANTS"
             && i.createForm
         ) yield i
         query.list
@@ -153,7 +151,7 @@ object Tenants extends Controller {
     val fields = ModelInfo.toJsonArray {
       ConnectionFactory.connect withSession { implicit session =>
         val query = for (
-          i <- modelInfo if i.modelName === "TENANTS"
+          i <- modelTemplates if i.modelName === "TENANTS"
             && i.editForm
         ) yield i
         query.list

@@ -1,8 +1,7 @@
 package controllers
 
 import com.nooovle._
-import com.nooovle.security.HTTPBasicAuthAction
-import com.nooovle.slick.models.{ modelInfo, users }
+import com.nooovle.slick.models.{ modelTemplates, users }
 import com.nooovle.slick.ConnectionFactory
 import org.joda.time.DateTime
 import org.locker47.json.play._
@@ -14,20 +13,21 @@ import scala.slick.driver.H2Driver.simple._
 import scala.util.{ Try, Success, Failure }
 
 object Users extends Controller {
-  def show(username: String) = Action { implicit request =>
-    User.findByUsernameWithRoles(username) match {
+  def show(userId: String) = Action { implicit request =>
+    User.findByUserIdWithRoles(userId) match {
       case Some((u, rs)) =>
-        val self = routes.Users.show(username)
+        val self = routes.Users.show(userId)
         val obj = HalJsObject.create(self.absoluteURL())
           .withCurie("hoa", Application.defaultCurie)
           .withLink("profile", "hoa:user")
           .withLink("collection", routes.Users.list().absoluteURL())
-          .withLink("edit", routes.Users.edit(username).absoluteURL())
+          .withLink("edit", routes.Users.edit(userId).absoluteURL())
           .withField("_template", editForm)
-          .withField("username", u.username)
+          .withField("userId", u.userId)
           .withField("email", u.email)
           .withField("firstName", u.firstName)
           .withField("lastName", u.lastName)
+          .withField("fullName", u.fullName)
           .withField("roles", rs)
         Ok(obj.asJsValue)
       case None => NotFound
@@ -42,10 +42,10 @@ object Users extends Controller {
     }
 
     val objs = us map { u =>
-      val link = routes.Users.show(u.username)
+      val link = routes.Users.show(u.userId)
       val obj = HalJsObject.create(link.absoluteURL())
         .withLink("profile", "hoa:user")
-        .withField("username", u.username)
+        .withField("userId", u.userId)
         .withField("firstName", u.firstName)
         .withField("lastName", u.lastName)
       obj.asJsValue
@@ -53,7 +53,7 @@ object Users extends Controller {
 
     val self = routes.Users.list(offset, limit)
     // val createUrl = routes.Users.create("--------").absoluteURL()
-    // .replaceAll("--------", "{username}")
+    // .replaceAll("--------", "{userId}")
     val blank = HalJsObject.create(self.absoluteURL())
       .withCurie("hoa", Application.defaultCurie)
       .withLink("profile", "collection")
@@ -67,40 +67,9 @@ object Users extends Controller {
     Ok(x.asJsValue)
   }
 
-  def createViaInvite(username: String) = Action(parse.json) { implicit request =>
-    val json = request.body
-    ((json \ "firstName").asOpt[String], (json \ "lastName").asOpt[String],
-      (json \ "password").asOpt[String], (json \ "validationCode").asOpt[String]) match {
-        case (Some(firstName), Some(lastName), Some(password), Some(validationCode)) =>
-          Invite.findByUsernameWithRoles(username) match {
-            case Some((invite, rs)) =>
-              val now = new DateTime()
-              if (!now.isBefore(invite.validUntil)) BadRequest("Invite has expired")
-              else if (invite.validationCode != validationCode) BadRequest("Invalid validation code")
-              else {
-                val newUser = User(invite.username, invite.email,
-                  password.getBytes, firstName, lastName)
-                val result = User.insertWithRoles(newUser, rs)
-
-                result match {
-                  case Success(id) =>
-                    val link = routes.Users.show(id).absoluteURL()
-                    Created.withHeaders("Location" -> link)
-                  case Failure(err) => err match {
-                    case e: IllegalStateException => BadRequest(s"The username '${username}' already exists.")
-                    case e: Throwable => throw e
-                  }
-                }
-              }
-            case None => NotFound
-          }
-        case _ => BadRequest("Some required values are missing. Please check your request.")
-      }
-  }
-
-  def edit(username: String) = Action(parse.json) { implicit request =>
+  def edit(userId: String) = Action(parse.json) { implicit request =>
     // Check existence under ID
-    User.findByUsername(username) match {
+    User.findByUserId(userId) match {
       case None => NotFound
       case Some(user) =>
         val json = request.body
@@ -110,11 +79,10 @@ object Users extends Controller {
             case (Some(email), Some(firstName), Some(lastName), Some(password),
               Some(rs)) =>
               // Create a new user to ensure proper salt generation
-              val newUser = User(user.username, email, password.getBytes,
-                firstName, lastName)
+              val newUser = User(user.userId, firstName, lastName, Some(email), password)
 
               User.updateWithRoles(newUser, rs.toSet) match {
-                case Success(username) => NoContent
+                case Success(userId) => NoContent
                 case Failure(err) => err match {
                   case e: IndexOutOfBoundsException => NotFound
                   case e: Throwable => throw e
@@ -125,9 +93,9 @@ object Users extends Controller {
     }
   }
 
-  def delete(username: String) = Action { implicit request =>
+  def delete(userId: String) = Action { implicit request =>
     val deleted = ConnectionFactory.connect withSession { implicit session =>
-      val query = for (u <- users if u.username === username) yield u
+      val query = for (u <- users if u.userId === userId) yield u
       query.delete
     }
     if (deleted == 0) NotFound
@@ -138,7 +106,7 @@ object Users extends Controller {
     val fields = ModelInfo.toJsonArray {
       ConnectionFactory.connect withSession { implicit session =>
         val query = for (
-          i <- modelInfo if i.modelName === "USERS"
+          i <- modelTemplates if i.modelName === "USERS"
             && i.createForm
         ) yield i
         query.list
@@ -151,7 +119,7 @@ object Users extends Controller {
     val fields = ModelInfo.toJsonArray {
       ConnectionFactory.connect withSession { implicit session =>
         val query = for (
-          i <- modelInfo if i.modelName === "USERS"
+          i <- modelTemplates if i.modelName === "USERS"
             && i.editForm
         ) yield i
         query.list

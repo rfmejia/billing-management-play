@@ -1,7 +1,6 @@
 package controllers
 
 import com.nooovle._
-import com.nooovle.security.HTTPBasicAuthAction
 import com.nooovle.slick.models._
 import com.nooovle.slick.ConnectionFactory
 import org.locker47.json.play._
@@ -21,10 +20,12 @@ object Application extends Controller {
       .withCurie("hoa", Application.defaultCurie)
       .withLink("hoa:tenants", routes.Tenants.list().absoluteURL(),
         Some("List of registered tenants"))
-      .withLink("hoa:invites", routes.Invites.list().absoluteURL(),
-        Some("List of invites"))
+      .withLink("hoa:documents", routes.Documents.list().absoluteURL(),
+        Some("List of documents"))
       .withLink("hoa:users", routes.Users.list().absoluteURL(),
         Some("List of users"))
+      .withLink("hoa:templates", routes.Templates.list().absoluteURL(),
+        Some("List of document templates"))
       .withLink("hoa:webapp", routes.Assets.at("index.html").absoluteURL(),
         Some("Web application"))
     Ok(obj.asJsValue)

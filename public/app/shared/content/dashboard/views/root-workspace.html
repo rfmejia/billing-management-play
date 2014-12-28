@@ -1,0 +1,38 @@
+<div id="header" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">Hobbies of Asia</a>
+    </div>
+
+    <div class="navbar-collapse collapse" role="navigation">
+      <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="glyphicon glyphicon-user"></span> Test User</a>
+          <ul class="dropdown-menu" role="menu">
+            <li><a href="#">Settings</a></li>
+            <li><a href="#">Help</a></li>
+            <li class="divider"></li>
+            <li><a href="#">Logout</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div id="mainContent" class="container container-main">
+  <div class="row">
+    <div id="sidebarNav" class="col-xs-4">
+      <a href="#" class="btn btn-primary btn-lg btn-block">
+        <span class="glyphicon glyphicon-edit"></span>Create Invoice</a>
+        <br/>
+      <div id="sidebarContent" ui-view="sidebar">
+
+      </div>
+    </div>
+
+    <div id="contentContainer" class="panel panel-default col-xs-8" ui-view="contentArea">
+      test
+    </div> <!-- end container -->
+  </div> <!-- end row -->
+</div> <!-- end mainContent -->

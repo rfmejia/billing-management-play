@@ -14,23 +14,12 @@ object TestEnvironment extends Controller {
 
   def setup() = Action { implicit request =>
     ConnectionFactory.connect withSession { implicit session =>
-      buildTables
-
-      insertModelInfos
-      insertUserData
       insertTenantData
-      insertInviteData
 
       import play.api.Play.current
       val ds = play.api.db.DB.getDataSource()
       Ok("Created test session in " + ds.toString)
     }
-  }
-
-  def insertModelInfos(implicit session: Session) = {
-    Tenant.modelInfo foreach (modelInfo.insertOrUpdate(_))
-    User.modelInfo foreach (modelInfo.insertOrUpdate(_))
-    Invite.modelInfo foreach (modelInfo.insertOrUpdate(_))
   }
 
   def insertTenantData(implicit session: Session) = {
@@ -45,25 +34,6 @@ object TestEnvironment extends Controller {
       Tenant("Accolade Trading Corp.", "14 Zaragoza St. San Lorenzo Village, Makati",
         "Issa Santos", "987-4321", "isantos@email.com"))
     data foreach (tenants.insertOrUpdate(_))
-  }
-
-  def insertUserData(implicit session: Session) = {
-    (for (u <- users) yield u).delete
-    val data = Seq(
-      (User("admin", "techsupport@nooovle.com", "a1b2c3d4f5".getBytes,
-        "System", "Administrator"), Set("administrator")),
-      (User("testuser1", "testuser1@email.com", "testpass1".getBytes,
-        "Julius", "Amador"), Set("encoder", "checker")))
-    data foreach (d => User.insertWithRoles(d._1, d._2))
-  }
-
-  def insertInviteData(implicit session: Session) = {
-    (for (i <- invites) yield i).delete
-    val date = DateTime.parse("2014-11-30")
-    val data = Seq(
-      (Invite("testuser2", "testuser2@email.com", date), Set("encoder")),
-      (Invite("testuser3", "testuser3@email.com", date), Set("approver")))
-    data foreach (d => Invite.insertWithRoles(d._1, d._2))
   }
 
   def fail = Action {

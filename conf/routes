@@ -3,36 +3,43 @@
 # ~~~~
 
 # Entry point and documentation
-GET     /api                            controllers.Application.index
-GET     /api/docs                       controllers.Application.documentation
+GET     /api                        controllers.Application.index
+GET     /api/docs                   controllers.Application.documentation
 
 # Tenants
-GET     /api/tenants                    controllers.Tenants.list(offset: Int ?= 0, limit: Int ?= 10)
-GET     /api/tenants/:id                controllers.Tenants.show(id: Int)
-POST    /api/tenants                    controllers.Tenants.create
-PUT     /api/tenants/:id                controllers.Tenants.edit(id: Int)
-DELETE  /api/tenants/:id                controllers.Tenants.delete(id: Int)
-
-# Invitations
-GET     /api/invites                    controllers.Invites.list(offset: Int ?= 0, limit: Int ?= 10)
-GET     /api/invites/:username          controllers.Invites.show(username: String)
-POST    /api/invites                    controllers.Invites.create
-PUT     /api/invites/:username          controllers.Invites.edit(username: String)
-DELETE  /api/invites/:username          controllers.Invites.delete(username: String)
+GET     /api/tenants                controllers.Tenants.list(offset: Int ?= 0, limit: Int ?= 10)
+GET     /api/tenants/:id            controllers.Tenants.show(id: Int)
+POST    /api/tenants                controllers.Tenants.create
+PUT     /api/tenants/:id            controllers.Tenants.edit(id: Int)
+DELETE  /api/tenants/:id            controllers.Tenants.delete(id: Int)
 
 # Users
-GET     /api/users                      controllers.Users.list(offset: Int ?= 0, limit: Int ?= 10)
-GET     /api/users/:username            controllers.Users.show(username: String)
-#POST    /api/users/:username            controllers.Users.create(username: String)
-POST    /api/users/:username            controllers.Users.createViaInvite(username: String)
-PUT     /api/users/:username            controllers.Users.edit(username: String)
-DELETE  /api/users/:username            controllers.Users.delete(username: String)
+GET     /api/users                  controllers.Users.list(offset: Int ?= 0, limit: Int ?= 10)
+GET     /api/users/:userId        controllers.Users.show(userId: String)
+PUT     /api/users/:userId        controllers.Users.edit(userId: String)
+DELETE  /api/users/:userId        controllers.Users.delete(userId: String)
 
-GET     /api/setupTestEnvironment       controllers.TestEnvironment.setup
-GET     /api/testFail                   controllers.TestEnvironment.fail
+# Documents
+POST    /api/documents/:id/:box     controllers.Documents.moveMailbox(id: Int, box: String)
 
-# ----
+GET     /api/documents              controllers.Documents.list(offset: Int ?= 0, limit: Int ?= 10)
+GET     /api/documents/:id          controllers.Documents.show(id: Int)
+POST    /api/documents              controllers.Documents.create
+PUT     /api/documents/:id          controllers.Documents.edit(id: Int)
+DELETE  /api/documents/:id          controllers.Documents.delete(id: Int)
+
+
+# Documents
+GET     /api/templates              controllers.Templates.list(offset: Int ?= 0, limit: Int ?= 10)
+GET     /api/templates/:docType     controllers.Templates.show(docType: String)
+
+GET     /api/setupTestEnvironment   controllers.TestEnvironment.setup
+GET     /api/testFail               controllers.TestEnvironment.fail
+
+
+# ---- Web application routes ----
+# Note: must be last because of the catch-all /*file route
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /                               controllers.Assets.at(path="/public", file="views/dashboard.html")
+GET     /                               controllers.Assets.at(path="/public", file="index.html")
 GET     /*file                          controllers.Assets.at(path="/public", file)
