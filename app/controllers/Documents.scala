@@ -30,6 +30,12 @@ object Documents extends Controller {
           .withField("mailbox", d.mailbox)
           .withField("created", d.created)
           .withField("creator", d.creator)
+          .withField("preparedBy", d.preparedBy)
+          .withField("preparedOn", d.preparedOn)
+          .withField("checkedBy", d.checkedBy)
+          .withField("checkedOn", d.checkedOn)
+          .withField("approvedBy", d.approvedBy)
+          .withField("approvedOn", d.approvedOn)
           .withField("assigned", d.assigned)
           .withField("next", Workflow.next(d.mailbox))
           .withField("prev", Workflow.prev(d.mailbox))
@@ -75,8 +81,6 @@ object Documents extends Controller {
         .withField("title", d.title)
         .withField("docType", d.docType)
         .withField("mailbox", d.mailbox)
-        .withField("created", d.created)
-        .withField("creator", d.creator)
         .withField("assigned", d.assigned)
       obj.asJsValue
     }
