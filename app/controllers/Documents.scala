@@ -37,8 +37,8 @@ object Documents extends Controller {
           .withField("approvedBy", d.approvedBy)
           .withField("approvedOn", d.approvedOn)
           .withField("assigned", d.assigned)
-          .withField("next", Workflow.next(d.mailbox))
-          .withField("prev", Workflow.prev(d.mailbox))
+          .withField("hoa:next", Workflow.next(d.mailbox))
+          .withField("hoa:prev", Workflow.prev(d.mailbox))
           .withField("body", d.body)
 
         val obj1 = Workflow.next(d.mailbox) map { box =>
