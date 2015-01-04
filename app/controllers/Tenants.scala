@@ -13,12 +13,7 @@ import scala.util.{ Try, Success, Failure }
 
 object Tenants extends Controller {
   def show(id: Int) = Action { implicit request =>
-    val result = ConnectionFactory.connect withSession { implicit session =>
-      val query = for (t <- tenants if t.id === id) yield t
-      query.firstOption
-    }
-
-    result match {
+    Tenant.findById(id) match {
       case Some(t) =>
         val self = routes.Tenants.show(id)
         val obj = HalJsObject.create(self.absoluteURL())
@@ -40,9 +35,9 @@ object Tenants extends Controller {
 
   def list(offset: Int = 0, limit: Int = 10) = Action { implicit request =>
     val (ts, total) = ConnectionFactory.connect withSession { implicit session =>
-      val ts = tenants.drop(offset).take(limit).sortBy(_.tradeName).list
+      val query = tenants.drop(offset).take(limit).sortBy(_.tradeName)
       val total = tenants.length.run
-      (ts, total)
+      (query.list, tenants.length.run)
     }
 
     val objs = ts map { t =>
@@ -94,12 +89,7 @@ object Tenants extends Controller {
   }
 
   def edit(id: Int) = Action(parse.json) { implicit request =>
-    // Check existence under ID
-    val t = ConnectionFactory.connect withSession { implicit session =>
-      val query = for (t <- tenants if t.id === id) yield t
-      query.firstOption
-    }
-    t match {
+    Tenant.findById(id) match {
       case None => NotFound
       case Some(tenant) =>
         val json = request.body

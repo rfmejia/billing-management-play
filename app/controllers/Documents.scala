@@ -37,8 +37,10 @@ object Documents extends Controller {
           .withField("approvedBy", d.approvedBy)
           .withField("approvedOn", d.approvedOn)
           .withField("assigned", d.assigned)
-          .withField("next", Workflow.next(d.mailbox))
-          .withField("prev", Workflow.prev(d.mailbox))
+          .withField("forTenant", d.forTenant)
+          .withField("forMonth", d.forMonth)
+          .withField("hoa:next", Workflow.next(d.mailbox))
+          .withField("hoa:prev", Workflow.prev(d.mailbox))
           .withField("body", d.body)
 
         val obj1 = Workflow.next(d.mailbox) map { box =>
@@ -48,7 +50,20 @@ object Documents extends Controller {
           obj1.withLink("prev", routes.Documents.moveMailbox(id, box).absoluteURL())
         } getOrElse obj1
 
-        Ok(obj2.asJsValue)
+        val obj3 = Tenant.findById(d.forTenant) map { t =>
+          val obj = HalJsObject.create(routes.Tenants.show(d.forTenant).absoluteURL())
+            .withLink("profile", "hoa:tenant")
+            .withLink("collection", routes.Tenants.list().absoluteURL())
+            .withField("id", t.id)
+            .withField("tradeName", t.tradeName)
+            .withField("address", t.address)
+            .withField("contactPerson", t.contactPerson)
+            .withField("contactNumber", t.contactNumber)
+            .withField("email", t.email)
+          obj2.withEmbedded(obj)
+        } getOrElse obj2
+
+        Ok(obj3.asJsValue)
       case None => NotFound
     }
   }
@@ -65,16 +80,12 @@ object Documents extends Controller {
     }
   }
 
-  def list(offset: Int = 0, limit: Int = 10, mailbox: String = "") = Action { implicit request =>
+  def list(offset: Int = 0, limit: Int = 10, mailbox: String, forTenant: Int) = Action { implicit request =>
     val (ds, total) = ConnectionFactory.connect withSession { implicit session =>
-      val ds = {
-        if (mailbox.isEmpty) {
-          documents.drop(offset).take(limit).sortBy(_.created.desc)
-        } else {
-          documents.filter(d => d.mailbox === mailbox).drop(offset).take(limit).sortBy(_.created.desc)
-        }
-      }
-      (ds.list, ds.length.run)
+      val query = documents.drop(offset).take(limit).sortBy(_.created.desc)
+        .filter(d => d.mailbox === mailbox || mailbox.isEmpty)
+        .filter(d => d.forTenant === forTenant || forTenant < 1)
+      (query.list, query.length.run)
     }
 
     val objs = ds map { d =>
@@ -86,6 +97,8 @@ object Documents extends Controller {
         .withField("title", d.title)
         .withField("docType", d.docType)
         .withField("mailbox", d.mailbox)
+        .withField("forTenant", d.forTenant)
+        .withField("forMonth", d.forMonth)
         .withField("assigned", d.assigned)
       obj.asJsValue
     }
@@ -105,11 +118,11 @@ object Documents extends Controller {
     val withList = blank.withEmbedded(HalJsObject.empty.withField("item", objs))
 
     val withSubsections = withList
-      .withLink("subsection", routes.Documents.list(offset, limit, "Drafts").absoluteURL())
-      .withLink("subsection", routes.Documents.list(offset, limit, "For checking").absoluteURL())
-      .withLink("subsection", routes.Documents.list(offset, limit, "For approval").absoluteURL())
-      .withLink("subsection", routes.Documents.list(offset, limit, "Unpaid").absoluteURL())
-      .withLink("subsection", routes.Documents.list(offset, limit, "Paid").absoluteURL())
+      .withLink("subsection", routes.Documents.list(offset, limit, "Drafts").absoluteURL(), Some("Drafts"))
+      .withLink("subsection", routes.Documents.list(offset, limit, "For checking").absoluteURL(), Some("For checking"))
+      .withLink("subsection", routes.Documents.list(offset, limit, "For approval").absoluteURL(), Some("For approval"))
+      .withLink("subsection", routes.Documents.list(offset, limit, "Unpaid").absoluteURL(), Some("Unpaid"))
+      .withLink("subsection", routes.Documents.list(offset, limit, "Paid").absoluteURL(), Some("Paid"))
 
     Ok(withSubsections.asJsValue)
   }

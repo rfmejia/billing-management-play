@@ -23,16 +23,18 @@
 <div id="mainContent" class="container container-main">
   <div class="row">
     <div id="sidebarNav" class="col-xs-4">
-      <a href="#" class="btn btn-primary btn-lg btn-block">
-        <span class="glyphicon glyphicon-edit"></span>Create Invoice</a>
+      <btn ng-click="onCreateClicked()" class="btn btn-primary btn-lg btn-block">
+        <span class="glyphicon glyphicon-edit"></span>Create Invoice</btn>
         <br/>
       <div id="sidebarContent" ui-view="sidebar">
 
       </div>
     </div>
+  
+    <span us-spinner spinner-key="spinner"></span>
 
     <div id="contentContainer" class="panel panel-default col-xs-8" ui-view="contentArea">
-      test
+      
     </div> <!-- end container -->
   </div> <!-- end row -->
 </div> <!-- end mainContent -->

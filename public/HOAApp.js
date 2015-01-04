@@ -1,16 +1,24 @@
 var hoaApp = angular.module('hoaApp', [
     "ngCookies",
-    "ui.bootstrap", "ui.router",
+    "ui.bootstrap", "ui.router", "angularSpinner",
     "module.tenants", "module.mailbox", "module.users",
-    "service.dashboard", "service.tenants", "service.invites", "service.users",
+    "service.dashboard", "service.templates", "service.tenants", "service.invites", "service.users", "service.documents",
+    "controller.inbox", "controller.drafts", "controller.create",
     "controller.tenantslist", "controller.tenantview", "controller.tenantedit", "controller.tenantcreate",
     "controller.completeusers", "controller.userview", "controller.inviteuser",
     "hoaFilters",
     "hoaControllers",
     "hoaDirectives"]);
 
-hoaApp.config(["$stateProvider", "$urlRouterProvider", "$locationProvider", 
-    function($stateProvider, $urlRouterProvider) {
+hoaApp.config(["$stateProvider", "$urlRouterProvider", 'usSpinnerConfigProvider', 
+    function($stateProvider, $urlRouterProvider, usSpinnerConfigProvider) {
+
+        usSpinnerConfigProvider.setDefaults({
+            color   : '#2196F3',
+            lines   : 9,
+            corners : 1,
+            length  : 1
+        });
 
         var authenticate = {
             views       : {
@@ -49,7 +57,7 @@ hoaApp.config(["$stateProvider", "$urlRouterProvider", "$locationProvider",
                 },
                 "contentArea@workspace" : {
                     templateUrl     : "app/components/mailbox/views/maincontent-inbox.html",
-                    controller      : "inboxController"
+                    controller      : "controller.inbox"
                 }
             }
         };
@@ -60,3 +68,17 @@ hoaApp.config(["$stateProvider", "$urlRouterProvider", "$locationProvider",
             .state("workspace",             workspace);
     }
 ]);
+
+hoaApp.run(['$rootScope', 'usSpinnerService', 
+    function($rootScope, usSpinnerService, usSpinnerConfigProvider){
+
+        $rootScope.$on('$stateChangeStart', 
+            function(event, toState, toParams, fromState, fromParams){
+                usSpinnerService.spin('spinner');
+             });  
+        
+        $rootScope.$on('$stateChangeSuccess', 
+            function(event, toState, toParams, fromState, fromParams){ 
+                usSpinnerService.stop('spinner');
+            }); 
+}]);

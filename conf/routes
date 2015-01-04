@@ -5,6 +5,7 @@
 # Entry point and documentation
 GET     /api                        controllers.Application.index
 GET     /api/docs                   controllers.Application.documentation
+GET     /api/mailboxes              controllers.Application.listMailboxes
 
 # Tenants
 GET     /api/tenants                controllers.Tenants.list(offset: Int ?= 0, limit: Int ?= 10)
@@ -22,7 +23,7 @@ DELETE  /api/users/:userId        controllers.Users.delete(userId: String)
 # Documents
 POST    /api/documents/:id/:box     controllers.Documents.moveMailbox(id: Int, box: String)
 
-GET     /api/documents              controllers.Documents.list(offset: Int ?= 0, limit: Int ?= 10, mailbox: String ?= "")
+GET     /api/documents              controllers.Documents.list(offset: Int ?= 0, limit: Int ?= 10, mailbox: String ?= "", forTenant: Int ?= -1)
 GET     /api/documents/:id          controllers.Documents.show(id: Int)
 POST    /api/documents              controllers.Documents.create
 PUT     /api/documents/:id          controllers.Documents.edit(id: Int)

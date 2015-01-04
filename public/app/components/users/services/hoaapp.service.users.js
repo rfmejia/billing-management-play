@@ -14,7 +14,7 @@ users.service("service.hoausers", ["$resource", "$q", "service.hoalinks",
         var getData = function(username) {
             console.log(username);
 			var deferred		= $q.defer();
-			var tempUsername	= (username != null) ? {id : username} : username;
+			var tempUsername	= (username != null) ? {id : username} : {};
 			var query			= function(){
 				resource.get(tempUsername).$promise.then(
 					function(userData){
@@ -28,8 +28,8 @@ users.service("service.hoausers", ["$resource", "$q", "service.hoalinks",
         		hoalinks.getLinks().then(
         			function(links){
         				var topUrl = hoalinks.getUsersLinks() + "/:id";
-                        console.log(topUrl);
         				createResource(topUrl);
+                        console.log(topUrl);
         				query();
         			});
         	}
@@ -42,6 +42,8 @@ users.service("service.hoausers", ["$resource", "$q", "service.hoalinks",
         }
 
         this.queryApi = function(id) {
+            console.log("query api");
+            console.log(id);
             return getData(id);
         }
 

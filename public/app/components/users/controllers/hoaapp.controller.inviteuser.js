@@ -5,6 +5,7 @@ userInvite.controller("controller.inviteuser", ["$scope", "$modalInstance", "r_i
 
 		$scope.controlData = [];
         $scope.editedData  = {};
+        $scope.isValid = true;
         var masterData     = r_inviteTemplate;
 
         $scope.resetData = function() {
@@ -17,8 +18,6 @@ userInvite.controller("controller.inviteuser", ["$scope", "$modalInstance", "r_i
             for(var i = 0; i < $scope.roles.length; i++) {
                 $scope.editedData[$scope.roles[i].name] = $scope.roles[i].value;
             }
-
-            console.log($scope.editedData);
          }
 
         $scope.onUserInviteClicked = function(newData) {
@@ -37,13 +36,25 @@ userInvite.controller("controller.inviteuser", ["$scope", "$modalInstance", "r_i
 
         }
 
-
         $scope.onSubmitClicked = function() {
-            $modalInstance.close($scope.editedData);
+            if($scope.inviteUserForm.email.$invalid) {
+
+            }
+            else {
+                $modalInstance.close($scope.editedData);
+            }
         }
 
         $scope.onCancelClicked = function() {
             $modalInstance.dismiss("cancel");
+        }
+
+        $scope.validate = function(data) {
+            $scope.isValid = $scope.inviteUserForm[data.name].$invalid && 
+            $scope.inviteUserForm[data.name].$dirty
+            console.log("JC");
+            console.log($scope.isValid);
+            return $scope.isValid;
         }
 
         $scope.resetData();
