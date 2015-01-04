@@ -86,3 +86,69 @@
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
 }
+
+.custom-alert {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.btn-borderless {
+  border : none;
+}
+
+label.vertical-aligned {
+  margin-bottom: 0px;
+  margin-top: 5px;
+}
+
+legend,
+.subtotal {
+  color: rgba(102, 102, 102, .87);
+}
+
+.subtotalLabel {
+  color: rgba(102, 102, 102, .54);
+}
+
+.fields {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.subsections {
+  clear: both;
+  padding-top: 15px;
+  padding-bottom: 40px;
+}
+
+h5.mainTotal {
+
+  color: #2196F3;
+}
+
+.subtotalContainer {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 5px;
+  padding-right: 5px;
+  clear: both;
+}
+
+.totalContainer h5 {
+  color: #2196F3;
+}
+
+#documentControls {
+  background-color: #F5F5F5;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  clear: both;
+}
+
+#saveButton {
+  clear: both;
+}
+
+#documentControls h4 {
+  color: rgba(33, 150, 243, .87);
+}
