@@ -15,6 +15,7 @@ object TestEnvironment extends Controller {
   def setup() = Action { implicit request =>
     ConnectionFactory.connect withSession { implicit session =>
       insertTenantData
+      insertDocumentData
 
       import play.api.Play.current
       val ds = play.api.db.DB.getDataSource()
@@ -34,6 +35,13 @@ object TestEnvironment extends Controller {
       Tenant("Accolade Trading Corp.", "14 Zaragoza St. San Lorenzo Village, Makati",
         "Issa Santos", "987-4321", "isantos@email.com"))
     data foreach (tenants.insertOrUpdate(_))
+  }
+
+  def insertDocumentData(implicit session: Session) = {
+    (for (d <- documents) yield d).delete
+    Document.insert("Document 1", "statement-of-account-1", 1, DateTime.parse("2015-01-01"), Json.obj())
+    Document.insert("Document 2", "statement-of-account-1", 2, DateTime.parse("2015-02-01"), Json.obj())
+    Document.insert("Document 3", "statement-of-account-1", 1, DateTime.parse("2015-01-01"), Json.obj())
   }
 
   def fail = Action {
