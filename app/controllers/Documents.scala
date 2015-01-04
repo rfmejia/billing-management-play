@@ -37,6 +37,8 @@ object Documents extends Controller {
           .withField("approvedBy", d.approvedBy)
           .withField("approvedOn", d.approvedOn)
           .withField("assigned", d.assigned)
+          .withField("forTenant", d.forTenant)
+          .withField("forMonth", d.forMonth)
           .withField("hoa:next", Workflow.next(d.mailbox))
           .withField("hoa:prev", Workflow.prev(d.mailbox))
           .withField("body", d.body)
@@ -48,7 +50,20 @@ object Documents extends Controller {
           obj1.withLink("prev", routes.Documents.moveMailbox(id, box).absoluteURL())
         } getOrElse obj1
 
-        Ok(obj2.asJsValue)
+        val obj3 = Tenant.findById(d.forTenant) map { t =>
+          val obj = HalJsObject.create(routes.Tenants.show(d.forTenant).absoluteURL())
+            .withLink("profile", "hoa:tenant")
+            .withLink("collection", routes.Tenants.list().absoluteURL())
+            .withField("id", t.id)
+            .withField("tradeName", t.tradeName)
+            .withField("address", t.address)
+            .withField("contactPerson", t.contactPerson)
+            .withField("contactNumber", t.contactNumber)
+            .withField("email", t.email)
+          obj2.withEmbedded(obj)
+        } getOrElse obj2
+
+        Ok(obj3.asJsValue)
       case None => NotFound
     }
   }
@@ -83,6 +98,7 @@ object Documents extends Controller {
         .withField("docType", d.docType)
         .withField("mailbox", d.mailbox)
         .withField("forTenant", d.forTenant)
+        .withField("forMonth", d.forMonth)
         .withField("assigned", d.assigned)
       obj.asJsValue
     }
