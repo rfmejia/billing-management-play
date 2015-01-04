@@ -102,11 +102,11 @@ object Documents extends Controller {
     val withList = blank.withEmbedded(HalJsObject.empty.withField("item", objs))
 
     val withSubsections = withList
-      .withLink("subsection", routes.Documents.list(offset, limit, "Drafts").absoluteURL())
-      .withLink("subsection", routes.Documents.list(offset, limit, "For checking").absoluteURL())
-      .withLink("subsection", routes.Documents.list(offset, limit, "For approval").absoluteURL())
-      .withLink("subsection", routes.Documents.list(offset, limit, "Unpaid").absoluteURL())
-      .withLink("subsection", routes.Documents.list(offset, limit, "Paid").absoluteURL())
+      .withLink("subsection", routes.Documents.list(offset, limit, "Drafts").absoluteURL(), Some("Drafts"))
+      .withLink("subsection", routes.Documents.list(offset, limit, "For checking").absoluteURL(), Some("For checking"))
+      .withLink("subsection", routes.Documents.list(offset, limit, "For approval").absoluteURL(), Some("For approval"))
+      .withLink("subsection", routes.Documents.list(offset, limit, "Unpaid").absoluteURL(), Some("Unpaid"))
+      .withLink("subsection", routes.Documents.list(offset, limit, "Paid").absoluteURL(), Some("Paid"))
 
     Ok(withSubsections.asJsValue)
   }
