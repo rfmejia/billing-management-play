@@ -65,16 +65,12 @@ object Documents extends Controller {
     }
   }
 
-  def list(offset: Int = 0, limit: Int = 10, mailbox: String = "") = Action { implicit request =>
+  def list(offset: Int = 0, limit: Int = 10, mailbox: String, forTenant: Int) = Action { implicit request =>
     val (ds, total) = ConnectionFactory.connect withSession { implicit session =>
-      val ds = {
-        if (mailbox.isEmpty) {
-          documents.drop(offset).take(limit).sortBy(_.created.desc)
-        } else {
-          documents.filter(d => d.mailbox === mailbox).drop(offset).take(limit).sortBy(_.created.desc)
-        }
-      }
-      (ds.list, ds.length.run)
+      val query = documents.drop(offset).take(limit).sortBy(_.created.desc)
+        .filter(d => d.mailbox === mailbox || mailbox.isEmpty)
+        .filter(d => d.forTenant === forTenant || forTenant < 1)
+      (query.list, query.length.run)
     }
 
     val objs = ds map { d =>
@@ -86,6 +82,7 @@ object Documents extends Controller {
         .withField("title", d.title)
         .withField("docType", d.docType)
         .withField("mailbox", d.mailbox)
+        .withField("forTenant", d.forTenant)
         .withField("assigned", d.assigned)
       obj.asJsValue
     }
