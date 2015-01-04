@@ -3,12 +3,9 @@ hoaControllers.value('entrypoint', "http://hoa-play-scala.herokuapp.com/api");
 
 hoaControllers.controller("rootController", ["$state", "$cookies",
     function($state, $cookies) {
-    console.log("loaded on page load");
     $state.go("authenticate")
     //check credentials,
     // if(!auth) $state.go("authenticate");
-
-    console.log($cookies.id);
 
     //true go to workspace state,
     //false go to auhtenticate state
@@ -16,9 +13,14 @@ hoaControllers.controller("rootController", ["$state", "$cookies",
 
 hoaControllers.controller("authenticateController", ["$scope", "$state",
 function($scope, $state) {
-    console.log($scope);
+    $scope.user = {};
+    $scope.isValidCredentials = true;
     $scope.verifyCredentials = function() {
-        console.log("clicked");
+        var userEq = angular.equals($scope.user.userName, "test");
+        var passwordEq = angular.equals($scope.user.password, "user");
+        $scope.isValidCredentials = userEq && passwordEq;
+
+        // if($scope.isValidCredentials) $state.go("workspace");
         $state.go("workspace");
     }
 }]);
@@ -29,12 +31,17 @@ hoaControllers.controller("verifyController", [function() {
 
 hoaControllers.controller('workspaceController', ['$rootScope', '$scope', "$http", "$state",  "$location", "entrypoint", "r_hoaLinks", "service.hoalinks",
     function ($rootScope, $scope, $http, $state, $location, entrypoint, r_hoaLinks, hoalinks) {
+        $scope.onCreateClicked = function() {
+            console.log("create");
+            $state.go("workspace.create");
+        }
 }]);
 
 hoaControllers.controller('sidebarController', ['$scope', "$location", "$state",
 function ($scope, $location, $state) {
     $scope.sidebarItems = [
         {link : "#/inbox", header : "Mailbox", name : "Inbox", title : "Inbox" , id : "inboxLink", state : "workspace.inbox"},
+        {link : "#/drafts", header : "Mailbox", name : "Drafts", title : "Drafts" , id : "draftsLink", state : "workspace.drafts"},
         {link : "#/delivered", header : "Mailbox", name : "Delivered", title : "Delivered",  id : "deliveredLink", state : "workspace.delivered"},
         {link : "#/pending", header : "Mailbox", name : "Pending", title : "Pending" , id : "pendingLink", state : "workspace.pending"},
         {link : "#/tenants", header : "Management", name: "Tenants", title : "Tenants List", id : "tenantsLink", state : "workspace.tenants"},
@@ -64,16 +71,6 @@ function ($scope, $location, $state) {
             }
         }
 }]);
-
-
-
-
-// Inbox related controllers
-hoaControllers.controller("inboxController", [
-   function() {
-   }
-]);
-// end - Inbox related controllers
 
 // User related controllers
 

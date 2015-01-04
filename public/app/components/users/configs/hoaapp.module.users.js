@@ -24,11 +24,15 @@ app.config(["$stateProvider", "$urlRouterProvider",
                 r_combinedRoot      : function(usersService, invitesService, $q) {
                     var deferred = $q.defer();
 
-                    $q.all([usersService.queryApi(), invitesService.queryApi()]).then(
+                    // $q.all([usersService.queryApi(), invitesService.queryApi()]).then(
+                    //     function(response){
+                    //         deferred.resolve(response);
+                    //     });
+                    $q.all([usersService.queryApi()]).then(
                         function(response){
                             deferred.resolve(response);
                         });
-                    return deferred.promise
+                    return deferred.promise;
                 },
                 r_users             : function(r_combinedRoot) {
                     return r_combinedRoot[0]._embedded.item;
@@ -36,8 +40,8 @@ app.config(["$stateProvider", "$urlRouterProvider",
                 r_invites           : function(invitesService, r_combinedRoot) {
                     var template = invitesService.getTemplate();
                     return {
-                            "pendingInvites"  : r_combinedRoot[1]._embedded.item,
-                            "template"        : template
+                            "pendingInvites"  : "",
+                            "template"        : ""
                         };
                 }
             },

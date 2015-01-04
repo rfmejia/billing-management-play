@@ -5,18 +5,18 @@
 <div class="modal-body">
   <form name="inviteUserForm">
       <div ng-repeat="data in controlData">
-          <div class="form-group">
-             <label class="control-label" for="{{data.name}}">{{data.prompt}}</label>
-             <input type="text" id="{{data.name}}" dynamic-name="data.name" ng-model="editedData[data.name]" class="form-control" value="{{data.value}}" placeholder="Input user {{data.prompt}}">
-          </div>
+          <validated-form element="inviteUserForm[data.name]">
+            <label class="control-label" for="{{data.name}}">{{data.prompt}}</label>
+            <input type="text" id="{{data.name}}" dynamic-name="data.name" ng-model="editedData[data.name]" class="form-control" value="{{data.value}}" placeholder="Input user {{data.prompt}}" ng-required="true">
+        </validated-form>
       </div>
 
       <div class="row">
-          <div class="col-xs-3 form-group">
+          <div class="col-xs-3 form-group" ng-required="true">
             <label class="control-label" for="{{admin.name}}">{{admin.prompt}}</label>
                    <input type="checkbox" id="{{admin.name}}" dynamic-name="admin.name" ng-model="editedData.admin" ng-checked="editedData.admin" ng-click="adminClicked()">
           </div>
-          <div class="col-xs-3" ng-repeat="role in roles">
+          <div class="col-xs-3" ng-repeat="role in roles" ng-requr>
                <div class="form-group">
                    <label class="control-label" for="{{role.name}}">{{role.prompt}}</label>
                    <input type="checkbox" id="{{role.name}}" dynamic-name="role.name" ng-model="editedData[role.name]" ng-checked="editedData[role.name]" ng-click="checkboxClicked(role.name)" ng-disabled="editedData[admin.name]">
