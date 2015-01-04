@@ -5,6 +5,7 @@
 # Entry point and documentation
 GET     /api                        controllers.Application.index
 GET     /api/docs                   controllers.Application.documentation
+GET     /api/mailboxes              controllers.Application.listMailboxes
 
 # Tenants
 GET     /api/tenants                controllers.Tenants.list(offset: Int ?= 0, limit: Int ?= 10)

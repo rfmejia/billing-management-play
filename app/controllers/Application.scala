@@ -18,6 +18,7 @@ object Application extends Controller {
     val self = routes.Application.index
     val obj = HalJsObject.create(self.absoluteURL())
       .withCurie("hoa", Application.defaultCurie)
+      .withLink("profile", "collection")
       .withLink("hoa:tenants", routes.Tenants.list().absoluteURL(),
         Some("List of registered tenants"))
       .withLink("hoa:documents", routes.Documents.list().absoluteURL(),
@@ -28,8 +29,18 @@ object Application extends Controller {
         Some("List of document templates"))
       .withLink("hoa:webapp", routes.Assets.at("index.html").absoluteURL(),
         Some("Web application"))
+      .withLink("hoa:mailboxes", routes.Application.listMailboxes.absoluteURL(),
+        Some("Listing of mailboxes and description of workflow"))
     Ok(obj.asJsValue)
   }
 
   def documentation = TODO
+
+  def listMailboxes = Action { implicit request =>
+    val self = routes.Application.listMailboxes
+    val obj = HalJsObject.create(self.absoluteURL())
+      .withCurie("hoa", Application.defaultCurie)
+      .withLink("profile", "collection")
+    Ok(obj.asJsValue ++ Workflow.asJsObject)
+  }
 }

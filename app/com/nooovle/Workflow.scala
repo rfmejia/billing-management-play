@@ -1,5 +1,7 @@
 package com.nooovle
 
+import play.api.libs.json._
+
 object Workflow {
   val pending = Vector("Drafts", "For checking", "For approval")
   val delivered = Vector("Unpaid", "Paid")
@@ -26,4 +28,9 @@ object Workflow {
     case "Paid" => Some("Unpaid")
     case _ => None
   }
+
+  val asJsObject: JsObject = Json.obj(
+    "mailboxes" -> Json.arr(
+      Json.obj("pending" -> pending),
+      Json.obj("delivered" -> delivered)))
 }
