@@ -37,7 +37,6 @@ object models {
     })
   }
 
-  // implicit val uuidToString = MappedColumnType.base[UUID, String](_.toString, UUID.fromString(_))
   implicit val jsToString = MappedColumnType.base[JsObject, String](_.toString, {
     Json.parse(_) match {
       case o: JsObject => o
@@ -139,6 +138,7 @@ class DocumentsModel(tag: Tag) extends Table[Document](tag, "DOCUMENTS") {
 
   //def _creator = foreignKey("CREATOR_FK", creator, models.users)(_.userId)
   //def _assigned = foreignKey("ASSIGNED_FK", assigned, models.users)(_.userId)
+  def _forTenant = foreignKey("TENANT_FK", forTenant, models.tenants)(_.id)
 
   def * = (id, serialId, title, docType, mailbox, creator, created, forTenant, forMonth, body, preparedBy, preparedOn, checkedBy, checkedOn, approvedBy, approvedOn, assigned) <>
     (Document.tupled, Document.unapply)

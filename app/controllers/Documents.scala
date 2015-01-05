@@ -60,7 +60,7 @@ object Documents extends Controller {
             .withField("contactPerson", t.contactPerson)
             .withField("contactNumber", t.contactNumber)
             .withField("email", t.email)
-          obj2.withEmbedded(obj)
+          obj2.withEmbedded(HalJsObject.empty.withField("tenant", obj.asJsValue))
         } getOrElse obj2
 
         Ok(obj3.asJsValue)
