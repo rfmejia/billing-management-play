@@ -19,6 +19,11 @@ object Tenant extends ((Int, String, String, String, String, String) => Tenant)
       (for (t <- tenants if t.id === id) yield t).firstOption
     }
 
+  def findByTradeName(tradeName: String): Option[Tenant] =
+    ConnectionFactory.connect withSession { implicit session =>
+      (for (t <- tenants if t.tradeName === tradeName) yield t).firstOption
+    }
+
   val modelName = "TENANTS"
   lazy val modelInfos = Seq(
     ModelInfo("TENANTS", "id", "Int", false, false, true, Some("Tennant ID")),
