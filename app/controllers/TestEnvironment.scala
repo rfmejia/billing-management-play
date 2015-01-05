@@ -39,9 +39,18 @@ object TestEnvironment extends Controller {
 
   def insertDocumentData(implicit session: Session) = {
     (for (d <- documents) yield d).delete
-    Document.insert("Document 1", "statement-of-account-1", 1, DateTime.parse("2015-01-01"), Json.obj())
-    Document.insert("Document 2", "statement-of-account-1", 2, DateTime.parse("2015-02-01"), Json.obj())
-    Document.insert("Document 3", "statement-of-account-1", 1, DateTime.parse("2015-01-01"), Json.obj())
+    Tenant.findByTradeName("Beast Burgers").map { tenant =>
+      Document.insert("Document 1", "statement-of-account-1", tenant.id,
+        DateTime.parse("2015-01-01"), Json.obj())
+    }
+    Tenant.findByTradeName("Jumpin' Juicers").map { tenant =>
+      Document.insert("Document 2", "statement-of-account-1", tenant.id,
+        DateTime.parse("2015-02-01"), Json.obj())
+    }
+    Tenant.findByTradeName("Beast Burgers").map { tenant =>
+      Document.insert("Document 3", "statement-of-account-1", tenant.id,
+        DateTime.parse("2015-01-01"), Json.obj())
+    }
   }
 
   def fail = Action {
