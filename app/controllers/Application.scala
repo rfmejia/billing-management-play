@@ -9,12 +9,12 @@ import play.api._
 import play.api.mvc._
 import scala.slick.driver.H2Driver.simple._
 
-object Application extends Controller {
+object Application extends Controller  with securesocial.core.SecureSocial {
 
   def defaultCurie(implicit requestHeader: RequestHeader) =
     routes.Application.documentation.absoluteURL() + "/{rel}"
 
-  def index = Action { implicit request =>
+  def index = SecuredAction { implicit request =>
     val self = routes.Application.index
     val obj = HalJsObject.create(self.absoluteURL())
       .withCurie("hoa", Application.defaultCurie)
