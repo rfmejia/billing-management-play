@@ -1,5 +1,6 @@
 
-import com.mohiva.play.silhouette.core.{ Logger, SecuredSettings }
+import com.nooovle.slick.models.modelTemplates
+import com.nooovle._
 import com.nooovle.slick.ConnectionFactory
 import filters._
 import org.locker47.json.play.HalJsObject
@@ -7,15 +8,17 @@ import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json._
 import play.api.mvc.Results.{ InternalServerError, Unauthorized }
 import play.api.mvc.{ RequestHeader, WithFilters }
-import play.api.{ Application, GlobalSettings }
+import play.api.{ Application, GlobalSettings, Logger }
 import play.filters.gzip.GzipFilter
 import scala.concurrent.Future
+import scala.slick.driver.H2Driver.simple._
 
-object Global extends WithFilters(CorsFilter, new GzipFilter()) with GlobalSettings with SecuredSettings with Logger {
+object Global extends WithFilters(CorsFilter, new GzipFilter()) with GlobalSettings {
 
   override def onStart(app: Application) = {
     ConnectionFactory.connect withSession { implicit session =>
       com.nooovle.slick.models.buildTables
+      insertModelInfos
     }
   }
 
@@ -36,7 +39,9 @@ object Global extends WithFilters(CorsFilter, new GzipFilter()) with GlobalSetti
     }
   }
 
-  override def onNotAuthenticated(request: RequestHeader, lang: Lang) = {
-    Some(Future.successful(Unauthorized("Secure domain")))
+  def insertModelInfos(implicit session: Session) = {
+    Tenant.modelInfos foreach (modelTemplates.insertOrUpdate(_))
+    User.modelInfos foreach (modelTemplates.insertOrUpdate(_))
+    Document.modelInfos foreach (modelTemplates.insertOrUpdate(_))
   }
 }

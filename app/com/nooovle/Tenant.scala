@@ -1,5 +1,9 @@
 package com.nooovle
 
+import com.nooovle.slick.ConnectionFactory
+import com.nooovle.slick.models.tenants
+import scala.slick.driver.H2Driver.simple._
+
 case class Tenant(id: Int, tradeName: String, address: String,
   contactPerson: String, contactNumber: String, email: String)
 
@@ -9,6 +13,11 @@ object Tenant extends ((Int, String, String, String, String, String) => Tenant)
   def apply(tradeName: String, address: String, contactPerson: String,
     contactNumber: String, email: String): Tenant =
     Tenant(0, tradeName, address, contactPerson, contactNumber, email)
+
+  def findById(id: Int): Option[Tenant] =
+    ConnectionFactory.connect withSession { implicit session =>
+      (for (t <- tenants if t.id === id) yield t).firstOption
+    }
 
   val modelName = "TENANTS"
   lazy val modelInfos = Seq(

@@ -3,35 +3,39 @@
 # ~~~~
 
 # Entry point and documentation
-GET     /api                        @controllers.Application.index
-#GET     /api/docs                   controllers.Application.documentation
+GET     /api                        controllers.Application.index
+GET     /api/docs                   controllers.Application.documentation
+GET     /api/mailboxes              controllers.Application.listMailboxes
 
 # Tenants
-##GET     /api/tenants                controllers.Tenants.list(offset: Int ?= 0, limit: Int ?= 10)
-##GET     /api/tenants/:id            controllers.Tenants.show(id: Int)
-##POST    /api/tenants                controllers.Tenants.create
-##PUT     /api/tenants/:id            controllers.Tenants.edit(id: Int)
-##DELETE  /api/tenants/:id            controllers.Tenants.delete(id: Int)
+GET     /api/tenants                controllers.Tenants.list(offset: Int ?= 0, limit: Int ?= 10)
+GET     /api/tenants/:id            controllers.Tenants.show(id: Int)
+POST    /api/tenants                controllers.Tenants.create
+PUT     /api/tenants/:id            controllers.Tenants.edit(id: Int)
+DELETE  /api/tenants/:id            controllers.Tenants.delete(id: Int)
 
 # Users
-#GET     /api/users                  controllers.Users.list(offset: Int ?= 0, limit: Int ?= 10)
-#GET     /api/users/:username        controllers.Users.show(username: String)
-#PUT     /api/users/:username        controllers.Users.edit(username: String)
-#DELETE  /api/users/:username        controllers.Users.delete(username: String)
+GET     /api/users                  controllers.Users.list(offset: Int ?= 0, limit: Int ?= 10)
+GET     /api/users/:userId          controllers.Users.show(userId: String)
+PUT     /api/users/:userId          controllers.Users.edit(userId: String)
+DELETE  /api/users/:userId          controllers.Users.delete(userId: String)
 
 # Documents
-#GET     /api/documents              controllers.Documents.list(offset: Int ?= 0, limit: Int ?= 10)
-#GET     /api/documents/:id          controllers.Documents.show(id: String)
-#POST    /api/documents              controllers.Documents.create
-#PUT     /api/documents/:id          controllers.Documents.edit(id: String)
-#DELETE  /api/documents/:id          controllers.Documents.delete(id: String)
+POST    /api/documents/:id/:box     controllers.Documents.moveMailbox(id: Int, box: String)
+
+GET     /api/documents              controllers.Documents.list(offset: Int ?= 0, limit: Int ?= 10, mailbox: String ?= "", forTenant: Int ?= -1)
+GET     /api/documents/:id          controllers.Documents.show(id: Int)
+POST    /api/documents              controllers.Documents.create
+PUT     /api/documents/:id          controllers.Documents.edit(id: Int)
+DELETE  /api/documents/:id          controllers.Documents.delete(id: Int)
+
 
 # Documents
-#GET     /api/templates              controllers.Templates.list(offset: Int ?= 0, limit: Int ?= 10)
-#GET     /api/templates/:docType     controllers.Templates.show(docType: String)
+GET     /api/templates              controllers.Templates.list(offset: Int ?= 0, limit: Int ?= 10)
+GET     /api/templates/:docType     controllers.Templates.show(docType: String)
 
-#GET     /api/setupTestEnvironment   controllers.TestEnvironment.setup
-#GET     /api/testFail               controllers.TestEnvironment.fail
+GET     /api/setupTestEnvironment   controllers.TestEnvironment.setup
+GET     /api/testFail               controllers.TestEnvironment.fail
 
 
 # ---- Web application routes ----

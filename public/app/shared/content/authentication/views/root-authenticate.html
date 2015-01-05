@@ -2,8 +2,16 @@
   <div class="container">
     <span id="loginLogo" class="glyphicon glyphicon-user"></span>
     <h2 id="loginHeader">Hobbies of Asia</h2>
-    <input type="text" class="form-control loginInput" placeholder="User name"/>
-    <input type="text" class="form-control loginInput" placeholder="Password"/>
+    <form name="loginForm">
+    	<input type="text" ng-model='user.userName' name="userName" class="form-control loginInput" placeholder="User name"/>
+    	<input type="text" ng-model='user.password' name="password"class="form-control loginInput" placeholder="Password"/>
+    </form>
     <button id="loginButton" class="btn btn-primary full-width" ng-click="verifyCredentials()"><span id="loginButtonLogo" class="glyphicon glyphicon-ok"></span></button>
+
+    <hoa-alert
+    	ng-show="!isValidCredentials"
+    	isDanger="true"
+   		title="Invalid credentials" 
+   		description="Please check your your user name and password"></hoa-alert>
   </div>
 </div>

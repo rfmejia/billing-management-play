@@ -1,10 +1,15 @@
 package com.nooovle
 
+import play.api.libs.json._
+
 object Workflow {
   val pending = Vector("Drafts", "For checking", "For approval")
   val delivered = Vector("Unpaid", "Paid")
 
   val start = "Drafts"
+
+  def exists(box: String): Option[String] =
+    (pending ++ delivered).find(_ == box)
 
   def next(box: String): Option[String] = box match {
     case "Drafts" => Some("For checking")
@@ -23,4 +28,9 @@ object Workflow {
     case "Paid" => Some("Unpaid")
     case _ => None
   }
+
+  val asJsObject: JsObject = Json.obj(
+    "mailboxes" -> Json.arr(
+      Json.obj("pending" -> pending),
+      Json.obj("delivered" -> delivered)))
 }
