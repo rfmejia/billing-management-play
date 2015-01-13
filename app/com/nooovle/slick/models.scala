@@ -73,8 +73,8 @@ class ModelInfosModel(tag: Tag) extends Table[ModelInfo](tag,
 class UsersModel(tag: Tag) extends Table[User](tag, "USERS") {
   def userId = column[String]("USER_ID", O.NotNull)
   def providerId = column[String]("PROVIDER_ID", O.NotNull)
-  def firstName = column[String]("FIRST_NAME", O.NotNull)
-  def lastName = column[String]("LAST_NAME", O.NotNull)
+  def firstName = column[Option[String]]("FIRST_NAME")
+  def lastName = column[Option[String]]("LAST_NAME")
   def email = column[Option[String]]("EMAIL")
   def hasher = column[String]("HASHER", O.NotNull)
   def password = column[String]("PASSWORD", O.NotNull)

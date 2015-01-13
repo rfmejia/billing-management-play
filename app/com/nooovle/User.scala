@@ -1,32 +1,40 @@
 package com.nooovle
 
-import com.nooovle.slick.ConnectionFactory
-import com.nooovle.slick.models.{ roles, users, userRoles }
-import org.joda.time.DateTime
-import scala.slick.driver.H2Driver.simple._
+import scala.slick.driver.H2Driver.simple.columnExtensionMethods
+import scala.slick.driver.H2Driver.simple.productQueryToUpdateInvoker
+import scala.slick.driver.H2Driver.simple.queryToAppliedQueryInvoker
+import scala.slick.driver.H2Driver.simple.queryToInsertInvoker
+import scala.slick.driver.H2Driver.simple.repToQueryExecutor
+import scala.slick.driver.H2Driver.simple.stringColumnType
+import scala.slick.driver.H2Driver.simple.valueToConstColumn
 import scala.util.Try
-//import securesocial.core._
-//import securesocial.core.providers.UsernamePasswordProvider
-//import securesocial.core.providers.utils.PasswordHasher
+
+import com.nooovle.slick.ConnectionFactory
+import com.nooovle.slick.models.roles
+import com.nooovle.slick.models.userRoles
+import com.nooovle.slick.models.users
+
+import securesocial.core.AuthenticationMethod
+import securesocial.core.GenericProfile
+import securesocial.core.PasswordInfo
 
 case class User(userId: String,
-  providerId: String,
-  firstName: String,
-  lastName: String,
-  email: Option[String],
-  hasher: String,
-  password: String,
-  salt: Option[String])/* extends Identity*/ {
-//  val identityId = IdentityId(userId, providerId)
-  val fullName = s"${firstName} ${lastName}"
-//  val authMethod = AuthenticationMethod.UserPassword
-//  val avatarUrl = None
-//  val oAuth1Info = None
-//  val oAuth2Info = None
-//  val passwordInfo = Option(PasswordInfo(hasher, password, salt))
+                providerId: String,
+                firstName: Option[String],
+                lastName: Option[String],
+                email: Option[String],
+                hasher: String,
+                password: String,
+                salt: Option[String]) extends GenericProfile {
+  val fullName = Some((firstName.getOrElse("") + " " + lastName.getOrElse("")).trim)
+  val authMethod = AuthenticationMethod.UserPassword
+  val avatarUrl = None
+  val oAuth1Info = None
+  val oAuth2Info = None
+  val passwordInfo = Option(PasswordInfo(hasher, password, salt))
 }
 
-object User extends ((String, String, String, String, Option[String], String, String, Option[String]) => User)
+object User extends ((String, String, Option[String], Option[String], Option[String], String, String, Option[String]) => User)
   with ModelTemplate {
 
   // def apply(userId: String, firstName: String, lastName: String, email: Option[String], password: String): User = {
