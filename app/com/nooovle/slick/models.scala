@@ -71,8 +71,8 @@ class ModelInfosModel(tag: Tag) extends Table[ModelInfo](tag,
 }
 
 class UsersModel(tag: Tag) extends Table[User](tag, "USERS") {
-  def userId = column[String]("USER_ID", O.NotNull)
   def providerId = column[String]("PROVIDER_ID", O.NotNull)
+  def userId = column[String]("USER_ID", O.NotNull)
   def firstName = column[Option[String]]("FIRST_NAME")
   def lastName = column[Option[String]]("LAST_NAME")
   def email = column[Option[String]]("EMAIL")
@@ -80,9 +80,9 @@ class UsersModel(tag: Tag) extends Table[User](tag, "USERS") {
   def password = column[String]("PASSWORD", O.NotNull)
   def salt = column[Option[String]]("SALT")
 
-  def pk = primaryKey("PK", (userId, providerId))
+  def pk = primaryKey("PK", (providerId, userId))
 
-  def * = (userId, providerId, firstName, lastName, email, hasher, password, salt) <>
+  def * = (providerId, userId, firstName, lastName, email, hasher, password, salt) <>
     (User.tupled, User.unapply)
 }
 

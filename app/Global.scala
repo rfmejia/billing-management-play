@@ -24,7 +24,6 @@ import play.filters.gzip.GzipFilter
 import securesocial.core.RuntimeEnvironment
 import securesocial.core.providers._
 import services.CustomUserService
-import services.DemoUser
 
 object Global extends WithFilters(CorsFilter, new GzipFilter()) with GlobalSettings {
 
@@ -55,10 +54,10 @@ object Global extends WithFilters(CorsFilter, new GzipFilter()) with GlobalSetti
   /**
    * Demo application's custom Runtime Environment
    */
-  object DemoRuntimeEnvironment extends RuntimeEnvironment.Default[DemoUser] {
+  object DemoRuntimeEnvironment extends RuntimeEnvironment.Default[User] {
     override lazy val userService: CustomUserService = new CustomUserService
     override lazy val providers = ListMap(
-      include(new UsernamePasswordProvider[DemoUser](userService, avatarService, viewTemplates, passwordHashers)))
+      include(new UsernamePasswordProvider[User](userService, avatarService, viewTemplates, passwordHashers)))
   }
 
   /**
@@ -71,7 +70,7 @@ object Global extends WithFilters(CorsFilter, new GzipFilter()) with GlobalSetti
   override def getControllerInstance[A](controllerClass: Class[A]): A = {
     val instance = controllerClass.getConstructors.find { c =>
       val params = c.getParameterTypes
-      params.length == 1 && params(0) == classOf[RuntimeEnvironment[DemoUser]]
+      params.length == 1 && params(0) == classOf[RuntimeEnvironment[User]]
     }.map {
       _.asInstanceOf[Constructor[A]].newInstance(DemoRuntimeEnvironment)
     }

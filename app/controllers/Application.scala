@@ -1,6 +1,6 @@
 package controllers
 
-import services.DemoUser
+
 import com.nooovle._
 import com.nooovle.slick.models._
 import com.nooovle.slick.ConnectionFactory
@@ -16,7 +16,7 @@ object Application {
     routes.Application.documentation.absoluteURL() + "/{rel}"
 }
 
-class Application(override implicit val env: RuntimeEnvironment[DemoUser]) extends securesocial.core.SecureSocial[DemoUser] {
+class Application(override implicit val env: RuntimeEnvironment[User]) extends securesocial.core.SecureSocial[User] {
   def index = SecuredAction { implicit request =>
     val self = routes.Application.index
     val obj = HalJsObject.create(self.absoluteURL())
