@@ -5,6 +5,9 @@ import com.nooovle.slick.models.{ roles, users, userRoles }
 import org.joda.time.DateTime
 import scala.slick.driver.H2Driver.simple._
 import scala.util.Try
+//import securesocial.core._
+//import securesocial.core.providers.UsernamePasswordProvider
+//import securesocial.core.providers.utils.PasswordHasher
 
 case class User(userId: String,
   providerId: String,
@@ -13,25 +16,25 @@ case class User(userId: String,
   email: Option[String],
   hasher: String,
   password: String,
-  salt: Option[String]) {
-  // val identityId = IdentityId(userId, providerId)
+  salt: Option[String])/* extends Identity*/ {
+//  val identityId = IdentityId(userId, providerId)
   val fullName = s"${firstName} ${lastName}"
-  // val authMethod = AuthenticationMethod.UserPassword
-  // val avatarUrl = None
-  // val oAuth1Info = None
-  // val oAuth2Info = None
-  // val passwordInfo = Option(PasswordInfo(hasher, password, salt))
+//  val authMethod = AuthenticationMethod.UserPassword
+//  val avatarUrl = None
+//  val oAuth1Info = None
+//  val oAuth2Info = None
+//  val passwordInfo = Option(PasswordInfo(hasher, password, salt))
 }
 
 object User extends ((String, String, String, String, Option[String], String, String, Option[String]) => User)
   with ModelTemplate {
 
-  def apply(userId: String, firstName: String, lastName: String, email: Option[String], password: String): User = {
-    val providerId = "UserPassword"
-    val hasher = "bcrypt"
-    val salt = java.util.UUID.randomUUID().toString
-    User(userId, providerId, firstName, lastName, email, hasher, password, Some(salt))
-  }
+  // def apply(userId: String, firstName: String, lastName: String, email: Option[String], password: String): User = {
+  //   val providerId = UsernamePasswordProvider.UsernamePassword
+  //   val hasher = PasswordHasher.
+  //   val salt = ""
+  //   User(userId, providerId, firstName, lastName, email, hasher, password, Some(salt))
+  // }
 
   // def findByIdentityId(id: IdentityId): Option[User] =
   //   ConnectionFactory.connect withSession { implicit session =>
