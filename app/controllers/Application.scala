@@ -1,6 +1,5 @@
 package controllers
 
-
 import com.nooovle._
 import com.nooovle.slick.models._
 import com.nooovle.slick.ConnectionFactory
@@ -20,10 +19,10 @@ class Application(override implicit val env: RuntimeEnvironment[User]) extends s
   def index = SecuredAction { implicit request =>
     val self = routes.Application.index
     val obj = HalJsObject.create(self.absoluteURL())
-//      .withCurie("hoa", Application.defaultCurie)
+      .withCurie("hoa", Application.defaultCurie)
       .withLink("profile", "collection")
-//      .withLink("hoa:tenants", routes.Tenants.list().absoluteURL(),
-//        Some("List of registered tenants"))
+      .withLink("hoa:tenants", routes.Tenants.list().absoluteURL(),
+        Some("List of registered tenants"))
 //      .withLink("hoa:documents", routes.Documents.list().absoluteURL(),
 //        Some("List of documents"))
 //      .withLink("hoa:users", routes.Users.list().absoluteURL(),

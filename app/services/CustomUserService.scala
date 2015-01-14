@@ -1,19 +1,28 @@
 package services;
 
 import scala.concurrent.Future
-
-import com.nooovle.slick.ConnectionFactory
-import com.nooovle.User
-import com.nooovle.slick.models.users
-import scala.slick.driver.H2Driver.simple._
-import play.api.Logger
-import securesocial.core.BasicProfile
-import securesocial.core.PasswordInfo
-import securesocial.core.providers.MailToken
-import securesocial.core.providers.UsernamePasswordProvider
-import securesocial.core.services.SaveMode
-import securesocial.core.services.UserService
+import scala.slick.driver.H2Driver.simple.{
+  booleanColumnExtensionMethods,
+  booleanColumnType,
+  columnExtensionMethods,
+  optionColumnExtensionMethods,
+  productQueryToUpdateInvoker,
+  queryToAppliedQueryInvoker,
+  queryToInsertInvoker,
+  repToQueryExecutor,
+  stringColumnType,
+  valueToConstColumn
+}
 import scala.util.Try
+
+import com.nooovle.User
+import com.nooovle.slick.ConnectionFactory
+import com.nooovle.slick.models.users
+
+import play.api.Logger
+import securesocial.core.{ BasicProfile, PasswordInfo }
+import securesocial.core.providers.MailToken
+import securesocial.core.services.{ SaveMode, UserService }
 
 class CustomUserService extends UserService[User] {
   val logger = Logger("application.controllers.DemoUserService")
@@ -42,6 +51,7 @@ class CustomUserService extends UserService[User] {
         }
       }
     }
+
   def save(profile: BasicProfile, mode: SaveMode): Future[User] = {
     Future.fromTry {
       Try {
@@ -51,18 +61,16 @@ class CustomUserService extends UserService[User] {
             u <- users if u.providerId === profile.providerId
               && u.userId === profile.userId
           ) yield u
+          // TODO: Review the implications for each save mode (ignored for now)
           if (query.exists.run) {
-            mode match {
-              case SaveMode.SignUp         => query.update(user)
-              case SaveMode.LoggedIn       => ???
-              case SaveMode.PasswordChange => ???
-            }
+            query.update(user)
+//            mode match {
+//              case SaveMode.SignUp         => ???
+//              case SaveMode.LoggedIn       => ???
+//              case SaveMode.PasswordChange => ???
+//            }
           } else {
-            mode match {
-              case SaveMode.SignUp         => users += user
-              case SaveMode.LoggedIn       => ???
-              case SaveMode.PasswordChange => ???
-            }
+            users += user
           }
           user
         }

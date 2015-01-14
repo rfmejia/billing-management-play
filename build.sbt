@@ -26,9 +26,7 @@ val repositoryDependencies = Seq(
 ) ++ jodaTimeDependencies
 
 val playDependencies = Seq(
-//  "com.typesafe.play" %% "play" % "2.3.6" withSources,
   "ws.securesocial" %% "securesocial" % "master-SNAPSHOT"
-//  "ws.securesocial" %% "securesocial" % "3.0-M1-play-2.2.x"
 )
 
 libraryDependencies ++= repositoryDependencies ++ playDependencies ++ Seq(
@@ -37,7 +35,7 @@ libraryDependencies ++= repositoryDependencies ++ playDependencies ++ Seq(
   cache
 )
 
-// Enable Play HTTP filters
+// Enable Play HTTP filters (cors, gzip, etc.)
 libraryDependencies += filters
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
