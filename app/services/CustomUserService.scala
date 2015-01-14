@@ -1,34 +1,20 @@
 package services;
 
 import scala.concurrent.Future
-import scala.slick.driver.H2Driver.simple.{
-  booleanColumnExtensionMethods,
-  booleanColumnType,
-  columnExtensionMethods,
-  optionColumnExtensionMethods,
-  productQueryToUpdateInvoker,
-  queryToAppliedQueryInvoker,
-  queryToInsertInvoker,
-  repToQueryExecutor,
-  stringColumnType,
-  valueToConstColumn
-}
+import scala.slick.driver.H2Driver.simple._
 import scala.util.Try
+
+import org.joda.time.DateTime
 
 import com.nooovle.User
 import com.nooovle.slick.ConnectionFactory
-import com.nooovle.slick.models.users
+import com.nooovle.slick.models.{ users, mailTokens }
 
-import play.api.Logger
 import securesocial.core.{ BasicProfile, PasswordInfo }
 import securesocial.core.providers.MailToken
 import securesocial.core.services.{ SaveMode, UserService }
 
 class CustomUserService extends UserService[User] {
-  val logger = Logger("application.controllers.DemoUserService")
-
-  private var tokens = Map[String, MailToken]()
-
   def find(providerId: String, userId: String): Future[Option[BasicProfile]] =
     Future.fromTry {
       Try {
@@ -57,18 +43,18 @@ class CustomUserService extends UserService[User] {
       Try {
         ConnectionFactory.connect withSession { implicit session =>
           val user = User.fromBasicProfile(profile)
-          val query = for (
+          val existingToken = for (
             u <- users if u.providerId === profile.providerId
               && u.userId === profile.userId
           ) yield u
           // TODO: Review the implications for each save mode (ignored for now)
-          if (query.exists.run) {
-            query.update(user)
-//            mode match {
-//              case SaveMode.SignUp         => ???
-//              case SaveMode.LoggedIn       => ???
-//              case SaveMode.PasswordChange => ???
-//            }
+          if (existingToken.exists.run) {
+            existingToken.update(user)
+            //            mode match {
+            //              case SaveMode.SignUp         => ???
+            //              case SaveMode.LoggedIn       => ???
+            //              case SaveMode.PasswordChange => ???
+            //            }
           } else {
             users += user
           }
@@ -80,32 +66,52 @@ class CustomUserService extends UserService[User] {
 
   def link(current: User, to: BasicProfile): Future[User] = save(to, SaveMode.SignUp)
 
-  def saveToken(token: MailToken): Future[MailToken] = {
-    Future.successful {
-      tokens += (token.uuid -> token)
-      token
-    }
-  }
-
-  def findToken(token: String): Future[Option[MailToken]] = {
-    Future.successful {
-      tokens.get(token)
-    }
-  }
-
-  def deleteToken(uuid: String): Future[Option[MailToken]] = {
-    Future.successful {
-      tokens.get(uuid) match {
-        case Some(token) =>
-          tokens -= uuid
-          Some(token)
-        case None => None
+  def findToken(uuid: String): Future[Option[MailToken]] =
+    Future.fromTry {
+      Try {
+        ConnectionFactory.connect withSession { implicit session =>
+          (for (t <- mailTokens if (t.uuid === uuid)) yield t).firstOption
+        }
       }
     }
-  }
 
-  def deleteExpiredTokens() {
-    tokens = tokens.filter(!_._2.isExpired)
+  def saveToken(token: MailToken): Future[MailToken] =
+    Future.fromTry {
+      Try {
+        ConnectionFactory.connect withSession { implicit session =>
+          val existingToken = (for (t <- mailTokens if (t.uuid === token.uuid)) yield t)
+          if (existingToken.exists.run) {
+            existingToken.update(token)
+          } else {
+            mailTokens += token
+          }
+          token
+        }
+      }
+    }
+
+  def deleteToken(uuid: String): Future[Option[MailToken]] =
+    Future.fromTry {
+      Try {
+        ConnectionFactory.connect withSession { implicit session =>
+          val existingToken = (for (t <- mailTokens if (t.uuid === uuid)) yield t)
+          if (existingToken.exists.run) {
+            val token = existingToken.firstOption
+            existingToken.delete
+            token
+          } else {
+            None
+          }
+        }
+      }
+    }
+
+  def deleteExpiredTokens() = Try {
+    import com.github.tototoshi.slick.H2JodaSupport._
+    ConnectionFactory.connect withSession { implicit session =>
+      val query = for (t <- mailTokens if t.expirationTime < DateTime.now) yield t
+
+    }
   }
 
   override def updatePasswordInfo(user: User, info: PasswordInfo): Future[Option[BasicProfile]] =

@@ -1,12 +1,16 @@
 package com.nooovle.slick
 
-import com.github.tototoshi.slick.H2JodaSupport._
-import com.nooovle._
-import org.joda.time.DateTime
-import play.api.libs.json._
 import scala.slick.driver.H2Driver.simple._
 import scala.slick.jdbc.meta.MTable
-import scala.util.{ Try, Success }
+import scala.util.{Success, Try}
+
+import org.joda.time.DateTime
+
+import com.github.tototoshi.slick.H2JodaSupport._
+import com.nooovle._
+
+import play.api.libs.json._
+import securesocial.core.providers.MailToken
 
 object models {
   val modelTemplates = TableQuery[ModelInfosModel]
@@ -16,14 +20,15 @@ object models {
   val users = TableQuery[UsersModel]
   val documents = TableQuery[DocumentsModel]
   val userRoles = TableQuery[UserRolesModel]
+  val mailTokens = TableQuery[MailTokensModel]
+  val tables = List(modelTemplates, roles, settings, tenants, users, documents,
+    userRoles, mailTokens)
 
   /**
    *  Builds tables one by one if they do not exist.
    *  !Note that this does not upgrade a table schema if they are changed.
    */
   def buildTables(implicit session: Session): List[Try[String]] = {
-    val tables = List(modelTemplates, roles, settings, tenants, users, documents,
-      userRoles)
     tables.map(t => {
       val tableName = t.baseTableRow.tableName
       if (MTable.getTables(tableName).list.isEmpty) {
@@ -40,7 +45,7 @@ object models {
   implicit val jsToString = MappedColumnType.base[JsObject, String](_.toString, {
     Json.parse(_) match {
       case o: JsObject => o
-      case _ => throw new IllegalStateException("Malformed JSON object")
+      case _           => throw new IllegalStateException("Malformed JSON object")
     }
   })
 }
@@ -142,6 +147,17 @@ class DocumentsModel(tag: Tag) extends Table[Document](tag, "DOCUMENTS") {
 
   def * = (id, serialId, title, docType, mailbox, creator, created, forTenant, forMonth, body, preparedBy, preparedOn, checkedBy, checkedOn, approvedBy, approvedOn, assigned) <>
     (Document.tupled, Document.unapply)
+}
+
+class MailTokensModel(tag: Tag) extends Table[MailToken](tag, "MAIL_TOKENS") {
+  def uuid = column[String]("UUID", O.PrimaryKey)
+  def email = column[String]("EMAIL", O.NotNull)
+  def creationTime = column[DateTime]("CREATION_TIME", O.NotNull)
+  def expirationTime = column[DateTime]("EXPIRATION_TIME", O.NotNull)
+  def isSignUp = column[Boolean]("IS_SIGN_UP", O.NotNull)
+
+  def * = (uuid, email, creationTime, expirationTime, isSignUp) <>
+    (MailToken.tupled, MailToken.unapply)
 }
 
 // class LogEntriesModel(tag: Tag) extends Table[LogEntry](tag, "LOG_ENTRIES") {}
