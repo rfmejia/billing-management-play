@@ -12,7 +12,9 @@ import scala.slick.driver.H2Driver.simple._
 import scala.util.{ Try, Success, Failure }
 import securesocial.core.RuntimeEnvironment
 
-class Tenants(override implicit val env: RuntimeEnvironment[User]) extends securesocial.core.SecureSocial[User] {
+class Tenants(override implicit val env: RuntimeEnvironment[User])
+  extends securesocial.core.SecureSocial[User] {
+
   def show(id: Int) = SecuredAction { implicit request =>
     Tenant.findById(id) match {
       case Some(t) =>
@@ -108,7 +110,7 @@ class Tenants(override implicit val env: RuntimeEnvironment[User]) extends secur
                 }
               }
               result match {
-                case Success(id) => NoContent
+                case Success(id)  => NoContent
                 case Failure(err) => InternalServerError(err.getMessage)
               }
             case _ => BadRequest("Some required values are missing. Please check your request.")

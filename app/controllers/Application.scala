@@ -15,7 +15,9 @@ object Application {
     routes.Application.documentation.absoluteURL() + "/{rel}"
 }
 
-class Application(override implicit val env: RuntimeEnvironment[User]) extends securesocial.core.SecureSocial[User] {
+class Application(override implicit val env: RuntimeEnvironment[User])
+  extends securesocial.core.SecureSocial[User] {
+
   def index = SecuredAction { implicit request =>
     val self = routes.Application.index
     val obj = HalJsObject.create(self.absoluteURL())
@@ -23,16 +25,16 @@ class Application(override implicit val env: RuntimeEnvironment[User]) extends s
       .withLink("profile", "collection")
       .withLink("hoa:tenants", routes.Tenants.list().absoluteURL(),
         Some("List of registered tenants"))
-//      .withLink("hoa:documents", routes.Documents.list().absoluteURL(),
-//        Some("List of documents"))
-//      .withLink("hoa:users", routes.Users.list().absoluteURL(),
-//        Some("List of users"))
-//      .withLink("hoa:templates", routes.Templates.list().absoluteURL(),
-//        Some("List of document templates"))
-//      .withLink("hoa:webapp", routes.Assets.at("index.html").absoluteURL(),
-//        Some("Web application"))
-//      .withLink("hoa:mailboxes", routes.Application.listMailboxes.absoluteURL(),
-//        Some("Listing of mailboxes and description of workflow"))
+      .withLink("hoa:documents", routes.Documents.list().absoluteURL(),
+        Some("List of documents"))
+      .withLink("hoa:users", routes.Users.list().absoluteURL(),
+        Some("List of users"))
+      .withLink("hoa:templates", routes.Templates.list().absoluteURL(),
+        Some("List of document templates"))
+      .withLink("hoa:webapp", routes.Assets.at("index.html").absoluteURL(),
+        Some("Web application"))
+      .withLink("hoa:mailboxes", routes.Application.listMailboxes.absoluteURL(),
+        Some("Listing of mailboxes and description of workflow"))
     Ok(obj.asJsValue)
   }
 

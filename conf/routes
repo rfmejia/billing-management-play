@@ -17,26 +17,26 @@ PUT      /api/tenants/:id              @controllers.Tenants.edit(id: Int)
 DELETE   /api/tenants/:id              @controllers.Tenants.delete(id: Int)
 
 # Users
-#GET      /api/users                  @controllers.Users.list(offset: Int ?= 0, limit: Int ?= 10)
-#GET      /api/users/:userId          @controllers.Users.show(userId: String)
+GET      /api/users                  @controllers.Users.list(offset: Int ?= 0, limit: Int ?= 10)
+GET      /api/users/:userId          @controllers.Users.show(userId: String)
 ##PUT      /api/users/:userId          controllers.Users.edit(userId: String)
 ##DELETE   /api/users/:userId          controllers.Users.delete(userId: String)
 
 # Documents
-#POST     /api/documents/:id/:box     @controllers.Documents.moveMailbox(id: Int, box: String)
+POST     /api/documents/:id/:box       @controllers.Documents.moveMailbox(id: Int, box: String)
 
-#GET      /api/documents              @controllers.Documents.list(offset: Int ?= 0, limit: Int ?= 10, mailbox: String ?= "", forTenant: Int ?= -1)
-#GET      /api/documents/:id          @controllers.Documents.show(id: Int)
-#POST     /api/documents              @controllers.Documents.create
-#PUT      /api/documents/:id          @controllers.Documents.edit(id: Int)
-#DELETE   /api/documents/:id          @controllers.Documents.delete(id: Int)
+GET      /api/documents                @controllers.Documents.list(offset: Int ?= 0, limit: Int ?= 10, mailbox: String ?= "", forTenant: Int ?= -1)
+GET      /api/documents/:id            @controllers.Documents.show(id: Int)
+POST     /api/documents                @controllers.Documents.create
+PUT      /api/documents/:id            @controllers.Documents.edit(id: Int)
+DELETE   /api/documents/:id            @controllers.Documents.delete(id: Int)
 
 # Templates
-#GET      /api/templates              @controllers.Templates.list(offset: Int ?= 0, limit: Int ?= 10)
-#GET      /api/templates/:docType     @controllers.Templates.show(docType: String)
+GET      /api/templates                @controllers.Templates.list(offset: Int ?= 0, limit: Int ?= 10)
+GET      /api/templates/:docType       @controllers.Templates.show(docType: String)
 
-#GET      /api/setupTestEnvironment   @controllers.TestEnvironment.setup
-#GET      /api/testFail               @controllers.TestEnvironment.fail
+GET      /api/setupTestEnvironment     @controllers.TestEnvironment.setup
+GET      /api/testFail                 @controllers.TestEnvironment.fail
 
 
 # ---- SecureSocial (master-SNAPSHOT) routes ----
