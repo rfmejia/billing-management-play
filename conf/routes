@@ -2,8 +2,6 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-# Note: Many SecureSocial LOCs come from http://www.filtercode.com/play/play-scala-securesocial
-
 # Entry point and documentation
 GET      /api                          @controllers.Application.index
 GET      /api/docs                     @controllers.Application.documentation
@@ -17,8 +15,8 @@ PUT      /api/tenants/:id              @controllers.Tenants.edit(id: Int)
 DELETE   /api/tenants/:id              @controllers.Tenants.delete(id: Int)
 
 # Users
-GET      /api/users                  @controllers.Users.list(offset: Int ?= 0, limit: Int ?= 10)
-GET      /api/users/:userId          @controllers.Users.show(userId: String)
+GET      /api/users                    @controllers.Users.list(offset: Int ?= 0, limit: Int ?= 10)
+GET      /api/users/:userId            @controllers.Users.show(userId: String)
 ##PUT      /api/users/:userId          controllers.Users.edit(userId: String)
 ##DELETE   /api/users/:userId          controllers.Users.delete(userId: String)
 
@@ -40,6 +38,7 @@ GET      /api/testFail                 @controllers.TestEnvironment.fail
 
 
 # ---- SecureSocial (master-SNAPSHOT) routes ----
+# Note: Many SecureSocial LOCs come from http://www.filtercode.com/play/play-scala-securesocial
 
 # Login page
 GET      /login                        @securesocial.controllers.LoginPage.login
@@ -53,14 +52,20 @@ POST     /signup/:token                @securesocial.controllers.Registration.ha
 GET      /password                     @securesocial.controllers.PasswordChange.page
 POST     /password                     @securesocial.controllers.PasswordChange.handlePasswordChange
 
+# Reset password
+GET         /reset        @securesocial.controllers.PasswordReset.startResetPassword
+POST        /reset        @securesocial.controllers.PasswordReset.handleStartResetPassword
+GET         /reset/:mailToken        @securesocial.controllers.PasswordReset.resetPassword(mailToken)
+POST        /reset/:mailToken        @securesocial.controllers.PasswordReset.handleResetPassword(mailToken)
+
 # Providers entry points
 GET      /authenticate/:provider       @securesocial.controllers.ProviderController.authenticate(provider)
 POST     /authenticate/:provider       @securesocial.controllers.ProviderController.authenticateByPost(provider)
 
+# Authentication API
 POST     /api/authenticate/:provider   @securesocial.controllers.LoginApi.authenticate(provider, builder = "token")
 
 # ---- Web application routes ----
-
-# Map static resources from the /public folder to the /assets URL path
 GET      /                             controllers.Assets.at(path="/public", file="index.html")
-GET      /assets/*file                 controllers.Assets.at(path="/public", file)
+# Note: Catch-all route must be the last in the definition
+GET      /*file                        controllers.Assets.at(path="/public", file)

@@ -19,32 +19,37 @@ class Application(override implicit val env: RuntimeEnvironment[User])
   extends securesocial.core.SecureSocial[User] {
 
   def index = SecuredAction { implicit request =>
-    val self = routes.Application.index
-    val obj = HalJsObject.create(self.absoluteURL())
-      .withCurie("hoa", Application.defaultCurie)
-      .withLink("profile", "collection")
-      .withLink("hoa:tenants", routes.Tenants.list().absoluteURL(),
-        Some("List of registered tenants"))
-      .withLink("hoa:documents", routes.Documents.list().absoluteURL(),
-        Some("List of documents"))
-      .withLink("hoa:users", routes.Users.list().absoluteURL(),
-        Some("List of users"))
-      .withLink("hoa:templates", routes.Templates.list().absoluteURL(),
-        Some("List of document templates"))
-      .withLink("hoa:webapp", routes.Assets.at("index.html").absoluteURL(),
-        Some("Web application"))
-      .withLink("hoa:mailboxes", routes.Application.listMailboxes.absoluteURL(),
-        Some("Listing of mailboxes and description of workflow"))
-    Ok(obj.asJsValue)
+    Ok {
+      val self = routes.Application.index
+      val obj = HalJsObject.create(self.absoluteURL())
+        .withCurie("hoa", Application.defaultCurie)
+        .withLink("profile", "collection")
+        .withLink("hoa:tenants", routes.Tenants.list().absoluteURL(),
+          Some("List of registered tenants"))
+        .withLink("hoa:documents", routes.Documents.list().absoluteURL(),
+          Some("List of documents"))
+        .withLink("hoa:users", routes.Users.list().absoluteURL(),
+          Some("List of users"))
+        .withLink("hoa:templates", routes.Templates.list().absoluteURL(),
+          Some("List of document templates"))
+        //      .withLink("hoa:webapp", routes.Assets.at("index.html").absoluteURL(),
+        //      .withLink("hoa:webapp", routes.Assets.at(path = "/public", file = "/index.html").absoluteURL(),
+        //        Some("Web application"))
+        .withLink("hoa:mailboxes", routes.Application.listMailboxes.absoluteURL(),
+          Some("Listing of mailboxes and description of workflow"))
+      obj.asJsValue
+    }
   }
 
   def documentation = TODO
 
   def listMailboxes = SecuredAction { implicit request =>
-    val self = routes.Application.listMailboxes
-    val obj = HalJsObject.create(self.absoluteURL())
-      .withCurie("hoa", Application.defaultCurie)
-      .withLink("profile", "collection")
-    Ok(obj.asJsValue ++ Workflow.asJsObject)
+    Ok {
+      val self = routes.Application.listMailboxes
+      val obj = HalJsObject.create(self.absoluteURL())
+        .withCurie("hoa", Application.defaultCurie)
+        .withLink("profile", "collection")
+      obj.asJsValue ++ Workflow.asJsObject
+    }
   }
 }

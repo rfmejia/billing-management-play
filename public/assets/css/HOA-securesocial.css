@@ -1,0 +1,28 @@
+@CHARSET "UTF-8";
+
+.navbar-fixed-top {
+	visibility: hidden;
+}
+
+.page-header h1 {
+	font-size: 3.0em;
+}
+
+.alert-error {
+	color: #a94442;
+	background-color: #f2dede;
+	border-color: #ebccd1;
+}
+
+.help-inline {
+	background-color: #f0ad4e;
+	display: inline;
+	padding: .2em .6em .3em;
+	font-weight: 700;
+	line-height: 1;
+	color: #fff;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: baseline;
+	border-radius: .25em;
+}
