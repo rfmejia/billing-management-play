@@ -32,9 +32,8 @@ class Application(override implicit val env: RuntimeEnvironment[User])
           Some("List of users"))
         .withLink("hoa:templates", routes.Templates.list().absoluteURL(),
           Some("List of document templates"))
-        //      .withLink("hoa:webapp", routes.Assets.at("index.html").absoluteURL(),
-        //      .withLink("hoa:webapp", routes.Assets.at(path = "/public", file = "/index.html").absoluteURL(),
-        //        Some("Web application"))
+        .withLink("hoa:webapp", routes.Assets.at("index.html").absoluteURL(),
+          Some("Web application"))
         .withLink("hoa:mailboxes", routes.Application.listMailboxes.absoluteURL(),
           Some("Listing of mailboxes and description of workflow"))
       obj.asJsValue

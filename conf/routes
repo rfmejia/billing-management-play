@@ -17,8 +17,8 @@ DELETE   /api/tenants/:id              @controllers.Tenants.delete(id: Int)
 # Users
 GET      /api/users                    @controllers.Users.list(offset: Int ?= 0, limit: Int ?= 10)
 GET      /api/users/:userId            @controllers.Users.show(userId: String)
-##PUT      /api/users/:userId          controllers.Users.edit(userId: String)
-##DELETE   /api/users/:userId          controllers.Users.delete(userId: String)
+PUT      /api/users/:userId            @controllers.Users.edit(userId: String)
+DELETE   /api/users/:userId            @controllers.Users.delete(userId: String)
 
 # Documents
 POST     /api/documents/:id/:box       @controllers.Documents.moveMailbox(id: Int, box: String)
@@ -53,10 +53,10 @@ GET      /password                     @securesocial.controllers.PasswordChange.
 POST     /password                     @securesocial.controllers.PasswordChange.handlePasswordChange
 
 # Reset password
-GET         /reset        @securesocial.controllers.PasswordReset.startResetPassword
-POST        /reset        @securesocial.controllers.PasswordReset.handleStartResetPassword
-GET         /reset/:mailToken        @securesocial.controllers.PasswordReset.resetPassword(mailToken)
-POST        /reset/:mailToken        @securesocial.controllers.PasswordReset.handleResetPassword(mailToken)
+GET      /reset                        @securesocial.controllers.PasswordReset.startResetPassword
+POST     /reset                        @securesocial.controllers.PasswordReset.handleStartResetPassword
+GET      /reset/:mailToken             @securesocial.controllers.PasswordReset.resetPassword(mailToken)
+POST     /reset/:mailToken             @securesocial.controllers.PasswordReset.handleResetPassword(mailToken)
 
 # Providers entry points
 GET      /authenticate/:provider       @securesocial.controllers.ProviderController.authenticate(provider)

@@ -11,7 +11,7 @@ import play.api.mvc.{ Action, Controller }
 import play.api.mvc.BodyParsers._
 import scala.slick.driver.H2Driver.simple._
 import scala.util.{ Try, Success, Failure }
-import securesocial.core.RuntimeEnvironment
+import securesocial.core.{ RuntimeEnvironment, SecureSocial }
 
 class Users(override implicit val env: RuntimeEnvironment[User])
   extends securesocial.core.SecureSocial[User] {
@@ -19,20 +19,22 @@ class Users(override implicit val env: RuntimeEnvironment[User])
   def show(userId: String) = Action { implicit request =>
     User.findByUserIdWithRoles(userId) match {
       case Some((u, rs)) =>
-        val self = routes.Users.show(userId)
-        val obj = HalJsObject.create(self.absoluteURL())
-          .withCurie("hoa", Application.defaultCurie)
-          .withLink("profile", "hoa:user")
-          .withLink("collection", routes.Users.list().absoluteURL())
-          // .withLink("edit", routes.Users.edit(userId).absoluteURL())
-          .withField("_template", editForm)
-          .withField("userId", u.userId)
-          .withField("email", u.email)
-          .withField("firstName", u.firstName)
-          .withField("lastName", u.lastName)
-          .withField("fullName", u.fullName)
-          .withField("roles", rs)
-        Ok(obj.asJsValue)
+        Ok {
+          val self = routes.Users.show(userId)
+          val obj = HalJsObject.create(self.absoluteURL())
+            .withCurie("hoa", Application.defaultCurie)
+            .withLink("profile", "hoa:user")
+            .withLink("collection", routes.Users.list().absoluteURL())
+            .withLink("edit", routes.Users.edit(userId).absoluteURL())
+            .withField("_template", editForm)
+            .withField("userId", u.userId)
+            .withField("email", u.email)
+            .withField("firstName", u.firstName)
+            .withField("lastName", u.lastName)
+            .withField("fullName", u.fullName)
+            .withField("roles", rs)
+          obj.asJsValue
+        }
       case None => NotFound
     }
   }
@@ -43,7 +45,6 @@ class Users(override implicit val env: RuntimeEnvironment[User])
       val total = users.length.run
       (us, total)
     }
-
     val objs = us map { u =>
       val link = routes.Users.show(u.userId)
       val obj = HalJsObject.create(link.absoluteURL())
@@ -54,56 +55,44 @@ class Users(override implicit val env: RuntimeEnvironment[User])
       obj.asJsValue
     }
 
-    val self = routes.Users.list(offset, limit)
-    // val createUrl = routes.Users.create("--------").absoluteURL()
-    // .replaceAll("--------", "{userId}")
-    val blank = HalJsObject.create(self.absoluteURL())
-      .withCurie("hoa", Application.defaultCurie)
-      .withLink("profile", "collection")
-      .withLink("up", routes.Application.index().absoluteURL())
-      // .withLink("create", createUrl)
-      .withField("_template", createForm)
-      .withField("count", us.length)
-      .withField("total", total)
-    val x = blank.withEmbedded(HalJsObject.empty.withField("item", objs))
+    Ok {
+      val self = routes.Users.list(offset, limit)
+      val blank = HalJsObject.create(self.absoluteURL())
+        .withCurie("hoa", Application.defaultCurie)
+        .withLink("profile", "collection")
+        .withLink("up", routes.Application.index().absoluteURL())
+        .withField("count", us.length)
+        .withField("total", total)
+      val x = blank.withEmbedded(HalJsObject.empty.withField("item", objs))
 
-    Ok(x.asJsValue)
+      x.asJsValue
+    }
   }
 
-  // def edit(userId: String) = Action(parse.json) { implicit request =>
-  //   // Check existence under ID
-  //   User.findByUserId(userId) match {
-  //     case None => NotFound
-  //     case Some(user) =>
-  //       val json = request.body
-  //       ((json \ "email").asOpt[String], (json \ "firstName").asOpt[String],
-  //         (json \ "lastName").asOpt[String], (json \ "password").asOpt[String],
-  //         (json \ "roles").asOpt[Seq[String]]) match {
-  //           case (Some(email), Some(firstName), Some(lastName), Some(password),
-  //             Some(rs)) =>
-  //             // Create a new user to ensure proper salt generation
-  //             val newUser = User(user.userId, firstName, lastName, Some(email), password)
+  def edit(userId: String) = SecuredAction(parse.json) { implicit request =>
+    val json = request.body
+    ((json \ "firstName").as[Option[String]], (json \ "lastName").as[Option[String]],
+      (json \ "email").as[Option[String]], (json \ "roles").asOpt[Seq[String]]) match {
+        case (firstName, lastName, email, Some(rs)) =>
+          User.updateWithRoles(userId, firstName, lastName, email, rs.toSet) match {
+            case Success(userId) => NoContent
+            case Failure(err) => err match {
+              case e: IndexOutOfBoundsException => NotFound
+              case e: Throwable                 => throw e
+            }
+          }
+        case _ => BadRequest("Some required values are missing. Please check your request.")
+      }
+  }
 
-  //             User.updateWithRoles(newUser, rs.toSet) match {
-  //               case Success(userId) => NoContent
-  //               case Failure(err) => err match {
-  //                 case e: IndexOutOfBoundsException => NotFound
-  //                 case e: Throwable => throw e
-  //               }
-  //             }
-  //           case _ => BadRequest("Some required values are missing. Please check your request.")
-  //         }
-  //   }
-  // }
-
-  // def delete(userId: String) = Action { implicit request =>
-  //   val deleted = ConnectionFactory.connect withSession { implicit session =>
-  //     val query = for (u <- users if u.userId === userId) yield u
-  //     query.delete
-  //   }
-  //   if (deleted == 0) NotFound
-  //   else Ok
-  // }
+  def delete(userId: String) = SecuredAction { implicit request =>
+    val deleted = ConnectionFactory.connect withSession { implicit session =>
+      val query = for (u <- users if u.userId === userId) yield u
+      query.delete
+    }
+    if (deleted == 0) NotFound
+    else Ok
+  }
 
   lazy val createForm: JsObject = {
     val fields = ModelInfo.toJsonArray {

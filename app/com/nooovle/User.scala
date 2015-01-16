@@ -48,7 +48,7 @@ object User extends ((String, String, Option[String], Option[String], Option[Str
     val salt = p.passwordInfo.map(_.salt).getOrElse(None)
     User(p.providerId, p.userId, p.firstName, p.lastName, p.email, hasher, password, salt)
   }
-  
+
   def findByUserIdWithRoles(userId: String): Option[(User, Set[String])] =
     ConnectionFactory.connect withSession { implicit session =>
       val user = for (u <- users if u.userId === userId) yield u
@@ -82,34 +82,37 @@ object User extends ((String, String, Option[String], Option[String], Option[Str
     }
   }
 
-  def updateWithRoles(user: User, rs: Set[String]): Try[String] = Try {
-    ConnectionFactory.connect withTransaction { implicit transaction =>
-      try {
-        val query = for (u <- users if u.userId === user.userId) yield u
+  def updateWithRoles(userId: String, firstName: Option[String], lastName: Option[String],
+                      email: Option[String], rs: Set[String]): Try[String] =
+    Try {
+      ConnectionFactory.connect withTransaction { implicit transaction =>
+        try {
+          val query = for (u <- users if u.userId === userId) yield u
 
-        val _username: String =
-          if (!query.exists.run) throw new IndexOutOfBoundsException
-          else { // Update user
-            query.update(user)
-            query.first.userId
-          }
-        rs foreach (role => roles.insertOrUpdate(role))
-        // The following does not use insertOrUpdate because userId is an
-        // auto-incrementing foreign key (bug exists)
-        rs foreach (role => userRoles += ((_username, role)))
-        _username
-      } catch {
-        case t: Throwable =>
-          transaction.rollback
-          throw t
+          val _username: String =
+            if (!query.exists.run) throw new IndexOutOfBoundsException
+            else { // Update user
+              val _user = query.first.copy(firstName = firstName, lastName = lastName, email = email)
+              query.update(_user)
+              _user.userId
+            }
+          rs foreach (role => roles.insertOrUpdate(role))
+          // The following does not use insertOrUpdate because userId is an
+          // auto-incrementing foreign key (bug exists)
+          rs foreach (role => userRoles += ((_username, role)))
+          _username
+        } catch {
+          case t: Throwable =>
+            transaction.rollback
+            throw t
+        }
       }
     }
-  }
 
   val modelName = "USERS"
   lazy val modelInfos = Seq(
     ModelInfo("USERS", "userId", "String", false, false, true, Some("Username")),
-    ModelInfo("USERS", "password", "String", true, true, true, Some("Password")),
+    ModelInfo("USERS", "password", "String", true, false, true, Some("Password")),
     ModelInfo("USERS", "email", "String", false, true, true, Some("Email")),
     ModelInfo("USERS", "roles", "String[]", false, true, true, Some("Roles")),
     ModelInfo("USERS", "firstName", "String", true, true, true, Some("First name")),
