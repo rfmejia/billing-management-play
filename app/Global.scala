@@ -1,18 +1,14 @@
 
 import java.lang.reflect.Constructor
-
 import scala.collection.immutable.ListMap
 import scala.concurrent.Future
 import scala.slick.driver.H2Driver.simple._
-
 import org.locker47.json.play.HalJsObject
-
 import com.nooovle._
 import com.nooovle.slick.ConnectionFactory
 import com.nooovle.slick.models.modelTemplates
-
 import filters._
-import play.api.{ Application, GlobalSettings }
+import play.api.{ Application, GlobalSettings, Logger }
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json._
 import play.api.mvc.{ RequestHeader, WithFilters }
@@ -21,27 +17,69 @@ import play.filters.gzip.GzipFilter
 import securesocial.core.RuntimeEnvironment
 import securesocial.core.providers._
 import services.CustomUserService
+import play.mvc.Http.Status
+import scala.util.{ Try, Success, Failure }
 
 object Global extends WithFilters(CorsFilter, new GzipFilter()) with GlobalSettings {
+  val logger = Logger(this.getClass.getName)
 
   override def onStart(app: Application) = {
-    ConnectionFactory.connect withSession { implicit session =>
-      com.nooovle.slick.models.buildTables
-      insertModelInfos
+    Try {
+      ConnectionFactory.connect withSession { implicit session =>
+        com.nooovle.slick.models.buildTables
+        insertModelInfos
+      }
+    } match {
+      case Success(_) => logger.info("Successfully initialized database")
+      case Failure(t) =>
+        logger.error(s"Could not initialize the database", t)
     }
   }
 
+  // TODO: Add an HTML 500 page in addition to the JSON response
   override def onError(request: RequestHeader, ex: Throwable) =
     Future.successful {
+      logger.warn("sError on request ${request.toString}", ex)
       InternalServerError {
         val obj = HalJsObject.create(request.uri)
           .withCurie("hoa", controllers.Application.defaultCurie(request))
           .withLink("profile", "hoa:error")
           .withField("title", "Unexpected Runtime Error")
-          .withField("code", 500)
+          .withField("code", Status.INTERNAL_SERVER_ERROR)
           .withField("message", "Uncaught application exception. Please contact your administrator for support.")
-          .withField("exception", ex.getMessage)
+          .withField("devMsg", ex.getMessage)
           .withField("stackTrace", ex.getStackTrace.mkString("\n"))
+
+        obj.asJsValue
+      }
+    }
+
+  override def onBadRequest(request: RequestHeader, error: String) =
+    Future.successful {
+      BadRequest {
+        val obj = HalJsObject.create(request.uri)
+          .withCurie("hoa", controllers.Application.defaultCurie(request))
+          .withLink("profile", "hoa:error")
+          .withField("title", "Bad request")
+          .withField("code", Status.BAD_REQUEST)
+          .withField("message", "You submitted a bad request. Please check your inputs or contact your administrator for support.")
+          .withField("devMsg", error)
+
+        obj.asJsValue
+      }
+    }
+
+  // TODO: Add an HTML 404 page in addition to the JSON response
+  override def onHandlerNotFound(request: RequestHeader) =
+    Future.successful {
+      NotFound {
+        val obj = HalJsObject.create(request.uri)
+          .withCurie("hoa", controllers.Application.defaultCurie(request))
+          .withLink("profile", "hoa:error")
+          .withField("title", "Action Not Found")
+          .withField("code", Status.NOT_FOUND)
+          .withField("message", "The server does not know the requested action. Please contact your administrator for support.")
+          .withField("devMsg", s"Unkown action '${request.toString}'")
 
         obj.asJsValue
       }
