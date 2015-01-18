@@ -1,18 +1,21 @@
-var hoaApp = angular.module('hoaApp', [
+var hoaapp = angular.module('hoaApp', [
     "ngCookies",
     "ui.bootstrap", "ui.router", "angularSpinner",
     "module.tenants", "module.mailbox", "module.users",
     "service.dashboard", "service.templates", "service.tenants", "service.invites", "service.users", "service.documents",
-    "controller.inbox", "controller.drafts", "controller.create",
+    "controller.inbox", "controller.drafts", "controller.create", "controller.root",
     "controller.tenantslist", "controller.tenantview", "controller.tenantedit", "controller.tenantcreate",
     "controller.completeusers", "controller.userview", "controller.inviteuser",
     "hoaFilters",
     "hoaControllers",
     "hoaDirectives"]);
 
-hoaApp.config(["$stateProvider", "$urlRouterProvider", 'usSpinnerConfigProvider', 
-    function($stateProvider, $urlRouterProvider, usSpinnerConfigProvider) {
+hoaapp.config(["$stateProvider", "$urlRouterProvider", "$locationProvider", "$httpProvider", 'usSpinnerConfigProvider', 
+    function($stateProvider, $urlRouterProvider,  $locationProvider, $httpProvider, usSpinnerConfigProvider) {
 
+        $httpProvider.responseInterceptors.push('httpInterceptor');
+        $locationProvider.html5Mode(true);
+        
         usSpinnerConfigProvider.setDefaults({
             color   : '#2196F3',
             lines   : 9,
@@ -21,21 +24,7 @@ hoaApp.config(["$stateProvider", "$urlRouterProvider", 'usSpinnerConfigProvider'
         });
 
         var authenticate = {
-            views       : {
-                "rootView@"  : {
-                    templateUrl     : "app/shared/content/authentication/views/root-authenticate.html",
-                    controller      : "authenticateController"
-                }
-            }
-        };
-
-        var verification = {
-            views   : {
-                "authenticateBox@"  : {
-                    templateUrl     : "app/shared/content/authentication/views/verifyBox.html",
-                    controller      : "verifyController"
-                }
-            }
+            url : "/login"
         };
 
         var workspace    = {
@@ -48,11 +37,11 @@ hoaApp.config(["$stateProvider", "$urlRouterProvider", 'usSpinnerConfigProvider'
             },
             views       : {
                 "rootView@"             : {
-                    templateUrl     : "app/shared/content/dashboard/views/root-workspace.html",
+                    templateUrl     : "app/shared/content/workspace/views/workspace.html",
                     controller      : "workspaceController"
                 },
                 "sidebar@workspace"     : {
-                    templateUrl     : "app/shared/sidebar/views/sidebar.html",
+                    templateUrl     : "app/shared/content/workspace/sidebar/views/sidebar.html",
                     controller      : "sidebarController"
                 },
                 "contentArea@workspace" : {
@@ -64,12 +53,11 @@ hoaApp.config(["$stateProvider", "$urlRouterProvider", 'usSpinnerConfigProvider'
 
         $stateProvider
             .state("authenticate",          authenticate)
-            .state("authenticate.verify",   verification)
             .state("workspace",             workspace);
     }
 ]);
 
-hoaApp.run(['$rootScope', 'usSpinnerService', 
+hoaapp.run(['$rootScope', 'usSpinnerService', 
     function($rootScope, usSpinnerService, usSpinnerConfigProvider){
 
         $rootScope.$on('$stateChangeStart', 

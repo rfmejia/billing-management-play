@@ -1,15 +1,4 @@
 var hoaControllers = angular.module("hoaControllers", []);
-hoaControllers.value('entrypoint', "http://hoa-play-scala.herokuapp.com/api");
-
-hoaControllers.controller("rootController", ["$state", "$cookies",
-    function($state, $cookies) {
-    $state.go("authenticate")
-    //check credentials,
-    // if(!auth) $state.go("authenticate");
-
-    //true go to workspace state,
-    //false go to auhtenticate state
-}]);
 
 hoaControllers.controller("authenticateController", ["$scope", "$state",
 function($scope, $state) {
@@ -20,17 +9,15 @@ function($scope, $state) {
         var passwordEq = angular.equals($scope.user.password, "user");
         $scope.isValidCredentials = userEq && passwordEq;
 
-        // if($scope.isValidCredentials) $state.go("workspace");
         $state.go("workspace");
     }
 }]);
 
-hoaControllers.controller("verifyController", [function() {
+hoaControllers.controller('workspaceController', ['$rootScope', '$scope', "$http", "$state",  "$location", "r_hoaLinks", "service.hoalinks", "$window", "$cookies", "tokenHandler",
+    function ($rootScope, $scope, $http, $state, $location, r_hoaLinks, hoalinks, $window, $cookies, tokenHandler) {
 
-}]);
+        console.log(tokenHandler.get());
 
-hoaControllers.controller('workspaceController', ['$rootScope', '$scope', "$http", "$state",  "$location", "entrypoint", "r_hoaLinks", "service.hoalinks",
-    function ($rootScope, $scope, $http, $state, $location, entrypoint, r_hoaLinks, hoalinks) {
         $scope.onCreateClicked = function() {
             console.log("create");
             $state.go("workspace.create");

@@ -19,7 +19,7 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
   </head>
-  <body ng-app="hoaApp" ng-controller="rootController">
+  <body ng-app="hoaApp" ng-controller="controller.root">
     <div ui-view="rootView">
 
     </div>
@@ -61,10 +61,14 @@
     <script src="app/components/mailbox/controllers/hoaapp.controller.inbox.js"></script>
     <script src="app/components/mailbox/controllers/hoaapp.controller.create.js"></script>
     <!-- end.components.mailbox -->
+    <script src="app/shared/content/authentication/service/hoaapp.service.httpinterceptor.js"></script>
+    <script src="app/shared/content/authentication/service/hoaapp.service.tokenhandler.js"></script>
+    <script src="app/shared/content/authentication/controllers/hoaapp.controllers.root-authentication.js"></script>
 
-    <script src="app/shared/content/dashboard/services/hoaapp.service.dashboard.js"></script>
-    <script src="app/shared/content/dashboard/services/hoaapp.service.templates.js"></script>
-    <script src="app/shared/content/dashboard/services/hoaapp.service.documents.js"></script>
+
+    <script src="app/shared/content/workspace/services/hoaapp.service.dashboard.js"></script>
+    <script src="app/shared/content/workspace/services/hoaapp.service.templates.js"></script>
+    <script src="app/shared/content/workspace/services/hoaapp.service.documents.js"></script>
     <script src="HOADirectives.js"></script>
     <script src="HOAController.js"></script>
     <script src="HOAFilters.js"></script>

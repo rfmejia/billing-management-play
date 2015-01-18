@@ -2,7 +2,8 @@ var dashboard = angular.module("service.dashboard", ["ngResource"]);
 
 dashboard.service("service.hoalinks", ["$resource", "$q", 
     function($resource, $q) {
-        var topUrl   = "http://hoa-play-scala.herokuapp.com/api";
+        // var topUrl   = "http://hoa-play-scala.herokuapp.com/api";
+        var topUrl   = "http://localhost:9000/api/"
         var resource = $resource(topUrl, {}, {
             get   : {method: "GET", isArray: false}
         });    
@@ -10,6 +11,10 @@ dashboard.service("service.hoalinks", ["$resource", "$q",
         var tenantsLink     = null;
         var invitesLink     = null;
         var currentUserLink = null;
+
+        this.getResource = function() {
+            return resource; 
+        }
 
         this.getLinks = function() {
             var deferred = $q.defer();
@@ -21,6 +26,9 @@ dashboard.service("service.hoalinks", ["$resource", "$q",
                     templatesLink   = data._links["hoa:templates"].href;
 
                     deferred.resolve(data);
+                }, 
+                function() {
+                    deferred.reject("Error");
                 });
 
             return deferred.promise;
@@ -30,7 +38,6 @@ dashboard.service("service.hoalinks", ["$resource", "$q",
             return usersLink;
         }
         this.getTenantsLinks = function() {
-            console.log(tenantsLink)
             return tenantsLink;
         }
         this.getInvitesLink = function() {
