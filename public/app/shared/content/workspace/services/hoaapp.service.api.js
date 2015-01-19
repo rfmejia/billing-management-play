@@ -1,4 +1,4 @@
-var dashboard = angular.module("service.dashboard", ["ngResource"]);
+var dashboard = angular.module("hoaApp");
 
 dashboard.service("service.hoalinks", ["$resource", "$q", 
     function($resource, $q) {
@@ -9,11 +9,19 @@ dashboard.service("service.hoalinks", ["$resource", "$q",
         });    
         var usersLink       = null;
         var tenantsLink     = null;
-        var invitesLink     = null;
-        var currentUserLink = null;
+        var invitesLink     = null; //TODO: remove
+        var currentUserLink = null; //not yet implemented
+        var mailboxesLink   = null;
+        var documentsLink   = null;
+        var templatesLink   = null;
+        var isLinksSet        = false;
 
         this.getResource = function() {
             return resource; 
+        }
+
+        this.isLinksSet = function() {
+            return isLinksSet;
         }
 
         this.getLinks = function() {
@@ -24,10 +32,12 @@ dashboard.service("service.hoalinks", ["$resource", "$q",
                     tenantsLink     = data._links["hoa:tenants"].href;
                     documentsLink   = data._links["hoa:documents"].href;
                     templatesLink   = data._links["hoa:templates"].href;
-
+                    mailboxesLink   = data._links["hoa:mailboxes"].href;
+                    isLinksSet = true;
                     deferred.resolve(data);
                 }, 
                 function() {
+                    isLinksSet = false;
                     deferred.reject("Error");
                 });
 
@@ -40,6 +50,7 @@ dashboard.service("service.hoalinks", ["$resource", "$q",
         this.getTenantsLinks = function() {
             return tenantsLink;
         }
+        //TODO: remove
         this.getInvitesLink = function() {
             return invitesLink;
         }
@@ -51,5 +62,8 @@ dashboard.service("service.hoalinks", ["$resource", "$q",
         }
         this.getTemplatesLink = function() {
             return templatesLink;
+        }
+        this.getMailboxesLink = function() {
+            return mailboxesLink;
         }
     }]);

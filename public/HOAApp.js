@@ -1,20 +1,13 @@
 var hoaapp = angular.module('hoaApp', [
-    "ngCookies",
+    "ngCookies", "ngResource",
     "ui.bootstrap", "ui.router", "angularSpinner",
-    "module.tenants", "module.mailbox", "module.users",
-    "service.dashboard", "service.templates", "service.tenants", "service.invites", "service.users", "service.documents",
-    "controller.inbox", "controller.drafts", "controller.create", "controller.root",
-    "controller.tenantslist", "controller.tenantview", "controller.tenantedit", "controller.tenantcreate",
-    "controller.completeusers", "controller.userview", "controller.inviteuser",
-    "hoaFilters",
-    "hoaControllers",
-    "hoaDirectives"]);
+    "module.users", "module.tenants", "module.mailbox", 
+    ]);
 
 hoaapp.config(["$stateProvider", "$urlRouterProvider", "$locationProvider", "$httpProvider", 'usSpinnerConfigProvider', 
     function($stateProvider, $urlRouterProvider,  $locationProvider, $httpProvider, usSpinnerConfigProvider) {
 
         $httpProvider.responseInterceptors.push('httpInterceptor');
-        $locationProvider.html5Mode(true);
         
         usSpinnerConfigProvider.setDefaults({
             color   : '#2196F3',
@@ -29,10 +22,26 @@ hoaapp.config(["$stateProvider", "$urlRouterProvider", "$locationProvider", "$ht
 
         var workspace    = {
             resolve     : {
-                r_linkService       : "service.hoalinks",
-                r_tenantsService    : "service.hoatenants",
-                r_hoaLinks          : function(r_linkService, r_tenantsService) {
-                    return r_linkService.getLinks();
+                r_linkSrvc          : "service.hoalinks",
+                r_mailboxSrvc       : "service.mailbox",
+                r_workspace         : function(r_linkSrvc, r_mailboxSrvc, $q) {
+                    var deferred       = $q.defer();
+                    var linksPromise   = r_linkSrvc.getLinks();
+                    
+                    var mailboxPromise = r_mailboxSrvc.queryApi();
+                    
+                    var success        = function(response) {
+                        deferred.resolve(response);
+                    }
+
+                    $q.all([linksPromise, mailboxPromise]).then(success);
+                    return deferred.promise;
+                },
+                r_hoaLinks          : function(r_workspace) {
+                    return r_workspace[0];
+                },
+                r_mailboxes         : function(r_workspace) {
+                    return r_workspace[1];
                 }
             },
             views       : {
@@ -46,7 +55,7 @@ hoaapp.config(["$stateProvider", "$urlRouterProvider", "$locationProvider", "$ht
                 },
                 "contentArea@workspace" : {
                     templateUrl     : "app/components/mailbox/views/maincontent-inbox.html",
-                    controller      : "controller.inbox"
+                    controller      : "controller.drafts"
                 }
             }
         };

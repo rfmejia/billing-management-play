@@ -1,4 +1,4 @@
-var invites = angular.module("service.invites", ["ngResource"]);
+var invites = angular.module("service.tenants", []);
 
 invites.service("service.hoainvites", ["$resource", "$q", "service.hoalinks", 
 	function($resource, $q, hoalinks){
@@ -10,7 +10,6 @@ invites.service("service.hoainvites", ["$resource", "$q", "service.hoalinks",
 			});
 		};
 		var getData			= function(username) {
-			console.log("users invite");
 			var deferred = $q.defer();
 			var param 	 = (username != null) ? {id : param} : username;
 			var query 	 = function() {
@@ -48,7 +47,6 @@ invites.service("service.hoainvites", ["$resource", "$q", "service.hoalinks",
            };
 
 		this.queryApi = function(url) {
-			console.log("query invites");
 			return getData(url);
 		}
 

@@ -14,7 +14,7 @@ token.factory("tokenHandler",
 				       // call action with provided data and
 				       // appended access_token
 				       angular.extend({}, data || {},
-				         {access_token: tokenHandler.get()}),
+				         {"X-Auth-Token": tokenHandler.get()}),
 				       success,
 				       error
 				);

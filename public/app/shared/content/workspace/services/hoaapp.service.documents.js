@@ -1,4 +1,4 @@
-var documents = angular.module("service.documents", ["ngResource"]);
+var documents = angular.module("hoaApp");
 
 documents.service('service.hoadocuments', ['$resource', '$q', 'service.hoalinks', 
 	function($resource, $q, hoalinks){
@@ -44,6 +44,5 @@ documents.service('service.hoadocuments', ['$resource', '$q', 'service.hoalinks'
 	}
 
 	this.putDocument = function(document) {
-		console.log(document);
 	}
 }])

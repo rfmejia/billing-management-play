@@ -1,11 +1,7 @@
 var app = angular.module("module.users", [
+        "ngResource",
         "ui.router",
-        "service.users",
-        "service.invites",
-        "controller.completeusers",
-        "hoaFilters",
-        "hoaControllers",
-        "hoaDirectives"
+        "service.tenants", "service.users"
     ]);
 
 app.config(["$stateProvider", "$urlRouterProvider", 
@@ -24,10 +20,6 @@ app.config(["$stateProvider", "$urlRouterProvider",
                 r_combinedRoot      : function(usersService, invitesService, $q) {
                     var deferred = $q.defer();
 
-                    // $q.all([usersService.queryApi(), invitesService.queryApi()]).then(
-                    //     function(response){
-                    //         deferred.resolve(response);
-                    //     });
                     $q.all([usersService.queryApi()]).then(
                         function(response){
                             deferred.resolve(response);
@@ -57,7 +49,6 @@ app.config(["$stateProvider", "$urlRouterProvider",
             url         : "/users-view/:username",
             resolve     : {
                 r_user          : function($stateParams, usersService) {
-                    console.log($stateParams);
                     return usersService.queryApi($stateParams.username);
                 }
             },

@@ -152,3 +152,7 @@ h5.mainTotal {
 #documentControls h4 {
   color: rgba(33, 150, 243, .87);
 }
+
+h6.sidebarSection {
+  color: #2196F3;
+}

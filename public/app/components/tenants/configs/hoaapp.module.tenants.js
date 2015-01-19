@@ -1,9 +1,6 @@
 var app = angular.module("module.tenants", [
-        "ui.router",
-        "service.tenants",
-        "hoaFilters",
-        "hoaControllers",
-        "hoaDirectives"
+        "ngResource",
+        "ui.router"
     ]);
 
 app.config(["$stateProvider", "$urlRouterProvider", 

@@ -1,4 +1,4 @@
-var user = angular.module("controller.userview", []);
+var user = angular.module("module.users");
 
 user.controller("controller.userview", ['$scope', "$state", "r_user",
     function ($scope, $state, r_user) {

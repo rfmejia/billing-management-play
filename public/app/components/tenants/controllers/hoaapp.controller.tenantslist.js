@@ -1,4 +1,4 @@
-var tenants = angular.module("controller.tenantslist", []);
+var tenants = angular.module("module.tenants");
 
 tenants.controller("controller.tenantslist", ["$scope", "$state", "$modal", "service.hoatenants", "r_tenantsApi",
     function($scope, $state, $modal, hoatenants, r_tenantsApi){
@@ -17,7 +17,6 @@ tenants.controller("controller.tenantslist", ["$scope", "$state", "$modal", "ser
         		controller : "controller.tenantcreate",
         		resolve : {
         			r_createTemplate : function() {
-        				console.log(r_tenantsApi.template);
         				return r_tenantsApi.template;
         			}
         		}
