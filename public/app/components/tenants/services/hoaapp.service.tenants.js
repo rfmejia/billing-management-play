@@ -1,4 +1,4 @@
-var tenants = angular.module("service.tenants", ["ngResource"]);
+var tenants = angular.module("module.tenants");
 
 tenants.service("service.hoatenants", ["$resource", "$q", "service.hoalinks",
     function($resource, $q, hoalinks){

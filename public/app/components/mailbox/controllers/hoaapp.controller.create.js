@@ -1,4 +1,4 @@
-var create = angular.module("controller.create", []);
+var create = angular.module("module.mailbox");
 
 create.controller("controller.create", ["$scope", "$state", "r_documentsService", "r_mailboxData",
 	function($scope, $state, r_documentsService, r_mailboxData){
@@ -26,7 +26,6 @@ create.controller("controller.create", ["$scope", "$state", "r_documentsService"
 
 
 		$scope.onSelect = function(tenant){
-			console.log(tenant);
 		};
 
 		$scope.today = function() {

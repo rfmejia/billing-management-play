@@ -1,4 +1,4 @@
-var tenants = angular.module("controller.tenantview", []);
+var tenants = angular.module("module.tenants");
 
 tenants.controller("controller.tenantview", ["$scope", "$state", "r_tenant", 
 	function($scope, $state, r_tenant){
@@ -22,7 +22,6 @@ tenants.controller("controller.tenantview", ["$scope", "$state", "r_tenant",
         }
 
         $scope.onEditClicked = function() {
-            console.log("edit controller");
              $state.go("workspace.tenants.tenantView.edit");
         }
 

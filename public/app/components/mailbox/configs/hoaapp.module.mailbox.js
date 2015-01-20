@@ -1,21 +1,11 @@
 var app = angular.module("module.mailbox", [
     "ui.bootstrap",
-    "ui.router",
-    "hoaControllers"]);
+    "ui.router"]);
 
 app.config(["$stateProvider", "$urlRouterProvider", 
     function($stateProvider, $urlRouterProvider) {
-        var inbox = {
-            url         : "/inbox",
-            views       : {
-                "contentArea@workspace"     : {
-                    templateUrl         : "app/components/mailbox/views/maincontent-inbox.html",
-                    controller          : "controller.inbox"
-                }
-            } 
-        };
 
-        var drafts = {
+         var drafts = {
             url   : "/drafts",
             views : {
                 "contentArea@workspace" : {
@@ -25,20 +15,38 @@ app.config(["$stateProvider", "$urlRouterProvider",
             }
         }
 
-        var pending = {
-            url         : "/pending",
+        var forchecking = {
+            url         : "/checking",
             views       : {
                 "contentArea@workspace"     : {
-                    template    : "pending"
+                    template         : "checking"
+                }
+            } 
+        };
+
+        var forapproval = {
+            url         : "/approval",
+            views       : {
+                "contentArea@workspace"     : {
+                    template    : "approval"
                 }
             }
         };
 
-        var delivered = {
-            url         : "/delivered",
+        var unpaid = {
+            url         : "/unpaid",
             views       : {
                 "contentArea@workspace"     : {
-                    template    : "delivered"
+                    template    : "unpaid"
+                }
+            }
+        };
+
+        var paid = {
+            url         : "/paid",
+            views       : {
+                "contentArea@workspace"     : {
+                    template    : "paid"
                 }
             }
         };
@@ -84,10 +92,11 @@ app.config(["$stateProvider", "$urlRouterProvider",
         }
 
         $stateProvider
-            .state("workspace.create",      create)
-            .state("workspace.inbox",       inbox)
-            .state("workspace.drafts",      drafts)
-            .state("workspace.delivered",   delivered)
-            .state("workspace.pending",     pending);
+            .state("workspace.create",                 create)
+            .state("workspace.forchecking",       forchecking)
+            .state("workspace.forapproval",       forapproval)
+            .state("workspace.drafts",                 drafts)
+            .state("workspace.unpaid",                 unpaid)
+            .state("workspace.paid",                     paid);
     }]);
 

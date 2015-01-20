@@ -1,18 +1,14 @@
-var hoaApp = angular.module('hoaApp', [
-    "ngCookies",
+var hoaapp = angular.module('hoaApp', [
+    "ngCookies", "ngResource",
     "ui.bootstrap", "ui.router", "angularSpinner",
-    "module.tenants", "module.mailbox", "module.users",
-    "service.dashboard", "service.templates", "service.tenants", "service.invites", "service.users", "service.documents",
-    "controller.inbox", "controller.drafts", "controller.create",
-    "controller.tenantslist", "controller.tenantview", "controller.tenantedit", "controller.tenantcreate",
-    "controller.completeusers", "controller.userview", "controller.inviteuser",
-    "hoaFilters",
-    "hoaControllers",
-    "hoaDirectives"]);
+    "module.users", "module.tenants", "module.mailbox", 
+    ]);
 
-hoaApp.config(["$stateProvider", "$urlRouterProvider", 'usSpinnerConfigProvider', 
-    function($stateProvider, $urlRouterProvider, usSpinnerConfigProvider) {
+hoaapp.config(["$stateProvider", "$urlRouterProvider", "$locationProvider", "$httpProvider", 'usSpinnerConfigProvider', 
+    function($stateProvider, $urlRouterProvider,  $locationProvider, $httpProvider, usSpinnerConfigProvider) {
 
+        $httpProvider.responseInterceptors.push('httpInterceptor');
+        
         usSpinnerConfigProvider.setDefaults({
             color   : '#2196F3',
             lines   : 9,
@@ -21,55 +17,56 @@ hoaApp.config(["$stateProvider", "$urlRouterProvider", 'usSpinnerConfigProvider'
         });
 
         var authenticate = {
-            views       : {
-                "rootView@"  : {
-                    templateUrl     : "app/shared/content/authentication/views/root-authenticate.html",
-                    controller      : "authenticateController"
-                }
-            }
-        };
-
-        var verification = {
-            views   : {
-                "authenticateBox@"  : {
-                    templateUrl     : "app/shared/content/authentication/views/verifyBox.html",
-                    controller      : "verifyController"
-                }
-            }
+            url : "/login"
         };
 
         var workspace    = {
             resolve     : {
-                r_linkService       : "service.hoalinks",
-                r_tenantsService    : "service.hoatenants",
-                r_hoaLinks          : function(r_linkService, r_tenantsService) {
-                    return r_linkService.getLinks();
+                r_linkSrvc          : "service.hoalinks",
+                r_mailboxSrvc       : "service.mailbox",
+                r_workspace         : function(r_linkSrvc, r_mailboxSrvc, $q) {
+                    var deferred       = $q.defer();
+                    var linksPromise   = r_linkSrvc.getLinks();
+                    
+                    var mailboxPromise = r_mailboxSrvc.queryApi();
+                    
+                    var success        = function(response) {
+                        deferred.resolve(response);
+                    }
+
+                    $q.all([linksPromise, mailboxPromise]).then(success);
+                    return deferred.promise;
+                },
+                r_hoaLinks          : function(r_workspace) {
+                    return r_workspace[0];
+                },
+                r_mailboxes         : function(r_workspace) {
+                    return r_workspace[1];
                 }
             },
             views       : {
                 "rootView@"             : {
-                    templateUrl     : "app/shared/content/dashboard/views/root-workspace.html",
+                    templateUrl     : "app/shared/content/workspace/views/workspace.html",
                     controller      : "workspaceController"
                 },
                 "sidebar@workspace"     : {
-                    templateUrl     : "app/shared/sidebar/views/sidebar.html",
+                    templateUrl     : "app/shared/content/workspace/sidebar/views/sidebar.html",
                     controller      : "sidebarController"
                 },
                 "contentArea@workspace" : {
                     templateUrl     : "app/components/mailbox/views/maincontent-inbox.html",
-                    controller      : "controller.inbox"
+                    controller      : "controller.drafts"
                 }
             }
         };
 
         $stateProvider
             .state("authenticate",          authenticate)
-            .state("authenticate.verify",   verification)
             .state("workspace",             workspace);
     }
 ]);
 
-hoaApp.run(['$rootScope', 'usSpinnerService', 
+hoaapp.run(['$rootScope', 'usSpinnerService', 
     function($rootScope, usSpinnerService, usSpinnerConfigProvider){
 
         $rootScope.$on('$stateChangeStart', 

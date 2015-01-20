@@ -1,4 +1,4 @@
-var hoaDirectives = angular.module("hoaDirectives", []);
+var hoaDirectives = angular.module("hoaApp");
 
 hoaDirectives.directive('dynamicName', ["$compile", "$parse", function ($compile, $parse) {
     return {

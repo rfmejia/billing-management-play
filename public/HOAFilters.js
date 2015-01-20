@@ -1,4 +1,4 @@
-var hoaFilters = angular.module("hoaFilters", []);
+var hoaFilters = angular.module("hoaApp");
 
 hoaFilters.filter("sidebarListFilter", function() {
     return function(input, header) {

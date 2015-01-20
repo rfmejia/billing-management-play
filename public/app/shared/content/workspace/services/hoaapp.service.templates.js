@@ -1,4 +1,4 @@
-var templates = angular.module("service.templates", ["ngResource"]);
+var templates = angular.module("hoaApp");
 
 templates.service("service.hoatemplates", ["$resource", "$q", "service.hoalinks", 
 	function($resource, $q, hoalinks){
@@ -6,7 +6,6 @@ templates.service("service.hoatemplates", ["$resource", "$q", "service.hoalinks"
 		var templatesList	= [];
 
 		var createResource = function(url) {
-			console.log(url);
 			resource = $resource(url, {}, {
 				get : {method : "GET", isArray: false}
 			});
@@ -28,7 +27,6 @@ templates.service("service.hoatemplates", ["$resource", "$q", "service.hoalinks"
 		var getData = function() {
 			var deferred	= $q.defer();
 			var query		= function() {
-				console.log(resource);
 				resource.get().$promise
 				.then(function(templateData) {
 					var hoaTemplateLink = templateData._embedded.item[0]._links.self.href;
@@ -39,10 +37,8 @@ templates.service("service.hoatemplates", ["$resource", "$q", "service.hoalinks"
 					templateLink = $resource(hoaTemplateLink, {}, {
 						get : {method : 'GET', isArray : false}
 					});
-					console.log(templateLink);
 					templateLink.get().$promise
 					.then(function(hoaTemplate) {
-						console.log(hoaTemplate);
 						deferred.resolve(hoaTemplate);
 					});
 				});
@@ -53,7 +49,6 @@ templates.service("service.hoatemplates", ["$resource", "$q", "service.hoalinks"
 				hoalinks.getLinks().then(
 					function(data){
 						var topUrl = hoalinks.getTemplatesLink();
-						console.log(topUrl);
 						createResource(topUrl);
 						query();
 					});

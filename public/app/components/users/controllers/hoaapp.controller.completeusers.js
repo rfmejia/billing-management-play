@@ -1,4 +1,4 @@
-var users	= angular.module("controller.completeusers", []);
+var users	= angular.module("module.users");
 
 users.controller("controller.completeusers", 
 	["$scope", "$state",  "$modal", "r_users", "r_invites", 
@@ -6,10 +6,9 @@ users.controller("controller.completeusers",
 		
 		//vars
 		$scope.isPendingInvitesOpen	= true;
-		// $scope.pendingUsers			= r_invites.pendingInvites;
-		// $scope.users				= r_users;
+		$scope.pendingUsers			= r_invites.pendingInvites;
+		$scope.users				= r_users;
 		$scope.pendingUsers			= null;
-		$scope.users				= null;
 		//end vars
 
 		//Callback for user list item clicked

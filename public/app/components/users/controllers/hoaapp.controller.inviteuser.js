@@ -1,4 +1,4 @@
-var userInvite = angular.module("controller.inviteuser", []);
+var userInvite = angular.module("module.users");
 
 userInvite.controller("controller.inviteuser", ["$scope", "$modalInstance", "r_inviteTemplate", 
 	function($scope, $modalInstance, r_inviteTemplate) {
@@ -52,8 +52,6 @@ userInvite.controller("controller.inviteuser", ["$scope", "$modalInstance", "r_i
         $scope.validate = function(data) {
             $scope.isValid = $scope.inviteUserForm[data.name].$invalid && 
             $scope.inviteUserForm[data.name].$dirty
-            console.log("JC");
-            console.log($scope.isValid);
             return $scope.isValid;
         }
 
