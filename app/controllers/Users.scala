@@ -16,7 +16,7 @@ import securesocial.core.{ RuntimeEnvironment, SecureSocial }
 class Users(override implicit val env: RuntimeEnvironment[User])
   extends securesocial.core.SecureSocial[User] {
 
-  def show(userId: String) = Action { implicit request =>
+  def show(userId: String) = SecuredAction { implicit request =>
     User.findByUserIdWithRoles(userId) match {
       case Some((u, rs)) =>
         Ok {
@@ -39,7 +39,7 @@ class Users(override implicit val env: RuntimeEnvironment[User])
     }
   }
 
-  def list(offset: Int = 0, limit: Int = 10) = Action { implicit request =>
+  def list(offset: Int = 0, limit: Int = 10) = SecuredAction { implicit request =>
     val (us, total) = ConnectionFactory.connect withSession { implicit session =>
       val us = users.drop(offset).take(limit).list
       val total = users.length.run
