@@ -1,7 +1,7 @@
 var tenantInvite = angular.module("module.tenants");
 
-tenantInvite.controller("controller.tenantcreate", ["$scope", "$modalInstance", "r_createTemplate", 
-	function($scope, $modalInstance, r_createTemplate){
+tenantInvite.controller("controller.tenantcreate", ["$scope", "$modalInstance", "r_tenants", "r_createTemplate", 
+	function($scope, $modalInstance, tenantsSrvc, r_createTemplate){
 
 		$scope.controlData = [];
 		$scope.editedData = {};
@@ -18,7 +18,9 @@ tenantInvite.controller("controller.tenantcreate", ["$scope", "$modalInstance", 
 		};
 
 		$scope.onCreateClicked = function() {
-			var newTenant = {};
+			console.log($scope.editedData);
+			tenantsSrvc.createTenant($scope.editedData);
+
 			$modalInstance.close($scope.editedData);
 		};
 

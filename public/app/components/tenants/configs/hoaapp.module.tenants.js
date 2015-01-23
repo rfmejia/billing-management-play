@@ -6,7 +6,7 @@ var app = angular.module("module.tenants", [
 app.config(["$stateProvider", "$urlRouterProvider", 
     function($stateProvider, $urlRouterProvider) {
         var tenantsList = {
-            url         : "/tenants",
+            url         : "tenants",
             views       : {
                 "contentArea@workspace"     : {
                     templateUrl             : "app/components/tenants/views/maincontent-tenants-list.html",
@@ -19,7 +19,7 @@ app.config(["$stateProvider", "$urlRouterProvider",
                     return r_tenantsService;
                 },
                 r_tenantTop         : function(r_tenantsService) {
-                    return r_tenantsService.queryApi();
+                    return r_tenantsService.getList();
                 },
                 r_tenantsApi        : function(r_tenantTop) {
                     return {
@@ -37,7 +37,7 @@ app.config(["$stateProvider", "$urlRouterProvider",
                     return service;
                 },
                 r_tenant            : function(service, $stateParams) {
-                    return service.queryApi($stateParams.id);
+                    return service.getTenant($stateParams.id);
                 }
             },
             views    : {
@@ -50,11 +50,6 @@ app.config(["$stateProvider", "$urlRouterProvider",
 
         var tenantsEdit = {
             url         : "/tenant-edit",
-            resolve     : {
-                r_editTenant        : function(r_tenant) {
-                    return r_tenant;
-                }
-            },
             views       : {
                 "contentArea@workspace" : {
                     templateUrl     : "app/components/tenants/views/maincontent-tenant-edit.html",

@@ -32,6 +32,7 @@ hoaControllers.controller('workspaceController',
 hoaControllers.controller('sidebarController', ['$scope', "$location", "$state",
     "r_mailboxes", 
 function ($scope, $location, $state, r_mailboxes) {
+    console.log(r_mailboxes);
     $scope.mailboxItems = r_mailboxes;
     $scope.sidebarItems = [
         {link : "#/tenants", header : "Management", section: "Tenants", title : "Tenants List", id : "tenantsLink", state : "workspace.tenants"},
@@ -40,13 +41,21 @@ function ($scope, $location, $state, r_mailboxes) {
 
     var path = $location.path();
 
-    for(i = 0; i < $scope.sidebarItems.length; i++) {
+    for(var i = 0; i < $scope.sidebarItems.length; i++) {
             if($scope.sidebarItems[i].section.search(path) != -1) {
-                $scope.selectedLink = $scope.sidebarItems[i];
+                $scope.selectedLink($scope.sidebarItems[i]);
                 break;
             }
-            else $scope.selectedLink = $scope.sidebarItems[0];
+    }
+    for(var i = 0; i < $scope.mailboxItems.length; i++) {
+        for(var j = 0; j < $scope.mailboxItems[i].contents.length; j++) {
+            if($scope.mailboxItems[i].contents[j].section.search(path) != -1) {
+                $scope.selectedIndex($scope.mailboxItems[i].contents[j]);
+                break;
+            }
         }
+    }
+
     $scope.setSelectedLink= function(link) {
             $scope.selectedLink = link;
             $state.go($scope.selectedLink.state);

@@ -32,8 +32,13 @@ tenant.controller("controller.tenantedit", ["$scope", "$state", "r_tenant", "ser
         }
 
         $scope.onSubmitClicked = function(newData) {
-            $scope.editedData = angular.copy(newData);
-            TenantsService.editTenant(r_tenant.id, $scope.editedData);
+            hoatenants.editTenant(r_tenant.id, newData).then(
+                function() {
+                    console.log("go")
+                    $state.go("workspace.tenants.tenantView", {"id" : r_tenant.id}, {reload : true});
+                }
+            );
+            
         }
 
         $scope.resetData();

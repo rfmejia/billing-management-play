@@ -3,49 +3,74 @@ var tenants = angular.module("module.tenants");
 tenants.service("service.hoatenants", ["$resource", "$q", "service.hoalinks",
     function($resource, $q, hoalinks){
         var resource       = null;
-        var tenantsList    = [];                            
+        var requestType    = Object.freeze({"QUERY" : 0, "GET" : 1, "EDIT" : 2, "CREATE" : 3});
        
         var createResource = function(url){
             resource = $resource(url, {}, {
                     get     : {method: "GET", isArray: false},
-                    edit    : {method: "PUT", isArray: false}
+                    create  : {method: "POST", isArray: false, headers:{"Content-Type" : "application/json"}},
+                    edit    : {method: "PUT", isArray: false, headers:{"Content-Type" : "application/json"}}
+
             });
         };
 
-         var getData        = function(dataId) {
-            var deferred = $q.defer();
-            var tempId   = (dataId != null) ? {id : dataId} : dataId;
-            var query    = function(){
-                    resource.get(tempId).$promise.then(
-                    function(tenantsData) {
-                        deferred.resolve(tenantsData);
+        var makeRequest = function(dataId, data, type) {
+            var deferred  = $q.defer();
+            var id        = (dataId != null) ? {id : dataId} : dataId;
+            var success   = function(response) {
+                console.log("success");
+                deferred.resolve(response);
+            };
 
-                    });
-                };
-            
-            if(resource != null) query();
-            else {
-                hoalinks.getLinks().then(
-                    function(data){
-                        var topUrl = hoalinks.getTenantsLinks() + "/:id";
-                        createResource(topUrl);
-                        query();
-                    });
+            var error     = function(msg) {
+                console.log(msg);
+                deferred.reject();
             }
+
+            var request   = function() {
+                switch(type) {
+                    case requestType.GET:
+                        resource.get(id).$promise.then(success);
+                        break;
+                    case requestType.QUERY:
+                        resource.get().$promise.then(success);
+                        break;
+                    case requestType.EDIT:
+                        resource.edit(id, data).$promise.then(success);
+                        break;
+                    case requestType.CREATE:
+                        resource.create(data).$promise.then(success).then(error);
+                        break;
+                }
+            }
+
+            if(resource == null) {
+                hoalinks.getLinks().then(
+                        function(response){
+                            var topUrl = hoalinks.getTenantsLinks() + "/:id";
+                            createResource(topUrl);
+                            request();
+                        }
+                    );
+            }
+            else request();
+
             return deferred.promise;
         }
 
-        this.buildRequest = function(url) {
-            var topUrl = url + "/:id";
-            createResource(topUrl);
+        this.getList        = function() {
+            return makeRequest(null, null, requestType.QUERY);
         }
 
-        this.queryApi = function(id) {
-            return getData(id);
+        this.getTenant      = function(id) {
+            return makeRequest(id, null, requestType.GET);
         }
 
-        this.editTenant = function(id, tenantDetails) {
-            console.log(id);
-            console.log(tenantDetails);
-        } 
+        this.createTenant   = function(data) {
+            return makeRequest(null, data, requestType.CREATE);
+        }
+
+        this.editTenant     = function(id, data) {
+            return makeRequest(id, data, requestType.EDIT);
+        }
     }]);

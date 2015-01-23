@@ -3,6 +3,7 @@ var tenants = angular.module("module.tenants");
 tenants.controller("controller.tenantview", ["$scope", "$state", "r_tenant", 
 	function($scope, $state, r_tenant){
 		$scope.selectedTenant = r_tenant;
+        console.log(r_tenant);
         $scope.values = [];
         $scope.isInfoOpen = true;
         var data = $scope.selectedTenant._template.edit.data;

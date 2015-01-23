@@ -3,7 +3,6 @@ var templates = angular.module("hoaApp");
 templates.service("service.hoatemplates", ["$resource", "$q", "service.hoalinks", 
 	function($resource, $q, hoalinks){
 		var resource		= null;
-		var templatesList	= [];
 
 		var createResource = function(url) {
 			resource = $resource(url, {}, {
@@ -13,12 +12,13 @@ templates.service("service.hoatemplates", ["$resource", "$q", "service.hoalinks"
 
 		var getLocal = function() {
 			var deferred = $q.defer();
-			var resource = $resource("../../assets/hoa_invoice_template.json", {}, {
+			var resource = $resource("../../../../../assets/hoa_invoice_template.json", {}, {
 				get : {method : "GET", isArray: false}
 			});
 
-			resource.get().$promise
-			.then(function(data) {
+			resource.get().$promise.then(
+                function(data) {
+                    console.log(data);
 				deferred.resolve(data);
 			});
 			return deferred.promise;
@@ -61,6 +61,7 @@ templates.service("service.hoatemplates", ["$resource", "$q", "service.hoalinks"
 		}
 
 		this.queryLocal = function() {
+            console.log("local");
 			return getLocal();
 		}
 	}]);

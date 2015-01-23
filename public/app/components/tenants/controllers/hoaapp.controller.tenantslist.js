@@ -16,6 +16,9 @@ tenants.controller("controller.tenantslist", ["$scope", "$state", "$modal", "ser
         		templateUrl : "app/components/tenants/views/maincontent-tenant-create.html",
         		controller : "controller.tenantcreate",
         		resolve : {
+                    r_tenants        : function() {
+                        return hoatenants;
+                    },
         			r_createTemplate : function() {
         				return r_tenantsApi.template;
         			}
@@ -27,7 +30,7 @@ tenants.controller("controller.tenantslist", ["$scope", "$state", "$modal", "ser
 
         	//create action callback
         	var create =  function(data) {
-
+                $state.go($state.current, {}, {reload : true});
         	};
 
         	//cancelled action callback
