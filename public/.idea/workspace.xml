@@ -50,7 +50,7 @@
             <entry file="file://$PROJECT_DIR$/app/components/tenants/configs/hoaapp.module.tenants.js">
               <provider selected="true" editor-type-id="text-editor">
                 <state vertical-scroll-proportion="0.0" vertical-offset="94" max-vertical-offset="1050">
-                  <caret line="19" column="18" selection-start-line="19" selection-start-column="18" selection-end-line="19" selection-end-column="18" />
+                  <caret line="31" column="0" selection-start-line="31" selection-start-column="0" selection-end-line="31" selection-end-column="0" />
                   <folding />
                 </state>
               </provider>
@@ -66,11 +66,11 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="hoaapp.controller.tenantslist.js" pinned="false" current-in-tab="true">
+          <file leaf-file-name="hoaapp.controller.tenantslist.js" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/app/components/tenants/controllers/hoaapp.controller.tenantslist.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.50209206" vertical-offset="0" max-vertical-offset="956">
-                  <caret line="32" column="63" selection-start-line="32" selection-start-column="63" selection-end-line="32" selection-end-column="63" />
+                <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="765">
+                  <caret line="2" column="90" selection-start-line="2" selection-start-column="90" selection-end-line="2" selection-end-column="90" />
                   <folding />
                 </state>
               </provider>
@@ -86,11 +86,11 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="hoaapp.service.tenants.js" pinned="false" current-in-tab="false">
+          <file leaf-file-name="hoaapp.service.tenants.js" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/app/components/tenants/services/hoaapp.service.tenants.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0" vertical-offset="272" max-vertical-offset="1215">
-                  <caret line="60" column="42" selection-start-line="60" selection-start-column="42" selection-end-line="60" selection-end-column="42" />
+                <state vertical-scroll-proportion="0.13702929" vertical-offset="364" max-vertical-offset="1320">
+                  <caret line="33" column="69" selection-start-line="33" selection-start-column="69" selection-end-line="33" selection-end-column="69" />
                   <folding />
                 </state>
               </provider>
@@ -110,11 +110,11 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="hoaapp.controller.tenantedit.js" pinned="false" current-in-tab="false">
+          <file leaf-file-name="hoaapp.controller.tenantedit.js" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/app/components/tenants/controllers/hoaapp.controller.tenantedit.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="750">
-                  <caret line="24" column="17" selection-start-line="24" selection-start-column="17" selection-end-line="24" selection-end-column="17" />
+                <state vertical-scroll-proportion="0.6589958" vertical-offset="0" max-vertical-offset="956">
+                  <caret line="42" column="0" selection-start-line="42" selection-start-column="0" selection-end-line="42" selection-end-column="0" />
                   <folding />
                 </state>
               </provider>
@@ -123,18 +123,18 @@
           <file leaf-file-name="maincontent-tenant-edit.html" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/app/components/tenants/views/maincontent-tenant-edit.html">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="-13.125" vertical-offset="0" max-vertical-offset="525">
-                  <caret line="21" column="94" selection-start-line="21" selection-start-column="84" selection-end-line="21" selection-end-column="94" />
+                <state vertical-scroll-proportion="-15.0" vertical-offset="0" max-vertical-offset="525">
+                  <caret line="24" column="77" selection-start-line="24" selection-start-column="77" selection-end-line="24" selection-end-column="77" />
                   <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="hoaapp.controller.tenantcreate.js" pinned="false" current-in-tab="true">
+          <file leaf-file-name="hoaapp.controller.tenantcreate.js" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/app/components/tenants/controllers/hoaapp.controller.tenantcreate.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.43933055" vertical-offset="0" max-vertical-offset="956">
-                  <caret line="28" column="8" selection-start-line="28" selection-start-column="8" selection-end-line="28" selection-end-column="8" />
+                <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="510">
+                  <caret line="14" column="0" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
                   <folding />
                 </state>
               </provider>
@@ -209,14 +209,15 @@
         <option value="$PROJECT_DIR$/HOAController.js" />
         <option value="$PROJECT_DIR$/app/shared/content/workspace/sidebar/service/hoaapp.service.mailboxes.js" />
         <option value="$PROJECT_DIR$/HOAApp.js" />
-        <option value="$PROJECT_DIR$/app/components/tenants/services/hoaapp.service.tenants.js" />
         <option value="$PROJECT_DIR$/app/shared/content/workspace/services/hoaapp.service.templates.js" />
         <option value="$PROJECT_DIR$/app/components/mailbox/configs/hoaapp.module.mailbox.js" />
         <option value="$PROJECT_DIR$/app/components/tenants/configs/hoaapp.module.tenants.js" />
-        <option value="$PROJECT_DIR$/app/components/tenants/controllers/hoaapp.controller.tenantedit.js" />
         <option value="$PROJECT_DIR$/app/components/tenants/views/maincontent-tenant-create.html" />
         <option value="$PROJECT_DIR$/app/components/tenants/controllers/hoaapp.controller.tenantcreate.js" />
         <option value="$PROJECT_DIR$/app/components/tenants/controllers/hoaapp.controller.tenantslist.js" />
+        <option value="$PROJECT_DIR$/app/components/tenants/views/maincontent-tenant-edit.html" />
+        <option value="$PROJECT_DIR$/app/components/tenants/services/hoaapp.service.tenants.js" />
+        <option value="$PROJECT_DIR$/app/components/tenants/controllers/hoaapp.controller.tenantedit.js" />
       </list>
     </option>
   </component>
@@ -649,14 +650,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/components/tenants/services/hoaapp.service.tenants.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="272" max-vertical-offset="1215">
-          <caret line="60" column="42" selection-start-line="60" selection-start-column="42" selection-end-line="60" selection-end-column="42" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/shared/content/workspace/services/hoaapp.service.templates.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1080">
@@ -681,30 +674,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/components/tenants/controllers/hoaapp.controller.tenantedit.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="750">
-          <caret line="24" column="17" selection-start-line="24" selection-start-column="17" selection-end-line="24" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/components/tenants/views/maincontent-tenant-edit.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-13.125" vertical-offset="0" max-vertical-offset="525">
-          <caret line="21" column="94" selection-start-line="21" selection-start-column="84" selection-end-line="21" selection-end-column="94" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/components/tenants/configs/hoaapp.module.tenants.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="94" max-vertical-offset="1050">
-          <caret line="19" column="18" selection-start-line="19" selection-start-column="18" selection-end-line="19" selection-end-column="18" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/components/tenants/views/maincontent-tenant-create.html">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-11.25" vertical-offset="0" max-vertical-offset="375">
@@ -721,18 +690,50 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/components/tenants/controllers/hoaapp.controller.tenantslist.js">
+    <entry file="file://$PROJECT_DIR$/app/components/tenants/controllers/hoaapp.controller.tenantcreate.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.50209206" vertical-offset="0" max-vertical-offset="956">
-          <caret line="32" column="63" selection-start-line="32" selection-start-column="63" selection-end-line="32" selection-end-column="63" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="510">
+          <caret line="14" column="0" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/components/tenants/controllers/hoaapp.controller.tenantcreate.js">
+    <entry file="file://$PROJECT_DIR$/app/components/tenants/configs/hoaapp.module.tenants.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.43933055" vertical-offset="0" max-vertical-offset="956">
-          <caret line="28" column="8" selection-start-line="28" selection-start-column="8" selection-end-line="28" selection-end-column="8" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="94" max-vertical-offset="1050">
+          <caret line="31" column="0" selection-start-line="31" selection-start-column="0" selection-end-line="31" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/components/tenants/views/maincontent-tenant-edit.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-15.0" vertical-offset="0" max-vertical-offset="525">
+          <caret line="24" column="77" selection-start-line="24" selection-start-column="77" selection-end-line="24" selection-end-column="77" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/components/tenants/controllers/hoaapp.controller.tenantslist.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="765">
+          <caret line="2" column="90" selection-start-line="2" selection-start-column="90" selection-end-line="2" selection-end-column="90" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/components/tenants/services/hoaapp.service.tenants.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.13702929" vertical-offset="364" max-vertical-offset="1320">
+          <caret line="33" column="69" selection-start-line="33" selection-start-column="69" selection-end-line="33" selection-end-column="69" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/components/tenants/controllers/hoaapp.controller.tenantedit.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.6589958" vertical-offset="0" max-vertical-offset="956">
+          <caret line="42" column="0" selection-start-line="42" selection-start-column="0" selection-end-line="42" selection-end-column="0" />
           <folding />
         </state>
       </provider>

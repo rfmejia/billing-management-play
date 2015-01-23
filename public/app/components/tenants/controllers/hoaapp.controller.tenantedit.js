@@ -41,5 +41,13 @@ tenant.controller("controller.tenantedit", ["$scope", "$state", "r_tenant", "ser
             
         }
 
+        $scope.onDeleteClicked = function() {
+            hoatenants.deleteTenant(r_tenant.id).then(
+                function() {
+                    $state.go("workspace.tenants", {}, {reload : true});
+                }
+            )
+        }
+
         $scope.resetData();
 	}]);
