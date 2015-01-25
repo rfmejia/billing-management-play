@@ -1,15 +1,16 @@
 var tenantInvite = angular.module("module.tenants");
 
-tenantInvite.controller("controller.tenantcreate", ["$scope", "$modalInstance", "r_tenants", "r_createTemplate", 
-	function($scope, $modalInstance, tenantsSrvc, r_createTemplate){
+tenantInvite.controller("controller.tenantcreate", ["$scope", "$modalInstance", "tenantsService", "tenantCreateTemplate",
+	function($scope, $modalInstance, tenantsService, template){
 
+        console.log(template);
 		$scope.controlData = [];
-		$scope.editedData = {};
-		$scope.controlData = r_createTemplate;
+		$scope.editedData = angular.copy(template.postTemplate);
+		$scope.controlData = template.details;
 
 		$scope.resetData = function() {
-			angular.forEach($scope.controlData, function(data){
-				$scope.editedData[data.name] = data.value;
+			angular.forEach(Object.keys($scope.editedData), function(value){
+				$scope.editedData[value] = "";
 			});
 		}
 
@@ -19,7 +20,7 @@ tenantInvite.controller("controller.tenantcreate", ["$scope", "$modalInstance", 
 
 		$scope.onCreateClicked = function() {
 			console.log($scope.editedData);
-			tenantsSrvc.createTenant($scope.editedData);
+			tenantsService.createTenant($scope.editedData);
 
 			$modalInstance.close($scope.editedData);
 		};

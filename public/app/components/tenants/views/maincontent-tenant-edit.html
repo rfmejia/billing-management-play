@@ -4,13 +4,13 @@
 
     <form name="editTenantForm">
         <div class="form-group">
-            <label class="control-label" for="{{title.name}}">{{title.prompt}}</label>
-               <input type="text" id="{{title.name}}" dynamic-name="title.name" class="form-control" ng-model="editedData[title.name]" placeholder="Input tenant {{title.prompt}}" "title.isRequired"/>
+            <label class="control-label" for="{{tradeName.name}}">{{tradeName.prompt}}</label>
+               <input type="text" id="{{tradeName.name}}" dynamic-name="title.name" class="form-control" ng-model="editedData[tradeName.name]" placeholder="Input tenant {{tradeName.prompt}}" "title.isRequired"/>
         </div>
-        <div ng-repeat="data in controlData">
+        <div ng-repeat="detail in tenant">
             <div class="form-group">
-               <label class="control-label" for="{{data.name}}">{{data.prompt}}</label>
-               <input type="text" id="{{data.name}}" dynamic-name="data.name" ng-model="editedData[data.name]" class="form-control" value="{{data.value}}" placeholder="Input tenant {{data.prompt}}">
+               <label class="control-label" for="{{detail.name}}">{{detail.prompt}}</label>
+               <input type="text" id="{{detail.name}}" dynamic-name="detail.name" ng-model="editedData[detail.name]" class="form-control" value="{{detail.value}}" placeholder="Input tenant {{detail.prompt}}">
             </div>
         </div>
     </form>
@@ -19,7 +19,7 @@
     
     <div>
         <div class="btn-group">
-            <button type="submit" class="btn btn-primary" ng-click="onSubmitClicked(editedData)">Save</button>
+            <button type="submit" class="btn btn-primary" ng-click="onSubmitClicked()">Save</button>
             <button class="btn btn-default" ng-click="onCancelClicked()">Cancel</button>
         </div>
         <button class="btn btn-danger pull-right" ng-click="onDeleteClicked()"> Delete Tenant</button>

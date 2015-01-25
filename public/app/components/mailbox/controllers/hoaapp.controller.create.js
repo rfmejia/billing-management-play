@@ -1,9 +1,9 @@
 var create = angular.module("module.mailbox");
 
-create.controller("controller.create", ["$scope", "$state", "r_documentsService", "r_mailboxData",
-	function($scope, $state, r_documentsService, r_mailboxData){
-		$scope.tenants = r_mailboxData.tenants;
-		$scope.templates = r_mailboxData.templates;
+create.controller("controller.create", ["$scope", "$state", "documentsService", "createBundle",
+	function($scope, $state, documentsService, createBundle){
+		$scope.tenants = createBundle.tenantsBundle.tenants;
+		$scope.templates = createBundle.templates;
 		
 		
 		$scope.setData = function() {

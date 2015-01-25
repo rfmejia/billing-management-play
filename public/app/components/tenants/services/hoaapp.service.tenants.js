@@ -11,41 +11,108 @@ tenants.service("service.hoatenants", ["$resource", "$q", "service.hoalinks",
                     create  : {method: "POST", isArray: false, headers:{"Content-Type" : "application/json"}},
                     edit    : {method: "PUT", isArray: false, headers:{"Content-Type" : "application/json"}},
                     delete  : {method: "DELETE", isArray: false}
-
             });
         };
 
-        var makeRequest = function(dataId, data, type) {
+        //Function to get the list of tenants and add a template to creating tenants
+        var extractTenantList    = function(response) {
+            return {
+                "tenants"         : response._embedded.item,
+                "template"        : extractCreateTemplate(response)
+            };
+        };
+
+        //Function get a tenant and add a template to edit the tenant + adds the values to each field
+        var extractTenant        = function(response) {
+            var tenant = extractEditTemplate(response);
+            angular.forEach(tenant.details,
+                function(templateContents) {
+                    templateContents.value = response[templateContents.name];
+                }
+            );
+           return tenant;
+        };
+
+        //Function to extract the template for creating tenants and adds a post template for the server
+        var extractCreateTemplate      = function(response) {
+            var raw = response._template.create.data[0];
+            var details = [];
+            angular.forEach(raw,
+                function(value){
+                    var template = angular.copy(value);
+                    template.value = "";
+                    details.push(template);
+                }
+            );
+            return {
+                "details" : details,
+                "postTemplate" : extractPostTemplate(raw)
+            };
+        };
+
+        //Function to extract the edit template for a tenant and adds a post template for the server
+        var extractEditTemplate      = function(response) {
+            var raw = response._template.edit.data[0];
+            var details = [];
+            angular.forEach(raw,
+                function(value){
+                    var template = angular.copy(value);
+                    template.value = "";
+                    details.push(template);
+                }
+            );
+            return {
+                "details" : details,
+                "id"      : response.id,
+                "postTemplate" : extractPostTemplate(raw)
+            };
+        };
+
+        //Function that creates a post template for the server
+        var extractPostTemplate  = function(response) {
+            var postTemplate = {};
+            angular.forEach(response,
+                function(value){
+                    postTemplate[value.name] = "";
+                }
+            );
+            return postTemplate;
+        };
+
+        //Function that makes the actual request
+        var makeRequest = function(tenantId, tenantData, type) {
             var deferred  = $q.defer();
-            var id        = (dataId != null) ? {id : dataId} : dataId;
+            var id        = (tenantId != null) ? {id : tenantId} : tenantId;
             var success   = function(response) {
-                console.log("success");
                 deferred.resolve(response);
             };
 
             var error     = function(msg) {
-                console.log(msg);
                 deferred.reject();
-            }
+            };
 
             var request   = function() {
                 switch(type) {
                     case requestType.GET:
-                        resource.get(id).$promise.then(success, error);
+                        resource.get(id).$promise
+                            .then(extractTenant, error)
+                            .then(success);
                         break;
                     case requestType.QUERY:
-                        resource.get().$promise.then(success, error);
+                        resource.get().$promise
+                            .then(extractTenantList, error)
+                            .then(success);
                         break;
                     case requestType.EDIT:
-                        resource.edit(id, data).$promise.then(success, error);
+                        resource.edit(id, tenantData).$promise.then(success, error);
                         break;
                     case requestType.CREATE:
-                        resource.create(data).$promise.then(success, error);
+                        resource.create(tenantData).$promise.then(success, error);
                         break;
                     case requestType.DELETE:
                         resource.delete(id).$promise.then(success, error);
                 }
-            }
+            };
 
             if(resource == null) {
                 hoalinks.getLinks().then(
@@ -59,25 +126,35 @@ tenants.service("service.hoatenants", ["$resource", "$q", "service.hoalinks",
             else request();
 
             return deferred.promise;
-        }
+        };
 
+        //Returns a list of tenants and also a template to create a tenant
         this.getList        = function() {
             return makeRequest(null, null, requestType.QUERY);
-        }
+        };
 
+        //Returns a tenant and also a template to edit a tenant
         this.getTenant      = function(id) {
             return makeRequest(id, null, requestType.GET);
-        }
+        };
 
+        //Creates a tenant with the supplied data
         this.createTenant   = function(data) {
             return makeRequest(null, data, requestType.CREATE);
-        }
+        };
 
+        //Edits a tenant referenced by the id with the new data
         this.editTenant     = function(id, data) {
             return makeRequest(id, data, requestType.EDIT);
-        }
+        };
 
+        //Delets a tenant referenced by the id
         this.deleteTenant   = function(id) {
             return makeRequest(id, null, requestType.DELETE);
+        };
+
+        //Returns a template of the tenant
+        this.getTemplate    = function() {
+            return makeRequest(null, null, requestType.QUERY);
         }
     }]);

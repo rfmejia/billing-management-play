@@ -17,6 +17,11 @@ app.config(["$stateProvider", "$urlRouterProvider",
 
         var forchecking = {
             url         : "forchecking",
+            resolve     : {
+                test    : function() {
+                    console.log("test");
+                }
+            },
             views       : {
                 "contentArea@workspace"     : {
                     template         : "checking"
@@ -54,23 +59,22 @@ app.config(["$stateProvider", "$urlRouterProvider",
         var create = {
             url     : "create",
             resolve : {
-                r_documentsService  : "service.hoadocuments",
-                r_tenantsService    : "service.hoatenants",
-                r_templatesService  : "service.hoatemplates",
-                r_combinedRoot      : function(r_tenantsService, r_templatesService, $q) {
-                    console.log(r_templatesService);
+                documentsService    : "service.hoadocuments",
+                tenantsService      : "service.hoatenants",
+                templatesService    : "service.hoatemplates",
+                response            : function(tenantsService, templatesService, $q) {
                     var deferred = $q.defer();
 
-                    $q.all([r_tenantsService.getList(), r_templatesService.queryLocal()]).then(
+                    $q.all([tenantsService.getList(), templatesService.queryLocal()]).then(
                         function(response) {
                         deferred.resolve(response);
                     });
                     return deferred.promise;
                 },
-                r_mailboxData    : function(r_combinedRoot) {
+                createBundle        : function(response) {
                     return {
-                        "tenants"       : r_combinedRoot[0]._embedded.item,
-                        "templates"     : r_combinedRoot[1]
+                        "tenantsBundle"       : response[0],
+                        "templates"     : response[1]
                     };
                 }
             },

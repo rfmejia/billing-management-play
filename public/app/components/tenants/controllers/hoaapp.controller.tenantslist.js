@@ -1,8 +1,8 @@
 var tenants = angular.module("module.tenants");
 
-tenants.controller("controller.tenantslist", ["$scope", "$state", "$modal", "service.hoatenants", "r_tenantsApi",
-    function($scope, $state, $modal, hoatenants, r_tenantsApi){
-        $scope.tenants = r_tenantsApi.tenants
+tenants.controller("controller.tenantslist", ["$scope", "$state", "$modal", "tenantsService", "response",
+    function($scope, $state, $modal, tenantsService, response){
+        $scope.tenants = response.tenants;
 
         //Callback for tenant item clicked
         $scope.onTenantClick = function(tenant) {
@@ -16,11 +16,11 @@ tenants.controller("controller.tenantslist", ["$scope", "$state", "$modal", "ser
         		templateUrl : "app/components/tenants/views/maincontent-tenant-create.html",
         		controller : "controller.tenantcreate",
         		resolve : {
-                    r_tenants        : function() {
-                        return hoatenants;
+                    tenantsService        : function() {
+                        return tenantsService;
                     },
-        			r_createTemplate : function() {
-        				return r_tenantsApi.template;
+        			tenantCreateTemplate  : function() {
+        				return response.template;
         			}
         		}
         	}//opts end

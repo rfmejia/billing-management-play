@@ -14,18 +14,9 @@ app.config(["$stateProvider", "$urlRouterProvider",
                 }
             },
             resolve : {
-                r_tenantsService    : "service.hoatenants",
-                service             : function(r_tenantsService) {
-                    return r_tenantsService;
-                },
-                r_tenantTop         : function(r_tenantsService) {
-                    return r_tenantsService.getList();
-                },
-                r_tenantsApi        : function(r_tenantTop) {
-                    return {
-                        "tenants" : r_tenantTop._embedded.item,
-                        "template" : r_tenantTop._template.create.data[0]
-                    };
+                tenantsService         : "service.hoatenants",
+                response               : function(tenantsService) {
+                    return tenantsService.getList();
                 }
             }
         };
@@ -33,11 +24,8 @@ app.config(["$stateProvider", "$urlRouterProvider",
         var tenantsView = {
             url         : "/tenant-view/:id",
             resolve     : {
-                service             : function(service) {
-                    return service;
-                },
-                r_tenant            : function(service, $stateParams) {
-                    return service.getTenant($stateParams.id);
+                tenant            : function(tenantsService, $stateParams) {
+                    return tenantsService.getTenant($stateParams.id);
                 }
             },
             views    : {
