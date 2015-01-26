@@ -29,8 +29,82 @@ object Workflow {
     case _ => None
   }
 
-  val asJsObject: JsObject = Json.obj(
-    "mailboxes" -> Json.arr(
-      Json.obj("pending" -> pending),
-      Json.obj("delivered" -> delivered)))
+  val asJsObject: JsObject = Json.parse("""
+{
+    "_links": {
+        "curies": [
+            {
+                "name": "hoa",
+                "href": "http://localhost:9000/api/docs/{rel}",
+                "templated": true
+            }
+        ],
+        "self": {
+            "href": "http://localhost:9000/api/mailboxes"
+        },
+        "profile": {
+            "href": "collection"
+        }
+    },
+    "mailbox": {
+        "title": "Mailbox",
+        "queryKey": "",
+        "queryParam": "",
+        "subFolders": [
+            {
+                "title": "Pending",
+                "queryKey": "mailbox",
+                "queryParam": "pending",
+                "subFolders": [
+                    {
+                        "title": "Drafts",
+                        "queryKey": "mailbox",
+                        "queryParam": "drafts",
+                        "subFolders": []
+                    },
+                    {
+                        "title": "For checking",
+                        "queryKey": "mailbox",
+                        "queryParam": "for+checking",
+                        "subFolders": []
+                    },
+                    {
+                        "title": "For approval",
+                        "queryKey": "mailbox",
+                        "queryParam": "for+approval",
+                        "subFolders": []
+                    }
+                ]
+            },
+            {
+                "title": "Delivered",
+                "queryKey": "mailbox",
+                "queryParam": "delivered",
+                "subFolders": [
+                    {
+                        "title": "Delivered",
+                        "queryKey": "mailbox",
+                        "queryParam": "pending",
+                        "subFolders": [
+                            {
+                                "title": "Paid",
+                                "queryKey": "mailbox",
+                                "queryParam": "paid",
+                                "subFolders": []
+                            },
+                            {
+                                "title": "unpaid",
+                                "queryKey": "mailbox",
+                                "queryParam": "unpaid",
+                                "subFolders": []
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+}
+    """)
+
 }
