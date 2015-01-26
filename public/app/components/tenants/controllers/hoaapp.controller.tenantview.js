@@ -1,11 +1,15 @@
 var tenants = angular.module("module.tenants");
 
-tenants.controller("controller.tenantview", ["$scope", "$state", "r_tenant", 
-	function($scope, $state, r_tenant){
-		$scope.selectedTenant = r_tenant;
-        $scope.values = [];
+tenants.controller("controller.tenantview", ["$scope", "$state", "tenant",
+	function($scope, $state, tenant){
+        $scope.tenant = tenant.details;
         $scope.isInfoOpen = true;
-        var data = $scope.selectedTenant._template.edit.data;
+
+        angular.forEach($scope.tenant,
+            function(value){
+                if(value.name == "tradeName") $scope.tradeName = value.value;
+            }
+        );
 
         //Temporary values
         $scope.billings = [
@@ -14,9 +18,6 @@ tenants.controller("controller.tenantview", ["$scope", "$state", "r_tenant",
         {isPaid : false, isActive : false, date : "January 2014"}
         ];
 
-        for(var i = 0; i < data[0].length; i++) {
-             $scope.values.push({"prompt" : data[0][i].prompt, "entry": $scope.selectedTenant[data[0][i].name]});
-        }   
         $scope.toggleInfo = function() {
              $scope.isInfoOpen = !$scope.isInfoOpen;
         }

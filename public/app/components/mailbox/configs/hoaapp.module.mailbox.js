@@ -6,7 +6,7 @@ app.config(["$stateProvider", "$urlRouterProvider",
     function($stateProvider, $urlRouterProvider) {
 
          var drafts = {
-            url   : "/drafts",
+            url   : "drafts",
             views : {
                 "contentArea@workspace" : {
                     templateUrl : "app/components/mailbox/views/maincontent-drafts.html",
@@ -16,7 +16,12 @@ app.config(["$stateProvider", "$urlRouterProvider",
         }
 
         var forchecking = {
-            url         : "/checking",
+            url         : "forchecking",
+            resolve     : {
+                test    : function() {
+                    console.log("test");
+                }
+            },
             views       : {
                 "contentArea@workspace"     : {
                     template         : "checking"
@@ -25,7 +30,7 @@ app.config(["$stateProvider", "$urlRouterProvider",
         };
 
         var forapproval = {
-            url         : "/approval",
+            url         : "forapproval",
             views       : {
                 "contentArea@workspace"     : {
                     template    : "approval"
@@ -34,7 +39,7 @@ app.config(["$stateProvider", "$urlRouterProvider",
         };
 
         var unpaid = {
-            url         : "/unpaid",
+            url         : "unpaid",
             views       : {
                 "contentArea@workspace"     : {
                     template    : "unpaid"
@@ -43,7 +48,7 @@ app.config(["$stateProvider", "$urlRouterProvider",
         };
 
         var paid = {
-            url         : "/paid",
+            url         : "paid",
             views       : {
                 "contentArea@workspace"     : {
                     template    : "paid"
@@ -52,34 +57,24 @@ app.config(["$stateProvider", "$urlRouterProvider",
         };
 
         var create = {
-            url     : "/create",
+            url     : "create",
             resolve : {
-                r_documentsService  : "service.hoadocuments",
-                r_tenantsService    : "service.hoatenants",
-                tenantsService      : function(r_tenantsService) {
-                    console.log("tenants service");
-                    return r_tenantsService;
-                },
-                r_templatesService  : "service.hoatemplates",
-                templatesService    : function(r_templatesService) {
-                    console.log(r_templatesService);
-                    return r_templatesService;
-                },
-                r_combinedRoot      : function(tenantsService, templatesService, $q) {
+                documentsService    : "service.hoadocuments",
+                tenantsService      : "service.hoatenants",
+                templatesService    : "service.hoatemplates",
+                response            : function(tenantsService, templatesService, $q) {
                     var deferred = $q.defer();
-                    $q.all([tenantsService.queryApi(), templatesService.queryLocal()]).then(
+
+                    $q.all([tenantsService.getList(), templatesService.queryLocal()]).then(
                         function(response) {
                         deferred.resolve(response);
                     });
                     return deferred.promise;
                 },
-                r_tenantTop      : function(r_tenantsService) {
-                    return r_tenantsService.queryApi();
-                },
-                r_mailboxData    : function(r_combinedRoot) {
+                createBundle        : function(response) {
                     return {
-                        "tenants"       : r_combinedRoot[0]._embedded.item,
-                        "templates"     : r_combinedRoot[1]
+                        "tenantsBundle"       : response[0],
+                        "templates"     : response[1]
                     };
                 }
             },

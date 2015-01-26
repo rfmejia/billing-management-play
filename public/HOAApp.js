@@ -8,7 +8,8 @@ hoaapp.config(["$stateProvider", "$urlRouterProvider", "$locationProvider", "$ht
     function($stateProvider, $urlRouterProvider,  $locationProvider, $httpProvider, usSpinnerConfigProvider) {
 
         $httpProvider.responseInterceptors.push('httpInterceptor');
-        
+        $locationProvider
+            .html5Mode(false);
         usSpinnerConfigProvider.setDefaults({
             color   : '#2196F3',
             lines   : 9,
@@ -21,6 +22,7 @@ hoaapp.config(["$stateProvider", "$urlRouterProvider", "$locationProvider", "$ht
         };
 
         var workspace    = {
+            url : "/",
             resolve     : {
                 r_linkSrvc          : "service.hoalinks",
                 r_mailboxSrvc       : "service.mailbox",
