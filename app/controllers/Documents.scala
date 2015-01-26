@@ -75,7 +75,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
     (Document.findById(id), Workflow.exists(mailbox)) match {
       case (Some(d), Some(box)) =>
         Document.update(d.copy(mailbox = box)) match {
-          case Success(d)   => NoContent
+          case Success(d) => NoContent
           case Failure(err) => InternalServerError(err.getMessage)
         }
       case (None, _) => NotFound("Document cannot be found")
@@ -83,7 +83,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
     }
   }
 
-  def list(offset: Int = 0, limit: Int = 10, mailbox: String, forTenant: Int) = SecuredAction { implicit request =>
+  def list(offset: Int = 0, limit: Int = 10, mailbox: String, forTenant: Int) = Action { implicit request =>
     val (ds, total) = ConnectionFactory.connect withSession { implicit session =>
       val query = documents.drop(offset).take(limit).sortBy(_.created.desc)
         .filter(d => d.mailbox === mailbox || mailbox.isEmpty)
@@ -120,14 +120,39 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
 
     val withList = blank.withEmbedded(HalJsObject.empty.withField("item", objs))
 
-    val withSubsections = withList
-      .withLink("subsection", routes.Documents.list(offset, limit, "Drafts").absoluteURL(), Some("Drafts"))
-      .withLink("subsection", routes.Documents.list(offset, limit, "For checking").absoluteURL(), Some("For checking"))
-      .withLink("subsection", routes.Documents.list(offset, limit, "For approval").absoluteURL(), Some("For approval"))
-      .withLink("subsection", routes.Documents.list(offset, limit, "Unpaid").absoluteURL(), Some("Unpaid"))
-      .withLink("subsection", routes.Documents.list(offset, limit, "Paid").absoluteURL(), Some("Paid"))
+    val withSubsections = (withList.asJsValue \ "_links").as[JsObject] +
+      ("subsection", Json.parse("""
+        [{
+          "title" : "Drafts",
+          "paramKey" : "mailbox",
+          "paramValue" : "drafts"
+        }, {
+          "title" : "For checking",
+          "paramKey" : "mailbox",
+          "paramValue" : "for checking"
+        }, {
+          "title" : "For approval",
+          "paramKey" : "mailbox",
+          "paramValue" : "for approval"
+        }, {
+          "title" : "Unpaid",
+          "paramKey" : "mailbox",
+          "paramValue" : "unpaid"
+        }, {
+          "title" : "Paid",
+          "paramKey" : "mailbox",
+          "paramValue" : "paid"
+        }]
+      """))
 
-    Ok(withSubsections.asJsValue)
+    // val withSubsections = withList
+    //   .withLink("subsection", routes.Documents.list(offset, limit, "Drafts").absoluteURL(), Some("Drafts"))
+    //   .withLink("subsection", routes.Documents.list(offset, limit, "For checking").absoluteURL(), Some("For checking"))
+    //   .withLink("subsection", routes.Documents.list(offset, limit, "For approval").absoluteURL(), Some("For approval"))
+    //   .withLink("subsection", routes.Documents.list(offset, limit, "Unpaid").absoluteURL(), Some("Unpaid"))
+    //   .withLink("subsection", routes.Documents.list(offset, limit, "Paid").absoluteURL(), Some("Paid"))
+
+    Ok(withList.asJsValue + ("_links", withSubsections))
   }
 
   def create() = Action(parse.json) { implicit request =>
@@ -164,7 +189,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
               val newDoc = d.copy(title = title, mailbox = mailbox, body = body,
                 assigned = assigned)
               Document.update(newDoc) match {
-                case Success(id)  => NoContent
+                case Success(id) => NoContent
                 case Failure(err) => InternalServerError(err.getMessage)
               }
             case _ => BadRequest("Some required values are missing. Please check your request.")

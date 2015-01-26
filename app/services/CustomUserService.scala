@@ -15,6 +15,7 @@ import securesocial.core.providers.MailToken
 import securesocial.core.services.{ SaveMode, UserService }
 
 class CustomUserService extends UserService[User] {
+
   def find(providerId: String, userId: String): Future[Option[BasicProfile]] =
     Future.fromTry {
       Try {
