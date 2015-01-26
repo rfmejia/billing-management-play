@@ -105,6 +105,6 @@ object Workflow {
         ]
     }
 }
-    """)
+    """).as[JsObject]
 
 }
