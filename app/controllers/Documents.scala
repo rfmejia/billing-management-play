@@ -120,39 +120,14 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
 
     val withList = blank.withEmbedded(HalJsObject.empty.withField("item", objs))
 
-    val withSubsections = (withList.asJsValue \ "_links").as[JsObject] +
-      ("subsection", Json.parse("""
-        [{
-          "title" : "Drafts",
-          "paramKey" : "mailbox",
-          "paramValue" : "drafts"
-        }, {
-          "title" : "For checking",
-          "paramKey" : "mailbox",
-          "paramValue" : "for checking"
-        }, {
-          "title" : "For approval",
-          "paramKey" : "mailbox",
-          "paramValue" : "for approval"
-        }, {
-          "title" : "Unpaid",
-          "paramKey" : "mailbox",
-          "paramValue" : "unpaid"
-        }, {
-          "title" : "Paid",
-          "paramKey" : "mailbox",
-          "paramValue" : "paid"
-        }]
-      """))
+    val withSubsections = withList
+      .withLink("subsection", routes.Documents.list(offset, limit, "Drafts").absoluteURL(), Some("Drafts"))
+      .withLink("subsection", routes.Documents.list(offset, limit, "For checking").absoluteURL(), Some("For checking"))
+      .withLink("subsection", routes.Documents.list(offset, limit, "For approval").absoluteURL(), Some("For approval"))
+      .withLink("subsection", routes.Documents.list(offset, limit, "Unpaid").absoluteURL(), Some("Unpaid"))
+      .withLink("subsection", routes.Documents.list(offset, limit, "Paid").absoluteURL(), Some("Paid"))
 
-    // val withSubsections = withList
-    //   .withLink("subsection", routes.Documents.list(offset, limit, "Drafts").absoluteURL(), Some("Drafts"))
-    //   .withLink("subsection", routes.Documents.list(offset, limit, "For checking").absoluteURL(), Some("For checking"))
-    //   .withLink("subsection", routes.Documents.list(offset, limit, "For approval").absoluteURL(), Some("For approval"))
-    //   .withLink("subsection", routes.Documents.list(offset, limit, "Unpaid").absoluteURL(), Some("Unpaid"))
-    //   .withLink("subsection", routes.Documents.list(offset, limit, "Paid").absoluteURL(), Some("Paid"))
-
-    Ok(withList.asJsValue + ("_links", withSubsections))
+    Ok(withSubsections.asJsValue)
   }
 
   def create() = Action(parse.json) { implicit request =>
