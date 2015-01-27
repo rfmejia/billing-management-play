@@ -1,4 +1,6 @@
 {
+	"name" : "Statement of Account 1",
+	"docType" : "invoice-1",
 	"breakdown":[
 		{
 			"title":"Previous Charges",
