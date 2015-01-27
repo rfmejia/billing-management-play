@@ -26,7 +26,8 @@ val repositoryDependencies = Seq(
 ) ++ jodaTimeDependencies
 
 val playDependencies = Seq(
-  "ws.securesocial" %% "securesocial" % "master-SNAPSHOT"
+  "ws.securesocial" %% "securesocial" % "master-SNAPSHOT",
+  "com.netaporter" %% "scala-uri" % "0.4.4"
 )
 
 libraryDependencies ++= repositoryDependencies ++ playDependencies ++ Seq(

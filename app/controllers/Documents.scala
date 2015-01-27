@@ -14,7 +14,7 @@ import scala.util.{ Try, Success, Failure }
 import securesocial.core.RuntimeEnvironment
 
 class Documents(override implicit val env: RuntimeEnvironment[User])
-  extends securesocial.core.SecureSocial[User] {
+  extends ApiController[User] {
 
   def show(id: Int) = SecuredAction { implicit request =>
     Document.findById(id) match {
@@ -83,12 +83,12 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
     }
   }
 
-  def list(offset: Int = 0, limit: Int = 10, mailbox: String, forTenant: Int) = SecuredAction { implicit request =>
+  def list(offset: Int = 0, limit: Int = 10, mailbox: String, forTenant: Int) = Action { implicit request =>
     val (ds, total) = ConnectionFactory.connect withSession { implicit session =>
       val query = documents.drop(offset).take(limit).sortBy(_.created.desc)
         .filter(d => d.mailbox === mailbox || mailbox.isEmpty)
         .filter(d => d.forTenant === forTenant || forTenant < 1)
-      (query.list, query.length.run)
+      (query.list, documents.length.run)
     }
 
     val objs = ds map { d =>
@@ -121,13 +121,17 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
     val withList = blank.withEmbedded(HalJsObject.empty.withField("item", objs))
 
     val withSubsections = withList
-      .withLink("subsection", routes.Documents.list(offset, limit, "Drafts").absoluteURL(), Some("Drafts"))
-      .withLink("subsection", routes.Documents.list(offset, limit, "For checking").absoluteURL(), Some("For checking"))
-      .withLink("subsection", routes.Documents.list(offset, limit, "For approval").absoluteURL(), Some("For approval"))
-      .withLink("subsection", routes.Documents.list(offset, limit, "Unpaid").absoluteURL(), Some("Unpaid"))
-      .withLink("subsection", routes.Documents.list(offset, limit, "Paid").absoluteURL(), Some("Paid"))
+      .withLink("subsection", routes.Documents.list(mailbox="Drafts").absoluteURL(), Some("Drafts"))
+      .withLink("subsection", routes.Documents.list(mailbox="For checking").absoluteURL(), Some("For checking"))
+      .withLink("subsection", routes.Documents.list(mailbox="For approval").absoluteURL(), Some("For approval"))
+      .withLink("subsection", routes.Documents.list(mailbox="Unpaid").absoluteURL(), Some("Unpaid"))
+      .withLink("subsection", routes.Documents.list(mailbox="Paid").absoluteURL(), Some("Paid"))
 
-    Ok(withSubsections.asJsValue)
+    val y = listNavLinks(self.absoluteURL(), offset, limit, total).foldLeft(withSubsections) {
+      (obj, pair) => obj.withLink(pair._1, pair._2.href)
+    }
+
+    Ok(y.asJsValue)
   }
 
   def create() = Action(parse.json) { implicit request =>

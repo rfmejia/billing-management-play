@@ -13,7 +13,7 @@ import scala.util.{ Try, Success, Failure }
 import securesocial.core.RuntimeEnvironment
 
 class Tenants(override implicit val env: RuntimeEnvironment[User])
-  extends securesocial.core.SecureSocial[User] {
+  extends ApiController[User] {
 
   def show(id: Int) = SecuredAction { implicit request =>
     Tenant.findById(id) match {
@@ -39,7 +39,6 @@ class Tenants(override implicit val env: RuntimeEnvironment[User])
   def list(offset: Int = 0, limit: Int = 10) = SecuredAction { implicit request =>
     val (ts, total) = ConnectionFactory.connect withSession { implicit session =>
       val query = tenants.drop(offset).take(limit).sortBy(_.tradeName)
-      val total = tenants.length.run
       (query.list, tenants.length.run)
     }
 
@@ -61,9 +60,13 @@ class Tenants(override implicit val env: RuntimeEnvironment[User])
       .withField("_template", createForm)
       .withField("count", ts.length)
       .withField("total", total)
-    val x = blank.withEmbedded(HalJsObject.empty.withField("item", objs))
 
-    Ok(x.asJsValue)
+    val x = blank.withEmbedded(HalJsObject.empty.withField("item", objs))
+    val y = listNavLinks(self.absoluteURL(), offset, limit, total).foldLeft(x) {
+      (obj, pair) => obj.withLink(pair._1, pair._2.href)
+    }
+
+    Ok(y.asJsValue)
   }
 
   def create() = SecuredAction(parse.json) { implicit request =>
@@ -110,7 +113,7 @@ class Tenants(override implicit val env: RuntimeEnvironment[User])
                 }
               }
               result match {
-                case Success(id)  => NoContent
+                case Success(id) => NoContent
                 case Failure(err) => InternalServerError(err.getMessage)
               }
             case _ => BadRequest("Some required values are missing. Please check your request.")

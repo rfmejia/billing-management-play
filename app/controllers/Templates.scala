@@ -12,7 +12,7 @@ import play.api.libs.json._
 import securesocial.core.RuntimeEnvironment
 
 class Templates(override implicit val env: RuntimeEnvironment[User])
-  extends securesocial.core.SecureSocial[User] {
+  extends ApiController[User] {
 
   val logger = Logger("controllers.Templates")
 

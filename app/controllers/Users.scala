@@ -14,7 +14,7 @@ import scala.util.{ Try, Success, Failure }
 import securesocial.core.{ RuntimeEnvironment, SecureSocial }
 
 class Users(override implicit val env: RuntimeEnvironment[User])
-  extends securesocial.core.SecureSocial[User] {
+  extends ApiController[User] {
 
   def show(userId: String) = SecuredAction { implicit request =>
     User.findByUserIdWithRoles(userId) match {
