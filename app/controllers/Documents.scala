@@ -42,6 +42,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
           .withField("assigned", d.assigned)
           .withField("forTenant", d.forTenant)
           .withField("forMonth", d.forMonth)
+          .withField("isPaid", d.isPaid)
           .withField("hoa:next", Workflow.next(d.mailbox))
           .withField("hoa:prev", Workflow.prev(d.mailbox))
           .withField("body", d.body)
@@ -102,6 +103,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
         .withField("mailbox", d.mailbox)
         .withField("forTenant", d.forTenant)
         .withField("forMonth", d.forMonth)
+        .withField("isPaid", d.isPaid)
         .withField("assigned", d.assigned)
       obj.asJsValue
     }
@@ -155,11 +157,12 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
         ((json \ "title").asOpt[String],
           (json \ "body").asOpt[JsObject],
           (json \ "mailbox").asOpt[String],
-          (json \ "assigned").asOpt[String]) match {
-            case (Some(title), Some(body), Some(mailbox), assigned) =>
+          (json \ "assigned").asOpt[String],
+          (json \ "isPaid").asOpt[Boolean]) match {
+            case (Some(title), Some(body), Some(mailbox), assigned, Some(isPaid)) =>
               // TODO: Get user responsible for this request
               val newDoc = d.copy(title = title, mailbox = mailbox, body = body,
-                assigned = assigned)
+                assigned = assigned, isPaid = isPaid)
               Document.update(newDoc) match {
                 case Success(id) => NoContent
                 case Failure(err) => InternalServerError(err.getMessage)
