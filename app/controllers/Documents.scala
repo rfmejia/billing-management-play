@@ -120,14 +120,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
 
     val withList = blank.withEmbedded(HalJsObject.empty.withField("item", objs))
 
-    val withSubsections = withList
-      .withLink("subsection", routes.Documents.list(mailbox="Drafts").absoluteURL(), Some("Drafts"))
-      .withLink("subsection", routes.Documents.list(mailbox="For checking").absoluteURL(), Some("For checking"))
-      .withLink("subsection", routes.Documents.list(mailbox="For approval").absoluteURL(), Some("For approval"))
-      .withLink("subsection", routes.Documents.list(mailbox="Unpaid").absoluteURL(), Some("Unpaid"))
-      .withLink("subsection", routes.Documents.list(mailbox="Paid").absoluteURL(), Some("Paid"))
-
-    val y = listNavLinks(self.absoluteURL(), offset, limit, total).foldLeft(withSubsections) {
+    val y = listNavLinks(self.absoluteURL(), offset, limit, total).foldLeft(withList) {
       (obj, pair) => obj.withLink(pair._1, pair._2.href)
     }
 
