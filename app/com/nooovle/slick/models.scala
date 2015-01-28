@@ -131,7 +131,7 @@ class DocumentsModel(tag: Tag) extends Table[Document](tag, "DOCUMENTS") {
   def created = column[DateTime]("CREATED", O.NotNull)
   def forTenant = column[Int]("FOR_TENANT", O.NotNull)
   def forMonth = column[DateTime]("FOR_MONTH", O.NotNull)
-  def isPaid = column[Boolean]("IS_PAID", O.NotNull)
+  def amountPaid = column[Double]("AMOUNT_PAID", O.NotNull)
   def body = column[JsObject]("BODY", O.NotNull)
 
   def preparedBy = column[Option[String]]("PREPARED_BY")
@@ -146,7 +146,7 @@ class DocumentsModel(tag: Tag) extends Table[Document](tag, "DOCUMENTS") {
   //def _assigned = foreignKey("ASSIGNED_FK", assigned, models.users)(_.userId)
   def _forTenant = foreignKey("TENANT_FK", forTenant, models.tenants)(_.id)
 
-  def * = (id, serialId, title, docType, mailbox, creator, created, forTenant, forMonth, isPaid, body, preparedBy, preparedOn, checkedBy, checkedOn, approvedBy, approvedOn, assigned) <>
+  def * = (id, serialId, title, docType, mailbox, creator, created, forTenant, forMonth, amountPaid, body, preparedBy, preparedOn, checkedBy, checkedOn, approvedBy, approvedOn, assigned) <>
     (Document.tupled, Document.unapply)
 }
 

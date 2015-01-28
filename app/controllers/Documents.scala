@@ -42,7 +42,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
           .withField("assigned", d.assigned)
           .withField("forTenant", d.forTenant)
           .withField("forMonth", d.forMonth)
-          .withField("isPaid", d.isPaid)
+          .withField("amountPaid", d.amountPaid)
           .withField("hoa:next", Workflow.next(d.mailbox))
           .withField("hoa:prev", Workflow.prev(d.mailbox))
           .withField("body", d.body)
@@ -84,7 +84,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
     }
   }
 
-  def list(offset: Int = 0, limit: Int = 10, mailbox: String, forTenant: Int) = Action { implicit request =>
+  def list(offset: Int = 0, limit: Int = 10, mailbox: String, forTenant: Int) = SecuredAction { implicit request =>
     val (ds, total) = ConnectionFactory.connect withSession { implicit session =>
       val query = documents.drop(offset).take(limit).sortBy(_.created.desc)
         .filter(d => d.mailbox === mailbox || mailbox.isEmpty)
@@ -114,7 +114,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
         .withField("mailbox", d.mailbox)
         .withField("forTenant", d.forTenant)
         .withField("forMonth", d.forMonth)
-        .withField("isPaid", d.isPaid)
+        .withField("amountPaid", d.amountPaid)
         .withField("assigned", d.assigned)
 
       val withTotal = getTotal(d) match {
@@ -176,11 +176,11 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
           (json \ "body").asOpt[JsObject],
           (json \ "mailbox").asOpt[String],
           (json \ "assigned").asOpt[String],
-          (json \ "isPaid").asOpt[Boolean]) match {
-            case (Some(title), Some(body), Some(mailbox), assigned, Some(isPaid)) =>
+          (json \ "amountPaid").asOpt[Double]) match {
+            case (Some(title), Some(body), Some(mailbox), assigned, Some(amountPaid)) =>
               // TODO: Get user responsible for this request
               val newDoc = d.copy(title = title, mailbox = mailbox, body = body,
-                assigned = assigned, isPaid = isPaid)
+                assigned = assigned, amountPaid = amountPaid)
               Document.update(newDoc) match {
                 case Success(id) => NoContent
                 case Failure(err) => InternalServerError(err.getMessage)
