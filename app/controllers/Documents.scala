@@ -92,6 +92,17 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       (query.list, documents.length.run)
     }
 
+    // NOTE: The following is a hard-coded lookup of total values.
+    // Either standardize the field in the document type(s) or have a
+    // template registration system
+    def getTotal(d: Document): Either[String, JsValue] = {
+      if (d.docType == "invoice-1") {
+        if (d.body \ "summary" \ "id" == JsString("invoice_summary"))
+          Right(d.body \ "summary" \ "value")
+        else Left(s"Cannot find invoice summary in '${d.docType}'")
+      } else Left(s"The document type '${d.docType}' is not registered")
+    }
+
     val objs = ds map { d =>
       val link = routes.Documents.show(d.id)
       val obj = HalJsObject.create(link.absoluteURL())
@@ -105,7 +116,14 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
         .withField("forMonth", d.forMonth)
         .withField("isPaid", d.isPaid)
         .withField("assigned", d.assigned)
-      obj.asJsValue
+
+      val withTotal = getTotal(d) match {
+        case Right(value) => obj.withField("total", value)
+        case Left(warning) =>
+          Logger.warn(warning)
+          obj.withField("total", JsNull)
+      }
+      withTotal.asJsValue
     }
 
     val self = routes.Documents.list(offset, limit)
