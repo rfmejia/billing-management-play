@@ -17,6 +17,7 @@ case class Document(
   created: DateTime,
   forTenant: Int,
   forMonth: DateTime,
+  isPaid: Boolean,
   body: JsObject,
   preparedBy: Option[String] = None,
   preparedOn: Option[DateTime] = None,
@@ -26,7 +27,7 @@ case class Document(
   approvedOn: Option[DateTime] = None,
   assigned: Option[String] = None) // Which user is working on this now?
 
-object Document extends ((Int, Option[String], String, String, String, String, DateTime, Int, DateTime, JsObject, Option[String], Option[DateTime], Option[String], Option[DateTime], Option[String], Option[DateTime], Option[String]) => Document) with ModelTemplate {
+object Document extends ((Int, Option[String], String, String, String, String, DateTime, Int, DateTime, Boolean, JsObject, Option[String], Option[DateTime], Option[String], Option[DateTime], Option[String], Option[DateTime], Option[String]) => Document) with ModelTemplate {
 
   def findById(id: Int): Option[Document] =
     ConnectionFactory.connect withSession { implicit session =>
@@ -38,7 +39,7 @@ object Document extends ((Int, Option[String], String, String, String, String, D
     val created = new DateTime()
     val creator = "To implement"
     val newDoc = Document(0, None, title, docType, Workflow.start, creator,
-      created, forTenant, forMonth, body)
+      created, forTenant, forMonth, false, body)
     ConnectionFactory.connect withSession { implicit session =>
       Try {
         // Returns ID of newly inserted tenant
@@ -69,6 +70,7 @@ object Document extends ((Int, Option[String], String, String, String, String, D
     ModelInfo("DOCUMENTS", "created", "DateTime", false, false, true, Some("Created on")),
     ModelInfo("DOCUMENTS", "forTenant", "Int", true, false, true, Some("For tenant")),
     ModelInfo("DOCUMENTS", "forMonth", "DateTime", true, false, true, Some("For the month of")),
+    ModelInfo("DOCUMENTS", "isPaid", "Boolean", false, true, true, Some("Paid")),
     ModelInfo("DOCUMENTS", "body", "String", true, true, true, Some("Document JSON body (free-form)")),
     ModelInfo("DOCUMENTS", "assigned", "String", false, true, false, Some("Currently assigned to")))
 }
