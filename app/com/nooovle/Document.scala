@@ -65,7 +65,7 @@ object Document extends ((Int, Option[String], String, String, String, String, D
     ModelInfo("DOCUMENTS", "serialId", "String", false, false, true, Some("Serial ID")),
     ModelInfo("DOCUMENTS", "title", "String", true, true, true, Some("Title")),
     ModelInfo("DOCUMENTS", "docType", "String", true, false, true, Some("Document type")),
-    ModelInfo("DOCUMENTS", "mailbox", "String", false, true, true, Some("Mailbox")),
+    ModelInfo("DOCUMENTS", "mailbox", "String", false, false, true, Some("Mailbox")),
     ModelInfo("DOCUMENTS", "creator", "String", false, false, true, Some("Created by")),
     ModelInfo("DOCUMENTS", "created", "DateTime", false, false, true, Some("Created on")),
     ModelInfo("DOCUMENTS", "forTenant", "Int", true, false, true, Some("For tenant")),

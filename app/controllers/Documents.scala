@@ -43,15 +43,15 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
           .withField("forTenant", d.forTenant)
           .withField("forMonth", d.forMonth)
           .withField("amountPaid", d.amountPaid)
-          .withField("hoa:next", Workflow.next(d.mailbox))
-          .withField("hoa:prev", Workflow.prev(d.mailbox))
+          .withField("hoa:nextBox", Workflow.next(d.mailbox))
+          .withField("hoa:prevBox", Workflow.prev(d.mailbox))
           .withField("body", d.body)
 
         val obj1 = Workflow.next(d.mailbox) map { box =>
-          obj.withLink("next", routes.Documents.moveMailbox(id, box).absoluteURL())
+          obj.withLink("hoa:nextBox", routes.Documents.moveMailbox(id, box).absoluteURL())
         } getOrElse obj
         val obj2 = Workflow.prev(d.mailbox) map { box =>
-          obj1.withLink("prev", routes.Documents.moveMailbox(id, box).absoluteURL())
+          obj1.withLink("hoa:prevBox", routes.Documents.moveMailbox(id, box).absoluteURL())
         } getOrElse obj1
 
         val obj3 = Tenant.findById(d.forTenant) map { t =>
@@ -178,13 +178,12 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
         val json = request.body
         ((json \ "title").asOpt[String],
           (json \ "body").asOpt[JsObject],
-          (json \ "mailbox").asOpt[String],
           (json \ "assigned").asOpt[String],
           (json \ "amountPaid").asOpt[Double]) match {
-            case (Some(title), Some(body), Some(mailbox), assigned, Some(amountPaid)) =>
+            case (Some(title), Some(body), assigned, Some(amountPaid)) =>
               // TODO: Get user responsible for this request
-              val newDoc = d.copy(title = title, mailbox = mailbox, body = body,
-                assigned = assigned, amountPaid = amountPaid)
+              val newDoc = d.copy(title = title, body = body, assigned = assigned,
+                amountPaid = amountPaid)
               Document.update(newDoc) match {
                 case Success(id) => NoContent
                 case Failure(err) => InternalServerError(err.getMessage)
