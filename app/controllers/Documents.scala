@@ -156,18 +156,24 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
     ((json \ "title").asOpt[String],
       (json \ "docType").asOpt[String],
       (json \ "forTenant").asOpt[Int],
-      (json \ "forMonth").asOpt[DateTime],
+      (json \ "forMonth").asOpt[String],
       (json \ "body").asOpt[JsObject]) match {
         case (Some(title), Some(docType), Some(forTenant), Some(forMonth), Some(body)) =>
-          Document.insert(title, docType, forTenant, forMonth, body) match {
-            case Success(id) =>
-              val link = routes.Documents.show(id).absoluteURL()
-              Created.withHeaders("Location" -> link)
-            case Failure(err) =>
-              err.printStackTrace
-              InternalServerError(err.getMessage)
+          Try(DateTime.parse(forMonth)) match {
+            case Success(date) =>
+              Document.insert(title, docType, forTenant, date, body) match {
+                case Success(id) =>
+                  val link = routes.Documents.show(id).absoluteURL()
+                  Created.withHeaders("Location" -> link)
+                case Failure(err) =>
+                  Logger.error(s"Error in creating document '${title}'", err)
+                  InternalServerError(err.getMessage)
+              }
+              case Failure(msg) =>
+                BadRequest("The supplied date is invalid, please format to ISO8601")
           }
-        case _ => BadRequest("Some required values are missing. Please check your request.")
+        case _ =>
+          BadRequest("Some required values are missing. Please check your request.")
       }
   }
 
