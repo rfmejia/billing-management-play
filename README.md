@@ -1,7 +1,7 @@
 Billing Management Application - Nooovle
 ========================================
 
-Nooovle's web application solution for Hobbies of Asia, Inc.
+Nooovle's web application solution for Hobbies of Asia, Inc. Uses the Play! Framework on Scala for API services, Slick and H2 for database services, and AngularJS with Bootstrap for its UI Client.
 
 ## System Requirements
 
