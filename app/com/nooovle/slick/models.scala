@@ -63,9 +63,9 @@ class ModelInfosModel(tag: Tag) extends Table[ModelInfo](tag,
   def fieldName = column[String]("FIELD_NAME", O.NotNull)
   def datatype = column[String]("DATATYPE", O.NotNull)
   def createForm = column[Boolean]("CREATE_FORM", O.NotNull)
-  def createRequired = column[Boolean]("REQUIRED", O.NotNull)
+  def createRequired = column[Boolean]("CREATE_REQUIRED", O.NotNull)
   def editForm = column[Boolean]("EDIT_FORM", O.NotNull)
-  def editRequired = column[Boolean]("REQUIRED", O.NotNull)
+  def editRequired = column[Boolean]("EDIT_REQUIRED", O.NotNull)
 
   def prompt = column[Option[String]]("PROMPT")
   def tooltip = column[Option[String]]("TOOLTIP")
