@@ -169,8 +169,8 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
                   Logger.error(s"Error in creating document '${title}'", err)
                   InternalServerError(err.getMessage)
               }
-              case Failure(msg) =>
-                BadRequest("The supplied date is invalid, please format to ISO8601")
+            case Failure(msg) =>
+              BadRequest("The supplied date is invalid, please format to ISO8601")
           }
         case _ =>
           BadRequest("Some required values are missing. Please check your request.")
@@ -186,10 +186,16 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
           (json \ "body").asOpt[JsObject],
           (json \ "assigned").asOpt[String],
           (json \ "amountPaid").asOpt[Double]) match {
-            case (Some(title), Some(body), assigned, Some(amountPaid)) =>
+            case (None, None, None, None) =>
+              BadRequest("No editable fields matched. Please check your request.")
+            case (title, body, assigned, amountPaid) =>
               // TODO: Get user responsible for this request
-              val newDoc = d.copy(title = title, body = body, assigned = assigned,
-                amountPaid = amountPaid)
+              val newDoc =
+                d.replaceWith(title map (x => d.copy(title = x)))
+                .replaceWith(body map (x => d.copy(body = x)))
+                .replaceWith(amountPaid map (x => d.copy(amountPaid = x)))
+                .replaceWith(assigned map (x => d.copy(assigned = Option(x))))
+
               Document.update(newDoc) match {
                 case Success(id) => NoContent
                 case Failure(err) => InternalServerError(err.getMessage)
