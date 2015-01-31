@@ -9,6 +9,7 @@ import scala.slick.driver.H2Driver.simple.stringColumnType
 import scala.slick.driver.H2Driver.simple.valueToConstColumn
 import scala.util.Try
 
+import com.nooovle.ModelInfo._
 import com.nooovle.slick.ConnectionFactory
 import com.nooovle.slick.models.roles
 import com.nooovle.slick.models.userRoles
@@ -111,11 +112,12 @@ object User extends ((String, String, Option[String], Option[String], Option[Str
 
   val modelName = "USERS"
   lazy val modelInfos = Seq(
-    ModelInfo("USERS", "userId", "String", false, false, true, Some("Username")),
-    ModelInfo("USERS", "password", "String", true, false, true, Some("Password")),
-    ModelInfo("USERS", "email", "String", false, true, true, Some("Email")),
-    ModelInfo("USERS", "roles", "String[]", false, true, true, Some("Roles")),
-    ModelInfo("USERS", "firstName", "String", true, true, true, Some("First name")),
-    ModelInfo("USERS", "lastName", "String", true, true, true, Some("Last name")),
-    ModelInfo("USERS", "validationCode", "String", true, false, true, Some("Validation code")))
+    ModelInfo("USERS", "userId", "String", Uneditable, Uneditable, Some("Username")),
+    ModelInfo("USERS", "password", "String", Uneditable, Uneditable, Some("Password")),
+    ModelInfo("USERS", "email", "String", Uneditable, Uneditable, Some("Email")),
+    ModelInfo("USERS", "roles", "String[]", Uneditable, Required, Some("Roles")),
+    ModelInfo("USERS", "firstName", "String", Uneditable, Required, Some("First name")),
+    ModelInfo("USERS", "lastName", "String", Uneditable, Required, Some("Last name")),
+    ModelInfo("USERS", "validationCode", "String", Uneditable, Uneditable, Some("Validation code")))
+  // TODO: Remove validation code from model
 }

@@ -1,8 +1,13 @@
 package controllers
 
-import com.nooovle.User
 import com.netaporter.uri.dsl._
+import com.nooovle.ModelInfo._
+import com.nooovle.slick.ConnectionFactory
+import com.nooovle.slick.models.modelTemplates
+import com.nooovle.{ ModelInfo, User }
 import org.locker47.json.play._
+import play.api.libs.json.{ JsObject, Json }
+import scala.slick.driver.H2Driver.simple._
 
 trait ApiController[T] extends securesocial.core.SecureSocial[T] {
   def listNavLinks(base: String, offset: Int, limit: Int, total: Int): Map[String, Link] = {
@@ -17,4 +22,25 @@ trait ApiController[T] extends securesocial.core.SecureSocial[T] {
     } else Map.empty
     (startLinks ++ endLinks)
   }
+
+  def getTemplate(modelName: String, action: DocAction) = {
+    val fields = ModelInfo.toJsonArray(action) {
+      ConnectionFactory.connect withSession { implicit session =>
+        val query = for (
+          i <- modelTemplates if i.modelName === modelName
+            && {
+              if (action == "create") i.createForm
+              else if (action == "edit") i.editForm
+              else false
+            }
+
+        ) yield i
+        query.list
+      }
+    }
+    Json.obj(action -> Json.obj("data" -> fields))
+  }
+
+  def getCreateTemplate(modelName: String) = getTemplate(modelName, DocCreate)
+  def getEditTemplate(modelName: String) = getTemplate(modelName, DocEdit)
 }

@@ -94,29 +94,6 @@ class Users(override implicit val env: RuntimeEnvironment[User])
     else Ok
   }
 
-  lazy val createForm: JsObject = {
-    val fields = ModelInfo.toJsonArray {
-      ConnectionFactory.connect withSession { implicit session =>
-        val query = for (
-          i <- modelTemplates if i.modelName === "USERS"
-            && i.createForm
-        ) yield i
-        query.list
-      }
-    }
-    Json.obj("create" -> Json.obj("data" -> fields))
-  }
-
-  lazy val editForm: JsObject = {
-    val fields = ModelInfo.toJsonArray {
-      ConnectionFactory.connect withSession { implicit session =>
-        val query = for (
-          i <- modelTemplates if i.modelName === "USERS"
-            && i.editForm
-        ) yield i
-        query.list
-      }
-    }
-    Json.obj("edit" -> Json.obj("data" -> fields))
-  }
+  lazy val createForm: JsObject = getCreateTemplate("USERS")
+  lazy val editForm: JsObject = getEditTemplate("USERS")
 }
