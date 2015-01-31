@@ -2,7 +2,7 @@ package com.nooovle.slick
 
 import scala.slick.driver.H2Driver.simple._
 import scala.slick.jdbc.meta.MTable
-import scala.util.{Success, Try}
+import scala.util.{ Success, Try }
 
 import org.joda.time.DateTime
 
@@ -45,7 +45,7 @@ object models {
   implicit val jsToString = MappedColumnType.base[JsObject, String](_.toString, {
     Json.parse(_) match {
       case o: JsObject => o
-      case _           => throw new IllegalStateException("Malformed JSON object")
+      case _ => throw new IllegalStateException("Malformed JSON object")
     }
   })
 }
@@ -63,16 +63,16 @@ class ModelInfosModel(tag: Tag) extends Table[ModelInfo](tag,
   def fieldName = column[String]("FIELD_NAME", O.NotNull)
   def datatype = column[String]("DATATYPE", O.NotNull)
   def createForm = column[Boolean]("CREATE_FORM", O.NotNull)
+  def createRequired = column[Boolean]("REQUIRED", O.NotNull)
   def editForm = column[Boolean]("EDIT_FORM", O.NotNull)
-  def required = column[Boolean]("REQUIRED", O.NotNull)
+  def editRequired = column[Boolean]("REQUIRED", O.NotNull)
 
   def prompt = column[Option[String]]("PROMPT")
   def tooltip = column[Option[String]]("TOOLTIP")
 
   def pk = primaryKey("PK", (modelName, fieldName))
 
-  def * = (modelName, fieldName, datatype, createForm, editForm, required,
-    prompt, tooltip) <> (ModelInfo.tupled, ModelInfo.unapply)
+  def * = (modelName, fieldName, datatype, (createForm, createRequired), (editForm, editRequired), prompt, tooltip) <> (ModelInfo.tupled, ModelInfo.unapply)
 }
 
 class UsersModel(tag: Tag) extends Table[User](tag, "USERS") {

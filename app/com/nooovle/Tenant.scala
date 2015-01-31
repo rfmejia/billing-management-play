@@ -1,5 +1,6 @@
 package com.nooovle
 
+import com.nooovle.ModelInfo._
 import com.nooovle.slick.ConnectionFactory
 import com.nooovle.slick.models.tenants
 import scala.slick.driver.H2Driver.simple._
@@ -26,14 +27,10 @@ object Tenant extends ((Int, String, String, String, String, String) => Tenant)
 
   val modelName = "TENANTS"
   lazy val modelInfos = Seq(
-    ModelInfo("TENANTS", "id", "Int", false, false, true, Some("Tennant ID")),
-    ModelInfo("TENANTS", "tradeName", "String", true, true, true,
-      Some("Trade name")),
-    ModelInfo("TENANTS", "address", "String", true, true, true,
-      Some("Business address")),
-    ModelInfo("TENANTS", "contactPerson", "String", true, true, true,
-      Some("Contact person")),
-    ModelInfo("TENANTS", "contactNumber", "String", true, true, true,
-      Some("Contact number(s)"), Some("Separate numbers using a semicolon ';'")),
-    ModelInfo("TENANTS", "email", "String", true, true, true, Some("Email")))
+    ModelInfo("TENANTS", "id", "Int", Uneditable, Uneditable, Some("Tennant ID")),
+    ModelInfo("TENANTS", "tradeName", "String", Required, Required, Some("Trade name")),
+    ModelInfo("TENANTS", "address", "String", Required, Required, Some("Business address")),
+    ModelInfo("TENANTS", "contactPerson", "String", Required, Required, Some("Contact person")),
+    ModelInfo("TENANTS", "contactNumber", "String", Required, Required, Some("Contact number"), Some("Separate numbers using a semicolon ';'")),
+    ModelInfo("TENANTS", "email", "String", Required, Required, Some("Email")))
 }

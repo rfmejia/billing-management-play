@@ -1,5 +1,6 @@
 package com.nooovle
 
+import com.nooovle.ModelInfo._
 import com.nooovle.slick.ConnectionFactory
 import com.nooovle.slick.models.documents
 import org.joda.time.DateTime
@@ -72,16 +73,16 @@ object Document extends ((Int, Option[String], String, String, String, String, D
 
   val modelName = "DOCUMENTS"
   lazy val modelInfos = Seq(
-    ModelInfo("DOCUMENTS", "id", "UUID", false, false, true, Some("ID")),
-    ModelInfo("DOCUMENTS", "serialId", "String", false, false, true, Some("Serial ID")),
-    ModelInfo("DOCUMENTS", "title", "String", true, true, true, Some("Title")),
-    ModelInfo("DOCUMENTS", "docType", "String", true, false, true, Some("Document type")),
-    ModelInfo("DOCUMENTS", "mailbox", "String", false, false, true, Some("Mailbox")),
-    ModelInfo("DOCUMENTS", "creator", "String", false, false, true, Some("Created by")),
-    ModelInfo("DOCUMENTS", "created", "DateTime", false, false, true, Some("Created on")),
-    ModelInfo("DOCUMENTS", "forTenant", "Int", true, false, true, Some("For tenant")),
-    ModelInfo("DOCUMENTS", "forMonth", "DateTime", true, false, true, Some("For the month of")),
-    ModelInfo("DOCUMENTS", "amountPaid", "Double", false, true, true, Some("Amount paid")),
-    ModelInfo("DOCUMENTS", "body", "String", true, true, true, Some("Document JSON body (free-form)")),
-    ModelInfo("DOCUMENTS", "assigned", "String", false, true, false, Some("Currently assigned to")))
+    ModelInfo("DOCUMENTS", "id", "UUID", Uneditable, Uneditable, Some("ID")),
+    ModelInfo("DOCUMENTS", "serialId", "String", Uneditable, Uneditable, Some("Serial ID")),
+    ModelInfo("DOCUMENTS", "title", "String", Required, Editable, Some("Title")),
+    ModelInfo("DOCUMENTS", "docType", "String", Required, Uneditable, Some("Document type")),
+    ModelInfo("DOCUMENTS", "mailbox", "String", Uneditable, Uneditable, Some("Mailbox")),
+    ModelInfo("DOCUMENTS", "creator", "String", Uneditable, Uneditable, Some("Created by")),
+    ModelInfo("DOCUMENTS", "created", "DateTime", Uneditable, Uneditable, Some("Created on")),
+    ModelInfo("DOCUMENTS", "forTenant", "Int", Required, Uneditable, Some("For tenant")),
+    ModelInfo("DOCUMENTS", "forMonth", "DateTime", Required, Uneditable, Some("For the month of")),
+    ModelInfo("DOCUMENTS", "amountPaid", "Double", Uneditable, Editable, Some("Amount paid")),
+    ModelInfo("DOCUMENTS", "body", "String", Required, Editable, Some("Document JSON body (free-form)")),
+    ModelInfo("DOCUMENTS", "assigned", "String", Uneditable, Editable, Some("Currently assigned to")))
 }
