@@ -16,7 +16,7 @@ import securesocial.core.RuntimeEnvironment
 class Documents(override implicit val env: RuntimeEnvironment[User])
   extends ApiController[User] {
 
-  def show(id: Int) = SecuredAction { implicit request =>
+  def show(id: Int) = Action { implicit request =>
     Document.findById(id) match {
       case Some(d) =>
         val self = routes.Documents.show(id)
@@ -95,7 +95,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
     }
   }
 
-  def list(offset: Int = 0, limit: Int = 10, mailbox: String, forTenant: Int) = SecuredAction { implicit request =>
+  def list(offset: Int = 0, limit: Int = 10, mailbox: String, forTenant: Int) = Action { implicit request =>
     val (ds, total) = ConnectionFactory.connect withSession { implicit session =>
       val query = documents.drop(offset).take(limit).sortBy(_.created.desc)
         .filter(d => d.mailbox === mailbox || mailbox.isEmpty)
@@ -214,31 +214,8 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
     else Ok
   }
 
-  lazy val createForm: JsObject = {
-    val fields = ModelInfo.toJsonArray {
-      ConnectionFactory.connect withSession { implicit session =>
-        val query = for (
-          i <- modelTemplates if i.modelName === "DOCUMENTS"
-            && i.createForm
-        ) yield i
-        query.list
-      }
-    }
-    Json.obj("create" -> Json.obj("data" -> fields))
-  }
-
-  lazy val editForm: JsObject = {
-    val fields = ModelInfo.toJsonArray {
-      ConnectionFactory.connect withSession { implicit session =>
-        val query = for (
-          i <- modelTemplates if i.modelName === "DOCUMENTS"
-            && i.editForm
-        ) yield i
-        query.list
-      }
-    }
-    Json.obj("edit" -> Json.obj("data" -> fields))
-  }
+  lazy val createForm: JsObject = getCreateTemplate("DOCUMENTS")
+  lazy val editForm: JsObject = getEditTemplate("DOCUMENTS")
 
   // NOTE: The following is a hard-coded lookup of total values.
   // Either standardize the field in the document type(s) or have a
