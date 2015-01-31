@@ -25,7 +25,18 @@ case class Document(
   checkedOn: Option[DateTime] = None,
   approvedBy: Option[String] = None,
   approvedOn: Option[DateTime] = None,
-  assigned: Option[String] = None) // Which user is working on this now?
+  assigned: Option[String] = None) { // Which user is working on this now?
+
+  // Returns that if exists, else this
+  def replaceWith(that: Option[Document]): Document =
+    {
+      println(that)
+      that match {
+        case Some(that) => that
+        case None => this
+      }
+    }
+}
 
 object Document extends ((Int, Option[String], String, String, String, String, DateTime, Int, DateTime, Double, JsObject, Option[String], Option[DateTime], Option[String], Option[DateTime], Option[String], Option[DateTime], Option[String]) => Document) with ModelTemplate {
 
