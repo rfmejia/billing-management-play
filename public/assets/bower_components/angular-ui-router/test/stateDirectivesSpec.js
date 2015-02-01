@@ -43,9 +43,11 @@ describe('uiStateRef', function() {
       0, // screenYArg of type long, Specifies the Event's screen y coordinate
       0, // clientXArg of type long, Specifies the Event's client x coordinate
       0, // clientYArg of type long, Specifies the Event's client y coordinate
-      options.ctrlKey, // ctrlKeyArg of type boolean, Specifies whether or not control key was depressed during the Event.
+      options.ctrlKey, // ctrlKeyArg of type boolean, Specifies whether or not control key was depressed during the
+                       // Event.
       options.altKey, // altKeyArg of type boolean, Specifies whether or not alt key was depressed during the Event.
-      options.shiftKey, // shiftKeyArg of type boolean, Specifies whether or not shift key was depressed during the Event.
+      options.shiftKey, // shiftKeyArg of type boolean, Specifies whether or not shift key was depressed during the
+                        // Event.
       options.metaKey, // metaKeyArg of type boolean, Specifies whether or not meta key was depressed during the Event.
       options.button, // buttonArg of type unsigned short, Specifies the Event's mouse button.
       null // relatedTargetArg of type EventTarget
@@ -95,9 +97,8 @@ describe('uiStateRef', function() {
         // Behave as Angular >=1.1.5 and do nothing in such case.
       }
     }
-  };
-
-  describe('links', function() {
+  }
+    describe('links', function() {
     beforeEach(inject(buildDOM));
 
     it('should generate the correct href', function() {
@@ -348,7 +349,7 @@ describe('uiStateRef', function() {
       $q.flush();
 
       var grandchildToParent = angular.element(template[0].querySelector('a.item-parent2'));
-      expect($state.$current.name).toBe("contacts.item.detail")
+      expect($state.$current.name).toBe("contacts.item.detail");
 
       triggerClick(grandchildToParent);
       $timeout.flush();

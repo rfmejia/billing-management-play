@@ -2161,7 +2161,7 @@ forEach({
 		  // Refer to jQuery's implementation of mouseenter & mouseleave
           // Read about mouseenter and mouseleave:
           // http://www.quirksmode.org/js/events_mouse.html#link8
-          var eventmap = { mouseleave : "mouseout", mouseenter : "mouseover"}          
+          var eventmap = { mouseleave : "mouseout", mouseenter : "mouseover"};
           bindFn(element, eventmap[type], function(event) {
             var ret, target = this, related = event.relatedTarget;
             // For mousenter/leave call the handler if related is outside the target.
@@ -5182,7 +5182,7 @@ function $InterpolateProvider() {
      */
     $interpolate.startSymbol = function() {
       return startSymbol;
-    }
+    };
 
 
     /**
@@ -5199,7 +5199,7 @@ function $InterpolateProvider() {
      */
     $interpolate.endSymbol = function() {
       return endSymbol;
-    }
+    };
 
     return $interpolate;
   }];
@@ -5352,7 +5352,7 @@ function LocationUrl(url, pathPrefix, appBaseUrl) {
     if(absoluteLinkUrl.indexOf(appBaseUrl) == 0) {
       return absoluteLinkUrl;
     }
-  }
+  };
 
 
   this.$$parse(url);
@@ -5414,7 +5414,7 @@ function LocationHashbangUrl(url, hashPrefix, appBaseUrl) {
     if(absoluteLinkUrl.indexOf(appBaseUrl) == 0) {
       return absoluteLinkUrl;
     }
-  }
+  };
 
 
   this.$$parse(url);
@@ -12547,7 +12547,7 @@ var requiredDirective = function() {
       var validator = function(value) {
         if (attr.required && (isEmpty(value) || value === false)) {
           ctrl.$setValidity('required', false);
-          return;
+
         } else {
           ctrl.$setValidity('required', true);
           return value;
@@ -14714,7 +14714,7 @@ var selectDirective = ['$compile', '$parse', function($compile,   $parse) {
         ngModelCtrl = ngModelCtrl_;
         nullOption = nullOption_;
         unknownOption = unknownOption_;
-      }
+      };
 
 
       self.addOption = function(value) {
@@ -14743,12 +14743,12 @@ var selectDirective = ['$compile', '$parse', function($compile,   $parse) {
         $element.prepend(unknownOption);
         $element.val(unknownVal);
         unknownOption.prop('selected', true); // needed for IE
-      }
+      };
 
 
       self.hasOption = function(value) {
         return optionsMap.hasOwnProperty(value);
-      }
+      };
 
       $scope.$on('$destroy', function() {
         // disable unknown option so that we don't do work when the whole select is being destroyed

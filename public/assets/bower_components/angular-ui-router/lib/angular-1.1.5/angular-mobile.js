@@ -432,7 +432,7 @@ function makeSwipeDirective(directiveName, direction) {
         // One of totalX or totalY has exceeded the buffer, so decide on swipe vs. scroll.
         if (totalY > totalX) {
           valid = false;
-          return;
+
         } else {
           event.preventDefault();
         }

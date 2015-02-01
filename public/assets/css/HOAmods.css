@@ -92,6 +92,14 @@
   margin-bottom: 5px;
 }
 
+.btn-noPadding {
+    padding: 0;
+}
+
+.noPadding {
+    padding: 0;
+}
+
 .btn-borderless {
   border : none;
 }
@@ -99,6 +107,20 @@
 label.vertical-aligned {
   margin-bottom: 0px;
   margin-top: 5px;
+}
+
+.createDocumentSection {
+    margin-top: 20px;
+    position: relative;
+}
+
+.createDocumentHeader {
+    margin-top: 30px;
+    margin-bottom: 10px;
+}
+
+.subtotal {
+    margin-top: 30px;
 }
 
 legend,
@@ -156,3 +178,39 @@ h5.mainTotal {
 h6.sidebarSection {
   color: #2196F3;
 }
+
+.pointer {
+    cursor : pointer;
+}
+
+.unselectable {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+html {
+    overflow: -moz-scrollbars-vertical;
+    overflow-y: scroll;
+}
+
+.sidebarNav > li:not(:first-child) a{
+    text-indent: 15px;
+}
+
+.sidebarNav a:not(:focus),
+.sidebarNav a{
+    color: rgba(102, 102, 102, .87);
+}
+
+.sidebarNav li.indent  a{
+    text-indent: 30px;
+}
+
+.sidbarNav span {
+    margin-top: -2.0em;
+}
+

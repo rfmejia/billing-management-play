@@ -20,7 +20,7 @@ describe("UrlRouter", function () {
     });
 
     it("should throw on non-function rules", function () {
-      expect(function() { $urp.rule(null); }).toThrow("'rule' must be a function")
+      expect(function() { $urp.rule(null); }).toThrow("'rule' must be a function");
       expect(function() { $urp.otherwise(null); }).toThrow("'rule' must be a function")
     });
 

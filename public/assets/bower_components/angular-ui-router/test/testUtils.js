@@ -39,7 +39,7 @@ angular.module('ngMock').config(function ($provide) {
       var deferred = qDefer();
       expose(deferred.promise);
       return deferred;
-    }
+    };
 
     return $delegate;
   });

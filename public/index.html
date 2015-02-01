@@ -11,6 +11,7 @@
     <link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.0/paper/bootstrap.min.css" rel="stylesheet">
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
     <link href="assets/css/HOAmods.css" rel="stylesheet">
+      <link href="assets/css/bootstrap-additions-mgcrea.css" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -32,46 +33,49 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0/angular-route.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0/angular-resource.js"></script>
     <script src="assets/js/ui-bootstrap-tpls-0.12.0.min.js"></script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
     <script src="assets/bower_components/angular-ui-router/release/angular-ui-router.js"></script>
     <script type="text/javascript" src="http://fgnass.github.io/spin.js/spin.min.js"></script>
     <script src="assets/js/angular-spinner.js"></script>
     <script src="HOAApp.js"></script>
-    
+
+    <!-- widgets http://mgcrea.github.io/angular-strap/-->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular-strap/2.1.2/angular-strap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular-strap/2.1.2/angular-strap.tpl.min.js"></script>
+    <!-- end.widgets-->
+
     <!-- components.tenants -->
-    <script src="app/components/tenants/configs/hoaapp.module.tenants.js"></script>
-    <script src="app/components/tenants/services/hoaapp.service.tenants.js"></script>
-    <script src="app/components/tenants/controllers/hoaapp.controller.tenantslist.js"></script>
-    <script src="app/components/tenants/controllers/hoaapp.controller.tenantview.js"></script>
-    <script src="app/components/tenants/controllers/hoaapp.controller.tenantedit.js"></script>
-    <script src="app/components/tenants/controllers/hoaapp.controller.tenantcreate.js"></script>
+    <script src="app/components/workspace/tenants/configs/hoaapp.module.tenants.js"></script>
+    <script src="app/components/workspace/tenants/services/hoaapp.service.tenants.js"></script>
+    <script src="app/components/workspace/tenants/controllers/hoaapp.controller.tenantslist.js"></script>
+    <script src="app/components/workspace/tenants/controllers/hoaapp.controller.tenantview.js"></script>
+    <script src="app/components/workspace/tenants/controllers/hoaapp.controller.tenantedit.js"></script>
+    <script src="app/components/workspace/tenants/controllers/hoaapp.controller.tenantcreate.js"></script>
     <!-- end.compnents.tenants -->
 
     <!-- components.users/invites -->
-    <script src="app/components/users/services/hoaapp.service.users.js"></script>
-    <script src="app/components/users/services/hoaapp.service.invites.js"></script>
-    <script src="app/components/users/configs/hoaapp.module.users.js"></script>
-    <script src="app/components/users/controllers/hoaapp.controller.completeusers.js"></script>
-    <script src="app/components/users/controllers/hoaapp.controller.userview.js"></script>
-    <script src="app/components/users/controllers/hoaapp.controller.inviteuser.js"></script>
+    <script src="app/components/workspace/users/services/hoaapp.service.users.js"></script>
+    <script src="app/components/workspace/users/services/hoaapp.service.invites.js"></script>
+    <script src="app/components/workspace/users/configs/hoaapp.module.users.js"></script>
+    <script src="app/components/workspace/users/controllers/hoaapp.controller.completeusers.js"></script>
+    <script src="app/components/workspace/users/controllers/hoaapp.controller.userview.js"></script>
+    <script src="app/components/workspace/users/controllers/hoaapp.controller.inviteuser.js"></script>
     <!-- end.components.users -->
     
     <!-- compnents.mailbox -->
-    <script src="app/components/mailbox/configs/hoaapp.module.mailbox.js"></script>
-    <script src="app/components/mailbox/controllers/hoaapp.controller.drafts.js"></script>
-    <script src="app/components/mailbox/controllers/hoaapp.controller.forapproval.js"></script>
-    <script src="app/components/mailbox/controllers/hoaapp.controller.forchecking.js"></script>
-    <script src="app/components/mailbox/controllers/hoaapp.controller.paid.js"></script>
-    <script src="app/components/mailbox/controllers/hoaapp.controller.unpaid.js"></script>
-    <script src="app/components/mailbox/controllers/hoaapp.controller.create.js"></script>
+    <script src="app/components/workspace/mailbox/configs/hoaapp.module.mailbox.js"></script>
+    <script src="app/components/workspace/mailbox/controllers/hoaapp.controller.documents.js"></script>
+    <script src="app/components/workspace/mailbox/controllers/hoaapp.controller.create.js"></script>
     <!-- end.components.mailbox -->
 
-    <script src="app/shared/content/authentication/service/hoaapp.service.httpinterceptor.js"></script>
-    <script src="app/shared/content/authentication/service/hoaapp.service.tokenhandler.js"></script>
-    <script src="app/shared/content/workspace/sidebar/service/hoaapp.service.mailboxes.js"></script>
+    <script src="app/components/shared/content/authentication/service/hoaapp.service.httpinterceptor.js"></script>
+    <script src="app/components/shared/content/authentication/service/hoaapp.service.tokenhandler.js"></script>
+    <script src="app/components/workspace/mailbox/services/hoaapp.service.mailbox.js"></script>
 
-    <script src="app/shared/content/workspace/services/hoaapp.service.api.js"></script>
-    <script src="app/shared/content/workspace/services/hoaapp.service.templates.js"></script>
-    <script src="app/shared/content/workspace/services/hoaapp.service.documents.js"></script>
+    <script src="app/components/shared/content/workspace/services/hoaapp.service.api.js"></script>
+    <script src="app/components/shared/content/workspace/services/hoaapp.service.templates.js"></script>
+    <script src="app/components/workspace/mailbox/services/hoaapp.service.documents.js"></script>
     <script src="HOADirectives.js"></script>
     <script src="HOAController.js"></script>
     <script src="HOAFilters.js"></script>
