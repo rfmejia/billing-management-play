@@ -6,10 +6,25 @@ import com.nooovle.slick.ConnectionFactory
 import com.nooovle.slick.models.modelTemplates
 import com.nooovle.{ ModelInfo, User }
 import org.locker47.json.play._
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json.{ JsObject, Json }
+import play.api.mvc.{ Request, Result }
+import scala.concurrent.Future
 import scala.slick.driver.H2Driver.simple._
 
 trait ApiController[T] extends securesocial.core.SecureSocial[T] {
+
+  // def ApiAction[A](allowableRoles: Set[String])(f: (Request[A]) => Future[Result]) = {
+  //   import scala.
+  //   SecuredAction { implicit request =>
+  //     // Get user
+  //     // Check his roles against allowableRoles
+  //     // else Forbidden
+  //     // f()
+  //     Future { Forbidden }
+  //   }
+  // }
+
   def listNavLinks(base: String, offset: Int, limit: Int, total: Int): Map[String, Link] = {
     val uri = base.removeParams("offset").removeParams("limit")
     val startLinks = if (offset > 0) {

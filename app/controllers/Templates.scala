@@ -33,7 +33,7 @@ class Templates(override implicit val env: RuntimeEnvironment[User])
     }
   }
 
-  def list(offset: Int = 0, limit: Int = 10) = play.api.mvc.Action { implicit request =>
+  def list(offset: Int = 0, limit: Int = 10) = SecuredAction { implicit request =>
     val objs = templates map { t =>
       val docType = (t \ "docType").as[String]
       val link = routes.Templates.show(docType)
