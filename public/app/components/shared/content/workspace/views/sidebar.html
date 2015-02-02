@@ -1,0 +1,27 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4 class="panel-title">Documents</h4>
+    </div>
+
+    <ul class="list-group nav nav-pills nav-stacked sidebarNav">
+        <li><a href="#">{{mailboxItems.title | uppercase}}</a></li>
+        <li ng-repeat="children in mailboxItems.subFolders"><a href="#">{{children.title | uppercase}}</a>
+            <ul class="nav nav-pills nav-stacked" ng-repeat="grandChildren in children.subFolders">
+                <li class="indent" ng-class="linkClass(grandChildren)"><a href="#/documents" ng-click="queryDocuments(grandChildren)">{{grandChildren.title | uppercase}} <span class="pull-right glyphicon glyphicon-chevron-down"></span></a></li>
+            </ul>
+        </li>
+    </ul>
+
+</div>  <!-- end mailbox -->
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h4 class="panel-title">Management</h4>
+  </div>
+  <div class="panel-body">
+    <div class="list-group">
+                <a href="{{sidebarLink.link}}" ng-class="linkClass(sidebarLink)" link="sidebarLink" class="list-group-item" ng-repeat="sidebarLink in sidebarItems | sidebarListFilter: 'Management'" id="{{sidebarLink.id}}" ng-click="setSelectedLink(sidebarLink)">{{sidebarLink.title}}</a>
+    </div>
+  </div>
+</div>
+

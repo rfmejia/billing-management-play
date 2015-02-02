@@ -82,23 +82,16 @@ object Workflow {
                 "queryParam": "delivered",
                 "subFolders": [
                     {
-                        "title": "Delivered",
+                        "title": "Paid",
                         "queryKey": "mailbox",
-                        "queryParam": "pending",
-                        "subFolders": [
-                            {
-                                "title": "Paid",
-                                "queryKey": "mailbox",
-                                "queryParam": "paid",
-                                "subFolders": []
-                            },
-                            {
-                                "title": "unpaid",
-                                "queryKey": "mailbox",
-                                "queryParam": "unpaid",
-                                "subFolders": []
-                            }
-                        ]
+                        "queryParam": "paid",
+                        "subFolders": []
+                    },
+                    {
+                        "title": "unpaid",
+                        "queryKey": "mailbox",
+                        "queryParam": "unpaid",
+                        "subFolders": []
                     }
                 ]
             }
