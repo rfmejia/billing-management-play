@@ -54,24 +54,24 @@ object Workflow {
             {
                 "title": "Pending",
                 "queryKey": "mailbox",
-                "queryParam": "pending",
+                "queryParam": "Pending",
                 "subFolders": [
                     {
                         "title": "Drafts",
                         "queryKey": "mailbox",
-                        "queryParam": "drafts",
+                        "queryParam": "Drafts",
                         "subFolders": []
                     },
                     {
                         "title": "For checking",
                         "queryKey": "mailbox",
-                        "queryParam": "for+checking",
+                        "queryParam": "For+checking",
                         "subFolders": []
                     },
                     {
                         "title": "For approval",
                         "queryKey": "mailbox",
-                        "queryParam": "for+approval",
+                        "queryParam": "For+approval",
                         "subFolders": []
                     }
                 ]
@@ -79,18 +79,18 @@ object Workflow {
             {
                 "title": "Delivered",
                 "queryKey": "mailbox",
-                "queryParam": "delivered",
+                "queryParam": "Delivered",
                 "subFolders": [
                     {
                         "title": "Paid",
                         "queryKey": "mailbox",
-                        "queryParam": "paid",
+                        "queryParam": "Paid",
                         "subFolders": []
                     },
                     {
                         "title": "unpaid",
                         "queryKey": "mailbox",
-                        "queryParam": "unpaid",
+                        "queryParam": "Unpaid",
                         "subFolders": []
                     }
                 ]
