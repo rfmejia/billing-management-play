@@ -5,24 +5,21 @@ hoaControllers.controller("controller.root", ["$scope", "$location", "$state", "
 
         var success = function(data) {
             tokenHandler.set($cookies.id);
-            $state.go("workspace");
-        }
+        };
 
         var error = function() {
             
-        }
+        };
+
         if(!hoalinks.isLinksSet()) {
-            hoalinks.getResource()
-                .get()
-                .$promise
+            hoalinks.getResource().get().$promise
                 .then(success, error);
         }
     }]);
 
 hoaControllers.controller('workspaceController', 
-    ['$rootScope', '$scope', "$http", "$state",  "$location", "$window", "$cookies", 
-     "r_hoaLinks", "tokenHandler",
-    function ($rootScope, $scope, $http, $state, $location, $window, $cookies, r_hoaLinks, tokenHandler) {
+    ['$rootScope', '$scope', "$http", "$state",
+    function ($rootScope, $scope, $http, $state) {
 
         $scope.onCreateClicked = function() {
             $state.go("workspace.create");
@@ -30,17 +27,15 @@ hoaControllers.controller('workspaceController',
 }]);
 
 hoaControllers.controller('sidebarController', ['$scope', "$location", "$state",
-    "r_mailboxes", 
-function ($scope, $location, $state, r_mailboxes) {
-    console.log(r_mailboxes);
-    $scope.mailboxItems = r_mailboxes;
+    "mailbox",
+function ($scope, $location, $state, mailbox) {
+    $scope.mailboxItems = mailbox;
     $scope.sidebarItems = [
         {link : "#/tenants", header : "Management", section: "Tenants", title : "Tenants List", id : "tenantsLink", state : "workspace.tenants"},
         {link : "#/users", header : "Management", section : "Users", title: "Users List", id: "usersLink", state : "workspace.users"}
     ];
 
     var path = $location.path();
-
     for(var i = 0; i < $scope.sidebarItems.length; i++) {
             if($scope.sidebarItems[i].section.search(path) != -1) {
                 $scope.selectedLink($scope.sidebarItems[i]);
@@ -56,7 +51,12 @@ function ($scope, $location, $state, r_mailboxes) {
         }
     }
 
-    $scope.setSelectedLink= function(link) {
+    $scope.queryDocuments = function(folder) {
+        var query = [folder.queryKey, folder.queryParam];
+        $state.go("workspace.documents", query, {reload : true});
+    };
+
+    $scope.setSelectedLink = function(link) {
             $scope.selectedLink = link;
             $state.go($scope.selectedLink.state);
         };

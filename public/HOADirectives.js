@@ -21,7 +21,7 @@ hoaDirectives.directive('validatedForm',[
                 scope       : {
                     element     : '='
                 },
-                templateUrl : 'app/shared/elements/validated-form.html',
+                templateUrl : 'app/components/shared/elements/validated-form.html',
                 replace     : false,
                 transclude  : true
             };
@@ -35,7 +35,7 @@ hoaDirectives.directive("hoaAlert", function () {
             description : '@',
             isDanger    : '='
         },
-        templateUrl : 'app/shared/elements/alert.html',
+        templateUrl : 'app/components/shared/elements/alert.html',
         replace     : false
      };
  });

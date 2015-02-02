@@ -14,7 +14,7 @@ function tsort(edges) {
   var Node = function(id) {
     this.id = id;
     this.afters = [];
-  }
+  };
  
   // 1. build data structures
   edges.forEach(function(v) {
