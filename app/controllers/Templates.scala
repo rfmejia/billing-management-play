@@ -16,7 +16,7 @@ class Templates(override implicit val env: RuntimeEnvironment[User])
 
   val logger = Logger("controllers.Templates")
 
-  val templates: Seq[JsObject] = Seq(invoice1)
+  val templates: Seq[JsObject] = Seq(Templates.invoice1)
 
   def show(docType: String) = SecuredAction { implicit request =>
     templates find { template =>
@@ -55,6 +55,23 @@ class Templates(override implicit val env: RuntimeEnvironment[User])
 
     Ok(x.asJsValue)
   }
+}
+
+object Templates {
+  // NOTE: The following is a hard-coded lookup of total values.
+  // Either standardize the field in the document type(s) or have a
+  // template registration system
+  def getTotal(d: Document): Either[String, Double] = {
+    if (d.docType == "invoice-1") {
+      if (d.body \ "summary" \ "id" == JsString("invoice_summary")) {
+
+        d.body \ "summary" \ "value" match {
+          case JsNumber(value) => Right(value.doubleValue)
+          case _ => Left(s"Invoice summary value is not a number")
+        }
+      } else Left(s"Cannot find invoice summary in '${d.docType}'")
+    } else Left(s"The document type '${d.docType}' is not registered")
+  }
 
   lazy val invoice1: JsObject = {
     val filename = "public/assets/templates/invoice-1.json"
@@ -65,18 +82,18 @@ class Templates(override implicit val env: RuntimeEnvironment[User])
           json match {
             case obj: JsObject => obj
             case _ =>
-              logger.warn("File '${filename}' is not a valid JSON root object")
+              Logger.warn("File '${filename}' is not a valid JSON root object")
               Json.obj()
           }
         }
         obj match {
           case Success(obj) => obj
           case Failure(t) =>
-            logger.warn("Error in reading template file", t)
+            Logger.warn("Error in reading template file", t)
             Json.obj()
         }
       case None =>
-        logger.warn(s"File '${filename}' was not found")
+        Logger.warn(s"File '${filename}' was not found")
         Json.obj()
     }
   }

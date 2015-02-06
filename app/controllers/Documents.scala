@@ -67,7 +67,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
           obj2.withEmbedded(HalJsObject.empty.withField("tenant", obj.asJsValue))
         } getOrElse obj2
 
-        val withTotal = getTotal(d) match {
+        val withTotal = Templates.getTotal(d) match {
           case Right(total) =>
             val unpaid = total - d.amountPaid
             obj3.withField("isPaid", unpaid <= 0)
@@ -117,7 +117,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
         .withField("amountPaid", d.amountPaid)
         .withField("assigned", d.assigned)
 
-      val withTotal = getTotal(d) match {
+      val withTotal = Templates.getTotal(d) match {
         case Right(total) =>
           val unpaid = total - d.amountPaid
           obj.withField("isPaid", unpaid <= 0)
@@ -216,19 +216,4 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
 
   lazy val createForm: JsObject = getCreateTemplate("DOCUMENTS")
   lazy val editForm: JsObject = getEditTemplate("DOCUMENTS")
-
-  // NOTE: The following is a hard-coded lookup of total values.
-  // Either standardize the field in the document type(s) or have a
-  // template registration system
-  private def getTotal(d: Document): Either[String, Double] = {
-    if (d.docType == "invoice-1") {
-      if (d.body \ "summary" \ "id" == JsString("invoice_summary")) {
-
-        d.body \ "summary" \ "value" match {
-          case JsNumber(value) => Right(value.doubleValue)
-          case _ => Left(s"Invoice summary value is not a number")
-        }
-      } else Left(s"Cannot find invoice summary in '${d.docType}'")
-    } else Left(s"The document type '${d.docType}' is not registered")
-  }
 }
