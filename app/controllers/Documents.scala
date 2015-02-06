@@ -76,6 +76,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
           case Left(warning) =>
             Logger.warn(warning)
             obj3.withField("total", JsNull)
+              .withField("warning", warning)
         }
 
         Ok(withTotal.asJsValue)
@@ -126,6 +127,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
         case Left(warning) =>
           Logger.warn(warning)
           obj.withField("total", JsNull)
+            .withField("warning", warning)
       }
       withTotal.asJsValue
     }

@@ -69,7 +69,7 @@ object Templates {
           case JsNumber(value) => Right(value.doubleValue)
           case _ => Left(s"Invoice summary value is not a number")
         }
-      } else Left(s"Cannot find invoice summary in '${d.docType}'")
+      } else Left(s"Cannot find invoice_summary field in '${d.docType}'")
     } else Left(s"The document type '${d.docType}' is not registered")
   }
 
