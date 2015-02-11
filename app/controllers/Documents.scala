@@ -164,9 +164,10 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
           Try(DateTime.parse(forMonth)) match {
             case Success(date) =>
               Document.insert(title, docType, forTenant, date, body) match {
-                case Success(id) =>
-                  val link = routes.Documents.show(id).absoluteURL()
-                  Created.withHeaders("Location" -> link)
+                case Success(doc) =>
+                  val link = routes.Documents.show(doc.id).absoluteURL()
+                  val body = Json.obj("id" -> JsNumber(doc.id))
+                  Created(body).withHeaders("Location" -> link)
                 case Failure(err) =>
                   Logger.error(s"Error in creating document '${title}'", err)
                   InternalServerError(err.getMessage)
