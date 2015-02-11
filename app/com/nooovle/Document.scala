@@ -55,7 +55,8 @@ object Document extends ((Int, Option[String], String, String, String, String, D
     ConnectionFactory.connect withSession { implicit session =>
       Try {
         // Returns ID of newly inserted tenant
-        (documents returning documents) += newDoc
+        val id = (documents returning documents.map(_.id)) += newDoc
+        newDoc.copy(id = id)
       }
     }
   }
