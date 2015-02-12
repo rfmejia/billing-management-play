@@ -60,6 +60,15 @@ object User extends ((String, String, Option[String], Option[String], Option[Str
       user.firstOption map (u => (u, rs.list.toSet))
     }
 
+  def findRoles(userId: String): Set[String] =
+    ConnectionFactory.connect withSession { implicit session =>
+      val query = for {
+        ur <- userRoles if ur.userId === userId
+        rs <- roles if rs.name === ur.roleName
+      } yield rs
+      query.list.toSet
+    }
+
   def insertWithRoles(user: User, rs: Set[String]): Try[String] = Try {
     ConnectionFactory.connect withTransaction { implicit transaction =>
       try {
@@ -84,7 +93,7 @@ object User extends ((String, String, Option[String], Option[String], Option[Str
   }
 
   def updateWithRoles(userId: String, firstName: Option[String], lastName: Option[String],
-                      email: Option[String], rs: Set[String]): Try[String] =
+    email: Option[String], rs: Set[String]): Try[String] =
     Try {
       ConnectionFactory.connect withTransaction { implicit transaction =>
         try {
