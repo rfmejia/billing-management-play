@@ -47,7 +47,7 @@ object Document extends ((Int, Option[String], String, String, String, String, D
     }
 
   def insert(title: String, docType: String, forTenant: Int, forMonth: DateTime,
-    body: JsObject): Try[Int] = {
+    body: JsObject): Try[Document] = {
     val created = new DateTime()
     val creator = "To implement"
     val newDoc = Document(0, None, title, docType, Workflow.start, creator,
@@ -55,7 +55,8 @@ object Document extends ((Int, Option[String], String, String, String, String, D
     ConnectionFactory.connect withSession { implicit session =>
       Try {
         // Returns ID of newly inserted tenant
-        (documents returning documents.map(_.id)) += newDoc
+        val id = (documents returning documents.map(_.id)) += newDoc
+        newDoc.copy(id = id)
       }
     }
   }
