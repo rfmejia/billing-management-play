@@ -16,6 +16,9 @@ import securesocial.core.{ RuntimeEnvironment, SecureSocial }
 class Users(override implicit val env: RuntimeEnvironment[User])
   extends ApiController[User] {
 
+  lazy val createForm: JsObject = getCreateTemplate("USERS")
+  lazy val editForm: JsObject = getEditTemplate("USERS")
+
   def show(userId: String) = SecuredAction { implicit request =>
     User.findByUserIdWithRoles(userId) match {
       case Some((u, rs)) =>
@@ -69,7 +72,7 @@ class Users(override implicit val env: RuntimeEnvironment[User])
     }
   }
 
-  def edit(userId: String) = SecuredAction(parse.json) { implicit request =>
+  def edit(userId: String) = SecuredAction(WithRoles("administrator"))(parse.json) { implicit request =>
     val json = request.body
     ((json \ "firstName").as[Option[String]], (json \ "lastName").as[Option[String]],
       (json \ "email").as[Option[String]], (json \ "roles").asOpt[Seq[String]]) match {
@@ -85,7 +88,7 @@ class Users(override implicit val env: RuntimeEnvironment[User])
       }
   }
 
-  def delete(userId: String) = SecuredAction { implicit request =>
+  def delete(userId: String) = SecuredAction(WithRoles("administrator")) { implicit request =>
     val deleted = ConnectionFactory.connect withSession { implicit session =>
       val query = for (u <- users if u.userId === userId) yield u
       query.delete
@@ -93,7 +96,4 @@ class Users(override implicit val env: RuntimeEnvironment[User])
     if (deleted == 0) NotFound
     else Ok
   }
-
-  lazy val createForm: JsObject = getCreateTemplate("USERS")
-  lazy val editForm: JsObject = getEditTemplate("USERS")
 }

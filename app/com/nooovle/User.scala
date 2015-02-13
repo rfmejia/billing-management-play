@@ -60,31 +60,17 @@ object User extends ((String, String, Option[String], Option[String], Option[Str
       user.firstOption map (u => (u, rs.list.toSet))
     }
 
-  def insertWithRoles(user: User, rs: Set[String]): Try[String] = Try {
-    ConnectionFactory.connect withTransaction { implicit transaction =>
-      try {
-        val query = for (u <- users if u.userId === user.userId) yield u
-        val _userId = if (query.exists.run) {
-          throw new IllegalStateException
-        } else {
-          users += user
-          user.userId
-        }
-        rs foreach (role => roles.insertOrUpdate(role))
-        // The following does not use insertOrUpdate because id is an
-        // auto-incrementing foreign key (bug exists)
-        rs foreach (role => userRoles += ((_userId, role)))
-        _userId
-      } catch {
-        case t: Throwable =>
-          transaction.rollback
-          throw t
-      }
+  def findRoles(userId: String): Set[String] =
+    ConnectionFactory.connect withSession { implicit session =>
+      val query = for {
+        ur <- userRoles if ur.userId === userId
+        rs <- roles if rs.name === ur.roleName
+      } yield rs
+      query.list.toSet
     }
-  }
 
   def updateWithRoles(userId: String, firstName: Option[String], lastName: Option[String],
-                      email: Option[String], rs: Set[String]): Try[String] =
+    email: Option[String], rs: Set[String]): Try[String] =
     Try {
       ConnectionFactory.connect withTransaction { implicit transaction =>
         try {
