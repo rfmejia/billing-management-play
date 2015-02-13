@@ -7,7 +7,7 @@ import org.joda.time.DateTime
 import org.locker47.json.play._
 import play.api.libs.json._
 import play.api._
-import play.api.mvc.{ Action, Controller }
+import play.api.mvc.{ Action, Controller, RequestHeader }
 import play.api.mvc.BodyParsers._
 import scala.slick.driver.H2Driver.simple._
 import scala.util.{ Try, Success, Failure }
@@ -16,70 +16,13 @@ import securesocial.core.RuntimeEnvironment
 class Documents(override implicit val env: RuntimeEnvironment[User])
   extends ApiController[User] {
 
+  lazy val createForm: JsObject = getCreateTemplate("DOCUMENTS")
+  lazy val editForm: JsObject = getEditTemplate("DOCUMENTS")
+
   def show(id: Int) = Action { implicit request =>
     Document.findById(id) match {
-      case Some(d) =>
-        val self = routes.Documents.show(id)
-        val obj = HalJsObject.create(self.absoluteURL())
-          .withCurie("hoa", Application.defaultCurie)
-          .withLink("profile", "hoa:documents")
-          .withLink("collection", routes.Documents.list().absoluteURL())
-          .withField("_template", editForm)
-          .withLink("edit", routes.Documents.edit(id).absoluteURL())
-          .withField("id", d.id)
-          .withField("serialId", d.serialId)
-          .withField("title", d.title)
-          .withField("docType", d.docType)
-          .withField("mailbox", d.mailbox)
-          .withField("created", d.created)
-          .withField("creator", d.creator)
-          .withField("preparedBy", d.preparedBy)
-          .withField("preparedOn", d.preparedOn)
-          .withField("checkedBy", d.checkedBy)
-          .withField("checkedOn", d.checkedOn)
-          .withField("approvedBy", d.approvedBy)
-          .withField("approvedOn", d.approvedOn)
-          .withField("assigned", d.assigned)
-          .withField("forTenant", d.forTenant)
-          .withField("forMonth", d.forMonth)
-          .withField("amountPaid", d.amountPaid)
-          .withField("hoa:nextBox", Workflow.next(d.mailbox))
-          .withField("hoa:prevBox", Workflow.prev(d.mailbox))
-          .withField("body", d.body)
-
-        val obj1 = Workflow.next(d.mailbox) map { box =>
-          obj.withLink("hoa:nextBox", routes.Documents.moveMailbox(id, box).absoluteURL())
-        } getOrElse obj
-        val obj2 = Workflow.prev(d.mailbox) map { box =>
-          obj1.withLink("hoa:prevBox", routes.Documents.moveMailbox(id, box).absoluteURL())
-        } getOrElse obj1
-
-        val obj3 = Tenant.findById(d.forTenant) map { t =>
-          val obj = HalJsObject.create(routes.Tenants.show(d.forTenant).absoluteURL())
-            .withLink("profile", "hoa:tenant")
-            .withLink("collection", routes.Tenants.list().absoluteURL())
-            .withField("id", t.id)
-            .withField("tradeName", t.tradeName)
-            .withField("address", t.address)
-            .withField("contactPerson", t.contactPerson)
-            .withField("contactNumber", t.contactNumber)
-            .withField("email", t.email)
-          obj2.withEmbedded(HalJsObject.empty.withField("tenant", obj.asJsValue))
-        } getOrElse obj2
-
-        val withTotal = Templates.getTotal(d) match {
-          case Right(total) =>
-            val unpaid = total - d.amountPaid
-            obj3.withField("isPaid", unpaid <= 0)
-              .withField("unpaid", unpaid)
-              .withField("total", total)
-          case Left(warning) =>
-            Logger.warn(warning)
-            obj3.withField("total", JsNull)
-              .withField("warning", warning)
-        }
-
-        Ok(withTotal.asJsValue)
+      case Some(doc) =>
+        Ok(documentToHalJsObject(doc).asJsValue)
       case None => NotFound
     }
   }
@@ -166,8 +109,8 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
               Document.insert(title, docType, forTenant, date, body) match {
                 case Success(doc) =>
                   val link = routes.Documents.show(doc.id).absoluteURL()
-                  val body = Json.obj("id" -> JsNumber(doc.id))
-                  Created(body).withHeaders("Location" -> link)
+                  val body = documentToHalJsObject(doc)
+                  Created(body.asJsValue).withHeaders("Location" -> link)
                 case Failure(err) =>
                   Logger.error(s"Error in creating document '${title}'", err)
                   InternalServerError(err.getMessage)
@@ -217,6 +160,68 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
     else Ok
   }
 
-  lazy val createForm: JsObject = getCreateTemplate("DOCUMENTS")
-  lazy val editForm: JsObject = getEditTemplate("DOCUMENTS")
+  private def documentToHalJsObject(d: Document)(implicit req: RequestHeader): HalJsObject = {
+    val selfUrl = routes.Documents.show(d.id).absoluteURL()
+    val obj = HalJsObject.create(selfUrl)
+      .withCurie("hoa", Application.defaultCurie)
+      .withLink("profile", "hoa:documents")
+      .withLink("collection", routes.Documents.list().absoluteURL())
+      .withField("_template", editForm)
+      .withLink("edit", routes.Documents.edit(d.id).absoluteURL())
+      .withField("id", d.id)
+      .withField("serialId", d.serialId)
+      .withField("title", d.title)
+      .withField("docType", d.docType)
+      .withField("mailbox", d.mailbox)
+      .withField("created", d.created)
+      .withField("creator", d.creator)
+      .withField("preparedBy", d.preparedBy)
+      .withField("preparedOn", d.preparedOn)
+      .withField("checkedBy", d.checkedBy)
+      .withField("checkedOn", d.checkedOn)
+      .withField("approvedBy", d.approvedBy)
+      .withField("approvedOn", d.approvedOn)
+      .withField("assigned", d.assigned)
+      .withField("forTenant", d.forTenant)
+      .withField("forMonth", d.forMonth)
+      .withField("amountPaid", d.amountPaid)
+      .withField("hoa:nextBox", Workflow.next(d.mailbox))
+      .withField("hoa:prevBox", Workflow.prev(d.mailbox))
+      .withField("body", d.body)
+
+    val obj1 = Workflow.next(d.mailbox) map { box =>
+      obj.withLink("hoa:nextBox", routes.Documents.moveMailbox(d.id, box).absoluteURL())
+    } getOrElse obj
+    val obj2 = Workflow.prev(d.mailbox) map { box =>
+      obj1.withLink("hoa:prevBox", routes.Documents.moveMailbox(d.id, box).absoluteURL())
+    } getOrElse obj1
+
+    val obj3 = Tenant.findById(d.forTenant) map { t =>
+      val tenantUrl = routes.Tenants.show(d.forTenant).absoluteURL()
+      val obj = HalJsObject.create(tenantUrl)
+        .withLink("profile", "hoa:tenant")
+        .withLink("collection", routes.Tenants.list().absoluteURL())
+        .withField("id", t.id)
+        .withField("tradeName", t.tradeName)
+        .withField("address", t.address)
+        .withField("contactPerson", t.contactPerson)
+        .withField("contactNumber", t.contactNumber)
+        .withField("email", t.email)
+      obj2.withEmbedded(HalJsObject.empty.withField("tenant", obj.asJsValue))
+    } getOrElse obj2
+
+    val withTotal = Templates.getTotal(d) match {
+      case Right(total) =>
+        val unpaid = total - d.amountPaid
+        obj3.withField("isPaid", unpaid <= 0)
+          .withField("unpaid", unpaid)
+          .withField("total", total)
+      case Left(warning) =>
+        Logger.warn(warning)
+        obj3.withField("total", JsNull)
+          .withField("warning", warning)
+    }
+
+    withTotal
+  }
 }
