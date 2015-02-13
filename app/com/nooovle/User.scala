@@ -69,29 +69,6 @@ object User extends ((String, String, Option[String], Option[String], Option[Str
       query.list.toSet
     }
 
-  def insertWithRoles(user: User, rs: Set[String]): Try[String] = Try {
-    ConnectionFactory.connect withTransaction { implicit transaction =>
-      try {
-        val query = for (u <- users if u.userId === user.userId) yield u
-        val _userId = if (query.exists.run) {
-          throw new IllegalStateException
-        } else {
-          users += user
-          user.userId
-        }
-        rs foreach (role => roles.insertOrUpdate(role))
-        // The following does not use insertOrUpdate because id is an
-        // auto-incrementing foreign key (bug exists)
-        rs foreach (role => userRoles += ((_userId, role)))
-        _userId
-      } catch {
-        case t: Throwable =>
-          transaction.rollback
-          throw t
-      }
-    }
-  }
-
   def updateWithRoles(userId: String, firstName: Option[String], lastName: Option[String],
     email: Option[String], rs: Set[String]): Try[String] =
     Try {
