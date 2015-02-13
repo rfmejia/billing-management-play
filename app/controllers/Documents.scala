@@ -16,7 +16,10 @@ import securesocial.core.RuntimeEnvironment
 class Documents(override implicit val env: RuntimeEnvironment[User])
   extends ApiController[User] {
 
-  def show(id: Int) = Action { implicit request =>
+  lazy val createForm: JsObject = getCreateTemplate("DOCUMENTS")
+  lazy val editForm: JsObject = getEditTemplate("DOCUMENTS")
+
+  def show(id: Int) = SecuredAction { implicit request =>
     Document.findById(id) match {
       case Some(d) =>
         val self = routes.Documents.show(id)
@@ -96,7 +99,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
     }
   }
 
-  def list(offset: Int = 0, limit: Int = 10, mailbox: String, forTenant: Int) = Action { implicit request =>
+  def list(offset: Int = 0, limit: Int = 10, mailbox: String, forTenant: Int) = SecuredAction { implicit request =>
     val (ds, total) = ConnectionFactory.connect withSession { implicit session =>
       val query = documents.drop(offset).take(limit).sortBy(_.created.desc)
         .filter(d => d.mailbox === mailbox || mailbox.isEmpty)
@@ -216,7 +219,4 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
     if (deleted == 0) NotFound
     else Ok
   }
-
-  lazy val createForm: JsObject = getCreateTemplate("DOCUMENTS")
-  lazy val editForm: JsObject = getEditTemplate("DOCUMENTS")
 }

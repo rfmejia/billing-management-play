@@ -15,6 +15,9 @@ import securesocial.core.RuntimeEnvironment
 class Tenants(override implicit val env: RuntimeEnvironment[User])
   extends ApiController[User] {
 
+  lazy val createForm: JsObject = getCreateTemplate("TENANTS")
+  lazy val editForm: JsObject = getEditTemplate("TENANTS")
+
   def show(id: Int) = SecuredAction { implicit request =>
     Tenant.findById(id) match {
       case Some(t) =>
@@ -129,7 +132,4 @@ class Tenants(override implicit val env: RuntimeEnvironment[User])
     if (deleted == 0) NotFound
     else Ok
   }
-
-  lazy val createForm: JsObject = getCreateTemplate("TENANTS")
-  lazy val editForm: JsObject = getEditTemplate("TENANTS")
 }
