@@ -6,11 +6,11 @@ import com.nooovle.slick.ConnectionFactory
 import com.nooovle.slick.models.modelTemplates
 import com.nooovle.{ ModelInfo, User }
 import org.locker47.json.play._
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json.{ JsObject, Json }
-import play.api.mvc.{ Request, Result }
+import play.api.mvc.{ Request, RequestHeader, Result }
 import scala.concurrent.Future
 import scala.slick.driver.H2Driver.simple._
+import securesocial.core.Authorization
 
 trait ApiController[T] extends securesocial.core.SecureSocial[T] {
 
@@ -58,4 +58,19 @@ trait ApiController[T] extends securesocial.core.SecureSocial[T] {
 
   def getCreateTemplate(modelName: String) = getTemplate(modelName, DocCreate)
   def getEditTemplate(modelName: String) = getTemplate(modelName, DocEdit)
+
+  case class WithRoles(requiredRoles: Set[String]) extends Authorization[User] {
+    def isAuthorized(user: User, request: RequestHeader) = {
+      val userRoles = User.findRoles(user.userId)
+      val matches = userRoles & requiredRoles
+      play.api.Logger.debug(s"Required: ${requiredRoles}")
+      play.api.Logger.debug(s"User: ${userRoles}")
+      play.api.Logger.debug(s"Role matches: ${matches}")
+      matches.nonEmpty
+    }
+  }
+
+  object WithRoles extends (Set[String] => WithRoles) {
+    def apply(role: String): WithRoles = WithRoles.apply(Set(role))
+  }
 }
