@@ -63,32 +63,31 @@ app.config(["$stateProvider", "$urlRouterProvider",
             url     : "edit/:id",
             resolve : {
                 documentsService    : "service.hoadocuments",
-                tenantsService      : "service.hoatenants",
-                templatesService    : "service.hoatemplates",
-                response            : function(tenantsService, templatesService, documentsService, $q, $stateParams) {
+                templatesService    : 'service.hoatemplates',
+                response            : function(documentsService, templatesService, $stateParams, $q) {
                     var deferred = $q.defer();
-                    var tenantsPromise = tenantsService.getList();
                     var documentsPromise = documentsService.getDocument($stateParams.id);
-
-                    var success = function(response) {
+                    var templatesPromise = templatesService.getLocal();
+                    var success = function(response){
                         deferred.resolve(response);
                     };
 
-                    $q.all([tenantsPromise, documentsPromise])
+                    $q.all([documentsPromise, templatesPromise])
                         .then(success);
+
                     return deferred.promise;
                 },
-                tenantsList         : function(response) {
+                documentsResponse    : function(response) {
                     return response[0];
                 },
-                document            : function(response) {
+                templatesResponse    : function(response) {
                     return response[1];
                 }
             },
             views   : {
                 "contentArea@workspace" : {
                     templateUrl : "app/components/workspace/mailbox/views/maincontent-document-drafts.html",
-                    controller  : "controller.edit"
+                    controller  : "controller.drafts"
                 }
             }
         };

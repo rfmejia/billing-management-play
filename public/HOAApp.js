@@ -75,15 +75,15 @@ hoaapp.config(["$stateProvider", "$modalProvider",  "$urlRouterProvider", "$loca
 ]);
 
 hoaapp.run(['$rootScope', 'usSpinnerService', "$state", "$stateParams", "$location",
-    function($rootScope, usSpinnerService, usSpinnerConfigProvider, $state, $stateParams, $location){
+            function($rootScope, usSpinnerService, usSpinnerConfigProvider, $state, $stateParams, $location){
 
-        $rootScope.$on('$stateChangeStart',
-            function(event, toState, toParams, fromState, fromParams){
-                usSpinnerService.spin('spinner');
-             });
+                $rootScope.$on('$stateChangeStart',
+                    function(event, toState, toParams, fromState, fromParams){
+                        usSpinnerService.spin('spinner');
+                    });
 
-        $rootScope.$on('$stateChangeSuccess',
-            function(event, toState, toParams, fromState, fromParams){
-                usSpinnerService.stop('spinner');
-            });
+                $rootScope.$on('$stateChangeSuccess',
+                    function(event, toState, toParams, fromState, fromParams){
+                        usSpinnerService.stop('spinner');
+                    });
 }]);

@@ -14,7 +14,7 @@ documents.service('service.hoadocuments', ['$resource', '$q', 'service.hoalinks'
         });
 
         var createResource = function(url) {
-            resource = $resource(url, {id : "@id"}, {
+            resource = $resource(url, {}, {
                 get     : {method: "GET", isArray: false},
                 create  : {method: "POST", isArray: false, headers:{"Content-Type" : "application/json"}},
                 edit    : {method: "PUT", isArray: false, headers:{"Content-Type" : "application/json"}},
@@ -34,8 +34,10 @@ documents.service('service.hoadocuments', ['$resource', '$q', 'service.hoalinks'
         var extractEditDetails = function(response) {
             return {
                 "details"       : response.body,
-                "tenant"        : response.forTenant,
+                "title"         : response.title,
                 "documentId"    : response.id,
+                "forTenant"     : response.forTenant,
+                "forMonth"      : response.forMonth,
                 "nextBox"       : response._links["hoa:nextBox"],
                 "postTemplate"  : extractEditPostDetails(response._template.edit.data[0])
             }
@@ -156,4 +158,25 @@ documents.service('service.hoadocuments', ['$resource', '$q', 'service.hoalinks'
         this.getLimitRequest = function() {
             return limit;
         };
+
+        this.submitToNextBox = function(url, data) {
+            var deferred = $q.defer();
+
+            var  submitResource = $resource(url, {}, {
+                create  : {method: "POST", isArray: false, headers:{"Content-Type" : "application/json"}}
+            });
+
+            var success = function(response){
+                deferred.resolve(response);
+            };
+
+            var error = function(error) {
+                deferred.reject();
+            };
+
+            submitResource.create(data).$promise
+                .then(success, error);
+
+            return deferred.promise;
+        }
 }]);
