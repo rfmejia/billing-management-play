@@ -1,1 +1,28 @@
-inbox
+<br/>
+<table class="table table-hover table-fullheight">
+    <thead>
+    <th>Title</th>
+    <th class="text-center">Amount paid</th>
+    <th class="text-center">Total</th>
+    </thead>
+    <tbody>
+    <tr ng-repeat="document in documentsList" id="{{document.id}}" ng-click="onDocumentItemClicked(document)">
+        <td class="col-xs-6">{{document.title}}</td>
+        <td class="col-xs-3 text-nowrap text-center">{{document.amountPaid}}</td>
+        <td class="col-xs-3 text-nowrap text-center">{{document.total}}</td>
+    </tr>
+    </tbody>
+</table>
+<div class="text-center">
+    <ul class="pagination pagination-sm">
+        <li ng-class="{true: '', false:'disabled'}[isDecrementPagePossible()]"
+            ng-disabled="{true: '', false:'disabled'}[isDecrementPagePossible()]"
+            ng-click="onChangeSliceClicked(-5)"><a href>«</a></li>
+        <li ng-class="{true: 'active', false:'default'}[currentPage == page]"
+            ng-repeat="page in pagesSliced"
+            ng-click="onChangePageClicked(page)"><a href>{{page}}</a></li>
+        <li ng-class="{true: '', false:'disabled'}[isIncrementPagePossible()]"
+            ng-disabled="{true: '', false:'disabled'}[isIncrementPagePossible()]"
+            ng-click="onChangeSliceClicked(5)"><a class="disabledAnchor" href>»</a></li>
+    </ul>
+</div>
