@@ -44,7 +44,7 @@ app.config(["$stateProvider",
                     controller      : "controller.tenantedit"
                 }
             }
-        };;
+        };
 
         $stateProvider
             .state("workspace.tenants",                 tenantsList)

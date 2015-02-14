@@ -1,14 +1,9 @@
 {
-  "_links": {
-    "self": {
-      "href": "http://localhost:9000/api/templates/invoice-1"
-    },
-    "profile": {
-      "href": "hoa:template"
-    }
-  },
   "name": "Statement of Account 1",
   "docType": "invoice-1",
+  "forMonth" : null,
+  "forTenant" : null,
+  "title"     : null,
   "breakdown": {
     "previous"  : {
       "title": "Previous Charges",
@@ -245,6 +240,7 @@
     "title": "Total Amount Due",
     "datatype": "currency",
     "required": true,
-    "value": 0
+    "value": 0,
+    "comments" : ""
   }
 }

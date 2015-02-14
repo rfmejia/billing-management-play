@@ -56,7 +56,6 @@ templates.service("service.hoatemplates", ["$resource", "$q", "service.hoalinks"
             });
 
             var success = function(response) {
-                console.log(response);
                 deferred.resolve(response);
             };
 

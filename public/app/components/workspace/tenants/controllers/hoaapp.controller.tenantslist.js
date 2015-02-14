@@ -7,7 +7,7 @@ tenants.controller("controller.tenantslist", ["$scope", "$state", "$modal", "ten
         //Callback for tenant item clicked
         $scope.onTenantClick = function(tenant) {
             $state.go("workspace.tenants.tenantView", {"id" : tenant.id});
-        };;
+        };
 
         //Callback for invite button clicked
         $scope.onCreateTenantClicked = function() {
@@ -20,7 +20,6 @@ tenants.controller("controller.tenantslist", ["$scope", "$state", "$modal", "ten
                         return tenantsService;
                     },
         			tenantCreateTemplate  : function() {
-                        console.log(response);
         				return response.template;
         			}
         		}
@@ -31,6 +30,7 @@ tenants.controller("controller.tenantslist", ["$scope", "$state", "$modal", "ten
 
         	//create action callback
         	var create =  function(data) {
+                console.log(data);
                 $state.go($state.current, {}, {reload : true});
         	};
 
@@ -40,7 +40,7 @@ tenants.controller("controller.tenantslist", ["$scope", "$state", "$modal", "ten
         	};
 
         	$scope.createTenantModal.result.then(create, cancelled);
-        };;
+        };
 
     }]);
 

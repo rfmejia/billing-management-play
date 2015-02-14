@@ -39,3 +39,37 @@ hoaDirectives.directive("hoaAlert", function () {
         replace     : false
      };
  });
+
+hoaDirectives.directive( 'ignoreMouseWheel', function( $rootScope ) {
+    return {
+        restrict: 'A',
+        link: function( scope, element, attrs ){
+            element.bind('mousewheel', function ( event ) {
+                element.blur();
+            } );
+        }
+    }
+} );
+
+hoaDirectives.directive('numberValid', function() {
+    return {
+        require : 'ngModel',
+        link    : function(scope, elem, attrs, ctrl) {
+
+            ctrl.$parsers.push(function(value) {
+                return (new Number(parseFloat(value)) || '$');
+            });
+        }
+    }
+});
+
+/**
+ * Listener if our form changes validity
+ */
+hoaDirectives.directive('formWatcher', function() {
+   return function(scope, element, attrs) {
+       scope.$watch(attrs.name+'.$error', function() {
+
+       }, true);
+   }
+});
