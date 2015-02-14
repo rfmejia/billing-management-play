@@ -317,8 +317,19 @@ input[type=number]::-webkit-outer-spin-button {
     border-right: 1px solid #ddd;
 }
 
-#tenantSearchList {
-    max-height: 400px;
-    overflow-y: auto;
-    overflow-x: hidden;
+
+.tooltipWrapper {
+    display: inline-block;
 }
+
+.custom-dropdown {
+    max-height:200px;
+    overflow-y:scroll;
+}
+
+.nav-sidebar {
+    width: 100%;
+    padding: 8px 0;
+    border-right: 1px solid #ddd;
+}
+
