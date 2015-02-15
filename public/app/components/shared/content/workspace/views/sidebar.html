@@ -1,27 +1,32 @@
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h4 class="panel-title">Documents</h4>
+<button ng-click="onCreateDocumentClicked()" class="btn btn-primary">
+    <span class="glyphicon glyphicon-edit"></span>Create Invoice</button>
+<br/>
+<div>
+
+    <div ng-repeat="children in mailboxItems.subFolders">
+        <h6 class="text-muted">{{children.title | uppercase}}</h6>
+        <ul class="nav nav-list" ng-repeat="grandchildren in children.subFolders">
+            <li ng-class='active'><a href ng-click="linkClass(grandChildren)">{{grandchildren.title | uppercase}}</a></li>
+        </ul>
     </div>
 
-    <ul class="list-group nav nav-pills nav-stacked sidebarNav">
-        <li><a href="#">{{mailboxItems.title | uppercase}}</a></li>
-        <li ng-repeat="children in mailboxItems.subFolders"><a href="#">{{children.title | uppercase}}</a>
-            <ul class="nav nav-pills nav-stacked" ng-repeat="grandChildren in children.subFolders">
-                <li class="indent" ng-class="linkClass(grandChildren)"><a href="#/documents" ng-click="queryDocuments(grandChildren)">{{grandChildren.title | uppercase}} <span class="pull-right glyphicon glyphicon-chevron-down"></span></a></li>
-            </ul>
-        </li>
-    </ul>
-
-</div>  <!-- end mailbox -->
-
-<div class="panel panel-default">
-  <div class="panel-heading">
-    <h4 class="panel-title">Management</h4>
-  </div>
-  <div class="panel-body">
-    <div class="list-group">
-                <a href="{{sidebarLink.link}}" ng-class="linkClass(sidebarLink)" link="sidebarLink" class="list-group-item" ng-repeat="sidebarLink in sidebarItems | sidebarListFilter: 'Management'" id="{{sidebarLink.id}}" ng-click="setSelectedLink(sidebarLink)">{{sidebarLink.title}}</a>
+    <div>
+        <h6 class="text-muted">MANAGEMENT</h6>
+        <ul class="nav nav-list">
+            <li ng-repeat="sidebarLink in sidebarItems | sidebarListFilter: 'Management'"><a href="{{sidebarLink.link}}" ng-click="setSelectedLink(sidebarLink)">{{sidebarLink.title | uppercase}}</a></li>
+        </ul>
     </div>
-  </div>
 </div>
+
+
+<!--<div class="panel panel-default">-->
+  <!--<div class="panel-heading">-->
+    <!--<h4 class="panel-title">Management</h4>-->
+  <!--</div>-->
+  <!--<div class="panel-body">-->
+    <!--<div class="list-group">-->
+                <!--<a href="{{sidebarLink.link}}" ng-class="linkClass(sidebarLink)" link="sidebarLink" class="list-group-item" ng-repeat="sidebarLink in sidebarItems | sidebarListFilter: 'Management'" id="{{sidebarLink.id}}" ng-click="setSelectedLink(sidebarLink)">{{sidebarLink.title}}</a>-->
+    <!--</div>-->
+  <!--</div>-->
+<!--</div>-->
 

@@ -4,6 +4,7 @@ var documents = angular.module("hoaApp");
 documents.service('service.hoadocuments', ['$resource', '$q', 'service.hoalinks',
 	function($resource, $q, hoalinks){
         var resource		= null;
+        var limit = 10;
         var requestType     = Object.freeze({
             "QUERY"     : 0,
             "GET"       : 1,
@@ -13,7 +14,7 @@ documents.service('service.hoadocuments', ['$resource', '$q', 'service.hoalinks'
         });
 
         var createResource = function(url) {
-            resource = $resource(url, {id : "@id"}, {
+            resource = $resource(url, {}, {
                 get     : {method: "GET", isArray: false},
                 create  : {method: "POST", isArray: false, headers:{"Content-Type" : "application/json"}},
                 edit    : {method: "PUT", isArray: false, headers:{"Content-Type" : "application/json"}},
@@ -25,34 +26,57 @@ documents.service('service.hoadocuments', ['$resource', '$q', 'service.hoalinks'
         var extractDocumentsList = function(response) {
             return {
                 "documentsList" : response._embedded.item,
-                "createTemplate" : extractCreateTemplate(response)
+                "documentCount" : response.total,
+                "createTemplate" : extractCreatePostDetails(response)
             };
         };
 
-        var extractCreateTemplate = function(response) {
+        var extractEditDetails = function(response) {
+            return {
+                "details"       : response.body,
+                "title"         : response.title,
+                "documentId"    : response.id,
+                "forTenant"     : response.forTenant,
+                "forMonth"      : response.forMonth,
+                "nextBox"       : response._links["hoa:nextBox"],
+                "postTemplate"  : extractEditPostDetails(response._template.edit.data[0])
+            }
+        };
+
+        var extractEditPostDetails = function(response) {
+            var postTemplate = {};
+            angular.forEach(response, function(value){
+                postTemplate[value.name] = null;
+            });
+            return postTemplate;
+        };
+
+        var extractCreateDetails = function(response) {
             var raw     = response._template.create.data[0];
             var details = [];
-            angular.forEach(raw,
-                function(values){
+            angular.forEach(raw, function(values){
                     var template = angular.copy(values);
                     template.value = null;
                     details.push(template);
                 }
             );
-
             return {
-                "details" : details,
-                "postTemplate" : extractPostTemplate(raw)
+                "details"       : details,
+                "postTemplate"  : extractCreatePostDetails(raw)
             }
         };
 
-        var extractPostTemplate = function(response) {
+        var extractCreatePostDetails = function(response) {
             var postTemplate = {};
-            angular.forEach(response,
-                function(value) {
+            angular.forEach(response, function(value) {
                     postTemplate[value.name] = "";
                 }
             );
+
+            postTemplate.body = {};
+            postTemplate.body.previousMonth = {};
+            postTemplate.body.thisMonth = {};
+            postTemplate.body.summary = {};
             return postTemplate;
         };
 
@@ -65,14 +89,15 @@ documents.service('service.hoadocuments', ['$resource', '$q', 'service.hoalinks'
             };
 
             var error = function(response) {
-                console.log(response);
                 deferred.reject();
             };
 
             var request = function() {
                 switch(type) {
                     case requestType.GET:
-                        resource.get(id).$promise.then(success, error);
+                        resource.get(id).$promise
+                            .then(extractEditDetails, error)
+                            .then(success);
                         break;
                     case requestType.QUERY:
                         resource.get(documentQuery).$promise
@@ -109,9 +134,12 @@ documents.service('service.hoadocuments', ['$resource', '$q', 'service.hoalinks'
             return makeRequest(id, null, null, requestType.GET);
         };
 
-        this.getDocumentList = function(query) {
+        this.getDocumentList = function(queryBox, offsetPage) {
+            var limitRequest = this.getLimitRequest();
+            var startPage = (offsetPage == null) ? 0 : (offsetPage * limit);
+            var query = {mailbox: queryBox, offset: startPage, limit: limitRequest};
             return makeRequest(null, query, null, requestType.QUERY);
-        };;
+        };
 
         //Edits a document
         this.editDocument = function(id, documentData) {
@@ -125,5 +153,30 @@ documents.service('service.hoadocuments', ['$resource', '$q', 'service.hoalinks'
 
         this.createDocument = function(data) {
             return makeRequest(null, null, data, requestType.CREATE);
+        };
+
+        this.getLimitRequest = function() {
+            return limit;
+        };
+
+        this.submitToNextBox = function(url, data) {
+            var deferred = $q.defer();
+
+            var  submitResource = $resource(url, {}, {
+                create  : {method: "POST", isArray: false, headers:{"Content-Type" : "application/json"}}
+            });
+
+            var success = function(response){
+                deferred.resolve(response);
+            };
+
+            var error = function(error) {
+                deferred.reject();
+            };
+
+            submitResource.create(data).$promise
+                .then(success, error);
+
+            return deferred.promise;
         }
 }]);

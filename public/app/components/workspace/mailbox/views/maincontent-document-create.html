@@ -1,0 +1,42 @@
+<div>
+    <legend class="text-muted">Create document workflow</legend>
+</div>
+<div class="well row">
+    <div class="row-same-height row-full-height vertical-align">
+
+        <div class="col-xs-6 col-xs-height col-xs-full-height">
+            <div class="full-item">
+                <input class="input-sm input-list form-control" type="text" value="{{selectedTenant.tradeName}}" ng-model="search.$" placeholder="Find tenants"/>
+                <div class="custom-dropdown">
+                    <div id="tenantSearchList" class="list-group">
+                        <a href ng-repeat="tenant in tenantsList | filter:search:strict" class="list-group-item" ng-click="onTenantSelected(tenant, $index)" ng-class="selectedIndex == $index ? 'active' : ''">{{tenant.tradeName}}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xs-1"></div>
+
+        <div class="col-xs-5  col-xs-height col-xs-full-height ">
+            <div class="full-item">
+                <h6 class="text-muted text-center">Select billing period</h6>
+                <datetimepicker class="center-block"
+                                data-ng-model="billingDate"
+                                data-datetimepicker-config="{startView: 'month', minView:'month'}">
+                </datetimepicker>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="pull-right">
+            <h4 ng-show="isDocumentReady()">{{title()}}</h4>
+            <button class="pull-right btn btn-lg btn-primary" ng-disabled="!isDocumentReady()" ng-click="onCreateDocumentClicked()">Create</button>
+            <small ng-show="!isDocumentReady()">
+                Please select a tenant and a billing period.
+            </small>
+        </div>
+    </div>
+</div>
