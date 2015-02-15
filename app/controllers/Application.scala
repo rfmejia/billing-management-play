@@ -42,7 +42,7 @@ class Application(override implicit val env: RuntimeEnvironment[User])
 
   def documentation = TODO
 
-  def listMailboxes = SecuredAction { implicit request =>
+  def listMailboxes = play.api.mvc.Action { implicit request =>
     Ok {
       val self = routes.Application.listMailboxes
       val obj = HalJsObject.create(self.absoluteURL())

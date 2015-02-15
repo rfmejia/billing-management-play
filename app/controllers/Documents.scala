@@ -51,10 +51,10 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
           .withField("body", d.body)
 
         val obj1 = Workflow.next(d.mailbox) map { box =>
-          obj.withLink("hoa:nextBox", routes.Documents.moveMailbox(id, box).absoluteURL())
+          obj.withLink("hoa:nextBox", routes.Documents.moveMailbox(id, box.name).absoluteURL())
         } getOrElse obj
         val obj2 = Workflow.prev(d.mailbox) map { box =>
-          obj1.withLink("hoa:prevBox", routes.Documents.moveMailbox(id, box).absoluteURL())
+          obj1.withLink("hoa:prevBox", routes.Documents.moveMailbox(id, box.name).absoluteURL())
         } getOrElse obj1
 
         val obj3 = Tenant.findById(d.forTenant) map { t =>
@@ -90,7 +90,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
   def moveMailbox(id: Int, mailbox: String) = SecuredAction {
     (Document.findById(id), Workflow.exists(mailbox)) match {
       case (Some(d), Some(box)) =>
-        Document.update(d.copy(mailbox = box)) match {
+        Document.update(d.copy(mailbox = box.name)) match {
           case Success(d) => NoContent
           case Failure(err) => InternalServerError(err.getMessage)
         }
