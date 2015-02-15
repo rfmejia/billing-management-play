@@ -3,33 +3,43 @@ package com.nooovle
 import play.api.libs.json._
 
 object Workflow {
-  val pending = Vector("Drafts", "For checking", "For approval")
-  val delivered = Vector("Unpaid", "Paid")
 
-  val start = "Drafts"
+  case class Mailbox(name: String, title: String)
 
-  def exists(box: String): Option[String] =
-    (pending ++ delivered).find(_ == box)
+  val drafts = Mailbox("drafts", "Drafts")
+  val forChecking = Mailbox("forChecking", "For checking")
+  val forApproval = Mailbox("forApproval", "For approval")
+  val unpaid = Mailbox("unpaid", "Unpaid")
+  val paid = Mailbox("paid", "Paid")
 
-  def next(box: String): Option[String] = box match {
-    case "Drafts" => Some("For checking")
-    case "For checking" => Some("For approval")
-    case "For approval" => Some("Unpaid")
-    case "Unpaid" => Some("Paid")
+  val pending = Vector(drafts, forChecking, forApproval)
+  val delivered = Vector(unpaid, paid)
+
+  val start = drafts
+
+  def exists(box: String): Option[Mailbox] =
+    (pending ++ delivered).find(_.name == box)
+
+  def next(box: String): Option[Mailbox] = box match {
+    case "Drafts" => Some(forChecking)
+    case "For checking" => Some(forApproval)
+    case "For approval" => Some(unpaid)
+    case "Unpaid" => Some(paid)
     case "Paid" => None
     case _ => None
   }
 
-  def prev(box: String): Option[String] = box match {
+  def prev(box: String): Option[Mailbox] = box match {
     case "Drafts" => None
-    case "For checking" => Some("Drafts")
-    case "For approval" => Some("For checking")
-    case "Unpaid" => Some("For approval")
-    case "Paid" => Some("Unpaid")
+    case "For checking" => Some(drafts)
+    case "For approval" => Some(forChecking)
+    case "Unpaid" => Some(forApproval)
+    case "Paid" => Some(unpaid)
     case _ => None
   }
 
-  val asJsObject: JsObject = Json.parse("""
+  val asJsObject: JsObject = {
+    Json.parse("""
 {
     "_links": {
         "curies": [
@@ -54,24 +64,24 @@ object Workflow {
             {
                 "title": "Pending",
                 "queryKey": "mailbox",
-                "queryParam": "Pending",
+                "queryParam": "pending",
                 "subFolders": [
                     {
                         "title": "Drafts",
                         "queryKey": "mailbox",
-                        "queryParam": "Drafts",
+                        "queryParam": "drafts",
                         "subFolders": []
                     },
                     {
                         "title": "For checking",
                         "queryKey": "mailbox",
-                        "queryParam": "For+checking",
+                        "queryParam": "forChecking",
                         "subFolders": []
                     },
                     {
                         "title": "For approval",
                         "queryKey": "mailbox",
-                        "queryParam": "For+approval",
+                        "queryParam": "forApproval",
                         "subFolders": []
                     }
                 ]
@@ -79,18 +89,18 @@ object Workflow {
             {
                 "title": "Delivered",
                 "queryKey": "mailbox",
-                "queryParam": "Delivered",
+                "queryParam": "delivered",
                 "subFolders": [
                     {
                         "title": "Paid",
                         "queryKey": "mailbox",
-                        "queryParam": "Paid",
+                        "queryParam": "paid",
                         "subFolders": []
                     },
                     {
                         "title": "unpaid",
                         "queryKey": "mailbox",
-                        "queryParam": "Unpaid",
+                        "queryParam": "unpaid",
                         "subFolders": []
                     }
                 ]
@@ -99,5 +109,5 @@ object Workflow {
     }
 }
     """).as[JsObject]
-
+  }
 }

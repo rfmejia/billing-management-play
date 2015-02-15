@@ -50,7 +50,7 @@ object Document extends ((Int, Option[String], String, String, String, String, D
     body: JsObject): Try[Document] = {
     val created = new DateTime()
     val creator = "To implement"
-    val newDoc = Document(0, None, title, docType, Workflow.start, creator,
+    val newDoc = Document(0, None, title, docType, Workflow.start.name, creator,
       created, forTenant, forMonth, 0.0, body)
     ConnectionFactory.connect withSession { implicit session =>
       Try {

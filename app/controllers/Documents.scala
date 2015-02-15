@@ -19,7 +19,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
   lazy val createForm: JsObject = getCreateTemplate("DOCUMENTS")
   lazy val editForm: JsObject = getEditTemplate("DOCUMENTS")
 
-  def show(id: Int) = Action { implicit request =>
+  def show(id: Int) = SecuredAction { implicit request =>
     Document.findById(id) match {
       case Some(doc) =>
         Ok(documentToHalJsObject(doc).asJsValue)
@@ -30,7 +30,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
   def moveMailbox(id: Int, mailbox: String) = SecuredAction {
     (Document.findById(id), Workflow.exists(mailbox)) match {
       case (Some(d), Some(box)) =>
-        Document.update(d.copy(mailbox = box)) match {
+        Document.update(d.copy(mailbox = box.name)) match {
           case Success(d) => NoContent
           case Failure(err) => InternalServerError(err.getMessage)
         }
@@ -39,7 +39,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
     }
   }
 
-  def list(offset: Int = 0, limit: Int = 10, mailbox: String, forTenant: Int) = Action { implicit request =>
+  def list(offset: Int = 0, limit: Int = 10, mailbox: String, forTenant: Int) = SecuredAction { implicit request =>
     val (ds, total) = ConnectionFactory.connect withSession { implicit session =>
       val query = documents.drop(offset).take(limit).sortBy(_.created.desc)
         .filter(d => d.mailbox === mailbox || mailbox.isEmpty)
@@ -190,10 +190,10 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       .withField("body", d.body)
 
     val obj1 = Workflow.next(d.mailbox) map { box =>
-      obj.withLink("hoa:nextBox", routes.Documents.moveMailbox(d.id, box).absoluteURL())
+      obj.withLink("hoa:nextBox", routes.Documents.moveMailbox(d.id, box.name).absoluteURL())
     } getOrElse obj
     val obj2 = Workflow.prev(d.mailbox) map { box =>
-      obj1.withLink("hoa:prevBox", routes.Documents.moveMailbox(d.id, box).absoluteURL())
+      obj1.withLink("hoa:prevBox", routes.Documents.moveMailbox(d.id, box.name).absoluteURL())
     } getOrElse obj1
 
     val obj3 = Tenant.findById(d.forTenant) map { t =>

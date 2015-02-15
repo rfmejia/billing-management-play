@@ -16,7 +16,6 @@ import securesocial.core.{ RuntimeEnvironment, SecureSocial }
 class Users(override implicit val env: RuntimeEnvironment[User])
   extends ApiController[User] {
 
-  lazy val createForm: JsObject = getCreateTemplate("USERS")
   lazy val editForm: JsObject = getEditTemplate("USERS")
 
   def show(userId: String) = SecuredAction { implicit request =>
