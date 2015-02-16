@@ -65,5 +65,7 @@ create.controller("controller.create", ['$scope', "tenantsList", "documentsServi
             template.title = $scope.title();
             template.forMonth = $scope.billingDate;
             template.forTenant = $scope.selectedTenant.id;
+
+            console.log(template);
         };
 }]);
