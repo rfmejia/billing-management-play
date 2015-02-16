@@ -159,12 +159,17 @@ documents.service('service.hoadocuments', ['$resource', '$q', 'service.hoalinks'
             return limit;
         };
 
-        this.submitToNextBox = function(url, data) {
+        this.submitToNextBox = function(id, url, data) {
             var deferred = $q.defer();
 
             var  submitResource = $resource(url, {}, {
                 create  : {method: "POST", isArray: false, headers:{"Content-Type" : "application/json"}}
             });
+
+            var submitDocument = function() {
+                submitResource.create(data).$promise
+                    .then(success, error);
+            };
 
             var success = function(response){
                 deferred.resolve(response);
@@ -174,8 +179,10 @@ documents.service('service.hoadocuments', ['$resource', '$q', 'service.hoalinks'
                 deferred.reject();
             };
 
-            submitResource.create(data).$promise
-                .then(success, error);
+            this.editDocument(id, data)
+                .then(submitDocument);
+
+
 
             return deferred.promise;
         }

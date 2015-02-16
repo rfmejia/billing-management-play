@@ -1,51 +1,11 @@
 
 <div class="container col-xs-12">
-    <form name="billingForm" class="form-horizontal" ng-submit="onSubmitClicked(billingForm.$valid)" novalidate form-watcher>
+    <form name="billingForm" class="form-horizontal" novalidate form-watcher>
         <div class="form-group">
             <div class="createDocumentHeader">
-                <!-- Billing date -->
-                <div class="noPadding col-xs-4 dropdown">
-                    <a class="dropdown-toggle" id="billingDate" role="button" data-toggle="dropdown" data-target="#" href>
-                        <div class="input-group" ng-class="{'has-error': billingForm.billDate.$dirty && billingForm.billDate.$invalid}">
-                            <input type="text" class="form-control" data-ng-model="stringDate" name="billDate"
-                                   required ng-change="validateBillDate(billingForm.billDate)">
-                        </div>
-                    </a>
-                    <small class="help-block">
-                        <span ng-class="isRequiredMuted(billingForm.billDate)">{{showErrorMessage(billingForm.billDate, true)}}</span>
-                    </small>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                        <datetimepicker class="datetimepicker-dropdown-bottom-right"
-                                        data-ng-model="stringDate"
-                                        data-datetimepicker-config="{startView: 'month', minView:'month', dropdownSelector: '#billingDate'}"
-                                        data-on-set-time="onBillDateSet(billingForm.billDate, newDate)"></datetimepicker>
-                    </ul>
-                </div>
-                <!-- Billing date end -->
-
-                <!-- Tenant select -->
-                <div class="dropdown col-xs-8 dropdown" ng-class="{'has-error': billingForm.tenant.$dirty && billingForm.tenant.$invalid}">
-                    <input type='text' class='form-control input-md' name="tenant" ng-model="tenantName"
-                           typeahead="tenant.tradeName for tenant in tenants | filter:$viewValue | limitTo:8"
-                           typeahead-editable="false"
-                           placeholder="Select tenant" required
-                           ng-change="validateTenant(billingForm.tenant)"
-                           ng-model-options="{debounce: 500}" />
-                    <small class="help-block">
-                        <span ng-class="isRequiredMuted(billingForm.tenant)">{{showErrorMessage(billingForm.tenant, true)}}</span>
-                    </small>
-
-                    <ul class="dropdown-menu custom-dropdown" role='menu'>
-                        <li ng-repeat='tenant in tenants'>
-                            <a href ng-click='onSelect(tenant)'>{{tenant.tradeName}}</a>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- Tenant select end -->
+                <legend>{{documentTitle}}</legend>
             </div>
-            <br/>
-            <br/>
+
             <div class="createDocumentSection">
                 <legend>{{previous.title}}</legend>
                     <div class="col-xs-12 input-group" ng-repeat="sections in previous.sections">
@@ -93,7 +53,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="subtotal col-xs-12 well well-sm" ng-form="previousFormTotal">
+                        <div class="subtotal col-xs-12 well well-emphasis well-sm" ng-form="previousFormTotal">
                             <label for="previousTotal" class="control-label col-xs-4 pull-left">Previous total</label>
                             <div class="col-xs-8" ng-class="{'has-error': previousFormTotal.previousTotal.$dirty && previousFormTotal.previousTotal.$invalid}">
                                 <input id="previousTotal" class="form-control input-md" name="previousTotal"
@@ -188,7 +148,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="subtotal col-xs-12 well well-sm" ng-form="currentFormTotal">
+                    <div class="subtotal col-xs-12 well well-emphasis well-sm" ng-form="currentFormTotal">
                         <label for="{{sections.title}}" class="control-label col-xs-4 pull-left">{{sections.title}} total</label>
                         <div class="col-xs-8" ng-class="{'has-error': currentFormTotal.inputTotal.$dirty && currentFormTotal.inputTotal.$invalid}">
                             <input id="{{sections.title}}" class="form-control input-md" name="inputTotal"
@@ -206,17 +166,19 @@
         </div>
 
 
-            <div class="row">
-                <div class="col-xs-4"><h6 class="text-muted">{{previous.title}}</h6></div>
-                <div class="col-xs-8"><h6>{{previous.summary.value}}</h6></div>
-            </div>
-            <div class="row">
-                <div class="col-xs-4"><h6 class="text-muted">{{previous.title}}</h6></div>
-                <div class="col-xs-8"><h6>{{thisMonth.summary.value}}</h6></div>
-            </div>
-            <div class="row subtotal">
-                <div class="col-xs-4"><h5 class="text-muted">Total</h5></div>
-                <div class="col-xs-8"><h5>{{summary.value}}</h5></div>
+            <div class="well well-emphasis">
+                <div class="row">
+                    <div class="col-md-offset-2 col-md-3"><h6 class="bold">{{previous.title}}</h6></div>
+                    <div class="col-xs-7"><h6>{{previous.summary.value}}</h6></div>
+                </div>
+                <div class="row">
+                    <div class="col-md-offset-2 col-md-3"><h6 class="bold">{{thisMonth.title}}</h6></div>
+                    <div class="col-xs-7"><h6>{{thisMonth.summary.value}}</h6></div>
+                </div>
+                <div class="row subtotal">
+                    <div class="col-md-offset-2 col-md-3"><h6 class="bold">{{thisMonth.title}}</h6></div>
+                    <div class="col-xs-7"><h6>{{summary.value}}</h6></div>
+                </div>
             </div>
 
 
@@ -232,10 +194,10 @@
 
                 <button type="button" class="btn btn-default" ng-click="onCancelClicked()">Cancel</button>
                 <button type="button" class="btn btn-default" ng-click="onSaveClicked(billingForm)">Save</button>
-                <button type="submit" class="btn btn-default" ng-click="onSubmitClicked()" ng-hide="!isInEditingMode" ng-disabled="billingForm.$invalid">Submit</button>
-                <button ng-show="isInEditingMode" type="button" class="btn btn-danger pull-right" ng-click="onDeleteClicked()">Delete
+                <button type="submit" class="btn btn-default" ng-click="onSubmitClicked()" ng-disabled="billingForm.$invalid">Submit</button>
+                <button type="button" class="btn btn-danger pull-right" ng-click="onDeleteClicked()">Delete
                 </button>
-                <p class="text-warning" ng-show="isInEditingMode && billingForm.$invalid">Can't submit document with invalid fields</p>
+                <p class="text-warning" ng-show="billingForm.$invalid">Can't submit document with invalid fields</p>
 
             </div>
 

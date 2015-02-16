@@ -17,4 +17,4 @@ dist
 /.target/
 /bin/
 /.cache
-public/.idea/
+public/.idea/*

@@ -10,6 +10,8 @@ drafts.controller("controller.drafts", ["$scope", "$state", "documentsService", 
             $scope.summary = documentsResponse.details.summary;
             /** If null, this means that this document has not been pushed to the server yet **/
             $scope.documentId = documentsResponse.documentId;
+
+            $scope.forMonth = documentsResponse.forMonth;
             /** The tenant's id **/
             $scope.tenantId = documentsResponse.forTenant;
             /** The document's billing month **/
@@ -64,8 +66,9 @@ drafts.controller("controller.drafts", ["$scope", "$state", "documentsService", 
 
                 var error = function(error) {};
 
-                documentsService.submitToNextBox($scope.submitUrl, $scope.postTemplate)
+                documentsService.submitToNextBox($scope.documentId, $scope.submitUrl, $scope.postTemplate)
                     .then(success);
+
             };
 
             /**
@@ -73,7 +76,6 @@ drafts.controller("controller.drafts", ["$scope", "$state", "documentsService", 
              */
             $scope.onSaveClicked = function(billingForm) {
                 preparePostData();
-                console.log($scope.documentId);
                 documentsService.editDocument($scope.documentId, $scope.postTemplate)
                     .then(function(response) {
                         if(billingForm.$invalid) {
@@ -244,12 +246,15 @@ drafts.controller("controller.drafts", ["$scope", "$state", "documentsService", 
              * Convenience function that prepares the data to be posted to the server
              */
             var preparePostData = function() {
+                console.log($scope.forMonth);
+                console.log(moment($scope.forMonth));
                 $scope.postTemplate.body.breakdown.previous = $scope.previous;
                 $scope.postTemplate.body.breakdown.thisMonth = $scope.thisMonth;
                 $scope.postTemplate.body.summary = $scope.summary;
                 $scope.postTemplate.forTenant = $scope.tenantId;
-                $scope.postTemplate.forMonth = moment($scope.forMonth);
+                $scope.postTemplate.forMonth = $scope.forMonth;
                 $scope.postTemplate.title = $scope.documentTitle;
+
                 console.log($scope.postTemplate);
             };
 

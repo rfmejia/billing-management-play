@@ -4,243 +4,245 @@
   "forMonth" : null,
   "forTenant" : null,
   "title"     : null,
-  "breakdown": {
-    "previous"  : {
-      "title": "Previous Charges",
-      "sections": [
-        {
-          "total" : "",
-          "fields": [
-            {
-              "id": "_overdue_charges",
-              "title": "Overdue Charges",
-              "datatype": "double",
-              "value": null,
-              "required": true
-            },
-            {
-              "id": "_other_charges",
-              "title": "Other Charges",
-              "datatype": "double",
-              "required": false,
-              "value": null
-            }
-          ]
+  "body" : {
+    "breakdown": {
+      "previous"  : {
+        "title": "Previous Charges",
+        "sections": [
+          {
+            "total" : "",
+            "fields": [
+              {
+                "id": "_overdue_charges",
+                "title": "Overdue Charges",
+                "datatype": "double",
+                "value": null,
+                "required": true
+              },
+              {
+                "id": "_other_charges",
+                "title": "Other Charges",
+                "datatype": "double",
+                "required": false,
+                "value": null
+              }
+            ]
+          }
+        ],
+        "summary": {
+          "id": "previous_total",
+          "title": "Total",
+          "datatype": "currency",
+          "required": true,
+          "value": 0
         }
-      ],
-      "summary": {
-        "id": "previous_total",
-        "title": "Total",
-        "datatype": "currency",
-        "required": true,
-        "value": 0
+      },
+      "thisMonth" : {
+        "title": "This Month's Charges",
+        "sections": [
+          {
+            "title": "Rent",
+            "total" : null,
+            "fields": [
+              {
+                "id": "rent_base",
+                "title": "Base",
+                "datatype": "double",
+                "required": false,
+                "value": null
+              },
+              {
+                "id": "rent_vat",
+                "title": "+12% VAT",
+                "datatype": "double",
+                "required": false,
+                "value": null
+              },
+              {
+                "id": "rent_subtotal",
+                "title": "Subtotal",
+                "datatype": "double",
+                "required": false,
+                "value": null
+              },
+              {
+                "id": "rent_whtax",
+                "title": "-5% Withholding Tax",
+                "datatype": "double",
+                "required": false,
+                "value": null
+              }
+            ]
+          },
+          {
+            "title": "Electricity",
+            "total" : null,
+            "fields": [
+              {
+                "id": "elec_meter_number",
+                "title": "Meter number",
+                "datatype": "string",
+                "required": false,
+                "value": ""
+              },
+              {
+                "id": "elec_bill_start",
+                "title": "Billing starting",
+                "datatype": "date",
+                "required": false,
+                "value": ""
+              },
+              {
+                "id": "elec_bill_until",
+                "title": "Billing until",
+                "datatype": "date",
+                "required": false,
+                "value": ""
+              },
+              {
+                "id": "elec_prev_reading",
+                "title": "Previous reading",
+                "datatype": "integer",
+                "required": false,
+                "value": null
+              },
+              {
+                "id": "elec_curr_reading",
+                "title": "Current reading",
+                "datatype": "integer",
+                "required": false,
+                "value": null
+              },
+              {
+                "id": "elec_kw_used",
+                "title": "KW used",
+                "datatype": "integer",
+                "required": false,
+                "value": null
+              },
+              {
+                "id": "elec_multiplier",
+                "title": "Multiplier",
+                "datatype": "integer",
+                "required": false,
+                "value": null
+              },
+              {
+                "id": "elec_gross_usage",
+                "title": "Gross KW usage",
+                "datatype": "integer",
+                "required": false,
+                "value": null
+              },
+              {
+                "id": "elec_meralco",
+                "title": "Meralco",
+                "datatype": "double",
+                "required": false,
+                "value": null
+              },
+              {
+                "id": "elec_consumption",
+                "title": "Consumption",
+                "datatype": "double",
+                "required": false,
+                "value": null
+              }
+            ]
+          },
+          {
+            "title": "Water",
+            "total" : null,
+            "fields": [
+              {
+                "id": "water_meter_num",
+                "title": "Meter number",
+                "datatype": "string",
+                "required": false,
+                "value": ""
+              },
+              {
+                "id": "water_bill_start",
+                "title": "Billing starting",
+                "datatype": "date",
+                "required": false,
+                "value": ""
+              },
+              {
+                "id": "water_bill_until",
+                "title": "Billing until",
+                "datatype": "date",
+                "required": false,
+                "value": ""
+              },
+              {
+                "id": "water_prev_reading",
+                "title": "Previous reading",
+                "datatype": "integer",
+                "required": false,
+                "value": null
+              },
+              {
+                "id": "water_curr_reading",
+                "title": "Current reading",
+                "datatype": "integer",
+                "required": false,
+                "value": null
+              },
+              {
+                "id": "water_gross_usage",
+                "title": "Gross cu m usage",
+                "datatype": "integer",
+                "required": false,
+                "value": null
+              },
+              {
+                "id": "water_rate",
+                "title": "Rate/cu m",
+                "datatype": "double",
+                "required": false,
+                "value": null
+              },
+              {
+                "id": "water_consumption",
+                "title": "Consumption",
+                "datatype": "double",
+                "required": false,
+                "value": null
+              }
+            ]
+          },
+          {
+            "title": "Cusa",
+            "total" : null,
+            "fields": [
+              {
+                "id": "cusa_total",
+                "title": "Total",
+                "datatype": "currency",
+                "required": true,
+                "value": null
+              }
+            ]
+          }
+        ],
+        "summary": {
+          "id": "current_summary",
+          "title": "Total",
+          "datatype": "currency",
+          "required": true,
+          "value": 0
+        }
       }
     },
-    "thisMonth" : {
-      "title": "This Month's Charges",
-      "sections": [
-        {
-          "title": "Rent",
-          "total" : null,
-          "fields": [
-            {
-              "id": "rent_base",
-              "title": "Base",
-              "datatype": "double",
-              "required": false,
-              "value": null
-            },
-            {
-              "id": "rent_vat",
-              "title": "+12% VAT",
-              "datatype": "double",
-              "required": false,
-              "value": null
-            },
-            {
-              "id": "rent_subtotal",
-              "title": "Subtotal",
-              "datatype": "double",
-              "required": false,
-              "value": null
-            },
-            {
-              "id": "rent_whtax",
-              "title": "-5% Withholding Tax",
-              "datatype": "double",
-              "required": false,
-              "value": null
-            }
-          ]
-        },
-        {
-          "title": "Electricity",
-          "total" : null,
-          "fields": [
-            {
-              "id": "elec_meter_number",
-              "title": "Meter number",
-              "datatype": "string",
-              "required": false,
-              "value": ""
-            },
-            {
-              "id": "elec_bill_start",
-              "title": "Billing starting",
-              "datatype": "date",
-              "required": false,
-              "value": ""
-            },
-            {
-              "id": "elec_bill_until",
-              "title": "Billing until",
-              "datatype": "date",
-              "required": false,
-              "value": ""
-            },
-            {
-              "id": "elec_prev_reading",
-              "title": "Previous reading",
-              "datatype": "integer",
-              "required": false,
-              "value": null
-            },
-            {
-              "id": "elec_curr_reading",
-              "title": "Current reading",
-              "datatype": "integer",
-              "required": false,
-              "value": null
-            },
-            {
-              "id": "elec_kw_used",
-              "title": "KW used",
-              "datatype": "integer",
-              "required": false,
-              "value": null
-            },
-            {
-              "id": "elec_multiplier",
-              "title": "Multiplier",
-              "datatype": "integer",
-              "required": false,
-              "value": null
-            },
-            {
-              "id": "elec_gross_usage",
-              "title": "Gross KW usage",
-              "datatype": "integer",
-              "required": false,
-              "value": null
-            },
-            {
-              "id": "elec_meralco",
-              "title": "Meralco",
-              "datatype": "double",
-              "required": false,
-              "value": null
-            },
-            {
-              "id": "elec_consumption",
-              "title": "Consumption",
-              "datatype": "double",
-              "required": false,
-              "value": null
-            }
-          ]
-        },
-        {
-          "title": "Water",
-          "total" : null,
-          "fields": [
-            {
-              "id": "water_meter_num",
-              "title": "Meter number",
-              "datatype": "string",
-              "required": false,
-              "value": ""
-            },
-            {
-              "id": "water_bill_start",
-              "title": "Billing starting",
-              "datatype": "date",
-              "required": false,
-              "value": ""
-            },
-            {
-              "id": "water_bill_until",
-              "title": "Billing until",
-              "datatype": "date",
-              "required": false,
-              "value": ""
-            },
-            {
-              "id": "water_prev_reading",
-              "title": "Previous reading",
-              "datatype": "integer",
-              "required": false,
-              "value": null
-            },
-            {
-              "id": "water_curr_reading",
-              "title": "Current reading",
-              "datatype": "integer",
-              "required": false,
-              "value": null
-            },
-            {
-              "id": "water_gross_usage",
-              "title": "Gross cu m usage",
-              "datatype": "integer",
-              "required": false,
-              "value": null
-            },
-            {
-              "id": "water_rate",
-              "title": "Rate/cu m",
-              "datatype": "double",
-              "required": false,
-              "value": null
-            },
-            {
-              "id": "water_consumption",
-              "title": "Consumption",
-              "datatype": "double",
-              "required": false,
-              "value": null
-            }
-          ]
-        },
-        {
-          "title": "Cusa",
-          "total" : null,
-          "fields": [
-            {
-              "id": "cusa_total",
-              "title": "Total",
-              "datatype": "currency",
-              "required": true,
-              "value": null
-            }
-          ]
-        }
-      ],
-      "summary": {
-        "id": "current_summary",
-        "title": "Total",
-        "datatype": "currency",
-        "required": true,
-        "value": 0
-      }
-    }
-  },
 
-  "summary": {
-    "id": "invoice_summary",
-    "title": "Total Amount Due",
-    "datatype": "currency",
-    "required": true,
-    "value": 0,
-    "comments" : ""
+    "summary": {
+      "id": "invoice_summary",
+      "title": "Total Amount Due",
+      "datatype": "currency",
+      "required": true,
+      "value": 0,
+      "comments" : ""
+    }
   }
 }
