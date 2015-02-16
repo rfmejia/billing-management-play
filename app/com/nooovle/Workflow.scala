@@ -21,20 +21,20 @@ object Workflow {
     (pending ++ delivered).find(_.name == box)
 
   def next(box: String): Option[Mailbox] = box match {
-    case "Drafts" => Some(forChecking)
-    case "For checking" => Some(forApproval)
-    case "For approval" => Some(unpaid)
-    case "Unpaid" => Some(paid)
-    case "Paid" => None
+    case drafts.name => Some(forChecking)
+    case forChecking.name => Some(forApproval)
+    case forApproval.name => Some(unpaid)
+    case unpaid.name => Some(paid)
+    case paid.name => None
     case _ => None
   }
 
   def prev(box: String): Option[Mailbox] = box match {
-    case "Drafts" => None
-    case "For checking" => Some(drafts)
-    case "For approval" => Some(forChecking)
-    case "Unpaid" => Some(forApproval)
-    case "Paid" => Some(unpaid)
+    case drafts.name => None
+    case forChecking.name => Some(drafts)
+    case forApproval.name => Some(forChecking)
+    case unpaid.name => Some(forApproval)
+    case paid.name => Some(unpaid)
     case _ => None
   }
 
