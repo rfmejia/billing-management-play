@@ -9,7 +9,7 @@
                 <input class="input-sm input-list form-control" type="text" value="{{selectedTenant.tradeName}}" ng-model="search.$" placeholder="Find tenants"/>
                 <div class="custom-dropdown">
                     <div id="tenantSearchList" class="list-group">
-                        <a href ng-repeat="tenant in tenantsList | filter:search:strict" class="list-group-item" ng-click="onTenantSelected(tenant, $index)" ng-class="selectedIndex == $index ? 'active' : ''">{{tenant.tradeName}}</a>
+                        <a href ng-repeat="tenant in tenantsList | filter:search:strict" class="list-group-item list-group-item-unbordered list-group-item-bgaccented" ng-click="onTenantSelected(tenant, $index)" ng-class="selectedIndex == $index ? 'active' : ''">{{tenant.tradeName}}</a>
                     </div>
                 </div>
             </div>

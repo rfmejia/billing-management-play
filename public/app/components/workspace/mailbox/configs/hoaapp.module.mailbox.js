@@ -13,7 +13,7 @@ app.config(["$stateProvider", "$urlRouterProvider",
                     controller  : "controller.documents"
                 }
             },
-            params : {mailbox : null, offset: 0},
+            params : {mailbox : "Drafts", offset: 0},
             resolve : {
                 documentsService    : "service.hoadocuments",
                 documentMailbox     : function($stateParams) {
