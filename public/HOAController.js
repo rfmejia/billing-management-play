@@ -53,8 +53,11 @@ hoaControllers.controller('sidebarController', ['$scope', "$location", "$state",
     }
 
     $scope.queryDocuments = function(folder) {
-        var query = {mailbox: folder.queryParam, page: 0};
-        console.log(query);
+        console.log(folder.queryParam);
+        var queryParam = folder.queryParam;
+        var sanitized = queryParam.replace('+', ' ');
+        console.log(sanitized);
+        var query = {mailbox: sanitized, page: 0};
         $state.go("workspace.documents", query, {reload : true});
     };
 
@@ -64,13 +67,15 @@ hoaControllers.controller('sidebarController', ['$scope', "$location", "$state",
         };
 
     $scope.linkClass = function(link) {
-            if($scope.selectedLink == link) {
-                return "active";
-            }
-            else {
-                return "";
-            }
+        console.log(link);
+        if($scope.selectedLink == link) {
+            return "active";
         }
+        else {
+            return "";
+        }
+
+    }
 }]);
 
 // end - User releated controllers

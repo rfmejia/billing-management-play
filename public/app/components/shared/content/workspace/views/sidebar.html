@@ -1,12 +1,11 @@
-<button ng-click="onCreateDocumentClicked()" class="btn btn-primary">
-    <span class="glyphicon glyphicon-edit"></span>Create Invoice</button>
-<br/>
 <div>
+    <button ng-click="onCreateDocumentClicked()" class="btn btn-sm btn-primary">
+        <span class="glyphicon glyphicon-edit"></span>Create Invoice</button>
 
     <div ng-repeat="children in mailboxItems.subFolders">
         <h6 class="text-muted">{{children.title | uppercase}}</h6>
         <ul class="nav nav-list" ng-repeat="grandchildren in children.subFolders">
-            <li ng-class='active'><a href ng-click="linkClass(grandChildren)">{{grandchildren.title | uppercase}}</a></li>
+            <li class="list-group-item-unbordered"><a href class="text-muted" ng-click="queryDocuments(grandchildren)">{{grandchildren.title | uppercase}}</a></li>
         </ul>
     </div>
 
