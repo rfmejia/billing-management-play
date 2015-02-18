@@ -1,16 +1,16 @@
 {
   "name": "Statement of Account 1",
   "docType": "invoice-1",
-  "forMonth" : null,
-  "forTenant" : null,
-  "title"     : null,
-  "body" : {
+  "forMonth": null,
+  "forTenant": null,
+  "title": null,
+  "body": {
     "breakdown": {
-      "previous"  : {
+      "previous": {
         "title": "Previous Charges",
         "sections": [
           {
-            "total" : "",
+            "total": "",
             "fields": [
               {
                 "id": "_overdue_charges",
@@ -37,12 +37,12 @@
           "value": 0
         }
       },
-      "thisMonth" : {
+      "thisMonth": {
         "title": "This Month's Charges",
         "sections": [
           {
             "title": "Rent",
-            "total" : null,
+            "total": null,
             "fields": [
               {
                 "id": "rent_base",
@@ -76,7 +76,7 @@
           },
           {
             "title": "Electricity",
-            "total" : null,
+            "total": null,
             "fields": [
               {
                 "id": "elec_meter_number",
@@ -152,7 +152,7 @@
           },
           {
             "title": "Water",
-            "total" : null,
+            "total": null,
             "fields": [
               {
                 "id": "water_meter_num",
@@ -214,7 +214,7 @@
           },
           {
             "title": "Cusa",
-            "total" : null,
+            "total": null,
             "fields": [
               {
                 "id": "cusa_total",
@@ -235,14 +235,13 @@
         }
       }
     },
-
     "summary": {
       "id": "invoice_summary",
       "title": "Total Amount Due",
       "datatype": "currency",
       "required": true,
       "value": 0,
-      "comments" : ""
+      "comments": []
     }
   }
 }

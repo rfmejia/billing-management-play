@@ -6,10 +6,15 @@
 
         <div class="col-xs-6 col-xs-height col-xs-full-height">
             <div class="full-item">
-                <input class="input-sm input-list form-control" type="text" value="{{selectedTenant.tradeName}}" ng-model="search.$" placeholder="Find tenants"/>
+                <input class="input-sm input-list form-control" type="text" value="{{selectedTenant.tradeName}}"
+                       ng-model="search.$" placeholder="Find tenants"/>
+
                 <div class="custom-dropdown">
                     <div id="tenantSearchList" class="list-group">
-                        <a href ng-repeat="tenant in tenantsList | filter:search:strict" class="list-group-item list-group-item-unbordered list-group-item-bgaccented" ng-click="onTenantSelected(tenant, $index)" ng-class="selectedIndex == $index ? 'active' : ''">{{tenant.tradeName}}</a>
+                        <a href ng-repeat="tenant in tenantsList | filter:search:strict"
+                           class="list-group-item list-group-item-unbordered list-group-item-bgaccented"
+                           ng-click="onTenantSelected(tenant, $index)"
+                           ng-class="selectedIndex == $index ? 'active' : ''">{{tenant.tradeName}}</a>
                     </div>
                 </div>
             </div>
@@ -33,10 +38,13 @@
     <div class="col-md-12">
         <div class="pull-right">
             <h4 ng-show="isDocumentReady()">{{title()}}</h4>
-            <button class="pull-right btn btn-lg btn-primary" ng-disabled="!isDocumentReady()" ng-click="onCreateDocumentClicked()">Create</button>
+            <button class="pull-right btn btn-lg btn-primary" ng-disabled="!isDocumentReady()"
+                    ng-click="onCreateDocumentClicked()">Create
+            </button>
             <small ng-show="!isDocumentReady()">
                 Please select a tenant and a billing period.
             </small>
         </div>
     </div>
 </div>
+

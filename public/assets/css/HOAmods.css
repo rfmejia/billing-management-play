@@ -404,5 +404,36 @@ input[type=number]:focus,
 }
 
 
+/*Comment List styles*/
+.comment-list .row {
+    margin-bottom: 0px;
+}
+.comment-list .panel .panel-heading {
+    padding: 4px 15px;
+    position: absolute;
+    border:none;
+    /*Panel-heading border radius*/
+    border-top-right-radius:0px;
+    top: 1px;
+    color: #FF4081;
+}
+.comment-list .panel .panel-heading.right {
+    border-right-width: 0px;
+    /*Panel-heading border radius*/
+    border-top-left-radius:0px;
+    right: 16px;
+}
+.comment-list .panel .panel-heading .panel-body {
+    padding-top: 6px;
+}
+
+.comment-list .comment-post {
+    margin-top: 6px;
+}
+
+.comment-list .comment-iconified .fa {
+    margin-right: 5px;
+}
+
 
 

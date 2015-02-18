@@ -187,7 +187,7 @@
                     <label for="documentComments" class="col-lg-2 control-label">Comments</label>
                     <div class="col-lg-10">
                         <textarea class="form-control" rows="5" id="documentComments"
-                                  ng-model="summary.comments"></textarea>
+                                  ng-model="currentComment"></textarea>
                         <span class="help-block">Notes or comments for the current document (Will not be visible in final document).</span>
                     </div>
                 </div>
@@ -198,6 +198,11 @@
                 <button type="button" class="btn btn-danger pull-right" ng-click="onDeleteClicked()">Delete
                 </button>
                 <p class="text-warning" ng-show="billingForm.$invalid">Can't submit document with invalid fields</p>
+                <br/>
+                <h6 class="">Comments</h6>
+                <section class="comments-list">
+                    <hoa-comments ng-repeat="comment in comments.previous" is-current="isCurrent" timestamp="comment.timestamp" user="comment.user" comment="comment.comment"></hoa-comments>
+                </section>
 
             </div>
 

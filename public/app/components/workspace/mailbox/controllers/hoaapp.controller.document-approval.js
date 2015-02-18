@@ -4,25 +4,36 @@
 var approve = angular.module("module.mailbox");
 
 approve.controller("controller.approval", ['$scope', '$state', 'documentsService', 'documentsResponse', 'templatesResponse', '$modal', 'moment', 'toaster',
-    function($scope, $state, documentsService, documentsResponse, templatesResponse, $modal, moment, toaster) {
-        console.log(documentsResponse);
+    function ApprovalCtrlr($scope, $state, documentsService, documentsResponse, templatesResponse, $modal, moment, toaster) {
+
+        this.comments = "jc";
+
         /** Previous months template **/
         $scope.previous = documentsResponse.details.breakdown.previous;
         /** This months template **/
         $scope.thisMonth = documentsResponse.details.breakdown.thisMonth;
         /** Summary template **/
         $scope.summary = documentsResponse.details.summary;
+        /** Handles the input for the current comment **/
+        $scope.currentComment = "";
+        /** List of comment made in previous phases of the workflow **/
+        $scope.commentsList = {
+            "comments" : documentsResponse.details.summary.comments
+        };
         /** If null, this means that this document has not been pushed to the server yet **/
         $scope.documentId = documentsResponse.documentId;
         /** The tenant's id **/
         $scope.tenantId = documentsResponse.forTenant;
         /** The document's billing month **/
         $scope.billingPeriod = documentsResponse.forMonth;
-        /** Next box **/
+        /** Submit url **/
         $scope.submitUrl = documentsResponse.nextBox.href;
+        /** Reject url **/
+        $scope.rejectUrl = documentsResponse.prevBox.href;
         /** Document title for display **/
         $scope.documentTitle = documentsResponse.title;
         /** template as provided for by the server **/
+        //TODO: remove this no longer needed since the service parses it for us.
         $scope.postTemplate = templatesResponse;
         /** Format used for all dates **/
         $scope.format = "MMMM-YYYY";
@@ -37,14 +48,14 @@ approve.controller("controller.approval", ['$scope', '$state', 'documentsService
          * Submits the current document to the next box
          */
         $scope.onApproveClicked = function() {
-            preparePostData();
+            var postData = preparePostData();
             var success = function(response) {
                 toaster.pop('success', 'Submitted!', 'Your document was sent for checking.');
             };
 
             var error = function(error) {};
 
-            documentsService.submitToNextBox($scope.submitUrl, $scope.postTemplate)
+            documentsService.submitToNextBox($scope.documentId, $scope.submitUrl, postData)
                 .then(success);
         };
 
@@ -114,7 +125,9 @@ approve.controller("controller.approval", ['$scope', '$state', 'documentsService
             $scope.modal.title = "Changes not saved.";
             $scope.modal.message = "Are you sure you want to cancel?";
 
+            //TODO: Prepare post data to return to the prev box
             $scope.modalPositive = function(response) {
+                var postData = preparePostData();
                 $state.go("workspace.documents");
             };
 
@@ -122,15 +135,19 @@ approve.controller("controller.approval", ['$scope', '$state', 'documentsService
         };
 
         /**
-         * Convenience function that prepares the data to be posted to the server
+         * Service formats the data and this function will return the formatted post data ready for posting.
          */
         var preparePostData = function() {
-            $scope.postTemplate.body.breakdown.previous = $scope.previous;
-            $scope.postTemplate.body.breakdown.thisMonth = $scope.thisMonth;
-            $scope.postTemplate.body.summary = $scope.summary;
-            $scope.postTemplate.forTenant = $scope.tenantId;
-            $scope.postTemplate.forMonth = moment($scope.forMonth);
-            $scope.postTemplate.title = $scope.documentTitle;
+            return documentsService.formatPostData(
+                $scope.forMonth,
+                $scope.tenantId,
+                $scope.previous,
+                $scope.thisMonth,
+                $scope.documentTitle,
+                $scope.summary,
+                $scope.currentComment,
+                $scope.commentsList.comments
+            );
         };
 }]);
 

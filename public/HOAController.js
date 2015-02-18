@@ -28,7 +28,6 @@ hoaControllers.controller('workspaceController',
 
 hoaControllers.controller('sidebarController', ['$scope', "$location", "$state", "mailbox", "$modal", "service.hoatenants", "service.hoatemplates",
     function ($scope, $location, $state, mailbox, $modal, tenantsService, templatesService) {
-        console.log(tenantsService);
         $scope.mailboxItems = mailbox;
         $scope.sidebarItems = [
             {link : "#/tenants", header : "Management", section: "Tenants", title : "Tenants List", id : "tenantsLink", state : "workspace.tenants"},

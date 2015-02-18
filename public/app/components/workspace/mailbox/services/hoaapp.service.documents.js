@@ -1,8 +1,8 @@
 var documents = angular.module("hoaApp");
 
 
-documents.service('service.hoadocuments', ['$resource', '$q', 'service.hoalinks',
-	function($resource, $q, hoalinks){
+documents.service('service.hoadocuments', ['$resource', '$q', 'service.hoalinks', "moment",
+	function($resource, $q, hoalinks, moment){
         var resource		= null;
         var limit = 10;
         var requestType     = Object.freeze({
@@ -39,6 +39,7 @@ documents.service('service.hoadocuments', ['$resource', '$q', 'service.hoalinks'
                 "forTenant"     : response.forTenant,
                 "forMonth"      : response.forMonth,
                 "nextBox"       : response._links["hoa:nextBox"],
+                "prevBox"       : response._links["hoa:prevBox"],
                 "postTemplate"  : extractEditPostDetails(response._template.edit.data[0])
             }
         };
@@ -162,6 +163,8 @@ documents.service('service.hoadocuments', ['$resource', '$q', 'service.hoalinks'
         this.submitToNextBox = function(id, url, data) {
             var deferred = $q.defer();
 
+            console.log(url);
+
             var  submitResource = $resource(url, {}, {
                 create  : {method: "POST", isArray: false, headers:{"Content-Type" : "application/json"}}
             });
@@ -185,5 +188,74 @@ documents.service('service.hoadocuments', ['$resource', '$q', 'service.hoalinks'
 
 
             return deferred.promise;
+        };
+
+        /**
+         * Allows objects using this service to provide the needed details and the service will format it in an acceptable form by the server.
+         * @param forMonth YYYY-MMMM
+         * @param forTenant tenant id of the document
+         * @param previous previous billing information
+         * @param thisMonth  this month's billing information
+         * @param title generated title for the document
+         * @param summary summary of the billing info
+         * @param currentComment comments attached to the current workflow phase
+         * @param previousComments previous comments in other phases of the workflow
+         * @returns {{body: {summary: {}, breakdown: {previous: {}, thisMonth: {}}}, forTenant: string, forMonth: string, title: string, name: string, docType: string}}
+         */
+        this.formatPostData = function(forMonth, forTenant, previous, thisMonth, title, summary, currentComment, previousComments) {
+            var postTemplate = {
+                "body" : {
+                    "summary" : {},
+                    "breakdown" : {
+                        "previous" : {},
+                        "thisMonth" : {}
+                    }
+                },
+                "forTenant" : "",
+                "forMonth" : "",
+                "title" : "",
+                "name": "Statement of Account 1",
+                "docType": "invoice-1"
+            };
+
+            postTemplate.forMonth = forMonth;
+            postTemplate.forTenant = forTenant;
+            postTemplate.title = title;
+            postTemplate.body.breakdown.previous = previous;
+            postTemplate.body.breakdown.thisMonth = thisMonth;
+            postTemplate.body.summary = summary;
+            postTemplate.body.summary.comments = parseComments(currentComment, previousComments);
+            return postTemplate;
+        };
+
+        /**
+         * Prepares the comments for the API
+         * @param currentComment a string that could be empty or null. We check whether it's empty or null,  if not we push it to the comments array
+         * @param previousComments comments array holding previous comments
+         * @returns {*}
+         */
+        var parseComments = function(currentComment, previousComments) {
+            var commentObject = {
+                "user" : "",
+                "timestamp" : "",
+                "comment" : "",
+                "isCurrent" : false
+            };
+            //Set isCurrent to false for the other comments with or without a new comment
+            angular.forEach(previousComments, function(value) {
+                value.isCurrent = false;
+            });
+
+            if(currentComment != null || currentComment != '') {
+                commentObject.isCurrent = true;
+                commentObject.user = "Test user";
+                commentObject.timestamp = moment(new Date).format("MMMM DD, YYYY");
+                commentObject.comment = currentComment;
+
+                previousComments.unshift(commentObject);
+            }
+
+            return previousComments;
         }
+
 }]);

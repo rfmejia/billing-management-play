@@ -59,7 +59,7 @@ app.config(["$stateProvider", "$urlRouterProvider",
             }
         };
 
-        var edit = {
+        var drafts = {
             url     : "edit/:id",
             resolve : {
                 documentsService    : "service.hoadocuments",
@@ -92,9 +92,44 @@ app.config(["$stateProvider", "$urlRouterProvider",
             }
         };
 
+        var approvals = {
+            url     : "approvals/:id",
+            resolve : {
+                documentsService    : "service.hoadocuments",
+                templatesService    : 'service.hoatemplates',
+                response            : function(documentsService, templatesService, $stateParams, $q) {
+                    var deferred = $q.defer();
+                    var documentsPromise = documentsService.getDocument($stateParams.id);
+                    var templatesPromise = templatesService.getLocal();
+                    var success = function(response){
+                        deferred.resolve(response);
+                    };
+
+                    $q.all([documentsPromise, templatesPromise])
+                        .then(success);
+
+                    return deferred.promise;
+                },
+                documentsResponse    : function(response) {
+                    return response[0];
+                },
+                templatesResponse    : function(response) {
+                    return response[1];
+                }
+            },
+            views   : {
+                "contentArea@workspace" : {
+                    templateUrl : "app/components/workspace/mailbox/views/maincontent-document-approval.html",
+                    controller  : "controller.approval",
+                    controllerAs : 'approval'
+                }
+            }
+        };
+
         $stateProvider
-            .state("workspace.create",                 create)
-            .state("workspace.edit",                   edit)
+            .state("workspace.create",                  create)
+            .state("workspace.drafts",                   drafts)
+            .state("workspace.approval",               approvals)
             .state("workspace.documents",              documents);
     }]);
 

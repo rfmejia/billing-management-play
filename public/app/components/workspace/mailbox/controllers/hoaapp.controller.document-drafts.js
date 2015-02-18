@@ -8,9 +8,15 @@ drafts.controller("controller.drafts", ["$scope", "$state", "documentsService", 
             $scope.thisMonth = documentsResponse.details.breakdown.thisMonth;
             /** Summary template **/
             $scope.summary = documentsResponse.details.summary;
+            /** Current comment made in this phase of the workflow **/
+            $scope.currentComment = "";
+            /** Previous comments made in different phases of the workflow **/
+            $scope.commentsList = {
+                "comments" : documentsResponse.details.summary.comments
+            };
             /** If null, this means that this document has not been pushed to the server yet **/
             $scope.documentId = documentsResponse.documentId;
-
+            /** Month of the billing **/
             $scope.forMonth = documentsResponse.forMonth;
             /** The tenant's id **/
             $scope.tenantId = documentsResponse.forTenant;
@@ -21,6 +27,7 @@ drafts.controller("controller.drafts", ["$scope", "$state", "documentsService", 
             /** Document title for display **/
             $scope.documentTitle = documentsResponse.title;
             /** template as provided for by the server **/
+            //TODO remove this since the service parses the data for us.
             $scope.postTemplate = templatesResponse;
             /** Format used for all dates **/
             $scope.format = "MMMM-YYYY";
@@ -30,7 +37,8 @@ drafts.controller("controller.drafts", ["$scope", "$state", "documentsService", 
             $scope.negativeButton = {};
             /** Modal information **/
             $scope.modal = {};
-            //Functions
+
+            //region FUNCTIONS
             /**
              * Sets the string date for other input fields
              * @param newDate
@@ -59,14 +67,15 @@ drafts.controller("controller.drafts", ["$scope", "$state", "documentsService", 
              * Submits the current document to the next box
              */
             $scope.onSubmitClicked = function() {
-                preparePostData();
+                var postData = preparePostData();
+                console.log(postData);
                 var success = function(response) {
                     toaster.pop('success', 'Submitted!', 'Your document was sent for checking.');
                 };
 
                 var error = function(error) {};
 
-                documentsService.submitToNextBox($scope.documentId, $scope.submitUrl, $scope.postTemplate)
+                documentsService.submitToNextBox($scope.documentId, $scope.submitUrl, postData)
                     .then(success);
 
             };
@@ -75,8 +84,8 @@ drafts.controller("controller.drafts", ["$scope", "$state", "documentsService", 
              * Callback for when the save button is clicked
              */
             $scope.onSaveClicked = function(billingForm) {
-                preparePostData();
-                documentsService.editDocument($scope.documentId, $scope.postTemplate)
+                var postData = preparePostData();
+                documentsService.editDocument($scope.documentId, postData)
                     .then(function(response) {
                         if(billingForm.$invalid) {
                             toaster.pop('warning', 'Saved but...', 'Still can\'t submit your document because of missing or invalid fields.');
@@ -243,23 +252,23 @@ drafts.controller("controller.drafts", ["$scope", "$state", "documentsService", 
 
 
             /**
-             * Convenience function that prepares the data to be posted to the server
+             * Service formats the data and this function will return the formatted post data ready for posting.
              */
             var preparePostData = function() {
-                console.log($scope.forMonth);
-                console.log(moment($scope.forMonth));
-                $scope.postTemplate.body.breakdown.previous = $scope.previous;
-                $scope.postTemplate.body.breakdown.thisMonth = $scope.thisMonth;
-                $scope.postTemplate.body.summary = $scope.summary;
-                $scope.postTemplate.forTenant = $scope.tenantId;
-                $scope.postTemplate.forMonth = $scope.forMonth;
-                $scope.postTemplate.title = $scope.documentTitle;
-
-                console.log($scope.postTemplate);
+                return documentsService.formatPostData(
+                    $scope.forMonth,
+                    $scope.tenantId,
+                    $scope.previous,
+                    $scope.thisMonth,
+                    $scope.documentTitle,
+                    $scope.summary,
+                    $scope.currentComment,
+                    $scope.commentsList.comments
+                );
             };
 
 
-        //Functions end
+        //endregion
 
 	}]
 );

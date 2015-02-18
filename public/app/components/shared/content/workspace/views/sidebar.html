@@ -11,21 +11,10 @@
 
     <div>
         <h6 class="text-muted">MANAGEMENT</h6>
-        <ul class="nav nav-list">
+        <ul class="nav nav-pills nav-stacked">
             <li ng-repeat="sidebarLink in sidebarItems | sidebarListFilter: 'Management'"><a href="{{sidebarLink.link}}" ng-click="setSelectedLink(sidebarLink)">{{sidebarLink.title | uppercase}}</a></li>
         </ul>
     </div>
 </div>
 
-
-<!--<div class="panel panel-default">-->
-  <!--<div class="panel-heading">-->
-    <!--<h4 class="panel-title">Management</h4>-->
-  <!--</div>-->
-  <!--<div class="panel-body">-->
-    <!--<div class="list-group">-->
-                <!--<a href="{{sidebarLink.link}}" ng-class="linkClass(sidebarLink)" link="sidebarLink" class="list-group-item" ng-repeat="sidebarLink in sidebarItems | sidebarListFilter: 'Management'" id="{{sidebarLink.id}}" ng-click="setSelectedLink(sidebarLink)">{{sidebarLink.title}}</a>-->
-    <!--</div>-->
-  <!--</div>-->
-<!--</div>-->
 

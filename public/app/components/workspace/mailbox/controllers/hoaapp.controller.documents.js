@@ -2,6 +2,7 @@ var drafts = angular.module("module.mailbox");
 
 drafts.controller("controller.documents", ["$scope", "$state", "documentsList", "documentsService", "documentMailbox",
     function($scope, $state, documentsList, documentsService, documentMailbox){
+        console.log(documentMailbox);
         $scope.documentsList = documentsList.documentsList;
         var maxPages = 0;
         //index of first number displayed in pagination
@@ -47,7 +48,14 @@ drafts.controller("controller.documents", ["$scope", "$state", "documentsList", 
 
         //event listeners
         $scope.onDocumentItemClicked = function(document) {
-            $state.go("workspace.edit", {"id" : document.id});
+            if(documentMailbox == "Drafts") {
+                console.log("drafts");
+                console.log(documentMailbox);
+                $state.go("workspace.drafts", {"id" : document.id});
+            }
+            else if(documentMailbox == "forChecking" || documentMailbox == "forApproval") {
+                $state.go("workspace.approval", {"id" : document.id});
+            }
         };
 
         $scope.onChangePageClicked = function(selectedPage) {
