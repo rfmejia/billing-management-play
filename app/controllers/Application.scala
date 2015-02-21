@@ -36,6 +36,9 @@ class Application(override implicit val env: RuntimeEnvironment[User])
           Some("Web application"))
         .withLink("hoa:mailboxes", routes.Application.listMailboxes.absoluteURL(),
           Some("Listing of mailboxes and description of workflow"))
+        .withLink("hoa:logout", "/api/logout")
+        .withLink("hoa:currentUser", routes.Users.showCurrentUser().absoluteURL(),
+          Some("Information about the user currently logged in"))
       obj.asJsValue
     }
   }

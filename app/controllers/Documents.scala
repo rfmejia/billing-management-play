@@ -59,6 +59,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
         .withField("forTenant", d.forTenant)
         .withField("forMonth", d.forMonth)
         .withField("amountPaid", d.amountPaid)
+        .withField("creator", d.creator)
         .withField("assigned", d.assigned)
 
       val withTotal = Templates.getTotal(d) match {
@@ -106,7 +107,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
         case (Some(title), Some(docType), Some(forTenant), Some(forMonth), Some(body)) =>
           Try(DateTime.parse(forMonth)) match {
             case Success(date) =>
-              Document.insert(title, docType, forTenant, date, body) match {
+              Document.insert(request.user, title, docType, forTenant, date, body) match {
                 case Success(doc) =>
                   val link = routes.Documents.show(doc.id).absoluteURL()
                   val body = documentToHalJsObject(doc)
@@ -130,15 +131,17 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
         val json = request.body
         ((json \ "title").asOpt[String],
           (json \ "body").asOpt[JsObject],
+          (json \ "comments").asOpt[JsObject],
           (json \ "assigned").asOpt[String],
           (json \ "amountPaid").asOpt[Double]) match {
-            case (None, None, None, None) =>
+            case (None, None, None, None, None) =>
               BadRequest("No editable fields matched. Please check your request.")
-            case (title, body, assigned, amountPaid) =>
+            case (title, body, comments, assigned, amountPaid) =>
               // TODO: Get user responsible for this request
               val newDoc =
                 d.replaceWith(title map (x => d.copy(title = x)))
                 .replaceWith(body map (x => d.copy(body = x)))
+                .replaceWith(comments map (x => d.copy(comments = x)))
                 .replaceWith(amountPaid map (x => d.copy(amountPaid = x)))
                 .replaceWith(assigned map (x => d.copy(assigned = Option(x))))
 
@@ -188,6 +191,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       .withField("hoa:nextBox", Workflow.next(d.mailbox))
       .withField("hoa:prevBox", Workflow.prev(d.mailbox))
       .withField("body", d.body)
+      .withField("comments", d.comments)
 
     val obj1 = Workflow.next(d.mailbox) map { box =>
       obj.withLink("hoa:nextBox", routes.Documents.moveMailbox(d.id, box.name).absoluteURL())
