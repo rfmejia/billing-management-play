@@ -17,60 +17,23 @@ hoaControllers.controller("controller.root", ["$scope", "$location", "$state", "
         }
     }]);
 
-hoaControllers.controller('workspaceController', 
-    ['$rootScope', '$scope', "$http", "$state",
+hoaControllers.controller('workspaceController', ['$rootScope', '$scope', "$http", "$state",
     function ($rootScope, $scope, $http, $state) {
-
         $scope.onCreateDocumentClicked = function() {
             $state.go("workspace.create");
         }
 }]);
 
-hoaControllers.controller('sidebarController', ['$scope', "$location", "$state", "mailbox", "$modal", "service.hoatenants", "service.hoatemplates",
-    function ($scope, $location, $state, mailbox, $modal, tenantsService, templatesService) {
-        $scope.mailboxItems = mailbox;
-        $scope.sidebarItems = [
-            {link : "#/tenants", header : "Management", section: "Tenants", title : "Tenants List", id : "tenantsLink", state : "workspace.tenants"},
-            {link : "#/users", header : "Management", section : "Users", title: "Users List", id: "usersLink", state : "workspace.users"}
-        ];
-
-        var path = $location.path();
-
-        for(var i = 0; i < $scope.sidebarItems.length; i++) {
-            if($scope.sidebarItems[i].section.search(path) != -1) {
-                $scope.selectedLink($scope.sidebarItems[i]);
-                break;
-            }
-        }
-        for(i = 0; i < $scope.mailboxItems.length; i++) {
-            for(var j = 0; j < $scope.mailboxItems[i].contents.length; j++) {
-                if($scope.mailboxItems[i].contents[j].section.search(path) != -1) {
-                    $scope.selectedIndex($scope.mailboxItems[i].contents[j]);
-                    break;
-                }
-            }
-    }
-
-    $scope.queryDocuments = function(folder) {
-        var query = {mailbox: folder.queryParam, page: 0};
-        $state.go("workspace.documents", query, {reload : true});
-    };
-
-    $scope.setSelectedLink = function(link) {
-            $scope.selectedLink = link;
-            $state.go($scope.selectedLink.state);
+hoaControllers.controller('sidebarController', ['$scope', "$location", "$state", "mailbox",
+    function ($scope, $location, $state, mailbox) {
+        $scope.mailboxItems = {
+            "mailbox": mailbox.workflow
         };
 
-    $scope.linkClass = function(link) {
-        console.log(link);
-        if($scope.selectedLink == link) {
-            return "active";
-        }
-        else {
-            return "";
-        }
-
-    }
+        $scope.onSidebarClicked = function(folder) {
+            var query = {mailbox: folder.queryParam, page: 0};
+            $state.go(folder.path, query, {reload : true});
+        };
 }]);
 
 // end - User releated controllers

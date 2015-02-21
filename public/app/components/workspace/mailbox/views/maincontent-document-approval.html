@@ -1,8 +1,5 @@
 <div class="container col-md-12">
-
-    approval.comments
-
-    <legend>{{document.title}}</legend>
+    <legend>{{documentTitle}}</legend>
     <br/>
     <div class="createDocumentSection">
         <legend>{{previous.title}}</legend>
@@ -58,8 +55,8 @@
                 <span class="help-block">Notes or comments for the current document (Will not be visible in final document).</span>
             </div>
         </div>
-        <button type="button" class="btn btn-default" ng-click="onRejectClicked()">Reject</button>
-        <button type="submit" class="btn btn-default pull-right" ng-click="onApproveClicked()">Approve</button>
+        <button type="button" class="btn btn-default" ng-click="onMoveToBoxClicked(false)">Reject</button>
+        <button type="submit" class="btn btn-default pull-right" ng-click="onMoveToBoxClicked(true)">Approve</button>
         <hr/>
         <h6>Previous comments</h6>
         <section class="comment-list">

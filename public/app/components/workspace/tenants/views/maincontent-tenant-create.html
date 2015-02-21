@@ -1,20 +1,22 @@
 <div class="modal-header colored-header-primary">
-	<h5>Create tenant</h5>
+    <h5>Create tenant</h5>
 </div>
-
 <div class="modal-body">
-	<form name="createTenantForm">
-		<div ng-repeat="data in controlData">
-			<div class="form-group">
-				<label class="control-label" for="{{data.name}}">{{data.prompt}}</label>
-				<input type="text" id="{{data.name}}" dynamic-name="data.name" ng-model="editedData[data.name]" class="form-control" value="{{data.value}}" placeholder="Input user {{data.prompt}}">
-			</div>
-		</div>
-	</form>
+    <form name="myForm">
+        <div ng-repeat="data in controlData" ng-form="tenant">
+            <label class="control-label" for="{{data.name}}">{{data.prompt}}</label>
+            <input type="text" class="form-control" id="{{data.name}}" ng-model="editedData[data.name]" name="detail" required/>
+            <small class="help-block" ng-show="!tenant.$invalid || tenant.detail.$pristine">
+                <span>Required</span>
+            </small>
+            <small class="help-block" ng-show="tenant.detail.$error && !tenant.detail.$pristine">
+                <div ng-messages="tenant.detail.$error" ng-messages-include="nooovle-error"></div>
+            </small>
+        </div>
+    </form>
 </div>
 
 <div class="modal-footer">
-  <button class="btn btn-default" ng-click="onCancelClicked()">Cancel</button>
-
-  <button type="submit" class="btn btn-primary" ng-click="onCreateClicked()">Create</button>
-</div><!-- /modal-footer end -->   
+    <button class="btn btn-default" ng-click="onCancelClicked()">Cancel</button>
+    <button type="submit" class="btn btn-primary" ng-click="onCreateClicked()">Create</button>
+</div><!-- /modal-footer end -->

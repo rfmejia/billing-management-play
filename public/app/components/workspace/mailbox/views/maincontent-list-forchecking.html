@@ -1,4 +1,4 @@
-<legend>Drafts</legend>
+<legend>For Checking</legend>
 <table class="table table-hover table-fullheight">
     <thead>
     <th>Title</th>
@@ -18,7 +18,7 @@
         <li ng-class="{true: '', false:'disabled'}[isDecrementPagePossible()]"
             ng-disabled="{true: '', false:'disabled'}[isDecrementPagePossible()]"
             ng-click="onChangeSliceClicked(-5)"><a href>«</a></li>
-        <li ng-class="active"
+        <li ng-class="{true: 'active', false:'default'}[currentPage == page]"
             ng-repeat="page in pagesSliced"
             ng-click="onChangePageClicked(page)"><a href>{{page}}</a></li>
         <li ng-class="{true: '', false:'disabled'}[isIncrementPagePossible()]"

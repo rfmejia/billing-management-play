@@ -23,10 +23,10 @@ tenants.controller("controller.tenantview", ["$scope", "$state", "tenant",
         };;
 
         $scope.onEditClicked = function() {
-             $state.go("workspace.tenants.tenantView.edit");
+             $state.go("workspace.management.tenants.tenant-view.edit");
         };;
 
         $scope.onBackClicked = function() {
-             $state.go("workspace.tenants");
+             $state.go("workspace.management.tenants");
         }
 	}]);

@@ -2,19 +2,13 @@
     <button ng-click="onCreateDocumentClicked()" class="btn btn-sm btn-primary">
         <span class="glyphicon glyphicon-edit"></span>Create Invoice</button>
 
-    <div ng-repeat="children in mailboxItems.subFolders">
+    <div ng-repeat="children in mailboxItems.mailbox.subFolders">
         <h6 class="text-muted">{{children.title | uppercase}}</h6>
-        <ul class="nav nav-list" ng-repeat="grandchildren in children.subFolders">
-            <li class="list-group-item-unbordered"><a href class="text-muted" ng-click="queryDocuments(grandchildren)">{{grandchildren.title | uppercase}}</a></li>
+        <ul class="nav nav-pills nav-justified" ng-repeat="grandchildren in children.subFolders">
+            <li class="" hoa-activate path="{{grandchildren.link}}"><a href class="text-muted" ng-click="onSidebarClicked(grandchildren)">{{grandchildren.title | uppercase}}</a></li>
         </ul>
     </div>
 
-    <div>
-        <h6 class="text-muted">MANAGEMENT</h6>
-        <ul class="nav nav-pills nav-stacked">
-            <li ng-repeat="sidebarLink in sidebarItems | sidebarListFilter: 'Management'"><a href="{{sidebarLink.link}}" ng-click="setSelectedLink(sidebarLink)">{{sidebarLink.title | uppercase}}</a></li>
-        </ul>
-    </div>
 </div>
 
 

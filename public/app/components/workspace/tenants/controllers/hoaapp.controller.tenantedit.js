@@ -26,16 +26,14 @@ tenant.controller("controller.tenantedit", ["$scope", "$state", "tenant", "tenan
             }
         };
 
-        console.log($scope.editedData);
-
         $scope.onCancelClicked = function() {
-            $state.go("workspace.tenants.tenantView", {"id" : tenant.id});
-        };;
+            $state.go("workspace.management.tenants.tenant-view", {"id" : tenant.id});
+        };
 
         $scope.onSubmitClicked = function() {
             tenantsService.editTenant(tenant.id, $scope.editedData).then(
                 function() {
-                    $state.go("workspace.tenants.tenantView", {"id" : tenant.id}, {reload : true});
+                    $state.go("workspace.management.tenants.tenant-view", {"id" : tenant.id}, {reload : true});
                 }
             );
 
@@ -44,10 +42,10 @@ tenant.controller("controller.tenantedit", ["$scope", "$state", "tenant", "tenan
         $scope.onDeleteClicked = function() {
             tenantsService.deleteTenant(tenant.id).then(
                 function() {
-                    $state.go("workspace.tenants", {}, {reload : true});
+                    $state.go("workspace.management.tenants", {}, {reload : true});
                 }
             )
-        };;
+        };
 
         $scope.resetData();
 	}]);

@@ -5,8 +5,17 @@ var app = angular.module("module.tenants", [
 
 app.config(["$stateProvider",
     function($stateProvider) {
+        var management = {
+            url: 'management',
+            abstract : true,
+            template : '<ui-view/>',
+            resolve  : {
+                tenantsService : "service.hoatenants"
+            }
+        };
+
         var tenantsList = {
-            url         : "tenants",
+            url         : "/tenants",
             views       : {
                 "contentArea@workspace"     : {
                     templateUrl             : "app/components/workspace/tenants/views/maincontent-tenants-list.html",
@@ -14,7 +23,6 @@ app.config(["$stateProvider",
                 }
             },
             resolve : {
-                tenantsService         : "service.hoatenants",
                 tenantList             : function(tenantsService) {
                     return tenantsService.getList();
                 }
@@ -47,7 +55,8 @@ app.config(["$stateProvider",
         };
 
         $stateProvider
-            .state("workspace.tenants",                 tenantsList)
-            .state("workspace.tenants.tenantView",      tenantsView)
-            .state("workspace.tenants.tenantView.edit", tenantsEdit)
+            .state("workspace.management",                          management)
+            .state("workspace.management.tenants",                 tenantsList)
+            .state("workspace.management.tenants.tenant-view",      tenantsView)
+            .state("workspace.management.tenants.tenant-view.edit", tenantsEdit)
     }]);
