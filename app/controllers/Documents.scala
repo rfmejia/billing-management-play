@@ -178,13 +178,6 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       .withField("mailbox", d.mailbox)
       .withField("created", d.created)
       .withField("creator", d.creator)
-      .withField("preparedBy", d.preparedBy)
-      .withField("preparedOn", d.preparedOn)
-      .withField("checkedBy", d.checkedBy)
-      .withField("checkedOn", d.checkedOn)
-      .withField("approvedBy", d.approvedBy)
-      .withField("approvedOn", d.approvedOn)
-      .withField("assigned", d.assigned)
       .withField("forTenant", d.forTenant)
       .withField("forMonth", d.forMonth)
       .withField("amountPaid", d.amountPaid)
@@ -200,9 +193,9 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       obj1.withLink("hoa:prevBox", routes.Documents.moveMailbox(d.id, box.name).absoluteURL())
     } getOrElse obj1
 
-    val obj3 = Tenant.findById(d.forTenant) map { t =>
+    val obj3: HalJsObject = Tenant.findById(d.forTenant) map { t =>
       val tenantUrl = routes.Tenants.show(d.forTenant).absoluteURL()
-      val obj = HalJsObject.create(tenantUrl)
+      val tenant = HalJsObject.create(tenantUrl)
         .withLink("profile", "hoa:tenant")
         .withLink("collection", routes.Tenants.list().absoluteURL())
         .withField("id", t.id)
@@ -211,7 +204,9 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
         .withField("contactPerson", t.contactPerson)
         .withField("contactNumber", t.contactNumber)
         .withField("email", t.email)
-      obj2.withEmbedded(HalJsObject.empty.withField("tenant", obj.asJsValue))
+
+      val embedded = obj2.embedded.getOrElse(HalJsObject.empty)
+      obj2.withEmbedded(embedded.withField("tenant", tenant.asJsValue))
     } getOrElse obj2
 
     val withTotal = Templates.getTotal(d) match {
@@ -226,6 +221,21 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
           .withField("warning", warning)
     }
 
-    withTotal
+    def actionToJsObject(id: Int) = ActionLog.findById(id) map { log =>
+      JsObject(Seq(
+        "id" -> JsNumber(log.id),
+        "who" -> JsString(log.who),
+        "what" -> JsNumber(log.what),
+        "when" -> JsString(log.when.toString),
+        "why" -> JsString(log.why)))
+    }
+
+    val withActions = withTotal
+      .withField("lastAction", d.lastAction flatMap(actionToJsObject(_)))
+      .withField("preparedAction", d.preparedAction flatMap(actionToJsObject(_)))
+      .withField("checkedAction", d.checkedAction flatMap(actionToJsObject(_)))
+      .withField("approvedAction", d.approvedAction flatMap(actionToJsObject(_)))
+
+    withActions
   }
 }

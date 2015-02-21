@@ -21,8 +21,9 @@ object models {
   val documents = TableQuery[DocumentsModel]
   val userRoles = TableQuery[UserRolesModel]
   val mailTokens = TableQuery[MailTokensModel]
+  val actionLogs = TableQuery[ActionLogsModel]
   val tables = List(modelTemplates, roles, settings, tenants, users, documents,
-    userRoles, mailTokens)
+    userRoles, mailTokens, actionLogs)
 
   /**
    *  Builds tables one by one if they do not exist.
@@ -136,18 +137,15 @@ class DocumentsModel(tag: Tag) extends Table[Document](tag, "DOCUMENTS") {
   def comments = column[JsObject]("COMMENTS", O.NotNull)
   def assigned = column[Option[String]]("ASSIGNED")
 
-  def preparedBy = column[Option[String]]("PREPARED_BY")
-  def preparedOn = column[Option[DateTime]]("PREPARED_ON")
-  def checkedBy = column[Option[String]]("CHECKED_BY")
-  def checkedOn = column[Option[DateTime]]("CHECKED_ON")
-  def approvedBy = column[Option[String]]("APPROVED_BY")
-  def approvedOn = column[Option[DateTime]]("APPROVED_ON")
+  def lastAction = column[Option[Int]]("LAST_ACTION_ID")
+  def preparedAction = column[Option[Int]]("PREPARED_ACTION_ID")
+  def checkedAction = column[Option[Int]]("CHECKED_ACTION_ID")
+  def approvedAction = column[Option[Int]]("APPROVED_ACTION_ID")
 
-  def _creator = foreignKey("CREATOR_FK", creator, models.users)(_.userId)
+  def _creator = foreignKey("USER_FK", creator, models.users)(_.userId)
   def _forTenant = foreignKey("TENANT_FK", forTenant, models.tenants)(_.id)
 
-  def * = (id, serialId, title, docType, mailbox, creator, created, forTenant, forMonth, amountPaid, body, comments, assigned, preparedBy, preparedOn, checkedBy, checkedOn, approvedBy, approvedOn) <>
-    (Document.tupled, Document.unapply)
+  def * = (id, serialId, title, docType, mailbox, creator, created, forTenant, forMonth, amountPaid, body, comments, assigned, lastAction, preparedAction, checkedAction, approvedAction) <> (Document.tupled, Document.unapply)
 }
 
 class MailTokensModel(tag: Tag) extends Table[MailToken](tag, "MAIL_TOKENS") {
@@ -161,4 +159,15 @@ class MailTokensModel(tag: Tag) extends Table[MailToken](tag, "MAIL_TOKENS") {
     (MailToken.tupled, MailToken.unapply)
 }
 
-// class LogEntriesModel(tag: Tag) extends Table[LogEntry](tag, "LOG_ENTRIES") {}
+class ActionLogsModel(tag: Tag) extends Table[ActionLog](tag, "ACTION_LOGS") {
+  def id = column[Int]("ID", O.PrimaryKey, O.AutoInc)
+  def who = column[String]("WHO", O.NotNull)
+  def what = column[Int]("WHAT", O.NotNull)
+  def when = column[DateTime]("WHEN", O.NotNull)
+  def why = column[String]("WHY", O.NotNull)
+
+  def _who = foreignKey("USER_FK", who, models.users)(_.userId)
+  def _what = foreignKey("DOCUMENT_FK", what, models.documents)(_.id)
+
+  def * = (id, who, what, when, why) <> (ActionLog.tupled, ActionLog.unapply)
+}

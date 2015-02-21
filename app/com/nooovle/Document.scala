@@ -22,13 +22,10 @@ case class Document(
   body: JsObject,
   comments: JsObject,
   assigned: Option[String],
-  preparedBy: Option[String] = None,
-  preparedOn: Option[DateTime] = None,
-  checkedBy: Option[String] = None,
-  checkedOn: Option[DateTime] = None,
-  approvedBy: Option[String] = None,
-  approvedOn: Option[DateTime] = None) { // Which user is working on this now?
-
+  lastAction: Option[Int] = None,
+  preparedAction: Option[Int] = None,
+  checkedAction: Option[Int] = None,
+  approvedAction: Option[Int] = None) {
   // Returns that if exists, else this
   def replaceWith(that: Option[Document]): Document =
     {
@@ -40,7 +37,7 @@ case class Document(
     }
 }
 
-object Document extends ((Int, Option[String], String, String, String, String, DateTime, Int, DateTime, Double, JsObject, JsObject, Option[String], Option[String], Option[DateTime], Option[String], Option[DateTime], Option[String], Option[DateTime]) => Document) with ModelTemplate {
+object Document extends ((Int, Option[String], String, String, String, String, DateTime, Int, DateTime, Double, JsObject, JsObject, Option[String], Option[Int], Option[Int], Option[Int], Option[Int]) => Document) with ModelTemplate {
 
   def findById(id: Int): Option[Document] =
     ConnectionFactory.connect withSession { implicit session =>
@@ -49,15 +46,18 @@ object Document extends ((Int, Option[String], String, String, String, String, D
 
   def insert(creator: User, title: String, docType: String, forTenant: Int, forMonth: DateTime,
     body: JsObject): Try[Document] = {
-    val created = new DateTime()
-    // Set the assigned user as the creator
-    val newDoc = Document(0, None, title, docType, Workflow.start.name, creator.userId,
-      created, forTenant, forMonth, 0.0, body, JsObject(Seq.empty), Some(creator.userId))
+    val creationTime = new DateTime()
+    val doc = Document(0, None, title, docType, Workflow.start.name, creator.userId,
+      creationTime, forTenant, forMonth, 0.0, body, JsObject(Seq.empty), Some(creator.userId))
+
     ConnectionFactory.connect withSession { implicit session =>
-      Try {
-        // Return ID of newly inserted tenant
-        val id = (documents returning documents.map(_.id)) += newDoc
-        newDoc.copy(id = id)
+      // Return ID of newly inserted tenant
+      val id = (documents returning documents.map(_.id)) += doc
+
+      // Log this action
+      ActionLog.log(creator.userId, id, "Created document") map { log =>
+        val newDoc = doc.copy(id = id, lastAction = Some(log.id))
+        update(newDoc).get
       }
     }
   }
