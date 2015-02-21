@@ -1,5 +1,5 @@
 var hoaapp = angular.module('hoaApp', [
-    "ngCookies", "ngResource",
+    "ngCookies", "ngResource", "ngMessages",
     "ui.bootstrap", "ui.bootstrap.tooltip", "ui.router", "angularSpinner", "ui.bootstrap.datetimepicker", "angularMoment", "toastr", 'toaster', "ngAnimate",
     "module.users", "module.tenants", "module.mailbox"
     ]);
@@ -31,7 +31,7 @@ hoaapp.config(["$stateProvider", "$modalProvider",  "$urlRouterProvider", "$loca
                 response            : function(linksService, mailboxService, documentsService, $q) {
                     var deferred            = $q.defer();
                     var linksPromise        = linksService.getLinks();
-                    var mailboxPromise      = mailboxService.getMailbox();
+                    var mailboxPromise      = mailboxService.getLocal();
                     var documentsPromise    = documentsService.getDocumentList(null);
                     var success             = function(response){
                         deferred.resolve(response);
@@ -39,7 +39,6 @@ hoaapp.config(["$stateProvider", "$modalProvider",  "$urlRouterProvider", "$loca
 
                     $q.all([linksPromise, mailboxPromise, documentsPromise])
                         .then(success);
-                    console.log("mailbox");
                     return deferred.promise;
                 },
                 mailbox             : function(response) {
@@ -60,10 +59,6 @@ hoaapp.config(["$stateProvider", "$modalProvider",  "$urlRouterProvider", "$loca
                 "sidebar@workspace"     : {
                     templateUrl     : "app/components/shared/content/workspace/views/sidebar.html",
                     controller      : "sidebarController"
-                },
-                "contentArea@workspace" : {
-                    templateUrl     : "app/components/workspace/mailbox/views/maincontent-mailbox.html",
-                    controller      : "controller.documents"
                 }
             }
         };

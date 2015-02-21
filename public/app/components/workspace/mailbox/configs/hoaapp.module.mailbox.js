@@ -1,30 +1,10 @@
 var app = angular.module("module.mailbox", [
     "ui.bootstrap",
-    "ui.router"]);
+    "ui.router"
+]);
 
 app.config(["$stateProvider", "$urlRouterProvider", 
     function($stateProvider, $urlRouterProvider) {
-
-         var documents = {
-            url   : "documents",
-            views : {
-                "contentArea@workspace": {
-                    templateUrl : "app/components/workspace/mailbox/views/maincontent-mailbox.html",
-                    controller  : "controller.documents"
-                }
-            },
-            params : {mailbox : "Drafts", offset: 0},
-            resolve : {
-                documentsService    : "service.hoadocuments",
-                documentMailbox     : function($stateParams) {
-                    return $stateParams.mailbox;
-                },
-                documentsList       : function(documentsService, documentMailbox) {
-                    return documentsService.getDocumentList(documentMailbox);
-                }
-            }
-
-        };
 
         var create = {
             url     : "create",
@@ -32,7 +12,7 @@ app.config(["$stateProvider", "$urlRouterProvider",
                 documentsService    : "service.hoadocuments",
                 tenantsService      : "service.hoatenants",
                 templatesService    : "service.hoatemplates",
-                response            : function (tenantsService, templatesService, documentsService, $q) {
+                listResponse         : function (tenantsService, templatesService, documentsService, $q) {
                     var deferred = $q.defer();
                     var tenantsPromise   = tenantsService.getList();
                     var templatesPromise = templatesService.getLocal();
@@ -44,11 +24,11 @@ app.config(["$stateProvider", "$urlRouterProvider",
                         .then(success);
                     return deferred.promise;
                 },
-                tenantsList         : function(response) {
-                    return response[0];
+                tenantsList         : function(listResponse) {
+                    return listResponse[0];
                 },
-                template            : function(response) {
-                    return response[1];
+                template            : function(listResponse) {
+                    return listResponse[1];
                 }
             },
             views   : {
@@ -59,77 +39,101 @@ app.config(["$stateProvider", "$urlRouterProvider",
             }
         };
 
-        var drafts = {
-            url     : "edit/:id",
-            resolve : {
+        //region WORKSPACE.LIST
+        var list = {
+            url:'list?mailbox&page',
+            abstract    : true,
+            template    : '<ui-view/>',
+            resolve     : {
                 documentsService    : "service.hoadocuments",
-                templatesService    : 'service.hoatemplates',
-                response            : function(documentsService, templatesService, $stateParams, $q) {
-                    var deferred = $q.defer();
-                    var documentsPromise = documentsService.getDocument($stateParams.id);
-                    var templatesPromise = templatesService.getLocal();
-                    var success = function(response){
-                        deferred.resolve(response);
-                    };
-
-                    $q.all([documentsPromise, templatesPromise])
-                        .then(success);
-
-                    return deferred.promise;
+                documentMailbox     : function($stateParams) {
+                    if(!$stateParams.mailbox) $stateParams.mailbox = 'drafts';
+                    if(!$stateParams.page) $stateParams.page=0;
+                    return $stateParams.mailbox;
                 },
-                documentsResponse    : function(response) {
-                    return response[0];
+                documentsList       : function(documentsService, documentMailbox) {
+                    return documentsService.getDocumentList(documentMailbox);
                 },
-                templatesResponse    : function(response) {
-                    return response[1];
+                page                : function($stateParams) {
+                    return $stateParams.page;
                 }
-            },
+            }
+        };
+
+        var draftsList = {
+            url   : "/drafts",
+            views : {
+                "contentArea@workspace": {
+                    templateUrl : "app/components/workspace/mailbox/views/maincontent-list-drafts.html",
+                    controller  : "controller.documents"
+                }
+            }
+        };
+
+        var forCheckingList = {
+            url   : "/forChecking",
+            views : {
+                "contentArea@workspace": {
+                    templateUrl : "app/components/workspace/mailbox/views/maincontent-list-forchecking.html",
+                    controller  : "controller.documents"
+                }
+            }
+        };
+
+        var forApprovalList = {
+            url   : "/forApproval",
+            views : {
+                "contentArea@workspace": {
+                    templateUrl : "app/components/workspace/mailbox/views/maincontent-list-forapproval.html",
+                    controller  : "controller.documents"
+                }
+            }
+        };
+        //endregion
+
+        //region WORKSPACE.DOC
+        var editView = {
+            url     : "edit/:id",
             views   : {
                 "contentArea@workspace" : {
                     templateUrl : "app/components/workspace/mailbox/views/maincontent-document-drafts.html",
                     controller  : "controller.drafts"
                 }
+            },
+            resolve : {
+                documentsService    : "service.hoadocuments",
+                documentsResponse   : function(documentsService, $stateParams) {
+                    console.log("resolve");
+                    return documentsService.getDocument($stateParams.id);
+                }
             }
         };
 
-        var approvals = {
-            url     : "approvals/:id",
-            resolve : {
-                documentsService    : "service.hoadocuments",
-                templatesService    : 'service.hoatemplates',
-                response            : function(documentsService, templatesService, $stateParams, $q) {
-                    var deferred = $q.defer();
-                    var documentsPromise = documentsService.getDocument($stateParams.id);
-                    var templatesPromise = templatesService.getLocal();
-                    var success = function(response){
-                        deferred.resolve(response);
-                    };
-
-                    $q.all([documentsPromise, templatesPromise])
-                        .then(success);
-
-                    return deferred.promise;
-                },
-                documentsResponse    : function(response) {
-                    return response[0];
-                },
-                templatesResponse    : function(response) {
-                    return response[1];
-                }
-            },
+        var fixedView = {
+            url     :'view/:id',
             views   : {
                 "contentArea@workspace" : {
                     templateUrl : "app/components/workspace/mailbox/views/maincontent-document-approval.html",
-                    controller  : "controller.approval",
-                    controllerAs : 'approval'
+                    controller  : "controller.approval"
+                }
+            },
+            resolve : {
+                documentsService    : "service.hoadocuments",
+                documentsResponse   : function(documentsService, $stateParams) {
+                    return documentsService.getDocument($stateParams.id);
                 }
             }
         };
 
+        //endregion
+
         $stateProvider
-            .state("workspace.create",                  create)
-            .state("workspace.drafts",                   drafts)
-            .state("workspace.approval",               approvals)
-            .state("workspace.documents",              documents);
+            .state("workspace.create", create)
+            .state("workspace.pending", list)
+            .state("workspace.pending.drafts", draftsList)
+            .state("workspace.pending.for-checking", forCheckingList)
+            .state("workspace.pending.for-approval", forApprovalList)
+            .state("workspace.fixed-view", fixedView)
+            .state("workspace.edit-view", editView);
     }]);
 

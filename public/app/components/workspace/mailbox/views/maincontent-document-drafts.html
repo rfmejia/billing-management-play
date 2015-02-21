@@ -1,4 +1,3 @@
-
 <div class="container col-xs-12">
     <form name="billingForm" class="form-horizontal" novalidate form-watcher>
         <div class="form-group">
@@ -8,66 +7,69 @@
 
             <div class="createDocumentSection">
                 <legend>{{previous.title}}</legend>
-                    <div class="col-xs-12 input-group" ng-repeat="sections in previous.sections">
-                        <h6>{{sections.title}}</h6>
-                        <div ng-repeat="field in sections.fields" ng-form="previousForm"
-                             ng-class="{'has-error': previousForm.input.$dirty && previousForm.input.$invalid}">
+                <div class="col-xs-12 input-group" ng-repeat="sections in previous.sections">
+                    <h6>{{sections.title}}</h6>
 
-                            <label for="{{field.id}}" class="control-label col-xs-4 pull-left">{{field.title}}</label>
+                    <div ng-repeat="field in sections.fields" ng-form="previousForm"
+                         ng-class="{'has-error': previousForm.input.$dirty && previousForm.input.$invalid}">
 
-                            <div ng-switch on="field.datatype">
-                                <div ng-switch-when="integer" class="col-xs-8">
-                                    <input id="{{field.id}}" class="form-control input-md error" name="input"
-                                           ignore-mouse-wheel
-                                           type="number" ng-min="0" step="1"
-                                           placeholder="Input {{field.title}}"
-                                           ng-required="field.required" ng-model="field.value"
-                                           number-valid/>
-                                    <small class="help-block">
-                                        <span ng-class="isRequiredMuted(previousForm.input)">{{showErrorMessage(previousForm.input, field.required)}}</span>
-                                    </small>
-                                </div>
-                                <div ng-switch-when="double" class="col-xs-8">
-                                    <input id="{{field.id}}" class="form-control input-md error" name="input"
-                                           ignore-mouse-wheel
-                                           type="number" min="0" step="0.01"
-                                           placeholder="Input {{field.title}}"
-                                           ng-required="field.required"
-                                           ng-model="field.value"
-                                           number-valid
-                                           />
-                                    <small class="help-block">
-                                        <span ng-class="isRequiredMuted(previousForm.input)">{{showErrorMessage(previousForm.input, field.required)}}</span>
-                                    </small>
-                                </div>
-                                <div ng-switch-when="currency" class="col-xs-8">
-                                    <input id="{{field.id}}" class="form-control input-md error" name="input"
-                                           ignore-mouse-wheel
-                                           type="number" min="0" step="0.01"
-                                           placeholder="Input {{field.title}}"
-                                           ng-required="field.required" ng-model="field.value"
-                                           number-valid/>
-                                    <small class="help-block">
-                                        <span ng-class="isRequiredMuted(previousForm.input)">{{showErrorMessage(previousForm.input, field.required)}}</span>
-                                    </small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="subtotal col-xs-12 well well-emphasis well-sm" ng-form="previousFormTotal">
-                            <label for="previousTotal" class="control-label col-xs-4 pull-left">Previous total</label>
-                            <div class="col-xs-8" ng-class="{'has-error': previousFormTotal.previousTotal.$dirty && previousFormTotal.previousTotal.$invalid}">
-                                <input id="previousTotal" class="form-control input-md" name="previousTotal"
-                                       type="number" min="0" step="0.01" ignore-mouse-wheel
-                                       placeholder="Input {{sections.title}} total"
-                                       required ng-model="sections.total"
-                                       ng-change="computeSubtotal(previous)"
-                                       number-valid />
+                        <label for="{{field.id}}" class="control-label col-xs-4 pull-left">{{field.title}}</label>
+
+                        <div ng-switch on="field.datatype">
+                            <div ng-switch-when="integer" class="col-xs-8">
+                                <input id="{{field.id}}" class="form-control input-md error" name="input"
+                                       ignore-mouse-wheel
+                                       type="number" ng-min="0" step="1"
+                                       placeholder="Input {{field.title}}"
+                                       ng-required="field.required" ng-model="field.value"
+                                       number-valid/>
                                 <small class="help-block">
-                                    <span ng-class="isRequiredMuted(previousFormTotal.previousTotal)">{{showErrorMessage(previousFormTotal.previousTotal, true)}}</span>
+                                    <span ng-class="isRequiredMuted(previousForm.input)">{{showErrorMessage(previousForm.input, field.required)}}</span>
+                                </small>
+                            </div>
+                            <div ng-switch-when="double" class="col-xs-8">
+                                <input id="{{field.id}}" class="form-control input-md error" name="input"
+                                       ignore-mouse-wheel
+                                       type="number" min="0" step="0.01"
+                                       placeholder="Input {{field.title}}"
+                                       ng-required="field.required"
+                                       ng-model="field.value"
+                                       number-valid
+                                        />
+                                <small class="help-block">
+                                    <span ng-class="isRequiredMuted(previousForm.input)">{{showErrorMessage(previousForm.input, field.required)}}</span>
+                                </small>
+                            </div>
+                            <div ng-switch-when="currency" class="col-xs-8">
+                                <input id="{{field.id}}" class="form-control input-md error" name="input"
+                                       ignore-mouse-wheel
+                                       type="number" min="0" step="0.01"
+                                       placeholder="Input {{field.title}}"
+                                       ng-required="field.required" ng-model="field.value"
+                                       number-valid/>
+                                <small class="help-block">
+                                    <span ng-class="isRequiredMuted(previousForm.input)">{{showErrorMessage(previousForm.input, field.required)}}</span>
                                 </small>
                             </div>
                         </div>
                     </div>
+                    <div class="subtotal col-xs-12 well well-emphasis well-sm" ng-form="previousFormTotal">
+                        <label for="previousTotal" class="control-label col-xs-4 pull-left">Previous total</label>
+
+                        <div class="col-xs-8"
+                             ng-class="{'has-error': previousFormTotal.previousTotal.$dirty && previousFormTotal.previousTotal.$invalid}">
+                            <input id="previousTotal" class="form-control input-md" name="previousTotal"
+                                   type="number" min="0" step="0.01" ignore-mouse-wheel
+                                   placeholder="Input {{sections.title}} total"
+                                   required ng-model="sections.total"
+                                   ng-change="computeSubtotal(previous)"
+                                   number-valid/>
+                            <small class="help-block">
+                                <span ng-class="isRequiredMuted(previousFormTotal.previousTotal)">{{showErrorMessage(previousFormTotal.previousTotal, true)}}</span>
+                            </small>
+                        </div>
+                    </div>
+                </div>
 
             </div>
 
@@ -75,6 +77,7 @@
                 <legend>{{thisMonth.title}}</legend>
                 <div class="col-xs-12 input-group" ng-repeat="sections in thisMonth.sections">
                     <h6>{{sections.title}}</h6>
+
                     <div ng-repeat="field in sections.fields" ng-form="thisMonth"
                          ng-class="{'has-error': thisMonth.input.$dirty && thisMonth.input.$invalid}">
 
@@ -88,7 +91,7 @@
                                        placeholder="Input {{field.title}}"
                                        ng-required="field.required" ng-model="field.value"
                                        number-valid/>
-                                <small ng-show="thisMonth.input.$invalid && !previousForm.input.$pristine"
+                                <small ng-show="thisMonth.input.$invalid && !thisMonth.input.$pristine"
                                        class="help-block muted">
                                     <span ng-show="thisMonth.input.$error.required">Required : </span>
                                     <span ng-show="thisMonth.input.$error.number">Numbers only please</span>
@@ -129,11 +132,12 @@
                             <div class="col-xs-8" ng-switch-when="date" dropdown>
                                 <a class="dropdown-toggle" id="{{field.id}}" role="button" data-toggle="dropdown"
                                    data-target="#" href>
-                                    <div class="col-xs-12 input-group" ng-class="{'has-error': billingForm.billDate.$dirty && billingForm.billDate.$invalid}">
+                                    <div class="col-xs-12 input-group"
+                                         ng-class="{'has-error': billingForm.billDate.$dirty && billingForm.billDate.$invalid}">
                                         <input type="text" class="form-control" name="input"
                                                data-ng-model="field.value"
                                                placeholder="Input {{field.title}}"
-                                               ng-change="validateDateRange(field, thisMonth.input)" >
+                                               ng-change="validateDateRange(field, thisMonth.input)">
                                         <small class="help-block">
                                             <span ng-class="isRequiredMuted(thisMonth.input)">{{showErrorMessage(thisMonth.input, field.required)}}</span>
                                         </small>
@@ -149,8 +153,11 @@
                         </div>
                     </div>
                     <div class="subtotal col-xs-12 well well-emphasis well-sm" ng-form="currentFormTotal">
-                        <label for="{{sections.title}}" class="control-label col-xs-4 pull-left">{{sections.title}} total</label>
-                        <div class="col-xs-8" ng-class="{'has-error': currentFormTotal.inputTotal.$dirty && currentFormTotal.inputTotal.$invalid}">
+                        <label for="{{sections.title}}" class="control-label col-xs-4 pull-left">{{sections.title}}
+                            total</label>
+
+                        <div class="col-xs-8"
+                             ng-class="{'has-error': currentFormTotal.inputTotal.$dirty && currentFormTotal.inputTotal.$invalid}">
                             <input id="{{sections.title}}" class="form-control input-md" name="inputTotal"
                                    type="number" min="0" step="0.01" ignore-mouse-wheel
                                    placeholder="Input {{sections.title}} total"
@@ -161,9 +168,9 @@
                                 <span ng-class="isRequiredMuted(currentFormTotal.inputTotal)">{{showErrorMessage(currentFormTotal.inputTotal, true)}}</span>
                             </small>
                         </div>
+                    </div>
                 </div>
             </div>
-        </div>
 
 
             <div class="well well-emphasis">
@@ -185,6 +192,7 @@
             <div id="documentControls" class="well-sm">
                 <div class="form-group">
                     <label for="documentComments" class="col-lg-2 control-label">Comments</label>
+
                     <div class="col-lg-10">
                         <textarea class="form-control" rows="5" id="documentComments"
                                   ng-model="currentComment"></textarea>
@@ -194,19 +202,24 @@
 
                 <button type="button" class="btn btn-default" ng-click="onCancelClicked()">Cancel</button>
                 <button type="button" class="btn btn-default" ng-click="onSaveClicked(billingForm)">Save</button>
-                <button type="submit" class="btn btn-default" ng-click="onSubmitClicked()" ng-disabled="billingForm.$invalid">Submit</button>
+                <button type="submit" class="btn btn-default" ng-click="onSubmitClicked()"
+                        ng-disabled="billingForm.$invalid">Submit
+                </button>
                 <button type="button" class="btn btn-danger pull-right" ng-click="onDeleteClicked()">Delete
                 </button>
                 <p class="text-warning" ng-show="billingForm.$invalid">Can't submit document with invalid fields</p>
                 <br/>
-                <h6 class="">Comments</h6>
-                <section class="comments-list">
-                    <hoa-comments ng-repeat="comment in comments.previous" is-current="isCurrent" timestamp="comment.timestamp" user="comment.user" comment="comment.comment"></hoa-comments>
+                <h6>Previous comments</h6>
+                <section class="comment-list">
+                    <hoa-comments ng-repeat="comment in commentsList.comments" is-current="comment.isCurrent"
+                                  timestamp="comment.timestamp" user="comment.user"
+                                  comment="comment.comment"></hoa-comments>
                 </section>
 
             </div>
 
-        </div> <!--end form group -->
+        </div>
+        <!--end form group -->
     </form>
 </div>
 

@@ -96,3 +96,27 @@ hoaDirectives.directive('hoaComments', function () {
         '</article>'
     };
 });
+
+hoaDirectives.directive('hoaActivate', function ($location) {
+    return {
+        restrict: 'A',
+        link: function (scope, element, attrs) {
+            var active = "active";
+            var path = attrs.path;
+            scope.$location = $location;
+            scope.$watch('$location.path()', function (locationPath) {
+                locationPath.search(path) != -1
+                    ? element.addClass(active)
+                    : element.removeClass(active);
+            });
+        }
+    }
+});
+
+
+hoaDirectives.directive('nooovleError', function () {
+    return {
+        restrict: 'E',
+        template: '<script type="text/ng-template" id="nooovle-error">\n    <span ng-message="required" class="text-danger">This is required</span>\n    <span ng-message="number" class="text-danger">Oops! Numbers only please.</span>\n    <span ng-message="min" class="text-danger">Positive numbers only</span>\n    <span ng-message="date" class="text-danger">Invalid date format. Please use the date picker</span>\n    <span ng-message="email" class="text-danger">Please enter a valid-email address</span>\n</script>'
+    }
+});

@@ -3,11 +3,8 @@
  */
 var approve = angular.module("module.mailbox");
 
-approve.controller("controller.approval", ['$scope', '$state', 'documentsService', 'documentsResponse', 'templatesResponse', '$modal', 'moment', 'toaster',
-    function ApprovalCtrlr($scope, $state, documentsService, documentsResponse, templatesResponse, $modal, moment, toaster) {
-
-        this.comments = "jc";
-
+approve.controller("controller.approval", ['$scope', '$state', 'documentsService', 'documentsResponse', '$modal', 'moment', 'toaster',
+    function($scope, $state, documentsService, documentsResponse, $modal, moment, toaster) {
         /** Previous months template **/
         $scope.previous = documentsResponse.details.breakdown.previous;
         /** This months template **/
@@ -21,20 +18,17 @@ approve.controller("controller.approval", ['$scope', '$state', 'documentsService
             "comments" : documentsResponse.details.summary.comments
         };
         /** If null, this means that this document has not been pushed to the server yet **/
-        $scope.documentId = documentsResponse.documentId;
+        var documentId = documentsResponse.documentId;
         /** The tenant's id **/
-        $scope.tenantId = documentsResponse.forTenant;
+        var tenantId = documentsResponse.forTenant;
         /** The document's billing month **/
-        $scope.billingPeriod = documentsResponse.forMonth;
+        var billingPeriod = documentsResponse.forMonth;
         /** Submit url **/
-        $scope.submitUrl = documentsResponse.nextBox.href;
+        var submitUrl = documentsResponse.nextBox.href;
         /** Reject url **/
-        $scope.rejectUrl = documentsResponse.prevBox.href;
+        var rejectUrl = documentsResponse.prevBox.href;
         /** Document title for display **/
         $scope.documentTitle = documentsResponse.title;
-        /** template as provided for by the server **/
-        //TODO: remove this no longer needed since the service parses it for us.
-        $scope.postTemplate = templatesResponse;
         /** Format used for all dates **/
         $scope.format = "MMMM-YYYY";
         /** Modal button positive **/
@@ -45,31 +39,25 @@ approve.controller("controller.approval", ['$scope', '$state', 'documentsService
         $scope.modal = {};
 
         /**
-         * Submits the current document to the next box
+         * Submits the current document to the next box or previous box depending on the passed in boolean
+         * @param isApproved if true will send to next box otherwise will send to previous box
          */
-        $scope.onApproveClicked = function() {
+        $scope.onMoveToBoxClicked = function(isApproved) {
+            var message = isApproved
+                ? 'Document was sent for checking'
+                : 'Document returned';
+            var url = isApproved
+                ? submitUrl
+                : rejectUrl;
             var postData = preparePostData();
             var success = function(response) {
-                toaster.pop('success', 'Submitted!', 'Your document was sent for checking.');
+                toaster.pop('success', message);
+                $state.go("workspace.pending.drafts");
             };
-
             var error = function(error) {};
 
-            documentsService.submitToNextBox($scope.documentId, $scope.submitUrl, postData)
+            documentsService.moveToBox(documentId, url, postData)
                 .then(success);
-        };
-
-        /**
-         * Callback for when the cancel button is clicked
-         */
-        $scope.onRejectClicked = function() {
-            if($scope.billingForm.$pristine) {
-                $state.go("workspace.documents");
-            }
-            else {
-                $scope.prepareCancelModal();
-                $scope.openModal();
-            }
         };
 
         /**
@@ -128,7 +116,7 @@ approve.controller("controller.approval", ['$scope', '$state', 'documentsService
             //TODO: Prepare post data to return to the prev box
             $scope.modalPositive = function(response) {
                 var postData = preparePostData();
-                $state.go("workspace.documents");
+                $state.go("workspace.pending.drafts");
             };
 
             $scope.modalNegative = function(error) {};
@@ -138,9 +126,10 @@ approve.controller("controller.approval", ['$scope', '$state', 'documentsService
          * Service formats the data and this function will return the formatted post data ready for posting.
          */
         var preparePostData = function() {
+            console.log($scope.commentsList)
             return documentsService.formatPostData(
-                $scope.forMonth,
-                $scope.tenantId,
+                billingPeriod,
+                tenantId,
                 $scope.previous,
                 $scope.thisMonth,
                 $scope.documentTitle,

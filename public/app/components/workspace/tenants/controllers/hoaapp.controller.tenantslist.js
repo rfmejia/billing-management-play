@@ -6,7 +6,7 @@ tenants.controller("controller.tenantslist", ["$scope", "$state", "$modal", "ten
         $scope.tenants = response.tenants;
         //Callback for tenant item clicked
         $scope.onTenantClick = function(tenant) {
-            $state.go("workspace.tenants.tenantView", {"id" : tenant.id});
+            $state.go("workspace.management.tenants.tenant-view", {"id" : tenant.id});
         };
 
         //Callback for invite button clicked
@@ -20,6 +20,7 @@ tenants.controller("controller.tenantslist", ["$scope", "$state", "$modal", "ten
                         return tenantsService;
                     },
         			tenantCreateTemplate  : function() {
+                        console.log(response.template);
         				return response.template;
         			}
         		}

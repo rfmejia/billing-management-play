@@ -1,7 +1,10 @@
+/**
+ * Created by juancarlos.yu on 2/15/15.
+ */
 var drafts = angular.module("module.mailbox");
 
-drafts.controller("controller.drafts", ["$scope", "$state", "documentsService", "documentsResponse", "templatesResponse", "$modal", "moment", "toaster",
-        function($scope, $state, documentsService, documentsResponse, templatesResponse, $modal, moment, toaster){
+drafts.controller("controller.drafts", ["$scope", "$state", "documentsService", "documentsResponse", "$modal", "moment", "toaster",
+        function($scope, $state, documentsService, documentsResponse, $modal, moment, toaster){
             /** Previous months template **/
             $scope.previous = documentsResponse.details.breakdown.previous;
             /** This months template **/
@@ -26,9 +29,6 @@ drafts.controller("controller.drafts", ["$scope", "$state", "documentsService", 
             $scope.submitUrl = documentsResponse.nextBox.href;
             /** Document title for display **/
             $scope.documentTitle = documentsResponse.title;
-            /** template as provided for by the server **/
-            //TODO remove this since the service parses the data for us.
-            $scope.postTemplate = templatesResponse;
             /** Format used for all dates **/
             $scope.format = "MMMM-YYYY";
             /** Modal button positive **/
@@ -38,6 +38,7 @@ drafts.controller("controller.drafts", ["$scope", "$state", "documentsService", 
             /** Modal information **/
             $scope.modal = {};
 
+            console.log($scope.commentsList);
             //region FUNCTIONS
             /**
              * Sets the string date for other input fields
@@ -68,14 +69,14 @@ drafts.controller("controller.drafts", ["$scope", "$state", "documentsService", 
              */
             $scope.onSubmitClicked = function() {
                 var postData = preparePostData();
-                console.log(postData);
                 var success = function(response) {
                     toaster.pop('success', 'Submitted!', 'Your document was sent for checking.');
+                    $state.go("workspace.pending.drafts")
                 };
 
                 var error = function(error) {};
 
-                documentsService.submitToNextBox($scope.documentId, $scope.submitUrl, postData)
+                documentsService.moveToBox($scope.documentId, $scope.submitUrl, postData)
                     .then(success);
 
             };
@@ -104,7 +105,7 @@ drafts.controller("controller.drafts", ["$scope", "$state", "documentsService", 
              */
             $scope.onCancelClicked = function() {
                 if($scope.billingForm.$pristine) {
-                    $state.go("workspace.documents");
+                    $state.go("workspace.pending.drafts");
                 }
                 else {
                     $scope.prepareCancelModal();
@@ -191,7 +192,7 @@ drafts.controller("controller.drafts", ["$scope", "$state", "documentsService", 
                     documentsService.deleteDocument($scope.documentId)
                         .then(function(response) {
                             toaster.pop("warning", "Delete successful");
-                            $state.go("workspace.documents");
+                            $state.go("workspace.pending.drafts");
                         }, function(error) {
                             toaster.pop("error", "We couldn't delete your document");
                         });
@@ -216,7 +217,7 @@ drafts.controller("controller.drafts", ["$scope", "$state", "documentsService", 
                 $scope.modal.message = "Are you sure you want to cancel?";
 
                 $scope.modalPositive = function(response) {
-                    $state.go("workspace.documents");
+                    $state.go("workspace.pending.drafts");
                 };
 
                 $scope.modalNegative = function(error) {};
@@ -233,7 +234,7 @@ drafts.controller("controller.drafts", ["$scope", "$state", "documentsService", 
             };
 
             /**
-             * Will determine which error message to shwo
+             * Will determine which error message to show
              * @param input
              * @param isRequired
              * @returns {string}
@@ -250,7 +251,6 @@ drafts.controller("controller.drafts", ["$scope", "$state", "documentsService", 
                 }
             };
 
-
             /**
              * Service formats the data and this function will return the formatted post data ready for posting.
              */
@@ -266,8 +266,6 @@ drafts.controller("controller.drafts", ["$scope", "$state", "documentsService", 
                     $scope.commentsList.comments
                 );
             };
-
-
         //endregion
 
 	}]

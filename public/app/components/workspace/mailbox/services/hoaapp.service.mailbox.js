@@ -15,13 +15,8 @@ mailbox.service("service.hoamailbox", ["$resource", "$q", "service.hoalinks",
 				return deferred.resolve(response);
 			};
 
-			var parse 	 = function(response) {
-				return response.mailbox;
-			};
-
 			var query 	 = function() {
 				resource.get().$promise
-                    .then(parse)
 				    .then(success);
 
 			};
@@ -41,4 +36,23 @@ mailbox.service("service.hoamailbox", ["$resource", "$q", "service.hoalinks",
 		this.getMailbox = function() {
 			return makeRequest();
 		};
+
+        this.getLocal = function() {
+            var deferred = $q.defer();
+            resource = $resource("../../../../../../assets/templates/mailbox.json", {}, {
+                get : {method : "GET", isArray: false}
+            });
+
+            var success = function(response) {
+                deferred.resolve(response);
+            };
+
+            var query = function() {
+                resource.get().$promise
+                    .then(success);
+            };
+
+            query();
+            return deferred.promise;
+        }
 	}]);

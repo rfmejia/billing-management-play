@@ -1,8 +1,7 @@
 var drafts = angular.module("module.mailbox");
 
-drafts.controller("controller.documents", ["$scope", "$state", "documentsList", "documentsService", "documentMailbox",
-    function($scope, $state, documentsList, documentsService, documentMailbox){
-        console.log(documentMailbox);
+drafts.controller("controller.documents", ["$scope", "$state", "documentsList", "documentsService", "documentMailbox", "page",
+    function($scope, $state, documentsList, documentsService, documentMailbox, page){
         $scope.documentsList = documentsList.documentsList;
         var maxPages = 0;
         //index of first number displayed in pagination
@@ -12,7 +11,11 @@ drafts.controller("controller.documents", ["$scope", "$state", "documentsList", 
         var limitRequest = documentsService.getLimitRequest();
         $scope.pages = [];
         $scope.pagesSliced = [];
-        $scope.currentPage = 1;
+        /** Page is 0 indexed **/
+        page++;
+        $scope.pagination = {
+            "currentPage" : page
+        };
 
         //Pagination
         var splitPages = function() {
@@ -48,19 +51,18 @@ drafts.controller("controller.documents", ["$scope", "$state", "documentsList", 
 
         //event listeners
         $scope.onDocumentItemClicked = function(document) {
-            if(documentMailbox == "Drafts") {
-                console.log("drafts");
-                console.log(documentMailbox);
-                $state.go("workspace.drafts", {"id" : document.id});
-            }
-            else if(documentMailbox == "forChecking" || documentMailbox == "forApproval") {
-                $state.go("workspace.approval", {"id" : document.id});
-            }
+            var state = "";
+
+            if(documentMailbox == "drafts") state = "workspace.edit-view";
+            else state = "workspace.fixed-view";
+
+            $state.go(state, {"id" : document.id});
         };
 
         $scope.onChangePageClicked = function(selectedPage) {
+            console.log(page);
             requestNewPage(selectedPage-1);
-            $scope.currentPage = selectedPage;
+            $scope.pagination.currentPage = selectedPage;
         };
 
         $scope.onChangeSliceClicked = function(step) {

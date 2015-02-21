@@ -40,13 +40,16 @@ documents.service('service.hoadocuments', ['$resource', '$q', 'service.hoalinks'
                 "forMonth"      : response.forMonth,
                 "nextBox"       : response._links["hoa:nextBox"],
                 "prevBox"       : response._links["hoa:prevBox"],
-                "postTemplate"  : extractEditPostDetails(response._template.edit.data[0])
+                "postTemplate"  : extractEditPostDetails(response)
             }
         };
 
         var extractEditPostDetails = function(response) {
+            var template = {};
+            if(response._template.edit == undefined) template = response._template.create.data[0];
+            else template = response;
             var postTemplate = {};
-            angular.forEach(response, function(value){
+            angular.forEach(template, function(value){
                 postTemplate[value.name] = null;
             });
             return postTemplate;
@@ -96,6 +99,7 @@ documents.service('service.hoadocuments', ['$resource', '$q', 'service.hoalinks'
             var request = function() {
                 switch(type) {
                     case requestType.GET:
+                        console.log(id);
                         resource.get(id).$promise
                             .then(extractEditDetails, error)
                             .then(success);
@@ -160,10 +164,8 @@ documents.service('service.hoadocuments', ['$resource', '$q', 'service.hoalinks'
             return limit;
         };
 
-        this.submitToNextBox = function(id, url, data) {
+        this.moveToBox = function(id, url, data) {
             var deferred = $q.defer();
-
-            console.log(url);
 
             var  submitResource = $resource(url, {}, {
                 create  : {method: "POST", isArray: false, headers:{"Content-Type" : "application/json"}}
@@ -246,7 +248,8 @@ documents.service('service.hoadocuments', ['$resource', '$q', 'service.hoalinks'
                 value.isCurrent = false;
             });
 
-            if(currentComment != null || currentComment != '') {
+            if(currentComment) {
+                console.log(currentComment);
                 commentObject.isCurrent = true;
                 commentObject.user = "Test user";
                 commentObject.timestamp = moment(new Date).format("MMMM DD, YYYY");

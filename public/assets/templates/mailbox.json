@@ -1,0 +1,102 @@
+{
+  "_links": {
+    "curies": [
+      {
+        "name": "hoa",
+        "href": "http://localhost:9000/api/docs/{rel}",
+        "templated": true
+      }
+    ],
+    "self": {
+      "href": "http://localhost:9000/api/mailboxes"
+    },
+    "profile": {
+      "href": "collection"
+    }
+  },
+  "workflow": {
+    "title": "Workflow",
+    "path" : "workspace",
+    "link" : "workspace",
+    "queryKey": "",
+    "queryParam": "",
+    "subFolders": [
+      {
+        "title": "Pending",
+        "path" : "workspace.pending",
+        "link" : "pending",
+        "queryKey": "mailbox",
+        "queryParam": "pending",
+        "subFolders": [
+          {
+            "title": "Drafts",
+            "path" : "workspace.pending.drafts",
+            "queryKey": "mailbox",
+            "queryParam": "drafts",
+            "link" : "drafts",
+            "subFolders": []
+          },
+          {
+            "title": "For checking",
+            "path" : "workspace.pending.for-checking",
+            "queryKey": "mailbox",
+            "queryParam": "forChecking",
+            "link": "forChecking",
+            "subFolders": []
+          },
+          {
+            "title": "For approval",
+            "path" : "workspace.pending.for-approval",
+            "queryKey": "mailbox",
+            "queryParam": "forApproval",
+            "link": "forApproval",
+            "subFolders": []
+          }
+        ]
+      },
+      {
+        "title": "Management",
+        "path": "workspace.management",
+        "link" : "management",
+        "queryKey": "",
+        "queryParam": "",
+        "subFolders": [
+          {
+            "title": "Delivered",
+            "path": "management.management.delivered",
+            "link" : "delivered",
+            "queryKey": "mailbox",
+            "queryParam": "delivered",
+            "subFolders": [
+              {
+                "title": "Paid",
+                "path": "workspace.management.delivered.paid",
+                "queryKey": "mailbox",
+                "queryParam": "paid",
+                "link": "paid",
+                "subFolders": []
+              },
+              {
+                "title": "unpaid",
+                "path": "workspace.management.delivered.unpaid",
+                "queryKey": "mailbox",
+                "queryParam": "unpaid",
+                "link": "unpaid",
+                "subFolders": []
+              }
+            ]
+          },
+          {
+            "title": "Tenants",
+            "path": "workspace.management.tenants",
+            "queryKey": "",
+            "queryParam": "",
+            "link": "tenants",
+            "subFolders": []
+          }
+        ]
+      }
+
+    ]
+  }
+}
