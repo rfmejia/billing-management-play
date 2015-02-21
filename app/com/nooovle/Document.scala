@@ -20,6 +20,7 @@ case class Document(
   forMonth: DateTime,
   amountPaid: Double,
   body: JsObject,
+  comments: JsObject,
   preparedBy: Option[String] = None,
   preparedOn: Option[DateTime] = None,
   checkedBy: Option[String] = None,
@@ -39,7 +40,7 @@ case class Document(
     }
 }
 
-object Document extends ((Int, Option[String], String, String, String, String, DateTime, Int, DateTime, Double, JsObject, Option[String], Option[DateTime], Option[String], Option[DateTime], Option[String], Option[DateTime], Option[String]) => Document) with ModelTemplate {
+object Document extends ((Int, Option[String], String, String, String, String, DateTime, Int, DateTime, Double, JsObject, JsObject, Option[String], Option[DateTime], Option[String], Option[DateTime], Option[String], Option[DateTime], Option[String]) => Document) with ModelTemplate {
 
   def findById(id: Int): Option[Document] =
     ConnectionFactory.connect withSession { implicit session =>
@@ -51,7 +52,7 @@ object Document extends ((Int, Option[String], String, String, String, String, D
     val created = new DateTime()
     val creator = "To implement"
     val newDoc = Document(0, None, title, docType, Workflow.start.name, creator,
-      created, forTenant, forMonth, 0.0, body)
+      created, forTenant, forMonth, 0.0, body, JsObject(Seq.empty))
     ConnectionFactory.connect withSession { implicit session =>
       Try {
         // Returns ID of newly inserted tenant
@@ -84,6 +85,7 @@ object Document extends ((Int, Option[String], String, String, String, String, D
     ModelInfo("DOCUMENTS", "forTenant", "Int", Required, Uneditable, Some("For tenant")),
     ModelInfo("DOCUMENTS", "forMonth", "DateTime", Required, Uneditable, Some("For the month of")),
     ModelInfo("DOCUMENTS", "amountPaid", "Double", Uneditable, Editable, Some("Amount paid")),
-    ModelInfo("DOCUMENTS", "body", "String", Required, Editable, Some("Document JSON body (free-form)")),
+    ModelInfo("DOCUMENTS", "body", "JSON", Required, Editable, Some("Document JSON body (free-form)")),
+    ModelInfo("DOCUMENTS", "comments", "JSON", Uneditable, Editable, Some("Document JSON body (free-form)")),
     ModelInfo("DOCUMENTS", "assigned", "String", Uneditable, Editable, Some("Currently assigned to")))
 }
