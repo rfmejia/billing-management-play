@@ -59,6 +59,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
         .withField("forTenant", d.forTenant)
         .withField("forMonth", d.forMonth)
         .withField("amountPaid", d.amountPaid)
+        .withField("creator", d.creator)
         .withField("assigned", d.assigned)
 
       val withTotal = Templates.getTotal(d) match {
@@ -106,7 +107,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
         case (Some(title), Some(docType), Some(forTenant), Some(forMonth), Some(body)) =>
           Try(DateTime.parse(forMonth)) match {
             case Success(date) =>
-              Document.insert(title, docType, forTenant, date, body) match {
+              Document.insert(request.user, title, docType, forTenant, date, body) match {
                 case Success(doc) =>
                   val link = routes.Documents.show(doc.id).absoluteURL()
                   val body = documentToHalJsObject(doc)

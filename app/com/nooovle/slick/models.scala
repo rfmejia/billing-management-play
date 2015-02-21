@@ -134,6 +134,7 @@ class DocumentsModel(tag: Tag) extends Table[Document](tag, "DOCUMENTS") {
   def amountPaid = column[Double]("AMOUNT_PAID", O.NotNull)
   def body = column[JsObject]("BODY", O.NotNull)
   def comments = column[JsObject]("COMMENTS", O.NotNull)
+  def assigned = column[Option[String]]("ASSIGNED")
 
   def preparedBy = column[Option[String]]("PREPARED_BY")
   def preparedOn = column[Option[DateTime]]("PREPARED_ON")
@@ -141,13 +142,11 @@ class DocumentsModel(tag: Tag) extends Table[Document](tag, "DOCUMENTS") {
   def checkedOn = column[Option[DateTime]]("CHECKED_ON")
   def approvedBy = column[Option[String]]("APPROVED_BY")
   def approvedOn = column[Option[DateTime]]("APPROVED_ON")
-  def assigned = column[Option[String]]("ASSIGNED")
 
-  //def _creator = foreignKey("CREATOR_FK", creator, models.users)(_.userId)
-  //def _assigned = foreignKey("ASSIGNED_FK", assigned, models.users)(_.userId)
+  def _creator = foreignKey("CREATOR_FK", creator, models.users)(_.userId)
   def _forTenant = foreignKey("TENANT_FK", forTenant, models.tenants)(_.id)
 
-  def * = (id, serialId, title, docType, mailbox, creator, created, forTenant, forMonth, amountPaid, body, comments, preparedBy, preparedOn, checkedBy, checkedOn, approvedBy, approvedOn, assigned) <>
+  def * = (id, serialId, title, docType, mailbox, creator, created, forTenant, forMonth, amountPaid, body, comments, assigned, preparedBy, preparedOn, checkedBy, checkedOn, approvedBy, approvedOn) <>
     (Document.tupled, Document.unapply)
 }
 

@@ -21,13 +21,13 @@ case class Document(
   amountPaid: Double,
   body: JsObject,
   comments: JsObject,
+  assigned: Option[String],
   preparedBy: Option[String] = None,
   preparedOn: Option[DateTime] = None,
   checkedBy: Option[String] = None,
   checkedOn: Option[DateTime] = None,
   approvedBy: Option[String] = None,
-  approvedOn: Option[DateTime] = None,
-  assigned: Option[String] = None) { // Which user is working on this now?
+  approvedOn: Option[DateTime] = None) { // Which user is working on this now?
 
   // Returns that if exists, else this
   def replaceWith(that: Option[Document]): Document =
@@ -40,22 +40,22 @@ case class Document(
     }
 }
 
-object Document extends ((Int, Option[String], String, String, String, String, DateTime, Int, DateTime, Double, JsObject, JsObject, Option[String], Option[DateTime], Option[String], Option[DateTime], Option[String], Option[DateTime], Option[String]) => Document) with ModelTemplate {
+object Document extends ((Int, Option[String], String, String, String, String, DateTime, Int, DateTime, Double, JsObject, JsObject, Option[String], Option[String], Option[DateTime], Option[String], Option[DateTime], Option[String], Option[DateTime]) => Document) with ModelTemplate {
 
   def findById(id: Int): Option[Document] =
     ConnectionFactory.connect withSession { implicit session =>
       (for (d <- documents if d.id === id) yield d).firstOption
     }
 
-  def insert(title: String, docType: String, forTenant: Int, forMonth: DateTime,
+  def insert(creator: User, title: String, docType: String, forTenant: Int, forMonth: DateTime,
     body: JsObject): Try[Document] = {
     val created = new DateTime()
-    val creator = "To implement"
-    val newDoc = Document(0, None, title, docType, Workflow.start.name, creator,
-      created, forTenant, forMonth, 0.0, body, JsObject(Seq.empty))
+    // Set the assigned user as the creator
+    val newDoc = Document(0, None, title, docType, Workflow.start.name, creator.userId,
+      created, forTenant, forMonth, 0.0, body, JsObject(Seq.empty), Some(creator.userId))
     ConnectionFactory.connect withSession { implicit session =>
       Try {
-        // Returns ID of newly inserted tenant
+        // Return ID of newly inserted tenant
         val id = (documents returning documents.map(_.id)) += newDoc
         newDoc.copy(id = id)
       }
@@ -85,7 +85,7 @@ object Document extends ((Int, Option[String], String, String, String, String, D
     ModelInfo("DOCUMENTS", "forTenant", "Int", Required, Uneditable, Some("For tenant")),
     ModelInfo("DOCUMENTS", "forMonth", "DateTime", Required, Uneditable, Some("For the month of")),
     ModelInfo("DOCUMENTS", "amountPaid", "Double", Uneditable, Editable, Some("Amount paid")),
-    ModelInfo("DOCUMENTS", "body", "JSON", Required, Editable, Some("Document JSON body (free-form)")),
-    ModelInfo("DOCUMENTS", "comments", "JSON", Uneditable, Editable, Some("Document JSON body (free-form)")),
+    ModelInfo("DOCUMENTS", "body", "JSON", Required, Editable, Some("Document body (free-form JSON object)")),
+    ModelInfo("DOCUMENTS", "comments", "JSON", Uneditable, Editable, Some("Comments (free-form JSON object)")),
     ModelInfo("DOCUMENTS", "assigned", "String", Uneditable, Editable, Some("Currently assigned to")))
 }
