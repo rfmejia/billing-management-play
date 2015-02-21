@@ -75,17 +75,17 @@ object Document extends ((Int, Option[String], String, String, String, String, D
 
   val modelName = "DOCUMENTS"
   lazy val modelInfos = Seq(
-    ModelInfo("DOCUMENTS", "id", "UUID", Uneditable, Uneditable, Some("ID")),
-    ModelInfo("DOCUMENTS", "serialId", "String", Uneditable, Uneditable, Some("Serial ID")),
-    ModelInfo("DOCUMENTS", "title", "String", Required, Editable, Some("Title")),
-    ModelInfo("DOCUMENTS", "docType", "String", Required, Uneditable, Some("Document type")),
-    ModelInfo("DOCUMENTS", "mailbox", "String", Uneditable, Uneditable, Some("Mailbox")),
-    ModelInfo("DOCUMENTS", "creator", "String", Uneditable, Uneditable, Some("Created by")),
-    ModelInfo("DOCUMENTS", "created", "DateTime", Uneditable, Uneditable, Some("Created on")),
-    ModelInfo("DOCUMENTS", "forTenant", "Int", Required, Uneditable, Some("For tenant")),
-    ModelInfo("DOCUMENTS", "forMonth", "DateTime", Required, Uneditable, Some("For the month of")),
-    ModelInfo("DOCUMENTS", "amountPaid", "Double", Uneditable, Editable, Some("Amount paid")),
-    ModelInfo("DOCUMENTS", "body", "JSON", Required, Editable, Some("Document body (free-form JSON object)")),
-    ModelInfo("DOCUMENTS", "comments", "JSON", Uneditable, Editable, Some("Comments (free-form JSON object)")),
-    ModelInfo("DOCUMENTS", "assigned", "String", Uneditable, Editable, Some("Currently assigned to")))
+    ModelInfo("DOCUMENTS", "id", "string", Uneditable, Uneditable, Some("ID")),
+    ModelInfo("DOCUMENTS", "serialId", "string", Uneditable, Uneditable, Some("Serial ID")),
+    ModelInfo("DOCUMENTS", "title", "string", Required, Editable, Some("Title")),
+    ModelInfo("DOCUMENTS", "docType", "string", Required, Uneditable, Some("Document type")),
+    ModelInfo("DOCUMENTS", "mailbox", "string", Uneditable, Uneditable, Some("Mailbox")),
+    ModelInfo("DOCUMENTS", "creator", "string", Uneditable, Uneditable, Some("Created by")),
+    ModelInfo("DOCUMENTS", "created", "datetime", Uneditable, Uneditable, Some("Created on")),
+    ModelInfo("DOCUMENTS", "forTenant", "number", Required, Uneditable, Some("For tenant")),
+    ModelInfo("DOCUMENTS", "forMonth", "datetime", Required, Uneditable, Some("For the month of")),
+    ModelInfo("DOCUMENTS", "amountPaid", "number", Uneditable, Editable, Some("Amount paid")),
+    ModelInfo("DOCUMENTS", "body", "json", Required, Editable, Some("Document body (free-form JSON object)")),
+    ModelInfo("DOCUMENTS", "comments", "json", Uneditable, Editable, Some("Comments (free-form JSON object)")),
+    ModelInfo("DOCUMENTS", "assigned", "string", Uneditable, Editable, Some("Currently assigned to")))
 }

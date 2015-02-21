@@ -27,10 +27,10 @@ object Tenant extends ((Int, String, String, String, String, String) => Tenant)
 
   val modelName = "TENANTS"
   lazy val modelInfos = Seq(
-    ModelInfo("TENANTS", "id", "Int", Uneditable, Uneditable, Some("Tennant ID")),
-    ModelInfo("TENANTS", "tradeName", "String", Required, Required, Some("Trade name")),
-    ModelInfo("TENANTS", "address", "String", Required, Required, Some("Business address")),
-    ModelInfo("TENANTS", "contactPerson", "String", Required, Required, Some("Contact person")),
-    ModelInfo("TENANTS", "contactNumber", "String", Required, Required, Some("Contact number"), Some("Separate numbers using a semicolon ';'")),
-    ModelInfo("TENANTS", "email", "String", Required, Required, Some("Email")))
+    ModelInfo("TENANTS", "id", "number", Uneditable, Uneditable, Some("Tennant ID")),
+    ModelInfo("TENANTS", "tradeName", "string", Required, Required, Some("Trade name")),
+    ModelInfo("TENANTS", "address", "string", Required, Required, Some("Business address")),
+    ModelInfo("TENANTS", "contactPerson", "string", Required, Required, Some("Contact person")),
+    ModelInfo("TENANTS", "contactNumber", "string", Required, Required, Some("Contact number"), Some("Separate numbers using a semicolon ';'")),
+    ModelInfo("TENANTS", "email", "email", Required, Required, Some("Email")))
 }

@@ -98,12 +98,12 @@ object User extends ((String, String, Option[String], Option[String], Option[Str
 
   val modelName = "USERS"
   lazy val modelInfos = Seq(
-    ModelInfo("USERS", "userId", "String", Uneditable, Uneditable, Some("Username")),
-    ModelInfo("USERS", "password", "String", Uneditable, Uneditable, Some("Password")),
-    ModelInfo("USERS", "email", "String", Uneditable, Uneditable, Some("Email")),
-    ModelInfo("USERS", "roles", "String[]", Uneditable, Required, Some("Roles")),
-    ModelInfo("USERS", "firstName", "String", Uneditable, Required, Some("First name")),
-    ModelInfo("USERS", "lastName", "String", Uneditable, Required, Some("Last name")),
-    ModelInfo("USERS", "validationCode", "String", Uneditable, Uneditable, Some("Validation code")))
+    ModelInfo("USERS", "userId", "string", Uneditable, Uneditable, Some("Username")),
+    ModelInfo("USERS", "password", "string", Uneditable, Uneditable, Some("Password")),
+    ModelInfo("USERS", "email", "email", Uneditable, Uneditable, Some("Email")),
+    ModelInfo("USERS", "roles", "string[]", Uneditable, Required, Some("Roles")),
+    ModelInfo("USERS", "firstName", "string", Uneditable, Required, Some("First name")),
+    ModelInfo("USERS", "lastName", "string", Uneditable, Required, Some("Last name")),
+    ModelInfo("USERS", "validationCode", "string", Uneditable, Uneditable, Some("Validation code")))
   // TODO: Remove validation code from model
 }
