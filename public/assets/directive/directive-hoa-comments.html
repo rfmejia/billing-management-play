@@ -1,0 +1,12 @@
+<div ng-hide="comment == null" class="panel panel-default">
+    <div class="panel-heading right" ng-show="isCurrent ===true">Current</div>
+    <div class="panel-body">
+        <header>
+            <div class="comment-iconified comment-user"><i class="text-accented fa fa-user"></i>{{user}}</div>
+            <div class="comment-iconified comment-date"><i class="fa fa-clock-o"></i>{{timestamp}}</div>
+        </header>
+        <div class="comment-post">
+            <p>{{comment}}</p>
+        </div>
+    </div>
+</div>

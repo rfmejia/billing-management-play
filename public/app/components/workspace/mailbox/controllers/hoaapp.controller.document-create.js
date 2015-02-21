@@ -32,7 +32,7 @@ create.controller("controller.create", ['$scope', "tenantsList", "documentsServi
         $scope.onCreateDocumentClicked = function() {
             prepareDraftPost();
             var success = function(response) {
-                $state.go("workspace.pending.drafts", {id: response.id});
+                $state.go("workspace.edit-view", {id: response.id});
             };
 
             var error = function(response) {

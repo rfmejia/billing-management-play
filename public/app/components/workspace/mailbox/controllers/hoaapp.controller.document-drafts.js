@@ -170,8 +170,8 @@ drafts.controller("controller.drafts", ["$scope", "$state", "documentsService", 
 
                 modalInstance.result.then(function(response) {
                     $scope.modalPositive(response);
-                }, function(error) {
-                    $scope.modalNegative(error);
+                }, function(negative) {
+                    $scope.modalNegative(negative);
                 });
             };
 

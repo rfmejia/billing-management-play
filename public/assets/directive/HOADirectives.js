@@ -21,7 +21,7 @@ hoaDirectives.directive('validatedForm', [
             scope: {
                 element: '='
             },
-            templateUrl: 'app/components/shared/elements/validated-form.html',
+            templateUrl: '../../app/components/shared/elements/validated-form.html',
             replace: false,
             transclude: true
         };
@@ -35,7 +35,7 @@ hoaDirectives.directive("hoaAlert", function () {
             description: '@',
             isDanger: '='
         },
-        templateUrl: 'app/components/shared/elements/alert.html',
+        templateUrl: '../../app/components/shared/elements/alert.html',
         replace: false
     };
 });
@@ -57,7 +57,13 @@ hoaDirectives.directive('numberValid', function () {
         link: function (scope, elem, attrs, ctrl) {
 
             ctrl.$parsers.push(function (value) {
-                return (new Number(parseFloat(value)) || '$');
+                if(value == null) {
+                    console.log("null");
+                    return (new Number(parseFloat("1")) || '$');;
+                }
+                else {
+                    return (new Number(parseFloat(value)) || '$');
+                }
             });
         }
     }
@@ -89,11 +95,7 @@ hoaDirectives.directive('hoaComments', function () {
             timestamp: "=",
             comment: "="
         },
-        template: '<article class="row">' +
-        '<div class="col-md-12 col-sm-12">' +
-        '<div ng-hide="comment == null" class="panel panel-default">\n    <div class="panel-heading right" ng-show="isCurrent ===true">Current</div>\n    <div class="panel-body">\n        <header>\n            <div class="comment-iconified comment-user"><i class="text-accented fa fa-user"></i>{{user}}</div>\n            <div class="comment-iconified comment-date"><i class="fa fa-clock-o"></i>{{timestamp}}</div>\n        </header>\n        <div class="comment-post">\n            <p>{{comment}}</p>\n        </div>\n    </div>\n</div>' +
-        '</div>' +
-        '</article>'
+        templateUrl: 'assets/directive/directive-hoa-comments.html'
     };
 });
 
@@ -113,10 +115,43 @@ hoaDirectives.directive('hoaActivate', function ($location) {
     }
 });
 
-
-hoaDirectives.directive('nooovleError', function () {
+/**
+ *
+ */
+hoaDirectives.directive('nooovleInputs', function() {
     return {
-        restrict: 'E',
-        template: '<script type="text/ng-template" id="nooovle-error">\n    <span ng-message="required" class="text-danger">This is required</span>\n    <span ng-message="number" class="text-danger">Oops! Numbers only please.</span>\n    <span ng-message="min" class="text-danger">Positive numbers only</span>\n    <span ng-message="date" class="text-danger">Invalid date format. Please use the date picker</span>\n    <span ng-message="email" class="text-danger">Please enter a valid-email address</span>\n</script>'
+        restrict    : 'E',
+        replace     : false,
+        transclude  : false,
+        scope : {
+            field       : "=",
+            parentForm  : "=",
+            dateChangeCallback : "&",
+            dateConfig         : "="
+        },
+        templateUrl: 'assets/directive/directive-nooovle-inputs.html'
     }
 });
+
+/**
+ * Displays error messages. TODO: put the errors in a config file.
+ */
+hoaDirectives.directive('nooovleErrorMessages', function () {
+    return {
+        restrict: 'E',
+        templateUrl: 'assets/directive/directive-nooovle-error-messages.html'
+    }
+});
+
+hoaDirectives.directive('nooovleErrorBlock', function() {
+    return {
+        restrict    : 'E',
+        scope       : {
+            parentForm : '=',
+            field      : '@',
+            isRequired : '='
+        },
+        templateUrl : 'assets/directive/directive-nooovle-error-block.html'
+    }
+});
+
