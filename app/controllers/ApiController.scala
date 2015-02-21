@@ -48,6 +48,9 @@ trait ApiController[T] extends securesocial.core.SecureSocial[T] {
   def getCreateTemplate(modelName: String) = getTemplate(modelName, DocCreate)
   def getEditTemplate(modelName: String) = getTemplate(modelName, DocEdit)
 
+  // case class CreatorOnly() extends Authorization[User]
+  // case class AssignedOnly() extends Authorization[User]
+
   case class WithRoles(requiredRoles: Set[String]) extends Authorization[User] {
     def isAuthorized(user: User, request: RequestHeader) = {
       val userRoles = User.findRoles(user.userId)

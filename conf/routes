@@ -16,6 +16,7 @@ DELETE   /api/tenants/:id              @controllers.Tenants.delete(id: Int)
 
 # Users
 GET      /api/users                    @controllers.Users.list(offset: Int ?= 0, limit: Int ?= 10)
+GET      /api/users/me                 @controllers.Users.showCurrentUser()
 GET      /api/users/:userId            @controllers.Users.show(userId: String)
 PUT      /api/users/:userId            @controllers.Users.edit(userId: String)
 DELETE   /api/users/:userId            @controllers.Users.delete(userId: String)

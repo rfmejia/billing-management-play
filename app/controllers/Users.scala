@@ -80,7 +80,7 @@ class Users(override implicit val env: RuntimeEnvironment[User])
             case Success(userId) => NoContent
             case Failure(err) => err match {
               case e: IndexOutOfBoundsException => NotFound
-              case e: Throwable                 => throw e
+              case e: Throwable => throw e
             }
           }
         case _ => BadRequest("Some required values are missing. Please check your request.")
@@ -94,5 +94,27 @@ class Users(override implicit val env: RuntimeEnvironment[User])
     }
     if (deleted == 0) NotFound
     else Ok
+  }
+
+  def showCurrentUser() = SecuredAction { implicit request =>
+    Ok {
+      val u = request.user
+      val rs = User.findRoles(u.userId)
+
+      val self = routes.Users.show(u.userId)
+      val obj = HalJsObject.create(self.absoluteURL())
+        .withCurie("hoa", Application.defaultCurie)
+        .withLink("profile", "hoa:user")
+        .withLink("collection", routes.Users.list().absoluteURL())
+        .withLink("edit", routes.Users.edit(u.userId).absoluteURL())
+        .withField("_template", editForm)
+        .withField("userId", u.userId)
+        .withField("email", u.email)
+        .withField("firstName", u.firstName)
+        .withField("lastName", u.lastName)
+        .withField("fullName", u.fullName)
+        .withField("roles", rs)
+      obj.asJsValue
+    }
   }
 }
