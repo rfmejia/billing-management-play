@@ -15,7 +15,7 @@ case class HalJsObject(fields: immutable.Map[String, JsValue], links: HalJsLinks
 
   def withField(name: String, opt: Option[Any]): HalJsObject = opt match {
     case Some(value) => withField(name, HalJsObject.anyToJsValue(value))
-    case None => this
+    case None => withField(name, JsNull)
   }
 
   def withField(name: String, value: Any): HalJsObject =
