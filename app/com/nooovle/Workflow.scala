@@ -4,7 +4,13 @@ import play.api.libs.json._
 
 object Workflow {
 
-  case class Mailbox(name: String, title: String)
+  case class Mailbox(name: String, title: String) {
+    lazy val asJsObject: JsObject = {
+      JsObject(Seq(
+        "name" -> JsString(name),
+        "title" -> JsString(title)))
+    }
+  }
 
   val drafts = Mailbox("drafts", "Drafts")
   val forChecking = Mailbox("forChecking", "For checking")
@@ -38,6 +44,7 @@ object Workflow {
     case _ => None
   }
 
+  // TODO: Render from the objects given above
   val asJsObject: JsObject = {
     Json.parse("""
 {
