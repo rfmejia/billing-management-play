@@ -20,7 +20,6 @@ tenants.controller("controller.tenantslist", ["$scope", "$state", "$modal", "ten
                         return tenantsService;
                     },
         			tenantCreateTemplate  : function() {
-                        console.log(response.template);
         				return response.template;
         			}
         		}
@@ -31,8 +30,8 @@ tenants.controller("controller.tenantslist", ["$scope", "$state", "$modal", "ten
 
         	//create action callback
         	var create =  function(data) {
-                console.log(data);
-                $state.go($state.current, {}, {reload : true});
+                console.log("create");
+                $state.go("workspace.management.tenants", {}, {reload : true});
         	};
 
         	//cancelled action callback

@@ -5,13 +5,7 @@
     <form name="myForm">
         <div ng-repeat="data in controlData" ng-form="tenant">
             <label class="control-label" for="{{data.name}}">{{data.prompt}}</label>
-            <input type="text" class="form-control" id="{{data.name}}" ng-model="editedData[data.name]" name="detail" required/>
-            <small class="help-block" ng-show="!tenant.$invalid || tenant.detail.$pristine">
-                <span>Required</span>
-            </small>
-            <small class="help-block" ng-show="tenant.detail.$error && !tenant.detail.$pristine">
-                <div ng-messages="tenant.detail.$error" ng-messages-include="nooovle-error"></div>
-            </small>
+            <nooovle-inputs parent-form="tenant" field="data"></nooovle-inputs>
         </div>
     </form>
 </div>

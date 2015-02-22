@@ -1,0 +1,8 @@
+<div>
+    <div ng-show="(!parentForm.$invalid || parentForm[field].$pristine) && isRequired">
+        <p class="noMargin help-block" >
+            Required
+        </p>
+    </div>
+    <div ng-messages="parentForm[field].$error" ng-messages-include="nooovle-error" class="help-block noMargin" ng-show="parentForm[field].$error && !parentForm[field].$pristine"></div>
+</div>
