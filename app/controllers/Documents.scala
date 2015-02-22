@@ -27,7 +27,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
     }
   }
 
-  def moveMailbox(id: Int, mailbox: String) = SecuredAction {
+  def moveMailbox(id: Int, mailbox: String) = SecuredAction { implicit request =>
     (Document.findById(id), Workflow.exists(mailbox)) match {
       case (Some(d), Some(box)) =>
         Document.update(d.copy(mailbox = box.name)) match {
@@ -87,6 +87,8 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       .withField("_template", createForm)
       .withField("count", ds.length)
       .withField("total", total)
+      .withField("offset", offset)
+      .withField("limit", limit)
 
     val withList = blank.withEmbedded(HalJsObject.empty.withField("item", objs))
 
@@ -231,10 +233,10 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
     }
 
     val withActions = withTotal
-      .withField("lastAction", d.lastAction flatMap(actionToJsObject(_)))
-      .withField("preparedAction", d.preparedAction flatMap(actionToJsObject(_)))
-      .withField("checkedAction", d.checkedAction flatMap(actionToJsObject(_)))
-      .withField("approvedAction", d.approvedAction flatMap(actionToJsObject(_)))
+      .withField("lastAction", d.lastAction flatMap (actionToJsObject(_)))
+      .withField("preparedAction", d.preparedAction flatMap (actionToJsObject(_)))
+      .withField("checkedAction", d.checkedAction flatMap (actionToJsObject(_)))
+      .withField("approvedAction", d.approvedAction flatMap (actionToJsObject(_)))
 
     withActions
   }
