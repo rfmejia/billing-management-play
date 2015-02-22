@@ -6,14 +6,16 @@ import com.nooovle.slick.models.tenants
 import scala.slick.driver.H2Driver.simple._
 
 case class Tenant(id: Int, tradeName: String, address: String,
-  contactPerson: String, contactNumber: String, email: String)
+  contactPerson: String, contactNumber: String, email: String, area: String,
+  size: String, rentalPeriod: String, basicRentalRate: String, escalation: String)
 
-object Tenant extends ((Int, String, String, String, String, String) => Tenant)
+object Tenant extends ((Int, String, String, String, String, String, String, String, String, String, String) => Tenant)
   with ModelTemplate {
 
   def apply(tradeName: String, address: String, contactPerson: String,
-    contactNumber: String, email: String): Tenant =
-    Tenant(0, tradeName, address, contactPerson, contactNumber, email)
+    contactNumber: String, email: String, area: String, size: String,
+    rentalPeriod: String, basicRentalRate: String, escalation: String): Tenant =
+    Tenant(0, tradeName, address, contactPerson, contactNumber, email, area, size, rentalPeriod, basicRentalRate, escalation)
 
   def findById(id: Int): Option[Tenant] =
     ConnectionFactory.connect withSession { implicit session =>
@@ -32,5 +34,11 @@ object Tenant extends ((Int, String, String, String, String, String) => Tenant)
     ModelInfo("TENANTS", "address", "string", Required, Required, Some("Business address")),
     ModelInfo("TENANTS", "contactPerson", "string", Required, Required, Some("Contact person")),
     ModelInfo("TENANTS", "contactNumber", "string", Required, Required, Some("Contact number"), Some("Separate numbers using a semicolon ';'")),
-    ModelInfo("TENANTS", "email", "email", Required, Required, Some("Email")))
+    ModelInfo("TENANTS", "email", "email", Required, Required, Some("Email")),
+
+    ModelInfo("TENANTS", "area", "string", Required, Required, Some("Area")),
+    ModelInfo("TENANTS", "size", "string", Required, Required, Some("Size")),
+    ModelInfo("TENANTS", "rentalPeriod", "string", Required, Required, Some("Rental period")),
+    ModelInfo("TENANTS", "basicRentalRate", "string", Required, Required, Some("Basic rental rate")),
+    ModelInfo("TENANTS", "escalation", "string", Required, Required, Some("Escalation")))
 }

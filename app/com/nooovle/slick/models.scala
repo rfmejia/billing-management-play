@@ -100,7 +100,13 @@ class TenantsModel(tag: Tag) extends Table[Tenant](tag, "TENANTS") {
   def contactNumber = column[String]("CONTACT_NUMBER", O.NotNull)
   def email = column[String]("EMAIL", O.NotNull)
 
-  def * = (id, tradeName, address, contactPerson, contactNumber, email) <>
+  def area = column[String]("AREA", O.NotNull)
+  def size = column[String]("SIZE", O.NotNull)
+  def rentalPeriod = column[String]("RENTAL_PERIOD", O.NotNull)
+  def basicRentalRate = column[String]("BASIC_RENTAL_RATE", O.NotNull)
+  def escalation = column[String]("ESCALATION", O.NotNull)
+
+  def * = (id, tradeName, address, contactPerson, contactNumber, email, area, size, rentalPeriod, basicRentalRate, escalation) <>
     (Tenant.tupled, Tenant.unapply)
 }
 

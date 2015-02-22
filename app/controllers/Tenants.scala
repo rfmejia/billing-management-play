@@ -34,6 +34,11 @@ class Tenants(override implicit val env: RuntimeEnvironment[User])
           .withField("contactPerson", t.contactPerson)
           .withField("contactNumber", t.contactNumber)
           .withField("email", t.email)
+          .withField("area", t.area)
+          .withField("size", t.size)
+          .withField("rentalPeriod", t.rentalPeriod)
+          .withField("basicRentalRate", t.basicRentalRate)
+          .withField("escalation", t.escalation)
         Ok(obj.asJsValue)
       case None => NotFound
     }
@@ -78,9 +83,14 @@ class Tenants(override implicit val env: RuntimeEnvironment[User])
       (json \ "address").asOpt[String],
       (json \ "contactPerson").asOpt[String],
       (json \ "contactNumber").asOpt[String],
-      (json \ "email").asOpt[String]) match {
-        case (Some(tradeName), Some(address), Some(contactPerson), Some(contactNumber), Some(email)) =>
-          val newTenant = Tenant(tradeName, address, contactPerson, contactNumber, email)
+      (json \ "email").asOpt[String],
+      (json \ "area").asOpt[String],
+      (json \ "size").asOpt[String],
+      (json \ "rentalPeriod").asOpt[String],
+      (json \ "basicRentalRate").asOpt[String],
+      (json \ "escalation").asOpt[String]) match {
+        case (Some(tradeName), Some(address), Some(contactPerson), Some(contactNumber), Some(email), Some(area), Some(size), Some(rentalPeriod), Some(basicRentalRate), Some(escalation)) =>
+          val newTenant = Tenant(tradeName, address, contactPerson, contactNumber, email, area, size, rentalPeriod, basicRentalRate, escalation)
           val result = ConnectionFactory.connect withSession { implicit session =>
             Try {
               // Returns ID of newly inserted tenant
@@ -106,13 +116,19 @@ class Tenants(override implicit val env: RuntimeEnvironment[User])
           (json \ "address").asOpt[String],
           (json \ "contactPerson").asOpt[String],
           (json \ "contactNumber").asOpt[String],
-          (json \ "email").asOpt[String]) match {
-            case (Some(tradeName), Some(address), Some(contactPerson), Some(contactNumber), Some(email)) =>
+          (json \ "email").asOpt[String],
+          (json \ "area").asOpt[String],
+          (json \ "size").asOpt[String],
+          (json \ "rentalPeriod").asOpt[String],
+          (json \ "basicRentalRate").asOpt[String],
+          (json \ "escalation").asOpt[String]) match {
+            case (Some(tradeName), Some(address), Some(contactPerson), Some(contactNumber), Some(email), Some(area), Some(size), Some(rentalPeriod), Some(basicRentalRate), Some(escalation)) =>
               val result = ConnectionFactory.connect withSession { implicit session =>
                 Try {
                   val tenant = for (t <- tenants if t.id === id)
-                    yield (t.tradeName, t.address, t.contactPerson, t.contactNumber, t.email)
-                  tenant.update(tradeName, address, contactPerson, contactNumber, email)
+                    yield (t.tradeName, t.address, t.contactPerson, t.contactNumber, t.email,
+                      t.area, t.size, t.rentalPeriod, t.basicRentalRate, t.escalation)
+                  tenant.update(tradeName, address, contactPerson, contactNumber, email, area, size, rentalPeriod, basicRentalRate, escalation)
                 }
               }
               result match {

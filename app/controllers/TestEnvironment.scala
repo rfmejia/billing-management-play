@@ -19,14 +19,10 @@ class TestEnvironment(override implicit val env: RuntimeEnvironment[User])
     def insertTenantData(implicit session: Session) = {
       (for (t <- tenants) yield t).delete
       val data = Seq(
-        Tenant("Beast Burgers", "Unit 4D Breakpoint Tower, 458 Emerald Ave., Pasig",
-          "Ronald Macaraig", "987-4321", "r-mac@email.com"),
-        Tenant("Salcedo Tools & Supplies, Inc.", "6153 South Super Highway, Makati",
-          "Jimmy Galapago", "987-4321", "jimmyg@email.com"),
-        Tenant("Jumpin' Juicers", "5 Kennedy Drive, Pleasant View Subd., Tandang Sora, Quezon City",
-          "Alex Gomez", "987-4321", "agomez@email.com"),
-        Tenant("Accolade Trading Corp.", "14 Zaragoza St. San Lorenzo Village, Makati",
-          "Issa Santos", "987-4321", "isantos@email.com"))
+        Tenant("Beast Burgers", "Unit 4D Breakpoint Tower, 458 Emerald Ave., Pasig", "Ronald Macaraig", "987-4321", "r-mac@email.com", "area", "size", "rentalPeriod", "basicRentalRate", "escalation"),
+        Tenant("Salcedo Tools & Supplies, Inc.", "6153 South Super Highway, Makati", "Jimmy Galapago", "987-4321", "jimmyg@email.com", "area", "size", "rentalPeriod", "basicRentalRate", "escalation"),
+        Tenant("Jumpin' Juicers", "5 Kennedy Drive, Pleasant View Subd., Tandang Sora, Quezon City", "Alex Gomez", "987-4321", "agomez@email.com", "area", "size", "rentalPeriod", "basicRentalRate", "escalation"),
+        Tenant("Accolade Trading Corp.", "14 Zaragoza St. San Lorenzo Village, Makati", "Issa Santos", "987-4321", "isantos@email.com", "area", "size", "rentalPeriod", "basicRentalRate", "escalation"))
       data foreach (tenants.insertOrUpdate(_))
     }
 
