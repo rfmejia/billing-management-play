@@ -1,32 +1,40 @@
-var tenants = angular.module("module.tenants");
+angular
+    .module('module.tenants')
+    .controller('tenantViewCtrl',[
+        '$state',
+        'tenant',
+        tenantViewCtrl
+    ]);
 
-tenants.controller("controller.tenantview", ["$scope", "$state", "tenant",
-	function($scope, $state, tenant){
-        $scope.tenant = tenant.details;
-        $scope.isInfoOpen = true;
+function tenantViewCtrl($state, tenant){
+    var vm = this;
+    vm.tenant = tenant.details;
+    vm.isInfoOpen = true;
+    vm.toggleInfo = toggleInfo;
+    vm.onEditClicked = onEditClicked;
+    vm.onBackClicked = onBackClicked;
 
-        angular.forEach($scope.tenant,
+    activate();
+
+    //region FUNCTION_CALL
+    function activate() {
+        angular.forEach(vm.tenant,
             function(value){
-                if(value.name == "tradeName") $scope.tradeName = value.value;
+                if(value.name == "tradeName") vm.tradeName = value.value;
             }
         );
+    }
 
-        //Temporary values
-        $scope.billings = [
-        {isPaid : true, isActive : false, date : "March 2014"},
-        {isPaid : true, isActive : false, date : "February 2014"},
-        {isPaid : false, isActive : false, date : "January 2014"}
-        ];
+    function toggleInfo() {
+        vm.isInfoOpen = !vm.isInfoOpen;
+    }
 
-        $scope.toggleInfo = function() {
-             $scope.isInfoOpen = !$scope.isInfoOpen;
-        };;
+    function onEditClicked() {
+        $state.go("workspace.management.tenants.tenant-view.edit");
+    }
 
-        $scope.onEditClicked = function() {
-             $state.go("workspace.management.tenants.tenant-view.edit");
-        };;
-
-        $scope.onBackClicked = function() {
-             $state.go("workspace.management.tenants");
-        }
-	}]);
+    function onBackClicked() {
+        $state.go("workspace.management.tenants");
+    }
+    //endregion
+}
