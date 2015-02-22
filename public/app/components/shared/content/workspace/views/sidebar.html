@@ -1,11 +1,11 @@
 <div>
-    <button ng-click="onCreateDocumentClicked()" class="btn btn-sm btn-primary">
+    <button ng-click="sidebar.onCreateDocumentClicked()" class="btn btn-sm btn-primary">
         <span class="glyphicon glyphicon-edit"></span>Create Invoice</button>
 
-    <div ng-repeat="children in mailboxItems.mailbox.subFolders">
+    <div ng-repeat="children in sidebar.mailboxItems.mailbox.subFolders">
         <h6 class="text-muted">{{children.title | uppercase}}</h6>
         <ul class="nav nav-pills nav-justified" ng-repeat="grandchildren in children.subFolders">
-            <li class="" hoa-activate path="{{grandchildren.link}}"><a href class="text-muted" ng-click="onSidebarClicked(grandchildren)">{{grandchildren.title | uppercase}}</a></li>
+            <li class="" hoa-activate path="{{grandchildren.link}}"><a href class="text-muted" ng-click="sidebar.onSidebarItemClicked(grandchildren)">{{grandchildren.title | uppercase}}</a></li>
         </ul>
     </div>
 

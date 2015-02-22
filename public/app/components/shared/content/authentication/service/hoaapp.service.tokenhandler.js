@@ -27,7 +27,7 @@ token.factory("tokenHandler",
 
 		tokenHandler.get = function() {
 			return token;
-		};;
+		};
 
 		tokenHandler.wrapActions = function (resource, actions) {
 			//copy of resource
