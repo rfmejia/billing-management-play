@@ -39,44 +39,74 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
     }
   }
 
-  def list(offset: Int = 0, limit: Int = 10, mailbox: String, forTenant: Int) = SecuredAction { implicit request =>
+  def list(offset: Int = 0, limit: Int = 10, mailbox: String, forTenant: Int, creator: String, assigned: Option[String], forMonth: Option[String], isPaid: Option[Boolean]) = SecuredAction { implicit request =>
+
+    println(s"forMonth: ${forMonth}")
+    println(s"assigned: ${assigned}")
+
     val (ds, total) = ConnectionFactory.connect withSession { implicit session =>
+      // Filtering level 1: Query-level filters
+      // Filter values by comparing to their default values in the router
+      // (workaround to Slick limitations)
       val query = documents.drop(offset).take(limit).sortBy(_.created.desc)
         .filter(d => d.mailbox === mailbox || mailbox.isEmpty)
         .filter(d => d.forTenant === forTenant || forTenant < 1)
+        .filter(d => d.creator === creator || creator.isEmpty)
+        .filter(d => d.assigned === assigned || assigned.isEmpty)
+
       (query.list, documents.length.run)
     }
 
-    val objs = ds map { d =>
-      val link = routes.Documents.show(d.id)
-      val obj = HalJsObject.create(link.absoluteURL())
-        .withLink("profile", "hoa:document")
-        .withField("id", d.id)
-        .withField("serialId", d.serialId)
-        .withField("title", d.title)
-        .withField("docType", d.docType)
-        .withField("mailbox", d.mailbox)
-        .withField("forTenant", d.forTenant)
-        .withField("forMonth", d.forMonth)
-        .withField("amountPaid", d.amountPaid)
-        .withField("creator", d.creator)
-        .withField("assigned", d.assigned)
-
-      val withTotal = Templates.getTotal(d) match {
-        case Right(total) =>
-          val unpaid = total - d.amountPaid
-          obj.withField("isPaid", unpaid <= 0)
-            .withField("unpaid", unpaid)
-            .withField("total", total)
-        case Left(warning) =>
-          Logger.warn(warning)
-          obj.withField("total", JsNull)
-            .withField("warning", warning)
-      }
-      withTotal.asJsValue
+    // Filtering level 2: Post-fetch, pre-mapping to JS value
+    // TODO: if parsing fails, return bad request
+    def dateFilter(date: DateTime): Boolean = {
+      forMonth.map(dateParam => Try(DateTime.parse(dateParam)) match {
+        case Success(parsedDate) =>
+          println(s"Filtering ${date.getYear} ${date.getMonthOfYear}")
+          println(s"  with ${date.getYear} ${parsedDate.getMonthOfYear}")
+          date.getMonthOfYear == parsedDate.getMonthOfYear &&
+            date.getYear == parsedDate.getYear
+        case Failure(_) => false
+      }) getOrElse true
     }
 
-    val self = routes.Documents.list(offset, limit)
+    val objs = ds
+      .filter(d => dateFilter(d.forMonth))
+      .map { d =>
+        val link = routes.Documents.show(d.id)
+        val obj = HalJsObject.create(link.absoluteURL())
+          .withLink("profile", "hoa:document")
+          .withField("id", d.id)
+          .withField("serialId", d.serialId)
+          .withField("title", d.title)
+          .withField("docType", d.docType)
+          .withField("mailbox", d.mailbox)
+          .withField("forTenant", d.forTenant)
+          .withField("forMonth", d.forMonth)
+          .withField("amountPaid", d.amountPaid)
+          .withField("creator", d.creator)
+          .withField("assigned", d.assigned)
+
+        val withTotal = Templates.getTotal(d) match {
+          case Right(total) =>
+            val unpaid = total - d.amountPaid
+            obj.withField("isPaid", unpaid <= 0)
+              .withField("unpaid", unpaid)
+              .withField("total", total)
+          case Left(warning) =>
+            Logger.warn(warning)
+            obj.withField("total", JsNull)
+              .withField("warning", warning)
+        }
+        withTotal.asJsValue
+      }
+
+    // Filtering level 3: Post-mapping to JS value
+    val withIsPaid = isPaid map { b =>
+      objs.filter(d => d \ "isPaid" == JsBoolean(b))
+    } getOrElse objs
+
+    val self = routes.Documents.list(offset, limit, mailbox, forTenant, creator, assigned, forMonth, isPaid)
     val blank = HalJsObject.create(self.absoluteURL())
       .withCurie("hoa", Application.defaultCurie)
       .withLink("profile", "collection")
@@ -90,7 +120,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       .withField("offset", offset)
       .withField("limit", limit)
 
-    val withList = blank.withEmbedded(HalJsObject.empty.withField("item", objs))
+    val withList = blank.withEmbedded(HalJsObject.empty.withField("item", withIsPaid))
 
     val y = listNavLinks(self.absoluteURL(), offset, limit, total).foldLeft(withList) {
       (obj, pair) => obj.withLink(pair._1, pair._2.href)
@@ -166,8 +196,8 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
   }
 
   private def documentToHalJsObject(d: Document)(implicit req: RequestHeader): HalJsObject = {
-    val selfUrl = routes.Documents.show(d.id).absoluteURL()
-    val obj = HalJsObject.create(selfUrl)
+    val self = routes.Documents.show(d.id).absoluteURL()
+    val obj = HalJsObject.create(self)
       .withCurie("hoa", Application.defaultCurie)
       .withLink("profile", "hoa:documents")
       .withLink("collection", routes.Documents.list().absoluteURL())
