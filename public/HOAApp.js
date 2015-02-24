@@ -3,6 +3,7 @@ angular
         "ngCookies",
         "ngResource",
         "ngMessages",
+        "ngMaterial",
         "ui.bootstrap",
         "ui.bootstrap.tooltip",
         "ui.router",
@@ -23,6 +24,7 @@ angular
         "$urlRouterProvider",
         "$httpProvider",
         'usSpinnerConfigProvider',
+        '$mdThemingProvider',
         hoaAppConfig
     ]);
 
@@ -38,13 +40,32 @@ angular
     ]);
 
 
-function hoaAppConfig($stateProvider, $urlRouterProvider, $httpProvider, usSpinnerConfigProvider) {
+function hoaAppConfig($stateProvider, $urlRouterProvider, $httpProvider, usSpinnerConfigProvider, $mdThemingProvider) {
     $httpProvider.interceptors.push('httpInterceptor');
     $urlRouterProvider.otherwise("/");
 
     var authenticate = {
         url: "/login"
     };
+
+    var light = $mdThemingProvider.extendPalette('green', {
+        'contrastDefaultColor'  :   'dark'
+    });
+
+    $mdThemingProvider.definePalette('light', light);
+    $mdThemingProvider
+        .theme('default')
+        .primaryPalette('blue-grey', {
+            'default'   : '500',
+            'hue-1'     : '100',
+            'hue-2'     : '600',
+            'hue-3'     : 'A100'
+        })
+        .accentPalette('pink', {
+            'default' : 'A200'
+        });
+
+
 
 
     usSpinnerConfigProvider.setDefaults({

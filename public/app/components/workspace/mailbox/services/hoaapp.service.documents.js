@@ -46,10 +46,12 @@ documents.service('service.hoadocuments', ['$resource', '$q', 'service.hoalinks'
 
         var extractEditPostDetails = function(response) {
             var template = {};
+            console.log(response);
             if(response._template.edit == undefined) template = response._template.create.data[0];
-            else template = response;
+            else template = response._template.edit;
             var postTemplate = {};
             angular.forEach(template, function(value){
+                console.log(value);
                 postTemplate[value.name] = null;
             });
             return postTemplate;

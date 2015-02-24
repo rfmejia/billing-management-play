@@ -108,8 +108,8 @@ hoaDirectives.directive('hoaActivate', function ($location) {
             scope.$location = $location;
             scope.$watch('$location.path()', function (locationPath) {
                 locationPath.search(path) != -1
-                    ? element.addClass(active)
-                    : element.removeClass(active);
+                    ? element.addClass('md-accent')
+                    : element.removeClass('md-accent');
             });
         }
     }
@@ -152,6 +152,18 @@ hoaDirectives.directive('nooovleErrorBlock', function() {
             isRequired : '='
         },
         templateUrl : 'assets/directive/directive-nooovle-error-block.html'
+    }
+});
+
+hoaDirectives.directive('removeFocus', function() {
+    return {
+        restrict : 'A',
+        link: function postLink(scope, element, attrs) {
+            element.bind('focus', function () {
+                console.log('blur');
+                element[0].blur();
+            });
+        }
     }
 });
 

@@ -1,11 +1,19 @@
-<div>
-    <button ng-click="sidebar.onCreateDocumentClicked()" class="btn btn-sm btn-primary">
-        <span class="glyphicon glyphicon-edit"></span>Create Invoice</button>
+<md-toolbar class="md-tall md-default-theme">
+    <span layout="row" layout-align="center center" flex><h2>Welcome!</h2></span>
+    <div class="md-toolbar-tools md-toolbar-tools-bottom">
+        <md-button remove-focus class="md-ripple-full md-fab-top-right" ng-click='sidebar.onCreateDocumentClicked()' aria-label="Profile">
+            <md-icon icon="/assets/bower_components/material-design-icons/ic_person_outline_24px.svg" class="s24"></md-icon>Start workflow
+        </md-button>
+    </div>
+</md-toolbar>
+
+<div layout="column" layout-align="center center">
+
 
     <div ng-repeat="children in sidebar.mailboxItems.mailbox.subFolders">
         <h6 class="text-muted">{{children.title | uppercase}}</h6>
         <ul class="nav nav-pills nav-justified" ng-repeat="grandchildren in children.subFolders">
-            <li class="" hoa-activate path="{{grandchildren.link}}"><a href class="text-muted" ng-click="sidebar.onSidebarItemClicked(grandchildren)">{{grandchildren.title | uppercase}}</a></li>
+            <li class="" hoa-activate path="{{grandchildren.link}}"><md-button href class="text-muted" ng-click="sidebar.onSidebarItemClicked(grandchildren)">{{grandchildren.title | uppercase}}</md-button></li>
         </ul>
     </div>
 

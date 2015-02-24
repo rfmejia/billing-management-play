@@ -1,37 +1,43 @@
 <div>
     <legend class="text-muted">Create document workflow</legend>
 </div>
-<div class="well row">
-    <div class="row-same-height row-full-height vertical-align">
+<md-card>
+    <img src="img/washedout.png" alt="Washed Out">
+    <md-card-content>
+        <div class="row-same-height row-full-height vertical-align">
 
-        <div class="col-xs-6 col-xs-height col-xs-full-height">
-            <div class="full-item">
-                <input class="input-sm input-list form-control" type="text" value="{{selectedTenant.tradeName}}"
-                       ng-model="search.$" placeholder="Find tenants"/>
+            <div class="col-md-6 col-md-height col-md-full-height">
+                <div class="full-item">
+                    <input class="input-sm input-list form-control" type="text" value="{{selectedTenant.tradeName}}"
+                           ng-model="search.$" placeholder="Find tenants"/>
 
-                <div class="custom-dropdown">
-                    <div id="tenantSearchList" class="list-group">
-                        <a href ng-repeat="tenant in tenantsList | filter:search:strict"
-                           class="list-group-item list-group-item-unbordered list-group-item-bgaccented"
-                           ng-click="onTenantSelected(tenant, $index)"
-                           ng-class="selectedIndex == $index ? 'active' : ''">{{tenant.tradeName}}</a>
+                    <div class="custom-dropdown">
+                        <div id="tenantSearchList" class="list-group">
+                            <a href ng-repeat="tenant in tenantsList | filter:search:strict"
+                               class="list-group-item list-group-item-unbordered list-group-item-bgaccented"
+                               ng-click="onTenantSelected(tenant, $index)"
+                               ng-class="selectedIndex == $index ? 'active' : ''">{{tenant.tradeName}}</a>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="col-xs-1"></div>
+            <div class="col-md-1"></div>
 
-        <div class="col-xs-5  col-xs-height col-xs-full-height ">
-            <div class="full-item">
-                <h6 class="text-muted text-center">Select billing period</h6>
-                <datetimepicker class="center-block"
-                                data-ng-model="billingDate"
-                                data-datetimepicker-config="{startView: 'month', minView:'month'}">
-                </datetimepicker>
+            <div class="col-md-5  col-md-height col-md-full-height ">
+                <div class="full-item">
+                    <h6 class="text-muted text-center">Select billing period</h6>
+                    <datetimepicker class="center-block"
+                                    data-ng-model="billingDate"
+                                    data-datetimepicker-config="{startView: 'month', minView:'month'}">
+                    </datetimepicker>
+                </div>
             </div>
         </div>
-    </div>
+    </md-card-content>
+</md-card>
+<div class="well row">
+
 </div>
 
 <div class="row">

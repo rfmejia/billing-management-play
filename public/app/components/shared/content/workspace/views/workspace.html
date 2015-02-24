@@ -1,35 +1,55 @@
-<div id="header" class="container-fluid navbar navbar-inverse navbar-fixed-top" role="navigation">
-    <div class="navbar-header">
-        <a class="navbar-brand" href="#">Hobbies of Asia</a>
+<div layout="row" flex>
+    <md-sidenav layout="column" class="md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="$media('gt-sm')">
+        <div ui-view="sidebar">
+
+        </div>
+    </md-sidenav>
+    <div layout="column" flex id="content">
+        <md-toolbar layout="row" class="white-out">
+            <button hide-gt-sm class="menuBtn menuBtn-hamburger">
+                <span class="visually-hidden">Menu</span>
+            </button>
+            <h1>Hobbies of Asia</h1>
+        </md-toolbar>
+        <md-content layout="column" flex class="md-padding md-default-theme" ui-view="contentArea">
+
+        </md-content>
     </div>
-    <div class="navbar-collapse collapse" role="navigation">
-        <ul class="nav navbar-nav navbar-right">
-            <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="glyphicon glyphicon-user"></span> {{workspace.userDetails.firstName}}</a>
-                <ul class="dropdown-menu" role="menu">
-                    <li><a href="#">Settings</a></li>
-                    <li class="divider"></li>
-                    <li><a href ng-click="workspace.onLogOutClicked()">Logout</a></li>
-                </ul>
-            </li>
-        </ul>
-    </div>
+
 </div>
 
-<div id="mainContent" class="container-fluid container-main">
-  <div class="row">
-    <div id="sidebarNav" class="col-md-2">
-      <div class="nav-sidebar">
-          <div id="sidebarContent" ui-view="sidebar">
+<!--<div id="header" class="container-fluid navbar navbar-inverse navbar-fixed-top" role="navigation">-->
+<!--<div class="navbar-header">-->
+<!--<a class="navbar-brand" href="#">Hobbies of Asia</a>-->
+<!--</div>-->
+<!--<div class="navbar-collapse collapse" role="navigation">-->
+<!--<ul class="nav navbar-nav navbar-right">-->
+<!--<li class="dropdown">-->
+<!--<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="glyphicon glyphicon-user"></span> {{workspace.userDetails.firstName}}</a>-->
+<!--<ul class="dropdown-menu" role="menu">-->
+<!--<li><a href="#">Settings</a></li>-->
+<!--<li class="divider"></li>-->
+<!--<li><a href ng-click="workspace.onLogOutClicked()">Logout</a></li>-->
+<!--</ul>-->
+<!--</li>-->
+<!--</ul>-->
+<!--</div>-->
+<!--</div>-->
 
-          </div>
-      </div>
-    </div>
+<!--<div id="mainContent" class="container-fluid container-main">-->
+<!--<div class="row">-->
+<!--<div id="sidebarNav" class="col-md-2">-->
+<!--<div class="nav-sidebar">-->
+<!--<div id="sidebarContent" ui-view="sidebar">-->
 
-    <span us-spinner spinner-key="spinner"></span>
+<!--</div>-->
+<!--</div>-->
+<!--</div>-->
 
-    <div id="contentContainer" class="col-md-10" ui-view="contentArea">
+<!--<span us-spinner spinner-key="spinner"></span>-->
 
-    </div> <!-- end container -->
-  </div> <!-- end row -->
-</div> <!-- end mainContent -->
+<!--<div id="contentContainer" class="col-md-10" ui-view="contentArea">-->
+
+<!--</div> &lt;!&ndash; end container &ndash;&gt;-->
+<!--</div> &lt;!&ndash; end row &ndash;&gt;-->
+<!--</div> &lt;!&ndash; end mainContent &ndash;&gt;-->
