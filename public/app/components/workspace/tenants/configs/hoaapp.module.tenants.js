@@ -31,15 +31,15 @@ app.config(["$stateProvider",
 
         var tenantsView = {
             url         : "/tenant-view/:id",
-            views    : {
-                "contentArea@workspace" : {
-                    templateUrl     : "app/components/workspace/tenants/views/maincontent-tenant-view.html",
-                    controller      : "controller.tenantview"
-                }
-            },
             resolve     : {
                 tenant            : function(tenantsService, $stateParams) {
                     return tenantsService.getTenant($stateParams.id);
+                }
+            },
+            views    : {
+                "contentArea@workspace" : {
+                    templateUrl     : "app/components/workspace/tenants/views/maincontent-tenant-view.html",
+                    controller      : "tenantViewCtrl as tenantView"
                 }
             }
         };
