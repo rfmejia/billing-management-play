@@ -41,9 +41,6 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
 
   def list(offset: Int = 0, limit: Int = 10, mailbox: String, forTenant: Int, creator: String, assigned: Option[String], forMonth: Option[String], isPaid: Option[Boolean]) = SecuredAction { implicit request =>
 
-    println(s"forMonth: ${forMonth}")
-    println(s"assigned: ${assigned}")
-
     val (ds, total) = ConnectionFactory.connect withSession { implicit session =>
       // Filtering level 1: Query-level filters
       // Filter values by comparing to their default values in the router
@@ -62,8 +59,6 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
     def dateFilter(date: DateTime): Boolean = {
       forMonth.map(dateParam => Try(DateTime.parse(dateParam)) match {
         case Success(parsedDate) =>
-          println(s"Filtering ${date.getYear} ${date.getMonthOfYear}")
-          println(s"  with ${date.getYear} ${parsedDate.getMonthOfYear}")
           date.getMonthOfYear == parsedDate.getMonthOfYear &&
             date.getYear == parsedDate.getYear
         case Failure(_) => false
