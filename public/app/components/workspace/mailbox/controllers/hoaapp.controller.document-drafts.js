@@ -38,6 +38,8 @@ drafts.controller("controller.drafts", ["$scope", "$state", "documentsService", 
             /** Modal information **/
             $scope.modal = {};
 
+            console.log($scope.commentsList);
+
             //region FUNCTIONS
             /**
              * Sets the string date for other input fields

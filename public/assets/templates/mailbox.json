@@ -22,7 +22,7 @@
     "queryParam": "",
     "subFolders": [
       {
-        "title": "Pending",
+        "title": "Workspace",
         "path" : "workspace.pending",
         "link" : "pending",
         "queryKey": "mailbox",

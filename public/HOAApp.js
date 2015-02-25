@@ -65,6 +65,9 @@ function hoaAppConfig($stateProvider, $urlRouterProvider, $httpProvider, usSpinn
             'default' : 'A200'
         });
 
+    $mdThemingProvider.theme('bills-dark', 'default')
+        .primaryPalette('teal')
+        .dark();
 
 
 

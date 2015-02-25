@@ -15,6 +15,8 @@ angular
 function hoaCurrentUserService ($location, $resource, $q, hoalinks, $window) {
     var resource = null;
 
+    var userDetails = null;
+
     var service = {
         getUserDetails : getUserDetails,
         logoutUser     : logoutUser
@@ -28,7 +30,12 @@ function hoaCurrentUserService ($location, $resource, $q, hoalinks, $window) {
     }
 
     function getUserDetails() {
-        return makeRequest();
+        if(userDetails == null) {
+            return makeRequest();
+        }
+        else {
+            return userDetails;
+        }
     }
 
     function makeRequest() {
@@ -38,13 +45,21 @@ function hoaCurrentUserService ($location, $resource, $q, hoalinks, $window) {
             return deferred.resolve(response);
         }
 
+        function saveDetails(response) {
+            userDetails = response;
+            return response;
+        }
+
+
         function error(error) {
+            userDetails = null;
             return deferred.reject(error);
         }
 
         function query() {
             resource.get().$promise
-                .then(success, error);
+                .then(saveDetails, error)
+                .then(success);
         }
 
         if(resource != null) query();

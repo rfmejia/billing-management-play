@@ -1,56 +1,51 @@
-<div>
-    <legend class="text-muted">Create document workflow</legend>
-</div>
-<md-card>
-    <img src="img/washedout.png" alt="Washed Out">
-    <md-card-content>
-        <div class="row-same-height row-full-height vertical-align">
+<div layout="column" flex>
+    <md-card>
+        <md-card-content layout="row" layout-align="space-between center">
+            <div flex>
+                <h6>CREATE DOCUMENT</h6>
+                <p ng-show="!isDocumentReady()">
+                    Please select a tenant and a billing period.
+                </p>
+            </div>
+            <div layout="row" layout-align="end center" flex>
+                <md-button remove-focus ng-click="onCreateDocumentClicked()" class="md-accent" ng-hide="!isDocumentReady()">
+                    {{title()}}<i class="fa fa-check"></i>
+                </md-button>
+            </div>
+        </md-card-content>
+        <md-card-content>
+            <div layout="column" layout-gt-md="row" layout-align="center center" flex>
 
-            <div class="col-md-6 col-md-height col-md-full-height">
-                <div class="full-item">
-                    <input class="input-sm input-list form-control" type="text" value="{{selectedTenant.tradeName}}"
-                           ng-model="search.$" placeholder="Find tenants"/>
+                <div flex flex-order-gt-md="1" flex-order="2" class="">
+                    <div class="full-item">
+                        <md-input-container>
+                            <label>Find tenants</label>
+                            <input class="input-sm input-list" type="text" value="{{selectedTenant.tradeName}}"
+                                   ng-model="search.$"/>
+                        </md-input-container>
 
-                    <div class="custom-dropdown">
-                        <div id="tenantSearchList" class="list-group">
-                            <a href ng-repeat="tenant in tenantsList | filter:search:strict"
-                               class="list-group-item list-group-item-unbordered list-group-item-bgaccented"
-                               ng-click="onTenantSelected(tenant, $index)"
-                               ng-class="selectedIndex == $index ? 'active' : ''">{{tenant.tradeName}}</a>
+                        <div class="custom-dropdown">
+                            <div id="tenantSearchList" class="list-group">
+                                <a href ng-repeat="tenant in tenantsList | filter:search:strict"
+                                   remove-focus
+                                   class="list-group-item list-group-item-unbordered list-group-item-bgaccented"
+                                   ng-click="onTenantSelected(tenant, $index)"
+                                   ng-class="selectedIndex == $index ? 'active' : ''">{{tenant.tradeName}}</a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="col-md-1"></div>
-
-            <div class="col-md-5  col-md-height col-md-full-height ">
-                <div class="full-item">
-                    <h6 class="text-muted text-center">Select billing period</h6>
-                    <datetimepicker class="center-block"
-                                    data-ng-model="billingDate"
-                                    data-datetimepicker-config="{startView: 'month', minView:'month'}">
-                    </datetimepicker>
+                <div flex flex-order-gt-md="2" flex-order="2" class="">
+                    <div class="">
+                        <h6 class="text-muted text-center">Select billing period</h6>
+                        <datetimepicker class="center-block"
+                                        data-ng-model="billingDate"
+                                        data-datetimepicker-config="{startView: 'month', minView:'month'}">
+                        </datetimepicker>
+                    </div>
                 </div>
             </div>
-        </div>
-    </md-card-content>
-</md-card>
-<div class="well row">
-
+        </md-card-content>
+    </md-card>
 </div>
-
-<div class="row">
-    <div class="col-md-12">
-        <div class="pull-right">
-            <h4 ng-show="isDocumentReady()">{{title()}}</h4>
-            <button class="pull-right btn btn-lg btn-primary" ng-disabled="!isDocumentReady()"
-                    ng-click="onCreateDocumentClicked()">Create
-            </button>
-            <small ng-show="!isDocumentReady()">
-                Please select a tenant and a billing period.
-            </small>
-        </div>
-    </div>
-</div>
-

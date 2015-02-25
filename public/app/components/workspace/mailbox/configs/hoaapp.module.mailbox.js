@@ -103,7 +103,6 @@ app.config(["$stateProvider", "$urlRouterProvider",
             resolve : {
                 documentsService    : "service.hoadocuments",
                 documentsResponse   : function(documentsService, $stateParams) {
-                    console.log("resolve");
                     return documentsService.getDocument($stateParams.id);
                 }
             }

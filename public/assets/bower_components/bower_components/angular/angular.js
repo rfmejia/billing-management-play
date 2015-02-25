@@ -20043,7 +20043,7 @@ function checkboxInputType(scope, element, attr, ctrl, $sniffer, $browser, $filt
  */
 
 
-/**
+    .white-frame-footer/**
  * @ngdoc directive
  * @name input
  * @restrict E

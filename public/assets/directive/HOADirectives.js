@@ -80,25 +80,6 @@ hoaDirectives.directive('formWatcher', function () {
     }
 });
 
-
-/**
- * Directives for the comment section. Has an optional current label when this is the most latest. set is-current="true" inside the html. To be used with .comment-list for stylings
- */
-hoaDirectives.directive('hoaComments', function () {
-    return {
-        restrict: 'E',
-        replace: true,
-        transclude: false,
-        scope: {
-            isCurrent: "=",
-            user: "=",
-            timestamp: "=",
-            comment: "="
-        },
-        templateUrl: 'assets/directive/directive-hoa-comments.html'
-    };
-});
-
 hoaDirectives.directive('hoaActivate', function ($location) {
     return {
         restrict: 'A',
@@ -108,8 +89,8 @@ hoaDirectives.directive('hoaActivate', function ($location) {
             scope.$location = $location;
             scope.$watch('$location.path()', function (locationPath) {
                 locationPath.search(path) != -1
-                    ? element.addClass('md-accent')
-                    : element.removeClass('md-accent');
+                    ? element.addClass('active')
+                    : element.removeClass('active');
             });
         }
     }
@@ -166,4 +147,20 @@ hoaDirectives.directive('removeFocus', function() {
         }
     }
 });
+
+hoaDirectives.directive('iconFill', function () {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attr) {
+            console.log('iconFill');
+            var object = angular.element(element[0].children[0]);
+            if(angular.isDefined(attr.iconFill)) {
+                object.load(function () {
+                    var svg = angular.element(this.getSVGDocument().documentElement);
+                    console.log('iconFill');
+                    svg.attr('fill', attr.iconFill);
+                });
+            }
+        }
+    }});
 

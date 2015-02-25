@@ -1,4 +1,4 @@
-var mailbox = angular.module("hoaApp");
+var mailbox = angular.module("module.mailbox");
 
 mailbox.service("service.hoamailbox", ["$resource", "$q", "service.hoalinks",
 	function($resource, $q, hoalinks){

@@ -1,7 +1,6 @@
 @import url(//fonts.googleapis.com/css?family=RobotoDraft&lang=en);
 body {
     font-family:'RobotoDraft', Arial, sans-serif;
-    font-size: 12px;
 }
 img {
     width: 48px;
@@ -66,7 +65,7 @@ md-icon.s48 {
     color: #00f;
 }
 
-.md-button.md-fab md-icon {
+md-button.md-fab i {
     margin-top: 0;
     line-height: 0px;
 }
@@ -100,4 +99,38 @@ md-toolbar.white-out h6 {
     font-weight: 400;
     margin: auto;
     color: #727272;
+}
+
+button i {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+button i.white-out {
+    color: #ffffff;
+}
+
+button i.secondary-text {
+    color: #727272;
+}
+
+#test {
+    float: left;
+}
+
+#userName {
+    color: #ffffff;
+    font-weight: bold;
+}
+
+.secondary-text {
+    color: #727272;
+}
+
+md-content.md-default-theme {
+    background-color: #ececec;
+}
+
+md-card.md-default-theme {
+    background-color: #ffffff;
 }

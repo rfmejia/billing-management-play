@@ -1,0 +1,62 @@
+<div ng-switch on="field.datatype">
+    <div ng-switch-when="integer">
+        <md-input-container>
+            <label for="{{field.id}}">{{field.title}}</label>
+            <input type="number" min="0" step="1"
+                   id="{{field.id}}" class="input-md" name="input"
+                   ignore-mouse-wheel
+                   ng-required="field.required" ng-model="field.value"
+                   number-valid
+                   ng-model-options="{updateOn: 'blur'}" />
+            <div ng-messages="parentForm[field].$error">
+                <div ng-message="required">This is required</div>
+                <div ng-message="number" >Oops! Numbers only please.</div>
+                <div ng-message="min" >Positive numbers only</div>
+                <div ng-message="date" >Invalid date format. Please use the date picker</div>
+                <div ng-message="email">Please enter a valid-email address</div>
+            </div>
+        </md-input-container>
+    </div>
+    <div ng-switch-when="double">
+        <md-input-container>
+            <label for="{{field.id}}">{{field.title}}</label>
+            <input type="number" min="0.1" step="1"
+                   id="{{field.id}}" class="input-sm" name="input"
+                   ignore-mouse-wheel
+                   ng-required="field.required" ng-model="field.value"
+                   number-valid
+                   ng-model-options="{updateOn: 'blur'}"/>
+            <div>
+                <nooovle-error-block parent-form="parentForm" field="input" is-required="field.required"></nooovle-error-block>
+            </div>
+        </md-input-container>
+
+    </div>
+    <div ng-switch-when="currency">
+        <input type="number" min="0.1" step="1"
+               id="{{field.id}}" class="form-control input-md" name="input"
+               ignore-mouse-wheel
+               placeholder="Input {{field.title | lowercase}}"
+               ng-required="field.required" ng-model="field.value"
+               number-valid
+               ng-model-options="{updateOn: 'blur'}"/>
+        <nooovle-error-block parent-form="parentForm" field="input" is-required="field.required"></nooovle-error-block>
+    </div>
+    <div ng-switch-when="string">
+        <input type="text"
+               id="{{field.id}}" class="form-control input-md" name="input"
+               placeholder="Input {{field.title | lowercase}}"
+               ng-required="field.required" ng-model="field.value"
+               ng-model-options="{updateOn: 'blur'}"/>
+        <nooovle-error-block parent-form="parentForm" field="input" is-required="field.required"></nooovle-error-block>
+    </div>
+    <div ng-switch-when="email">
+        <input type="email"
+               id="{{field.id}}" class="form-control input-md" name="input"
+               placeholder="Input {{field.title | lowercase}}"
+               ng-required="field.required" ng-model="field.value"
+               ng-model-options="{updateOn: 'blur'}"/>
+        <nooovle-error-block parent-form="parentForm" field="input" is-required="field.required"></nooovle-error-block>
+    </div>
+
+</div>

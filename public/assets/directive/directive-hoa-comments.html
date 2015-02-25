@@ -1,12 +1,16 @@
-<div ng-hide="comment == null" class="panel panel-default">
-    <div class="panel-heading right" ng-show="isCurrent ===true">Current</div>
-    <div class="panel-body">
-        <header>
-            <div class="comment-iconified comment-user"><i class="text-accented fa fa-user"></i>{{user}}</div>
-            <div class="comment-iconified comment-date"><i class="fa fa-clock-o"></i>{{timestamp}}</div>
-        </header>
-        <div class="comment-post">
-            <p>{{comment}}</p>
+<div>
+    <md-whiteframe class="comments recent-only" ng-show="isRecentOnly && comments.hasRecent" ng-class="md-whiteframe-z2" layout="row" layout-align="start center">
+        <i flex="20" class="fa fa-quote-left fa-4x"></i>
+        <div layout="column" layout-align="start start">
+            <p>
+                {{comments[0].comment}}
+            </p>
+            <div>
+                <p>
+                    {{comments[0].userName}} on {{comments[0].timestamp | momentString : 'MMM-DD-YY HH:mm'}}
+                </p>
+            </div>
+
         </div>
-    </div>
+    </md-whiteframe>
 </div>

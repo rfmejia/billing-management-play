@@ -8,9 +8,9 @@
 
     <!-- Bootstrap -->
     <!-- Optional theme -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.0/paper/bootstrap.min.css"/>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"/>
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/0.7.1/angular-material.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.0/paper/bootstrap.min.css"/>
     <link rel="stylesheet" href="assets/bower_components/angular-toastr/angular-toastr.css"/>
     <link rel="stylesheet" href="assets/css/HOAmods.css">
     <link rel="stylesheet" href="assets/css/datetimepicker.css"/>
@@ -24,7 +24,7 @@
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 </head>
-<body ng-app="hoaApp" ng-controller="controller.root">
+<body ng-app="hoaApp" layout="row" ng-controller="controller.root">
 <div layout='column' layout-fill ui-view="rootView">
 
 </div>
@@ -94,6 +94,7 @@
 <script src="app/components/shared/content/workspace/services/hoaapp.service.api.js"></script>
 <script src="app/components/shared/content/workspace/services/hoaapp.service.templates.js"></script>
 <script src="app/components/workspace/mailbox/services/hoaapp.service.documents.js"></script>
+<script src="app/components/workspace/mailbox/services/hoaapp.helper.comments.js"></script>
 <script src="assets/directive/HOADirectives.js"></script>
 <script src="hoaapp.controller.root.js"></script>
 <script src="hoaapp.controller.workspace.js"></script>

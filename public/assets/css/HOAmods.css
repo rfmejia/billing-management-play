@@ -10,10 +10,6 @@
 
 .glyphicon-vert-centered {vertical-align: middle;}
 
-.icon-button {
-
-}
-
 .icon-button:hover{
   color: #e51c23;
 }
@@ -165,14 +161,7 @@ h5.mainTotal {
 }
 
 #documentControls {
-  background-color: #F5F5F5;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  clear: both;
-}
-
-#saveButton {
-  clear: both;
+    margin: 30px;
 }
 
 #documentControls h4 {
@@ -196,11 +185,10 @@ h6.sidebarSection {
     user-select: none;
 }
 
-html {
+#content {
     overflow: -moz-scrollbars-vertical;
     overflow-y: scroll;
 }
-
 
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
@@ -238,11 +226,6 @@ input[type=number]::-webkit-outer-spin-button {
     overflow-y:auto;
 }
 
-.nav-sidebar {
-    width: 100%;
-    padding: 8px 0;
-    border-right: 1px solid #ddd;
-}
 
 .full-height {
     height: 100%;
@@ -315,12 +298,6 @@ input[type=number]::-webkit-outer-spin-button {
     overflow-y:scroll;
 }
 
-.nav-sidebar {
-    width: 100%;
-    padding: 8px 0;
-    border-right: 1px solid #ddd;
-}
-
 
 .tooltipWrapper {
     display: inline-block;
@@ -331,19 +308,9 @@ input[type=number]::-webkit-outer-spin-button {
     overflow-y:scroll;
 }
 
-.nav-sidebar {
-    width: 100%;
-    padding: 8px 0;
-    border-right: 1px solid #ddd;
-}
 
 .nav-sidebar .nav-justified a {
     text-align: left;
-}
-
-.nav-sidebar .nav-pills>li>a {
-    border: 1px solid transparent;
-    box-sizing: border-box;
 }
 
 .nav-sidebar .nav-pills>li>a:hover,
@@ -352,15 +319,30 @@ input[type=number]::-webkit-outer-spin-button {
     color: rgba(0, 0, 0, .54);
 }
 
-.nav-sidebar .nav-pills>li.active>a,
-.nav-sidebar .nav-pills>li.active>a:hover,
-.nav-sidebar .nav-pills>li.active>a:focus {
-    color: #FFFFFF;
-    background-color: rgba(33, 150, 243, .54);
+.nav-sidebar .nav-justified>li.active>a,
+.nav-sidebar .nav-justified>li.active>a:hover,
+.nav-sidebar .nav-justified>li.active>a:focus {
+    color: #727272;
+    background-color: #CFD8DC;
     border-left: 1px solid #FF4081;
 }
 
-.nav-sidebar .nav-pills>li>a {
+.nav-sidebar .nav-justified>li>a {
+    border-left: 1px solid transparent;
+}
+
+.nav-sidebar .nav-justified>li>a:hover,
+.nav-sidebar .nav-justified>li>a:focus {
+    color: #FF4081;
+    background-color: #CFD8DC;
+    border-left: 1px solid #FF4081;
+}
+
+.nav-sidebar h6 {
+    margin-left: 5px;
+}
+
+.nav-sidebar .nav-justified>li>a {
     border-radius: 0px;
 }
 
@@ -409,6 +391,22 @@ input[type=number]:focus,
 [contenteditable].form-control:focus {
     -webkit-box-shadow: inset 0 -2px 0 #FF4081;
     box-shadow: inset 0 -2px 0 #FF4081;
+}
+
+textarea,
+textarea.form-control,
+input.form-control,
+input[type=text],
+input[type=password],
+input[type=email],
+input[type=number],
+[type=text].form-control,
+[type=password].form-control,
+[type=email].form-control,
+[type=tel].form-control,
+[contenteditable].form-control{
+    -webkit-box-shadow: inset 0 -2px 0 #B6B6B6;
+    box-shadow: inset 0 -2px 0 #B6B6B6;
 }
 
 .text-soft-accented {
@@ -468,5 +466,100 @@ input[type=number]:focus,
     margin-right: 5px;
 }
 
+p.billing-section {
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-left: 20px;
+    font-size: 12px;
+    color: #727272;
+}
 
+md-whiteframe p.billing-title{
+    color: #212121;
+    font-size: 16px;
+    margin-bottom: 0;
+}
 
+md-whiteframe {
+    background-color: #ffffff;
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+.form-view md-whiteframe {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+md-whiteframe .whiteframe-padded {
+    padding: 20px;
+}
+
+md-whiteframe .whiteframe-title {
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 10px;
+    padding-top: 10px;
+}
+
+.whiteframe-footer label,
+.whiteframe-footer input{
+    color: #fff;
+}
+
+.white-frame-footer textarea:focus,
+.white-frame-footer textarea.form-control:focus,
+.white-frame-footer input.form-control:focus,
+.white-frame-footer input[type=text]:focus,
+.white-frame-footer input[type=password]:focus,
+.white-frame-footer input[type=email]:focus,
+.white-frame-footer input[type=number]:focus,
+.white-frame-footer [type=text].form-control:focus,
+.white-frame-footer [type=password].form-control:focus,
+.white-frame-footer [type=email].form-control:focus,
+.white-frame-footer [type=tel].form-control:focus,
+.white-frame-footer [contenteditable].form-control:focus {
+    -webkit-box-shadow: inset 0 -2px 0 #FF4081;
+    box-shadow: inset 0 -2px 0 #FF4081;
+}
+
+.white-frame-footer textarea,
+.white-frame-footer textarea.form-control,
+.white-frame-footer input.form-control,
+.white-frame-footer input[type=text],
+.white-frame-footer input[type=password],
+.white-frame-footer input[type=email],
+.white-frame-footer input[type=number],
+.white-frame-footer [type=text].form-control,
+.white-frame-footer [type=password].form-control,
+.white-frame-footer [type=email].form-control,
+.white-frame-footer [type=tel].form-control,
+.white-frame-footer [contenteditable].form-control{
+    -webkit-box-shadow: inset 0 -2px 0 #B6B6B6;
+    box-shadow: inset 0 -2px 0 #B6B6B6;
+    color: #ffffff;
+}
+
+md-whiteframe.billframe {
+    margin-bottom: 80px;
+}
+
+.form-horizontal{
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+form-view md-subheader.narrowed.md-sticky-clone {
+    position: relative !important;
+}
+
+.md-button:not(.md-fab) {
+    min-width: 10em; }
+
+.documentButtonGroup button{
+    margin-right: 10px;
+}
+
+section.comments {
+    margin-top: 10px;
+}
