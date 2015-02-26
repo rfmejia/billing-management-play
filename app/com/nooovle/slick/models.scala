@@ -121,8 +121,8 @@ class UserRolesModel(tag: Tag) extends Table[(String, String)](tag, "USER_ROLES"
   def roleName = column[String]("ROLE_NAME", O.NotNull)
 
   def pk = primaryKey("PK", (userId, roleName))
-  // def user = foreignKey("USER_FK", userId, models.users)(_.userId)
-  def role = foreignKey("ROLE_FK", roleName, models.roles)(_.name)
+  def user = foreignKey("USER_FK", userId, models.users)(_.userId, onDelete=ForeignKeyAction.Cascade)
+  def role = foreignKey("ROLE_FK", roleName, models.roles)(_.name, onDelete=ForeignKeyAction.Cascade)
 
   def * = (userId, roleName)
 }
@@ -148,8 +148,8 @@ class DocumentsModel(tag: Tag) extends Table[Document](tag, "DOCUMENTS") {
   def checkedAction = column[Option[Int]]("CHECKED_ACTION_ID")
   def approvedAction = column[Option[Int]]("APPROVED_ACTION_ID")
 
-  def _creator = foreignKey("USER_FK", creator, models.users)(_.userId)
-  def _forTenant = foreignKey("TENANT_FK", forTenant, models.tenants)(_.id)
+  def _creator = foreignKey("USER_FK", creator, models.users)(_.userId, onDelete=ForeignKeyAction.SetNull)
+  def _forTenant = foreignKey("TENANT_FK", forTenant, models.tenants)(_.id, onDelete=ForeignKeyAction.SetNull)
 
   def * = (id, serialId, title, docType, mailbox, creator, created, forTenant, forMonth, amountPaid, body, comments, assigned, lastAction, preparedAction, checkedAction, approvedAction) <> (Document.tupled, Document.unapply)
 }
@@ -172,8 +172,8 @@ class ActionLogsModel(tag: Tag) extends Table[ActionLog](tag, "ACTION_LOGS") {
   def when = column[DateTime]("WHEN", O.NotNull)
   def why = column[String]("WHY", O.NotNull)
 
-  def _who = foreignKey("USER_FK", who, models.users)(_.userId)
-  def _what = foreignKey("DOCUMENT_FK", what, models.documents)(_.id)
+  def _who = foreignKey("USER_FK", who, models.users)(_.userId, onDelete=ForeignKeyAction.SetNull)
+  def _what = foreignKey("DOCUMENT_FK", what, models.documents)(_.id, onDelete=ForeignKeyAction.Cascade)
 
   def * = (id, who, what, when, why) <> (ActionLog.tupled, ActionLog.unapply)
 }

@@ -39,10 +39,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
     }
   }
 
-  def list(offset: Int = 0, limit: Int = 10, mailbox: String, forTenant: Int, creator: String, assigned: Option[String], forMonth: Option[String], isPaid: Option[Boolean]) = SecuredAction { implicit request =>
-
-    println(s"forMonth: ${forMonth}")
-    println(s"assigned: ${assigned}")
+  def list(offset: Int = 0, limit: Int = 10, mailbox: String, forTenant: Int, creator: String, assigned: Option[String], forMonth: Option[String], isPaid: Option[Boolean], others: Option[Boolean]) = SecuredAction { implicit request =>
 
     val (ds, total) = ConnectionFactory.connect withSession { implicit session =>
       // Filtering level 1: Query-level filters
@@ -62,16 +59,23 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
     def dateFilter(date: DateTime): Boolean = {
       forMonth.map(dateParam => Try(DateTime.parse(dateParam)) match {
         case Success(parsedDate) =>
-          println(s"Filtering ${date.getYear} ${date.getMonthOfYear}")
-          println(s"  with ${date.getYear} ${parsedDate.getMonthOfYear}")
           date.getMonthOfYear == parsedDate.getMonthOfYear &&
             date.getYear == parsedDate.getYear
         case Failure(_) => false
       }) getOrElse true
     }
 
+    def othersFilter(assigned: Option[String]) = {
+      (assigned, others) match {
+        case (Some(user), Some(true)) =>
+          user == request.user
+        case (_, _) => true
+      }
+    }
+
     val objs = ds
       .filter(d => dateFilter(d.forMonth))
+      .filter(d => othersFilter(d.assigned))
       .map { d =>
         val link = routes.Documents.show(d.id)
         val obj = HalJsObject.create(link.absoluteURL())
@@ -106,7 +110,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       objs.filter(d => d \ "isPaid" == JsBoolean(b))
     } getOrElse objs
 
-    val self = routes.Documents.list(offset, limit, mailbox, forTenant, creator, assigned, forMonth, isPaid)
+    val self = routes.Documents.list(offset, limit, mailbox, forTenant, creator, assigned, forMonth, isPaid, others)
     val blank = HalJsObject.create(self.absoluteURL())
       .withCurie("hoa", Application.defaultCurie)
       .withLink("profile", "collection")
@@ -168,14 +172,16 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
           (json \ "amountPaid").asOpt[Double]) match {
             case (None, None, None, None, None) =>
               BadRequest("No editable fields matched. Please check your request.")
-            case (title, body, comments, assigned, amountPaid) =>
+            case (titleOpt, bodyOpt, commentsOpt, assignedOpt, amountPaidOpt) =>
               // TODO: Get user responsible for this request
               val newDoc =
-                d.replaceWith(title map (x => d.copy(title = x)))
-                .replaceWith(body map (x => d.copy(body = x)))
-                .replaceWith(comments map (x => d.copy(comments = x)))
-                .replaceWith(amountPaid map (x => d.copy(amountPaid = x)))
-                .replaceWith(assigned map (x => d.copy(assigned = Option(x))))
+                d.copy(
+                  title = titleOpt getOrElse d.title,
+                  body = bodyOpt getOrElse d.body,
+                  comments = commentsOpt getOrElse d.comments,
+                  assigned = assignedOpt.map(Option(_)) getOrElse d.assigned,
+                  amountPaid = amountPaidOpt getOrElse d.amountPaid
+                  )
 
               Document.update(newDoc) match {
                 case Success(id) => NoContent
