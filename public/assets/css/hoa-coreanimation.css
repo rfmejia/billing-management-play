@@ -1,0 +1,5 @@
+.ng-hide-add.hoa-fade-right {
+    -webkit-animation: fadeOutRight 0.3s;
+    animation: fadeOutRight 0.3s;
+    display: block !important;
+}

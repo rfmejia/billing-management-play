@@ -3,14 +3,14 @@
  */
 angular
     .module("module.mailbox")
-    .factory('helper.comments', [
-        'service.hoacurrentuser',
-        'moment',
+    .factory("helper.comments", [
+        "service.hoacurrentuser",
+        "moment",
         commentParser
     ]);
 
 function commentParser(hoacurrentuser, moment) {
-    var dateFormat = 'MMM-DD-YY HH:mm';
+    var dateFormat = "MMM-DD-YY HH:mm";
 
     var parser = {
         parseComments : parseComments
@@ -21,21 +21,25 @@ function commentParser(hoacurrentuser, moment) {
     function parseComments(currentComment, previous) {
         var comments = {};
         var recentComment = {};
-        if (typeof previous !== 'undefined' && previous.length > 0) {
-            previous[0].profile = 'list-item';
+        if(previous == null) {
+            previous = {};
+            previous.all = [];
+        }
+        if (previous.all.length > 0) {
+            previous.all[0].profile = "list-item";
         }
         if(currentComment != null && currentComment.trim().length > 0) {
             comments.hasRecent = true;
-            recentComment.profile = 'list-item-special';
+            recentComment.profile = "list-item-special";
             recentComment.userName = hoacurrentuser.getUserDetails().fullName;
-            recentComment.timestamp = moment();
+            recentComment.timestamp = moment().format();
             recentComment.comment = currentComment;
-            previous.unshift(recentComment);
+            previous.all.unshift(recentComment);
         }
         else {
             comments.hasRecent = false;
         }
-        comments.all = previous;
+        comments.all = previous.all;
         return comments;
     }
 }

@@ -1,14 +1,13 @@
 angular
     .module('module.mailbox')
     .factory('service.hoadocuments', [
-        'helper.comments',
         '$q',
         '$resource',
         'service.hoalinks',
-        documentsApi
+        documentSrv
     ]);
 
-function documentsApi(commentsParser, $q, $resource, hoalinks) {
+function documentSrv($q, $resource, hoalinks) {
     var service = {
         getDocument         : getDocument,
         getDocumentList     : getDocumentList,
@@ -16,8 +15,7 @@ function documentsApi(commentsParser, $q, $resource, hoalinks) {
         deleteDocument      : deleteDocument,
         createDocument      : createDocument,
         getLimitRequest     : getLimitRequest,
-        moveToBox           : moveToBox,
-        formatPostData      : formatPostData
+        moveToBox           : moveToBox
     };
 
     var resource		= null;
@@ -44,9 +42,8 @@ function documentsApi(commentsParser, $q, $resource, hoalinks) {
      * @returns {*}
      */
     function getDocumentList(queryBox, offsetPage) {
-        var limitRequest = this.getLimitRequest();
         var startPage = (offsetPage == null) ? 0 : (offsetPage * limit);
-        var query = {mailbox: queryBox, offset: startPage, limit: limitRequest};
+        var query = {mailbox: queryBox, offset: startPage, limit: limit};
         return makeRequest(null, query, null, requestType.QUERY);
     }
 
@@ -88,10 +85,8 @@ function documentsApi(commentsParser, $q, $resource, hoalinks) {
             deferred.reject();
         };
 
-        this.editDocument(id, data)
+        editDocument(id, data)
             .then(submitDocument);
-
-
 
         return deferred.promise;
     }
@@ -105,74 +100,12 @@ function documentsApi(commentsParser, $q, $resource, hoalinks) {
         });
     }
 
-    //Function to get the list of documents based on a query
-    function extractDocumentsList(response) {
-        return {
-            "documentsList" : response._embedded.item,
-            "documentCount" : response.total,
-            "createTemplate" : extractCreatePostDetails(response)
-        };
-    }
-
-    function extractEditDetails(response) {
-        return {
-            "details"       : response.body,
-            "title"         : response.title,
-            "documentId"    : response.id,
-            "forTenant"     : response.forTenant,
-            "forMonth"      : response.forMonth,
-            "nextBox"       : response._links["hoa:nextBox"],
-            "prevBox"       : response._links["hoa:prevBox"],
-            "postTemplate"  : extractEditPostDetails(response)
-        }
-    }
-
-    function extractEditPostDetails(response) {
-        var template = {};
-        if(response._template.edit == undefined) template = response._template.create.data[0];
-        else template = response._template.edit;
-        var postTemplate = {};
-        angular.forEach(template, function(value){
-            console.log(value);
-            postTemplate[value.name] = null;
-        });
-        return postTemplate;
-    };
-
-    function extractCreateDetails(response) {
-        var raw     = response._template.create.data[0];
-        var details = [];
-        angular.forEach(raw, function(values){
-                var template = angular.copy(values);
-                template.value = null;
-                details.push(template);
-            }
-        );
-        return {
-            "details"       : details,
-            "postTemplate"  : extractCreatePostDetails(raw)
-        }
-    }
-
-    function extractCreatePostDetails(response) {
-        var postTemplate = {};
-        angular.forEach(response, function(value) {
-                postTemplate[value.name] = "";
-            }
-        );
-
-        postTemplate.body = {};
-        postTemplate.body.previousMonth = {};
-        postTemplate.body.thisMonth = {};
-        postTemplate.body.summary = {};
-        return postTemplate;
-    }
-
     function makeRequest(documentId, documentQuery, documentData, type) {
         var deferred = $q.defer();
         var id = (documentId != null) ? {id : documentId} : documentId;
         var success = function(response) {
             deferred.resolve(response);
+            return response;
         };
 
         var error = function(response) {
@@ -182,18 +115,19 @@ function documentsApi(commentsParser, $q, $resource, hoalinks) {
         var request = function() {
             switch(type) {
                 case requestType.GET:
-                    console.log(id);
                     resource.get(id).$promise
-                        .then(extractEditDetails, error)
-                        .then(success);
+                        .then(success, error);
                     break;
                 case requestType.QUERY:
                     resource.get(documentQuery).$promise
-                        .then(extractDocumentsList, error)
-                        .then(success);
+                        .then(success, error);
                     break;
                 case requestType.EDIT:
-                    resource.edit(id, documentData).$promise.then(success, error);
+                    var comments = {"comments" :documentData.comments};
+                    console.log(JSON.stringify(comments));
+                    resource.edit(id, comments).$promise.then(success, error).then(function(value) {
+                        console.log(value);
+                    });
                     break;
                 case requestType.CREATE:
                     resource.create(documentData).$promise.then(success, error);
@@ -215,44 +149,5 @@ function documentsApi(commentsParser, $q, $resource, hoalinks) {
         else request();
 
         return deferred.promise;
-    };
-
-
-    /**
-     * Allows objects using this service to provide the needed details and the service will format it in an acceptable form by the server.
-     * @param forMonth YYYY-MMMM
-     * @param forTenant tenant id of the document
-     * @param previous previous billing information
-     * @param thisMonth  this month's billing information
-     * @param title generated title for the document
-     * @param summary summary of the billing info
-     * @param currentComment comments attached to the current workflow phase
-     * @param previousComments previous comments in other phases of the workflow
-     * @returns {{body: {summary: {}, breakdown: {previous: {}, thisMonth: {}}}, forTenant: string, forMonth: string, title: string, name: string, docType: string}}
-     */
-    function formatPostData(forMonth, forTenant, previous, thisMonth, title, summary, currentComment, previousComments) {
-        var postTemplate = {
-            "body" : {
-                "summary" : {},
-                "breakdown" : {
-                    "previous" : {},
-                    "thisMonth" : {}
-                }
-            },
-            "forTenant" : "",
-            "forMonth" : "",
-            "title" : "",
-            "name": "Statement of Account 1",
-            "docType": "invoice-1"
-        };
-
-        postTemplate.forMonth = forMonth;
-        postTemplate.forTenant = forTenant;
-        postTemplate.title = title;
-        postTemplate.body.breakdown.previous = previous;
-        postTemplate.body.breakdown.thisMonth = thisMonth;
-        postTemplate.body.summary = summary;
-        postTemplate.comments= commentsParser.parseComments(currentComment, previousComments);
-        return postTemplate;
     }
 }

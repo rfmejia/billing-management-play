@@ -1,3 +1,5 @@
+@import url("documents.css");
+
 #header {
   border-radius: 0px;
 }
@@ -144,7 +146,6 @@ legend,
 }
 
 h5.mainTotal {
-
   color: #2196F3;
 }
 
@@ -160,13 +161,6 @@ h5.mainTotal {
   color: #2196F3;
 }
 
-#documentControls {
-    margin: 30px;
-}
-
-#documentControls h4 {
-  color: rgba(33, 150, 243, .87);
-}
 
 h6.sidebarSection {
   color: #2196F3;
@@ -435,131 +429,48 @@ input[type=number],
 }
 
 
-/*Comment List styles*/
-.comment-list .row {
-    margin-bottom: 0px;
-}
-.comment-list .panel .panel-heading {
-    padding: 4px 15px;
-    position: absolute;
-    border:none;
-    /*Panel-heading border radius*/
-    border-top-right-radius:0px;
-    top: 1px;
-    color: #FF4081;
-}
-.comment-list .panel .panel-heading.right {
-    border-right-width: 0px;
-    /*Panel-heading border radius*/
-    border-top-left-radius:0px;
-    right: 16px;
-}
-.comment-list .panel .panel-heading .panel-body {
-    padding-top: 6px;
+
+i.leftQuote {
+    position: relative;
+    left: 0;
+    top: 0;
 }
 
-.comment-list .comment-post {
-    margin-top: 6px;
-}
-
-.comment-list .comment-iconified .fa {
-    margin-right: 5px;
-}
-
-p.billing-section {
-    margin-top: 0;
-    margin-bottom: 0;
-    margin-left: 20px;
-    font-size: 12px;
+.comments-header {
+    font-weight: bold;
     color: #727272;
 }
 
-md-whiteframe p.billing-title{
-    color: #212121;
-    font-size: 16px;
-    margin-bottom: 0;
+.recent-only .comments-header{
+    color: #FF4081;
 }
 
-md-whiteframe {
-    background-color: #ffffff;
-    margin-top: 8px;
-    margin-bottom: 8px;
+.recent-only .comments-content i {
+    color:#FF4081;
 }
 
-.form-view md-whiteframe {
+
+.comments-list .comments-content i {
+    color: #9E9E9E;
+}
+
+.comments .comment-date {
+    margin-right: 20px;
+    color: #727272;
+}
+
+#documentControls {
     margin-left: 10px;
     margin-right: 10px;
+    margin-top: 80px;
+    margin-bottom: 40px;
 }
 
-md-whiteframe .whiteframe-padded {
-    padding: 20px;
+#documentControls .textContainer{
+    padding: 0;
 }
 
-md-whiteframe .whiteframe-title {
-    padding-left: 20px;
-    padding-right: 20px;
-    padding-bottom: 10px;
-    padding-top: 10px;
-}
-
-.whiteframe-footer label,
-.whiteframe-footer input{
-    color: #fff;
-}
-
-.white-frame-footer textarea:focus,
-.white-frame-footer textarea.form-control:focus,
-.white-frame-footer input.form-control:focus,
-.white-frame-footer input[type=text]:focus,
-.white-frame-footer input[type=password]:focus,
-.white-frame-footer input[type=email]:focus,
-.white-frame-footer input[type=number]:focus,
-.white-frame-footer [type=text].form-control:focus,
-.white-frame-footer [type=password].form-control:focus,
-.white-frame-footer [type=email].form-control:focus,
-.white-frame-footer [type=tel].form-control:focus,
-.white-frame-footer [contenteditable].form-control:focus {
-    -webkit-box-shadow: inset 0 -2px 0 #FF4081;
-    box-shadow: inset 0 -2px 0 #FF4081;
-}
-
-.white-frame-footer textarea,
-.white-frame-footer textarea.form-control,
-.white-frame-footer input.form-control,
-.white-frame-footer input[type=text],
-.white-frame-footer input[type=password],
-.white-frame-footer input[type=email],
-.white-frame-footer input[type=number],
-.white-frame-footer [type=text].form-control,
-.white-frame-footer [type=password].form-control,
-.white-frame-footer [type=email].form-control,
-.white-frame-footer [type=tel].form-control,
-.white-frame-footer [contenteditable].form-control{
-    -webkit-box-shadow: inset 0 -2px 0 #B6B6B6;
-    box-shadow: inset 0 -2px 0 #B6B6B6;
-    color: #ffffff;
-}
-
-md-whiteframe.billframe {
-    margin-bottom: 80px;
-}
-
-.form-horizontal{
-    margin-left: 20px;
-    margin-right: 20px;
-}
-
-form-view md-subheader.narrowed.md-sticky-clone {
-    position: relative !important;
-}
-
-.md-button:not(.md-fab) {
-    min-width: 10em; }
-
-.documentButtonGroup button{
-    margin-right: 10px;
-}
-
-section.comments {
-    margin-top: 10px;
+.comments-divider {
+    margin-top: 20px;
+    margin-bottom: 20px;
 }

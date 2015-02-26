@@ -1,159 +1,184 @@
-<div class="form-view" layout="column" flex>
-    <form name="billingForm" class="form-horizontal" novalidate form-watcher>
-        <div class="form-group">
-            <div>
-                <p class="billing-section">Previous Month</p>
-            </div>
-
-            <md-whiteframe class="billframe md-whiteframe-z4" layout="column" flex ng-repeat="sections in previous.sections">
-                <div class="whiteframe-title">
-                    <p class="billing-title">Previous charges</p>
-                </div>
-                <md-divider></md-divider>
-                <div class="whiteframe-padded" ng-repeat="field in sections.fields" ng-form="previousForm"
-                     ng-class="{'has-error': previousForm.input.$dirty && previousForm.input.$invalid}">
-                    <label flex for="{{field.id}}" class="control-label col-xs-4 pull-left secondary-text">{{field.title}}</label>
-                    <div flex class="col-xs-8" ng-switch on="field.datatype">
-                        <nooovle-inputs field="field" parent-form="previousForm"></nooovle-inputs>
+<div class="form-view editable-doc" layout="column" flex>
+    <section>
+        <section class="comments">
+            <hoa-comments is-recent-only="true" comments="drafts.comments" is-hidden="false"></hoa-comments>
+        </section>
+        <form name="billingForm" class="form-horizontal" novalidate form-watcher>
+            <div class="form-group">
+                <!-- Previous month's bill-->
+                <section class="previousMonth">
+                    <div>
+                        <p class="whiteframe-small-heading">Previous Month</p>
                     </div>
-                </div>
-                <div class="whiteframe-footer" layout="row" layout-align="center center">
-                    <md-toolbar md-theme="bills-dark" class="md-tall">
-                        <div class="subtotal" ng-form="previousFormTotal">
-                            <label for="previousTotal" class="control-label col-xs-4 pull-left">Previous total</label>
-                            <div class="col-xs-8"
-                                 ng-class="{'has-error': previousFormTotal.previousTotal.$dirty && previousFormTotal.previousTotal.$invalid}">
-                                <input id="previousTotal" class="form-control input-md" name="previousTotal"
-                                       type="number" min="0" step="0.01" ignore-mouse-wheel
-                                       placeholder="Input {{sections.title}} total"
-                                       required ng-model="sections.total"
-                                       ng-change="computeSubtotal(previous)"
-                                       number-valid/>
-                                <nooovle-error-block parent-form="previousFormTotal" field="previousTotal"
-                                                     is-required="true"></nooovle-error-block>
+                    <md-whiteframe class="billframe md-whiteframe-z4" layout="column" flex
+                                   ng-repeat="sections in drafts.previous.sections">
+                        <div class="whiteframe-title">
+                            <p class="billing-title">Previous charges</p>
+                        </div>
+                        <md-divider></md-divider>
+                        <div class="whiteframe-padded" ng-repeat="field in sections.fields" ng-form="previousForm"
+                             ng-class="{'has-error': previousForm.input.$dirty && previousForm.input.$invalid}">
+                            <label flex for="{{field.id}}" class="control-label col-xs-4 pull-left secondary-text">{{field.title}}</label>
+
+                            <div flex class="col-xs-8" ng-switch on="drafts.field.datatype">
+                                <nooovle-inputs field="field" parent-form="previousForm"></nooovle-inputs>
                             </div>
                         </div>
-                    </md-toolbar>
-                </div>
-            </md-whiteframe>
+                        <div class="whiteframe-footer" layout="row" layout-align="center center">
+                            <md-toolbar md-theme="bills-dark" class="md-tall">
+                                <div class="subtotal" ng-form="previousFormTotal">
+                                    <label for="previousTotal" class="control-label col-xs-4 pull-left">Previous
+                                        total</label>
 
-            <div>
-                <p class="billing-section">This month's charges</p>
-            </div>
-            <md-whiteframe class="billframe md-whiteframe-z4" layout="column"  flex ng-repeat="sections in thisMonth.sections">
-
-                <div class="whiteframe-title">
-                    <p class="billing-title">{{sections.title}}</p>
-                </div>
-                <md-divider></md-divider>
-                <div class="whiteframe-padded" ng-repeat="field in sections.fields" ng-form="thisMonth"
-                     ng-class="{'has-error': thisMonth.input.$dirty && thisMonth.input.$invalid}">
-                    <label flex for="{{field.id}}" class="control-label col-xs-4 pull-left secondary-text">{{field.title}}</label>
-                    <div flex class="col-xs-8" ng-switch on="field.datatype">
-                        <nooovle-inputs field="field" parent-form="thisMonthForm"></nooovle-inputs>
-                        <div ng-if="field.datatype == 'date'" ng-switch-when="date" dropdown>
-                            <a class="dropdown-toggle" id="{{field.id}}" role="button" data-toggle="dropdown"
-                               data-target="#" href>
-                                <div class="col-xs-12 input-group"
-                                     ng-class="{'has-error': billingForm.billDate.$dirty && billingForm.billDate.$invalid}">
-                                    <input type="text" class="form-control" name="input"
-                                           data-ng-model="field.value"
-                                           placeholder="Input {{field.title}}"
-                                           ng-change="validateDateRange(field, thisMonth.input)">
-                                    <small class="help-block">
-                                        <span ng-class="isRequiredMuted(thisMonth.input)">{{showErrorMessage(thisMonth.input, field.required)}}</span>
-                                    </small>
+                                    <div class="col-xs-8"
+                                         ng-class="{'has-error': previousFormTotal.previousTotal.$dirty && previousFormTotal.previousTotal.$invalid}">
+                                        <input id="previousTotal" class="form-control input-md" name="previousTotal"
+                                               type="number" min="0" step="0.01" ignore-mouse-wheel
+                                               placeholder="Input {{sections.title}} total"
+                                               required ng-model="sections.total"
+                                               ng-change="drafts.computeSubtotal(previous)"
+                                               number-valid/>
+                                        <nooovle-error-block parent-form="previousFormTotal" field="previousTotal"
+                                                             is-required="true"></nooovle-error-block>
+                                    </div>
                                 </div>
-                            </a>
-                            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                                <datetimepicker class="datetimepicker-dropdown-bottom-right"
-                                                data-ng-model="field.value"
-                                                data-on-set-time="onDateRangeSet(newDate, oldDate, field, thisMonth.input)"
-                                                data-datetimepicker-config="{ dropdownSelector : '#{{field.id}}', startView : 'month', minView : 'month'}"></datetimepicker>
-                            </ul>
+                            </md-toolbar>
                         </div>
+                    </md-whiteframe>
+                </section>
+
+                <!-- This month's billing -->
+                <section class="thisMonth">
+                    <div>
+                        <p class="whiteframe-small-heading">This month's charges</p>
                     </div>
-                </div>
-                <div class="whiteframe-footer" layout="row" layout-align="center center">
-                    <md-toolbar md-theme="bills-dark" class="md-tall">
-                        <div class="subtotal" ng-form="currentFormTotal">
-                            <label for="thisTotal" class="control-label col-xs-4 pull-left">{{sections.title}} total</label>
-                            <div class="col-xs-8"
-                                 ng-class="{'has-error': currentFormTotal.inputTotal.$dirty && currentFormTotal.inputTotal.$invalid}">
-                                <input id="thisTotal" class="form-control input-md" name="inputTotal"
-                                       type="number" min="0" step="0.01" ignore-mouse-wheel
-                                       placeholder="Input {{sections.title}} total"
-                                       required ng-model="sections.total"
-                                       ng-change="computeSubtotal(thisMonth)"
-                                       number-valid/>
-                                <nooovle-error-block parent-form="currentFormTotal" field="inputTotal"
-                                                     is-required="true"></nooovle-error-block>
+                    <md-whiteframe class="billframe md-whiteframe-z4" layout="column" flex
+                                   ng-repeat="sections in drafts.thisMonth.sections">
+
+                        <div class="whiteframe-title">
+                            <p class="billing-title">{{sections.title}}</p>
+                        </div>
+                        <md-divider></md-divider>
+                        <div class="whiteframe-padded" ng-repeat="field in sections.fields" ng-form="thisMonth"
+                             ng-class="{'has-error': thisMonth.input.$dirty && thisMonth.input.$invalid}">
+                            <label flex for="{{field.id}}" class="control-label col-xs-4 pull-left secondary-text">{{field.title}}</label>
+
+                            <div flex class="col-xs-8" ng-switch on="field.datatype">
+                                <nooovle-inputs field="field" parent-form="thisMonthForm"></nooovle-inputs>
+                                <div ng-if="field.datatype == 'date'" ng-switch-when="date" dropdown>
+                                    <a class="dropdown-toggle" id="{{field.id}}" role="button" data-toggle="dropdown"
+                                       data-target="#" href>
+                                        <div class="col-xs-12 input-group"
+                                             ng-class="{'has-error': billingForm.billDate.$dirty && billingForm.billDate.$invalid}">
+                                            <input type="text" class="form-control" name="input"
+                                                   data-ng-model="field.value"
+                                                   placeholder="Input {{field.title}}"
+                                                   ng-change="drafts.validateDateRange(field, thisMonth.input)">
+                                            <nooovle-error-block parent-form="thisMonth" field="input"
+                                                                 is-required="field.required"></nooovle-error-block>
+                                        </div>
+                                    </a>
+                                    <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                                        <datetimepicker class="datetimepicker-dropdown-bottom-right"
+                                                        data-ng-model="field.value"
+                                                        data-on-set-time="drafts.onDateRangeSet(newDate, oldDate, field, thisMonth.input)"
+                                                        data-datetimepicker-config="{ dropdownSelector : '#{{field.id}}', startView : 'month', minView : 'month'}"></datetimepicker>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
-                    </md-toolbar>
-                </div>
-            </md-whiteframe>
+                        <div class="whiteframe-footer" layout="row" layout-align="center center">
+                            <md-toolbar md-theme="bills-dark" class="md-tall">
+                                <div class="subtotal" ng-form="currentFormTotal">
+                                    <label for="thisTotal" class="control-label col-xs-4 pull-left">{{sections.title}}
+                                        total</label>
 
-            <div layout="row">
-                <md-whiteframe class="md-whiteframe-z2" flex layout="column" layout-align="center center">
-                    <div flex layout="column" layout-align="center center">
-                        <h6>Previous</h6>
-                        <h3>{{previous.summary.value}}</h3>
-                    </div>
-                </md-whiteframe>
-                <md-whiteframe class="md-whiteframe-z2" flex layout="column" layout-align="center center">
-                    <div flex layout="column" layout-align="center center">
-                        <h6>This month</h6>
-                        <h3>{{thisMonth.summary.value}}</h3>
-                    </div>
-                </md-whiteframe>
-            </div>
-            <div layout="row">
-                <md-whiteframe class="md-whiteframe-z2" flex layout="column" layout-align="center center">
-                    <div flex md-theme="md-pink"  layout="column" layout-align="center center">
-                        <h5>Total</h5>
-                        <h2>{{summary.value}}</h2>
-                    </div>
-                </md-whiteframe>
-            </div>
+                                    <div class="col-xs-8"
+                                         ng-class="{'has-error': currentFormTotal.inputTotal.$dirty && currentFormTotal.inputTotal.$invalid}">
+                                        <input id="thisTotal" class="form-control input-md" name="inputTotal"
+                                               type="number" min="0" step="0.01" ignore-mouse-wheel
+                                               placeholder="Input {{sections.title}} total"
+                                               required ng-model="sections.total"
+                                               ng-change="drafts.computeSubtotal(thisMonth)"
+                                               number-valid/>
+                                        <nooovle-error-block parent-form="currentFormTotal" field="inputTotal"
+                                                             is-required="true"></nooovle-error-block>
+                                    </div>
+                                </div>
+                            </md-toolbar>
+                        </div>
+                    </md-whiteframe>
+                </section>
 
-            <div id="documentControls">
-                <div class="form-group">
-                    <div class="col-lg-12">
+                <!-- Summary section -->
+                <section id="Summary section">
+                    <div layout="row">
+                        <md-whiteframe class="md-whiteframe-z2" flex layout="column" layout-align="center center">
+                            <div flex layout="column" layout-align="center center">
+                                <h6>Previous</h6>
+
+                                <h3>{{drafts.previous.summary.value}}</h3>
+                            </div>
+                        </md-whiteframe>
+                        <md-whiteframe class="md-whiteframe-z2" flex layout="column" layout-align="center center">
+                            <div flex layout="column" layout-align="center center">
+                                <h6>This month</h6>
+
+                                <h3>{{drafts.thisMonth.summary.value}}</h3>
+                            </div>
+                        </md-whiteframe>
+                    </div>
+
+                    <div layout="row">
+                        <md-whiteframe class="md-whiteframe-z2" flex layout="column" layout-align="center center">
+                            <div flex md-theme="md-pink" layout="column" layout-align="center center">
+                                <h5>Total</h5>
+
+                                <h2>{{drafts.summary.value}}</h2>
+                            </div>
+                        </md-whiteframe>
+                    </div>
+                </section>
+
+                <div id="documentControls">
+                    <div class="form-group">
+                        <div class="col-lg-12 textContainer">
                         <textarea class="form-control" rows="5" id="documentComments"
-                                  ng-model="currentComment" placeholder="Add comments here"></textarea>
-                        <span class="help-block">Notes or comments for the current document (Will not be visible in final document).</span>
+                                  ng-model="drafts.currentComment" placeholder="Add comments here"></textarea>
+                            <span class="help-block">Notes or comments for the current document (Will not be visible in final document).</span>
+                        </div>
                     </div>
+
+                    <section layout="row" layout-align="center center">
+                        <div class="documentButtonGroup" flex="80" layout="row" layout-align="start center">
+                            <md-button remove-focus class="md-primary md-raised md-hue-3"
+                                       ng-click="drafts.onCancelClicked()">
+                                Cancel
+                            </md-button>
+                            <md-button remove-focus type="button" class="md-primary md-raised md-hue-3"
+                                       ng-click="drafts.onSaveClicked(billingForm)">Save
+                            </md-button>
+                            <md-button remove-focus type="submit" class="md-primary md-raised md-hue-3"
+                                       ng-click="drafts.onSubmitClicked()"
+                                       ng-disabled="billingForm.$invalid">Submit
+                            </md-button>
+                        </div>
+                        <div flex="20" layout="column" layout-align="center end">
+                            <md-button type="button" class="md-warn md-hue-3 md-raised"
+                                       ng-click="drafts.onDeleteClicked()">Delete
+                            </md-button>
+                        </div>
+
+                    </section>
+                    <p class="md-warn" ng-show="billingForm.$invalid">Can't submit document with invalid fields</p>
+
                 </div>
-
-                <section layout="row" layout-align="center center">
-                    <div class="documentButtonGroup" flex="80" layout="row" layout-align="start center">
-                        <md-button remove-focus class="md-primary md-raised md-hue-3" ng-click="onCancelClicked()">
-                            Cancel
-                        </md-button>
-                        <md-button remove-focus type="button" class="md-primary md-raised md-hue-3" ng-click="onSaveClicked(billingForm)">Save</md-button>
-                        <md-button remove-focus type="submit" class="md-primary md-raised md-hue-3" ng-click="onSubmitClicked()"
-                                   ng-disabled="billingForm.$invalid">Submit
-                        </md-button>
-                    </div>
-                    <div flex="20" layout="column" layout-align="center center">
-                        <md-button type="button" class="md-warn md-hue-3 md-raised pull-right" ng-click="onDeleteClicked()">Delete
-                        </md-button>
-                    </div>
-
-                </section>
-                <p class="md-warn" ng-show="billingForm.$invalid">Can't submit document with invalid fields</p>
-
-                <section id="comments">
-                    <h6>Comments</h6>
-                    <hoa-comments is-recent-only="true" comments="commentsList"></hoa-comments>
-                </section>
-
             </div>
-</div>
-
-<!--end form group -->
-</form>
+        </form>
+        <section class="comments">
+            <hoa-comments is-recent-only="false" comments="drafts.comments" is-hidden="true"></hoa-comments>
+        </section>
+    </section>
 </div>
 
 

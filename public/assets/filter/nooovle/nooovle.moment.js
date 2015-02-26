@@ -3,8 +3,11 @@
  */
 angular
     .module('hoaApp')
-    .filter('momentString', format);
-
-function momentToString(dateString, format) {
-    return moment(dateString).format(format);
-}
+    .filter('momentString', [
+        "moment",
+        function() {
+            return function(dateString, format) {
+                return moment(dateString).format(format);
+            }
+        }
+    ]);

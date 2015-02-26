@@ -1,5 +1,6 @@
 angular
     .module('hoaApp', [
+        "ngAnimate",
         "ngCookies",
         "ngResource",
         "ngMessages",
@@ -88,7 +89,7 @@ function hoaAppConfig($stateProvider, $urlRouterProvider, $httpProvider, usSpinn
                 var deferred            = $q.defer();
                 var linksPromise        = linksService.getLinks();
                 var mailboxPromise      = mailboxService.getLocal();
-                var documentsPromise    = documentsService.getDocumentList(null);
+                var documentsPromise    = documentsService.getDocumentList(null, 0);
                 var userPromise         = userService.getUserDetails();
                 var success = function (response) {
                     deferred.resolve(response);
@@ -107,7 +108,6 @@ function hoaAppConfig($stateProvider, $urlRouterProvider, $httpProvider, usSpinn
                 return response[2];
             },
             userDetails         : function(response) {
-                console.log(response);
                 return response[3];
             }
         },
