@@ -39,7 +39,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
     }
   }
 
-  def list(offset: Int = 0, limit: Int = 10, mailbox: String, forTenant: Int, creator: String, assigned: Option[String], forMonth: Option[String], isPaid: Option[Boolean]) = SecuredAction { implicit request =>
+  def list(offset: Int = 0, limit: Int = 10, mailbox: String, forTenant: Int, creator: String, assigned: Option[String], forMonth: Option[String], isPaid: Option[Boolean], others: Option[Boolean]) = SecuredAction { implicit request =>
 
     val (ds, total) = ConnectionFactory.connect withSession { implicit session =>
       // Filtering level 1: Query-level filters
@@ -65,8 +65,17 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       }) getOrElse true
     }
 
+    def othersFilter(assigned: Option[String]) = {
+      (assigned, others) match {
+        case (Some(user), Some(true)) =>
+          user == request.user
+        case (_, _) => true
+      }
+    }
+
     val objs = ds
       .filter(d => dateFilter(d.forMonth))
+      .filter(d => othersFilter(d.assigned))
       .map { d =>
         val link = routes.Documents.show(d.id)
         val obj = HalJsObject.create(link.absoluteURL())
@@ -101,7 +110,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       objs.filter(d => d \ "isPaid" == JsBoolean(b))
     } getOrElse objs
 
-    val self = routes.Documents.list(offset, limit, mailbox, forTenant, creator, assigned, forMonth, isPaid)
+    val self = routes.Documents.list(offset, limit, mailbox, forTenant, creator, assigned, forMonth, isPaid, others)
     val blank = HalJsObject.create(self.absoluteURL())
       .withCurie("hoa", Application.defaultCurie)
       .withLink("profile", "collection")
