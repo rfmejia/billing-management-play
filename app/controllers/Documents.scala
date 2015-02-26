@@ -163,14 +163,16 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
           (json \ "amountPaid").asOpt[Double]) match {
             case (None, None, None, None, None) =>
               BadRequest("No editable fields matched. Please check your request.")
-            case (title, body, comments, assigned, amountPaid) =>
+            case (titleOpt, bodyOpt, commentsOpt, assignedOpt, amountPaidOpt) =>
               // TODO: Get user responsible for this request
               val newDoc =
-                d.replaceWith(title map (x => d.copy(title = x)))
-                .replaceWith(body map (x => d.copy(body = x)))
-                .replaceWith(comments map (x => d.copy(comments = x)))
-                .replaceWith(amountPaid map (x => d.copy(amountPaid = x)))
-                .replaceWith(assigned map (x => d.copy(assigned = Option(x))))
+                d.copy(
+                  title = titleOpt getOrElse d.title,
+                  body = bodyOpt getOrElse d.body,
+                  comments = commentsOpt getOrElse d.comments,
+                  assigned = assignedOpt.map(Option(_)) getOrElse d.assigned,
+                  amountPaid = amountPaidOpt getOrElse d.amountPaid
+                  )
 
               Document.update(newDoc) match {
                 case Success(id) => NoContent

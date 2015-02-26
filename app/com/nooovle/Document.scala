@@ -25,17 +25,7 @@ case class Document(
   lastAction: Option[Int] = None,
   preparedAction: Option[Int] = None,
   checkedAction: Option[Int] = None,
-  approvedAction: Option[Int] = None) {
-  // Returns that if exists, else this
-  def replaceWith(that: Option[Document]): Document =
-    {
-      println(that)
-      that match {
-        case Some(that) => that
-        case None => this
-      }
-    }
-}
+  approvedAction: Option[Int] = None)
 
 object Document extends ((Int, Option[String], String, String, String, String, DateTime, Int, DateTime, Double, JsObject, JsObject, Option[String], Option[Int], Option[Int], Option[Int], Option[Int]) => Document) with ModelTemplate {
 
