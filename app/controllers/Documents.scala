@@ -67,8 +67,8 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
 
     def isAssignedFilter(assigned: Option[String]) = {
       (assigned, isAssigned) match {
-        case (None, Some(false)) => false
-        case (Some(_), Some(true)) => false
+        case (None, Some(true)) => false
+        case (Some(_), Some(false)) => false
         case (_, _) => true
       }
     }
