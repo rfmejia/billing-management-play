@@ -51,7 +51,8 @@ class Application(override implicit val env: RuntimeEnvironment[User])
       val obj = HalJsObject.create(self.absoluteURL())
         .withCurie("hoa", Application.defaultCurie)
         .withLink("profile", "collection")
-      obj.asJsValue ++ Workflow.asJsObject
+        .withField("mailbox", Workflow.asJsObject)
+      obj.asJsValue
     }
   }
 }
