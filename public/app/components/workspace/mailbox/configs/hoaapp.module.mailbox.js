@@ -20,7 +20,6 @@ function mailboxModuleConfig ($stateProvider) {
             templatesService    : "service.hoatemplates",
             documentsHelper     : 'helper.documents',
             listResponse         : function (tenantsService, templatesService, documentsService, $q) {
-                console.log(documentsService);
                 var deferred = $q.defer();
                 var tenantsPromise   = tenantsService.getList();
                 var templatesPromise = templatesService.getLocal();
@@ -50,22 +49,41 @@ function mailboxModuleConfig ($stateProvider) {
 
     //region WORKSPACE.LIST
     var list = {
-        url:'list?mailbox&page',
+        url:'list?mailbox&limit&offset&forTenant&creator&assigned&forMonth&isPaid&isAssigned&others',
         abstract    : true,
         template    : '<ui-view/>',
         resolve     : {
             documentsService    : "service.hoadocuments",
-            documentMailbox     : function($stateParams) {
-                if(!$stateParams.mailbox) $stateParams.mailbox = 'drafts';
-                if(!$stateParams.page) $stateParams.page=0;
-                return $stateParams.mailbox;
+            documentsHelper     : "helper.documents",
+            userService         : "service.hoacurrentuser",
+            requestedParameters     : function($stateParams, documentsHelper) {
+                var queryParams = documentsHelper.getQueryParameters();
+                for(var key in $stateParams) {
+                    if($stateParams[key] == "true") queryParams[key] = true;
+                    else if($stateParams[key] == "false") queryParams[key] = false;
+                    else queryParams[key] = $stateParams[key];
+                }
+                return queryParams;
             },
-            documentsList       : function(documentsService, documentMailbox) {
-                return documentsService.getDocumentList(documentMailbox);
+            response                : function(documentsService, requestedParameters, userService, $q) {
+                var deferred = $q.defer();
+                var documentsPromise = documentsService.getDocumentList(requestedParameters);
+                var currentUserPromise = userService.getUserDetails();
+                var success = function(response) {
+                    deferred.resolve(response);
+                };
+
+                $q.all([documentsPromise, currentUserPromise])
+                    .then(success);
+                return deferred.promise;
             },
-            page                : function($stateParams) {
-                return $stateParams.page;
+            documentsResponse       : function(response) {
+                return response[0]
+            },
+            userDetails             : function(response) {
+                return response[1];
             }
+
         }
     };
 
@@ -74,7 +92,7 @@ function mailboxModuleConfig ($stateProvider) {
         views : {
             "contentArea@workspace": {
                 templateUrl : "app/components/workspace/mailbox/views/maincontent-list-drafts.html",
-                controller  : "controller.documents"
+                controller  : "controller.documents as draftsCtrl"
             }
         }
     };

@@ -14,12 +14,11 @@ function documentSrv($q, $resource, hoalinks) {
         editDocument        : editDocument,
         deleteDocument      : deleteDocument,
         createDocument      : createDocument,
-        getLimitRequest     : getLimitRequest,
+        assignDocument      : assignDocument,
         moveToBox           : moveToBox
     };
 
     var resource		= null;
-    var limit = 10;
     var requestType     = Object.freeze({
         "QUERY"     : 0,
         "GET"       : 1,
@@ -41,9 +40,7 @@ function documentSrv($q, $resource, hoalinks) {
      * @param offsetPage
      * @returns {*}
      */
-    function getDocumentList(queryBox, offsetPage) {
-        var startPage = (offsetPage == null) ? 0 : (offsetPage * limit);
-        var query = {mailbox: queryBox, offset: startPage, limit: limit};
+    function getDocumentList(query) {
         return makeRequest(null, query, null, requestType.QUERY);
     }
 
@@ -61,8 +58,9 @@ function documentSrv($q, $resource, hoalinks) {
         return makeRequest(null, null, data, requestType.CREATE);
     }
 
-    function getLimitRequest() {
-        return limit;
+    function assignDocument(id, assignee) {
+        var data = {"assigned" : assignee};
+        return makeRequest(id, null, data, requestType.EDIT);
     }
 
     function moveToBox(id, url, data) {
@@ -123,17 +121,16 @@ function documentSrv($q, $resource, hoalinks) {
                         .then(success, error);
                     break;
                 case requestType.EDIT:
-                    var comments = {"comments" :documentData.comments};
-                    console.log(JSON.stringify(comments));
-                    resource.edit(id, comments).$promise.then(success, error).then(function(value) {
-                        console.log(value);
-                    });
+                    resource.edit(id, documentData).$promise
+                        .then(success, error);
                     break;
                 case requestType.CREATE:
-                    resource.create(documentData).$promise.then(success, error);
+                    resource.create(documentData).$promise
+                        .then(success, error);
                     break;
                 case requestType.DELETE:
-                    resource.delete(id).$promise.then(success, error);
+                    resource.delete(id).$promise
+                        .then(success, error);
             }
         };
 

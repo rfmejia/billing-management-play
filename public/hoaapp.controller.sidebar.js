@@ -5,11 +5,13 @@ angular
     .module('hoaApp')
     .controller('sidebarController', [
         '$state',
+        'helper.documents',
         'mailbox',
+        'userDetails',
         sidebarController
     ]);
 
-function sidebarController ($state, mailbox) {
+function sidebarController ($state, documentsHelper, mailbox, userDetails) {
     var vm = this;
 
     vm.mailboxItems = {
@@ -20,7 +22,10 @@ function sidebarController ($state, mailbox) {
 
     //region FUNCTION_CALLS
     function onSidebarItemClicked(folder) {
-        var query = {mailbox: folder.queryParam, page: 0};
+        var query = documentsHelper.getQueryParameters();
+        query.mailbox = folder.queryParam;
+        query.isAssigned = true;
+        query.assigned = userDetails.userId;
         $state.go(folder.path, query, {reload : true});
     }
 

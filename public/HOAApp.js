@@ -15,11 +15,9 @@ angular
         "ngAnimate",
         "module.users",
         "module.tenants",
-        "module.mailbox"
-    ]);
-
-angular
-    .module('hoaApp')
+        "module.mailbox",
+        "module.directives"
+    ])
     .config([
         "$stateProvider",
         "$urlRouterProvider",
@@ -27,10 +25,7 @@ angular
         'usSpinnerConfigProvider',
         '$mdThemingProvider',
         hoaAppConfig
-    ]);
-
-angular
-    .module('hoaApp')
+    ])
     .run([
         '$rootScope',
         'usSpinnerService',
@@ -39,7 +34,6 @@ angular
         "$location",
         hoaAppRun
     ]);
-
 
 function hoaAppConfig($stateProvider, $urlRouterProvider, $httpProvider, usSpinnerConfigProvider, $mdThemingProvider) {
     $httpProvider.interceptors.push('httpInterceptor');
@@ -70,6 +64,9 @@ function hoaAppConfig($stateProvider, $urlRouterProvider, $httpProvider, usSpinn
         .primaryPalette('teal')
         .dark();
 
+    $mdThemingProvider.theme('drafts-list', 'default')
+        .primaryPalette('cyan');
+
 
 
     usSpinnerConfigProvider.setDefaults({
@@ -84,13 +81,15 @@ function hoaAppConfig($stateProvider, $urlRouterProvider, $httpProvider, usSpinn
             linksService        : "service.hoalinks",
             mailboxService      : "service.hoamailbox",
             documentsService    : "service.hoadocuments",
+            documentsHelper     : "helper.documents",
             userService         : 'service.hoacurrentuser',
-            response            : function (linksService, mailboxService, documentsService, userService, $q) {
-                var deferred            = $q.defer();
-                var linksPromise        = linksService.getLinks();
-                var mailboxPromise      = mailboxService.getLocal();
-                var documentsPromise    = documentsService.getDocumentList(null, 0);
+            response            : function(linksService, mailboxService, documentsService, documentsHelper, userService, $q ) {
+                var deferred = $q.defer();
+                var query = documentsHelper.getQueryParameters();
+                var linksPromise = linksService.getLinks();
+                var mailboxPromise = mailboxService.getLocal();
                 var userPromise         = userService.getUserDetails();
+                var documentsPromise = documentsService.getDocumentList(query);
                 var success = function (response) {
                     deferred.resolve(response);
                 };
@@ -101,15 +100,13 @@ function hoaAppConfig($stateProvider, $urlRouterProvider, $httpProvider, usSpinn
             mailbox             : function (response) {
                 return response[1];
             },
-            documentMailbox     : function ($stateParams) {
-                return $stateParams.mailbox;
-            },
             documentsList       : function (response) {
                 return response[2];
             },
             userDetails         : function(response) {
                 return response[3];
             }
+
         },
         views: {
             "rootView@": {

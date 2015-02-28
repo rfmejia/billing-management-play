@@ -17,8 +17,6 @@ function hoaComments() {
             onHideClicked : '&'
         },
         templateUrl : 'assets/directive/hoa/hoa-comments/directive-hoa-comments.html',
-        link : function() {
-        },
         controller : "hoaCommentsCtrl",
         controllerAs : "commentsView",
         bindToController : true
@@ -34,6 +32,7 @@ function hoaCommentsCtrl() {
     var vm = this;
     vm.toggleVisibility = toggleVisibility;
     vm.isVisible = false;
+    vm.isEmpty = true;
 
     activate();
     function toggleVisibility() {
@@ -43,5 +42,7 @@ function hoaCommentsCtrl() {
 
     function activate() {
         vm.isVisible = !vm.isHidden;
+        vm.isEmpty = (vm.comments.all.length < 1);
+        console.log(vm.isEmpty);
     }
 }

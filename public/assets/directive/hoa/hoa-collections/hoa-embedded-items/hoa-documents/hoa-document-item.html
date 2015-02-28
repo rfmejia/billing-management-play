@@ -1,0 +1,30 @@
+
+<div ng-click="item.onItemClick()">
+    <md-item-content>
+        <div layout="row" layout-margin layout-fill class="md-tile-content">
+            <div flex="20">
+                <h3>{{item.document.forMonth | momentString: "MMMM-YYYY"}}</h3>
+            </div>
+            <div flex="40">
+                <h4>Universal studios</h4>
+            </div>
+            <div flex layout="column" layout-align="start end">
+                <p>
+                    Paid: {{item.document.amountPaid}}
+                </p>
+            </div>
+            <div flex layout="column" layout-align="start end">
+                <p>
+                    Unpaid: {{item.document.unpaid}}
+                </p>
+            </div>
+            <div flex layout="column" layout-align="start end">
+                <p>
+                    Total: {{item.document.total}}
+                </p>
+            </div>
+
+        </div>
+    </md-item-content>
+    <md-divider ng-if="!$last"></md-divider>
+</div>

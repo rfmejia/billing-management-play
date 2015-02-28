@@ -19,6 +19,10 @@ md-whiteframe {
     margin-bottom: 8px;
 }
 
+md-whiteframe md-content {
+    background-color: #ffffff;
+}
+
 .editable-doc .form-horizontal .form-group {
     margin-left: 0;
     margin-right: 0;
@@ -79,7 +83,7 @@ md-whiteframe.billframe {
     margin-right: 10px;
 }
 
-section.comments {
+.comments hoa-comments{
     margin-top: 10px;
     margin-bottom:80px;
 }

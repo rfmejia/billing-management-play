@@ -12,13 +12,13 @@ angular
         'helper.comments',
         '$modal',
         'moment',
-        '$scope',
         '$state',
+        '$stateParams',
         'toaster',
         draftsCtrl
     ]);
 
-function draftsCtrl(documentsHelper, documentsResponse, documentsService, commentsHelper, $modal,  moment, $scope, $state,  toaster){
+function draftsCtrl(documentsHelper, documentsResponse, documentsService, commentsHelper, $modal,  moment, $state, $stateParams, toaster){
 
     var vm = this;
     /** Previous months template **/
@@ -31,8 +31,6 @@ function draftsCtrl(documentsHelper, documentsResponse, documentsService, commen
     vm.currentComment;
     /** Previous comments made in different phases of the workflow **/
     vm.comments;
-    /** If null, this means that this document has not been pushed to the server yet **/
-    var documentId;
     /** Next box **/
     vm.submitUrl;
     /** Document title for display **/
@@ -45,6 +43,14 @@ function draftsCtrl(documentsHelper, documentsResponse, documentsService, commen
     vm.negativeButton = {};
     /** Modal information **/
     vm.modal = {};
+    /** Display for month **/
+    vm.billDate;
+    /** Display for tenant name **/
+    vm.tenantName;
+    /** If null, this means that this document has not been pushed to the server yet **/
+    var documentId;
+    /** Callback for unlinked action **/
+    vm.onUnlinkClicked = onUnlinkClicked;
 
     activate();
 
@@ -56,6 +62,8 @@ function draftsCtrl(documentsHelper, documentsResponse, documentsService, commen
         documentId = documentsResponse.viewModel.documentId;
         vm.submitUrl = documentsResponse.viewModel.nextAction.nextBox.url;
         vm.documentTitle = documentsResponse.viewModel.documentTitle;
+        vm.tenantName = documentsResponse.viewModel.tenantName;
+        vm.billDate = documentsResponse.viewModel.billDate;
         vm.format = "MMMM-YYYY";
 
 
@@ -82,6 +90,19 @@ function draftsCtrl(documentsHelper, documentsResponse, documentsService, commen
     };
 
     /**
+     * Laucnhes a dialog for confirmation. If yes, make a network call to unlink user.
+     */
+    function onUnlinkClicked() {
+        documentsService.assignDocument($stateParams.id, "none")
+            .then(returnToList);
+    }
+
+    function returnToList() {
+        console.log("return to list");
+        $state.go("workspace.pending.drafts", {reload : true});
+    }
+
+    /**
      * Validates the data ranges but we do not store the actual date type
      * @param field
      * @param inputField
@@ -100,7 +121,6 @@ function draftsCtrl(documentsHelper, documentsResponse, documentsService, commen
     vm.onSubmitClicked = function() {
         preparePostData();
         var postData = documentsHelper.formatServerData(documentsResponse);
-        console.log(postData);
         var success = function(response) {
             toaster.pop('success', 'Submitted!', 'Your document was sent for checking.');
             $state.go("workspace.pending.drafts")
@@ -124,6 +144,7 @@ function draftsCtrl(documentsHelper, documentsResponse, documentsService, commen
             .then(function(response) {
                 if(billingForm.$invalid) {
                     toaster.pop('warning', 'Saved but...', 'Still can\'t submit your document because of missing or invalid fields.');
+                    vm.currentComment = null;
                 }
                 else {
                     toaster.pop('success', 'All done!', 'Document can now be submitted to the next phase.')
@@ -284,7 +305,7 @@ function draftsCtrl(documentsHelper, documentsResponse, documentsService, commen
         }
     };
 
-    var preparePostData = function() {
+    function preparePostData() {
         documentsResponse.viewModel.body.previous = vm.previous;
         documentsResponse.viewModel.body.thisMonth = vm.thisMonth;
         documentsResponse.viewModel.body.summary = vm.summary;

@@ -1,80 +1,134 @@
-var drafts = angular.module("module.mailbox");
 
-drafts.controller("controller.documents", ["$scope", "$state", "documentsList", "documentsService", "documentMailbox", "page",
-    function($scope, $state, documentsList, documentsService, documentMailbox, page){
-        $scope.documentsList = documentsList.documentsList;
-        var maxPages = 0;
-        //index of first number displayed in pagination
-        var minSlice = 0;
-        //index of last number displayed in pagination
-        var maxSlice = 0;
-        var limitRequest = documentsService.getLimitRequest();
-        $scope.pages = [];
-        $scope.pagesSliced = [];
-        /** Page is 0 indexed **/
-        page++;
-        $scope.pagination = {
-            "currentPage" : page
-        };
+angular
+    .module("module.mailbox")
+    .controller("controller.documents", [
+    "$state",
+    "documentsResponse",
+    "userDetails",
+    "documentsHelper",
+    "documentsService",
+    "requestedParameters",
+    documentsCtrl
+]);
 
-        //Pagination
-        var splitPages = function() {
-            maxPages = parseInt(documentsList.documentCount / limitRequest);
-            var remainder = documentsList.documentCount % limitRequest;
-            if(remainder > 0) maxPages++;
-            for(var j = 1; j <= maxPages; ++j) {
-                $scope.pages.push(j);
-            }
-            maxSlice = (maxPages > 5) ? 5 : maxPages;
-            $scope.pagesSliced = $scope.pages.slice(minSlice, maxSlice);
-        };
+function documentsCtrl($state, documentsResponse, userDetails, documentsHelper,documentsService, requestedParameters) {
+    var vm = this;
+    vm.documents = [];
+    vm.pages = [];
+    vm.pagesSliced = [];
+    vm.currentPage = 1;
+    vm.queryParameters = {};
+    vm.tabState = {};
+
+    vm.requestNewPage = requestNewPage;
+    vm.isIncrementPagePossible = isIncrementPagePossible;
+    vm.isDecrementPagePossible = isDecrementPagePossible;
+    vm.onDocumentItemClicked = onDocumentItemClicked;
+    vm.onChangePageClicked = onChangePageClicked;
+    vm.onChangeSliceClicked = onChangeSliceClicked;
+    vm.onFilterTabClicked = onFilterTabClicked;
+
+    var maxPages = 0;
+    var minSlice = 0;
+    var maxSlice = 0;
+    var limitRequest = 0;
+    var user = userDetails;
+    activate();
+
+    function activate() {
+        vm.documents = documentsResponse._embedded.item;
         splitPages();
+        vm.queryParameters = documentsHelper.getQueryParameters();
+        for(var key in requestedParameters) {
+            if(vm.queryParameters.hasOwnProperty(key)) {
+                vm.queryParameters[key] = requestedParameters[key];
+            }
+        }
+        changeTabState();
+    }
 
-        var requestNewPage = function(page) {
-            documentsService.getDocumentList(documentMailbox, page)
-                .then(success);
+    function changeTabState() {
+        vm.tabState = {
+            "mine" : true,
+            "others" : false,
+            "open" : false
         };
+        if(vm.queryParameters.others) {
+            vm.tabState.mine = false;
+            vm.tabState.others = true;
+            vm.tabState.open = false;
+        }
+        else if(vm.queryParameters.isAssigned && vm.queryParameters.assigned){
+            vm.tabState.mine = true;
+            vm.tabState.others = false;
+            vm.tabState.open = false;
+        }
+        else if(!vm.queryParameters.isAssigned && vm.queryParameters.assigned == undefined) {
+            vm.tabState.mine = false;
+            vm.tabState.others = false;
+            vm.tabState.open = true;
+        }
+    }
 
-        $scope.isIncrementPagePossible = function() {
-            return $scope.pagesSliced[$scope.pagesSliced.length-1] != maxPages;
-        };
+    function splitPages() {
+        maxPages = parseInt(documentsResponse.count / requestedParameters.limit);
+        var remainder = documentsResponse.total;
+        if(remainder > 0) maxPages++;
+        for(var j = 1; j <= maxPages; ++j) vm.pages.push(j);
+        maxSlice = (maxPages > 5) ? 5 : maxPages;
+        vm.pagesSliced = vm.pages.slice(minSlice, maxSlice);
+    }
 
-        $scope.isDecrementPagePossible = function() {
-            return $scope.pagesSliced[0] != 1;
-        };
+    function requestNewPage(page) {
+        vm.queryParameters.offset = (page == null) ? 0 : (page * limit);
+        $state.go($state.current, documentsHelper.formatParameters(vm.queryParameters), {reload : true});
+    }
 
+    function isIncrementPagePossible() {
+        return vm.pagesSliced[vm.pagesSliced.length-1] != maxPages;
+    }
+
+    function isDecrementPagePossible() {
+        return vm.pagesSliced[0] != 1;
+    }
+
+    function onDocumentItemClicked(item) {
+        var state = "";
         var success = function(response) {
-            $scope.documentsList.splice(0, $scope.documentsList.length);
-            $scope.documentsList = angular.copy(response.documentsList);
-        };
-        //end pagination
-
-        //event listeners
-        $scope.onDocumentItemClicked = function(document) {
-            var state = "";
-
-            if(documentMailbox == "drafts") state = "workspace.edit-view";
-            else state = "workspace.fixed-view";
-
-            $state.go(state, {"id" : document.id});
+            $state.go(state, {"id" : item.id});
         };
 
-        $scope.onChangePageClicked = function(selectedPage) {
-            console.log(page);
-            requestNewPage(selectedPage-1);
-            $scope.pagination.currentPage = selectedPage;
-        };
+        if(vm.queryParameters.mailbox == "drafts") state = "workspace.edit-view";
+        else state = "workspace.fixed-view";
 
-        $scope.onChangeSliceClicked = function(step) {
-            if(!$scope.isDecrementPagePossible() && step < 0) return;
-            if(!$scope.isIncrementPagePossible() && step > 0) return;
-            minSlice += step;
-            maxSlice += step;
-            $scope.pagesSliced = $scope.pages.slice(minSlice, (maxSlice > maxPages-1)? maxPages : maxSlice);
-            $scope.onChangePageClicked($scope.pagesSliced[0]);
-        };
-        //end event listeners
+        documentsService.assignDocument(item.id, userDetails.userId).then(success);
+    }
 
+    function onChangePageClicked(selectedPage) {
+        requestNewPage(selectedPage - 1);
+        vm.currentPage = selectedPage;
+    }
 
+    function onFilterTabClicked(filter) {
+        vm.queryParameters.isAssigned = (filter != "open");
+        vm.queryParameters.others = (filter == "others");
+        if(filter == "mine") {
+            vm.queryParameters.assigned = userDetails.userId;
+            vm.queryParameters.isAssigned = true;
+        }
+        else {
+            vm.queryParameters.assigned = null;
+        }
+        changeTabState();
+        $state.go($state.current, vm.queryParameters, {reload : true});
+    }
 
-}]);
+    function onChangeSliceClicked(step) {
+        if(!vm.isDecrementPagePossible() && step < 0) return;
+        if(!vm.isIncrementPagePossible() && step > 0) return;
+        minSlice += step;
+        maxSlice += step;
+        vm.pagesSliced = vm.pages.slice(minSlice, (maxSlice > maxPages-1)? maxPages : maxSlice);
+        vm.onChangePageClicked(vm.pagesSliced[0]);
+    }
+}

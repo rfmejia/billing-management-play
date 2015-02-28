@@ -1,28 +1,52 @@
-<legend>Drafts</legend>
-<table class="table table-hover table-fullheight">
-    <thead>
-    <th>Title</th>
-    <th class="text-center">Amount paid</th>
-    <th class="text-center">Total</th>
-    </thead>
-    <tbody>
-    <tr ng-repeat="document in documentsList" id="{{document.id}}" ng-click="onDocumentItemClicked(document)">
-        <td class="col-xs-6">{{document.title}}</td>
-        <td class="col-xs-3 text-nowrap text-center">{{document.amountPaid}}</td>
-        <td class="col-xs-3 text-nowrap text-center">{{document.total}}</td>
-    </tr>
-    </tbody>
-</table>
+<div layout="row" layout-align="space-around center">
+    <md-button class="list-filter" ng-click="draftsCtrl.onFilterTabClicked('mine')"
+               ng-class="{true: 'active', false: ''}[draftsCtrl.tabState.mine]" remove-focus>
+        <div layout="column" layout-align="center center">
+            <i class="fa fa-user fa-lg"></i>
+            <span>Mine</span>
+        </div>
+    </md-button>
+    <md-button class="list-filter" ng-click="draftsCtrl.onFilterTabClicked('open')"
+               ng-class="{true: 'active', false:''}[draftsCtrl.tabState.open]" remove-focus>
+        <div layout="column" layout-align="center center">
+            <i class="fa fa-chain-broken fa-lg"></i>
+            <span>Open</span>
+        </div>
+    </md-button>
+    <md-button class="list-filter" ng-click="draftsCtrl.onFilterTabClicked('others')"
+               ng-class="{true: 'active', false:''}[draftsCtrl.tabState.others]" remove-focus>
+        <div layout="column" layout-align="center center">
+            <i class="fa fa-group fa-lg"></i>
+            <span>Others</span>
+        </div>
+    </md-button>
+</div>
+
+<md-whiteframe class="documents-list md-whiteframe-z1">
+    <md-toolbar class="documents-list-toolbar" md-theme="drafts-list" layout="row" layout-align="start center">
+        <h5 class="documents-list-title">Drafts</h5>
+    </md-toolbar>
+    <md-content md-theme="drafts-list">
+        <md-list>
+            <md-item ng-repeat="document in draftsCtrl.documents">
+                <!-- hoa document directive -->
+                <hoa-embedded-items item="document" on-click="draftsCtrl.onDocumentItemClicked(item)"></hoa-embedded-items>
+            </md-item>
+        </md-list>
+    </md-content>
+
+</md-whiteframe>
+
 <div class="text-center">
     <ul class="pagination pagination-sm">
-        <li ng-class="{true: '', false:'disabled'}[isDecrementPagePossible()]"
-            ng-disabled="{true: '', false:'disabled'}[isDecrementPagePossible()]"
-            ng-click="onChangeSliceClicked(-5)"><a href>«</a></li>
-        <li ng-class="{true: 'active', false:'default'}[pagination.currentPage == page]"
-            ng-repeat="page in pagesSliced"
-            ng-click="onChangePageClicked(page)"><a href>{{page}}</a></li>
-        <li ng-class="{true: '', false:'disabled'}[isIncrementPagePossible()]"
-            ng-disabled="{true: '', false:'disabled'}[isIncrementPagePossible()]"
-            ng-click="onChangeSliceClicked(5)"><a class="disabledAnchor" href>»</a></li>
+        <li ng-class="{true: '', false:'disabled'}[draftsCtrl.isDecrementPagePossible()]"
+            ng-disabled="{true: '', false:'disabled'}[draftsCtrl.isDecrementPagePossible()]"
+            ng-click="draftCtrl.onChangeSliceClicked(-5)"><a href>«</a></li>
+        <li ng-class="{true: 'active', false:'default'}[draftsCtrl.currentPage == page]"
+            ng-repeat="page in draftsCtrl.pagesSliced"
+            ng-click="draftsCtrl.onChangePageClicked(page)"><a href>{{page}}</a></li>
+        <li ng-class="{true: '', false:'disabled'}[draftsCtrl.isIncrementPagePossible()]"
+            ng-disabled="{true: '', false:'disabled'}[draftsCtrl.isIncrementPagePossible()]"
+            ng-click="draftsCtrl.onChangeSliceClicked(5)"><a class="disabledAnchor" href>»</a></li>
     </ul>
 </div>

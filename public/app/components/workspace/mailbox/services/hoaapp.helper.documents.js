@@ -17,7 +17,9 @@ function documentHelper() {
         formatCreateResponse    : formatCreateResponse,
         formatEditResponse      : formatEditResponse,
         formatServerData        : formatServerData,
-        formatDocumentList      : formatListResponse
+        formatDocumentList      : formatListResponse,
+        getQueryParameters      : getQueryParameters,
+        formatParameters        : formatParameters
     };
     return helper;
 
@@ -40,8 +42,8 @@ function documentHelper() {
         return {
             "body"      : serverResponse.body,
             "comments"  : serverResponse.comments,
-            "assigned"  : serverResponse.assigned,
-            "forMonth"  : serverResponse.forMonth,
+            "billDate"  : serverResponse.forMonth,
+            "tenantName" : serverResponse._embedded.tenant.tradeName,
             "nextAction"  : {
                 "nextBox" : searchForBox(serverResponse, "hoa:nextBox"),
                 "prevBox" : searchForBox(serverResponse, "hoa:prevBox")
@@ -85,15 +87,38 @@ function documentHelper() {
      * @param editData
      */
     function formatServerData(editData) {
-        console.log(editData);
         var serverPostData = {};
         angular.forEach(editData.serverModel, function(value){
             if(editData.viewModel.hasOwnProperty(value.name)) {
                 serverPostData[value.name] = editData.viewModel[value.name];
             }
         });
-        console.log(serverPostData);
         return serverPostData;
+    }
+
+    function getQueryParameters() {
+        return {
+            mailbox     : "drafts", //defaults to drafts
+            limit       : 10,
+            offset      : 0,
+            forTenant   : null,
+            creator     : null,
+            assigned    : null,
+            forMonth    : null,
+            isPaid      : null,
+            others      : false,
+            isAssigned  : false
+        };
+    }
+
+    function formatParameters(parameters) {
+        var queryParameters = {};
+        for(var key in parameters) {
+            if(parameters.hasOwnProperty(key) && parameters[key] != null){
+                queryParameters[key] = parameters[key];
+            }
+        }
+        return queryParameters;
     }
     //endregion
 

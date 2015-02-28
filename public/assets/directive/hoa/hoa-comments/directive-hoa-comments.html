@@ -1,5 +1,5 @@
 <div>
-    <section ng-if="commentsView.isRecentOnly">
+    <section ng-if="commentsView.isRecentOnly && !commentsView.isEmpty">
         <div ng-show="commentsView.isVisible" class="hoa-fade-right">
             <p class="comment-top">Fresh comments</p>
             <md-whiteframe class="comments recent-only md-whiteframe-z4" layout="column">
@@ -27,7 +27,7 @@
     <div ng-if="!commentsView.isRecentOnly">
         <md-button remove-focus ng-click="commentsView.toggleVisibility()"><i class="fa fa-comment-o"></i>Comments
         </md-button>
-        <div ng-show="commentsView.isVisible">
+        <div ng-show="commentsView.isVisible && !commentsView.isEmpty">
             <md-whiteframe class="comments md-whiteframe-z4" layout="column">
                 <div flex="100" class="comments-list" ng-repeat="comment in commentsView.comments.all">
                     <p><span class="comments-header">{{comment.userName}}</span> said <span
