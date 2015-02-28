@@ -50,6 +50,11 @@ object User extends ((String, String, Option[String], Option[String], Option[Str
     User(p.providerId, p.userId, p.firstName, p.lastName, p.email, hasher, password, salt)
   }
 
+  def findById(userId: String): Option[User] =
+    ConnectionFactory.connect withSession { implicit session =>
+      (for (u <- users if u.userId === userId) yield u).firstOption
+    }
+
   def findByUserIdWithRoles(userId: String): Option[(User, Set[String])] =
     ConnectionFactory.connect withSession { implicit session =>
       val user = for (u <- users if u.userId === userId) yield u

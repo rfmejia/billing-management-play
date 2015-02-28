@@ -89,7 +89,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
           .withField("forMonth", d.forMonth)
           .withField("amountPaid", d.amountPaid)
           .withField("creator", d.creator)
-          .withField("assigned", d.assigned)
+          .withField("assigned", (d.assigned.map { userToObj(_) }))
 
         val withTotal = Templates.getTotal(d) match {
           case Right(total) =>
@@ -180,8 +180,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
                   body = bodyOpt getOrElse d.body,
                   comments = commentsOpt getOrElse d.comments,
                   assigned = assignedOpt.map(Option(_)) getOrElse d.assigned,
-                  amountPaid = amountPaidOpt getOrElse d.amountPaid
-                  )
+                  amountPaid = amountPaidOpt getOrElse d.amountPaid)
 
               Document.update(newDoc) match {
                 case Success(id) => NoContent
@@ -216,7 +215,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       .withField("mailbox", d.mailbox)
       .withField("created", d.created)
       .withField("creator", d.creator)
-      .withField("assigned", d.assigned)
+      .withField("assigned", (d.assigned.map { userToObj(_) }))
       .withField("forTenant", d.forTenant)
       .withField("forMonth", d.forMonth)
       .withField("amountPaid", d.amountPaid)
@@ -277,4 +276,14 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
 
     withActions
   }
+
+  def userToObj(userId: String): JsObject =
+    User.findById(userId) match {
+      case Some(u) =>
+        JsObject(Seq(
+          "userId" -> JsString(u.userId),
+          "fullName" -> JsString(u.fullName getOrElse "")))
+      case None => JsObject(Seq("userId" -> JsString(userId)))
+    }
+
 }
