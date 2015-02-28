@@ -39,7 +39,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
     }
   }
 
-  def list(offset: Int = 0, limit: Int = 10, mailbox: String, forTenant: Int, creator: String, assigned: Option[String], forMonth: Option[String], isPaid: Option[Boolean], others: Option[Boolean]) = SecuredAction { implicit request =>
+  def list(offset: Int = 0, limit: Int = 10, mailbox: String, forTenant: Int, creator: String, assigned: Option[String], forMonth: Option[String], isPaid: Option[Boolean], others: Option[Boolean], isAssigned: Option[Boolean]) = SecuredAction { implicit request =>
 
     val (ds, total) = ConnectionFactory.connect withSession { implicit session =>
       // Filtering level 1: Query-level filters
@@ -65,6 +65,14 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       }) getOrElse true
     }
 
+    def isAssignedFilter(assigned: Option[String]) = {
+      (assigned, isAssigned) match {
+        case (None, Some(false)) => false
+        case (Some(_), Some(true)) => false
+        case (_, _) => true
+      }
+    }
+
     def othersFilter(assigned: Option[String]) = {
       (assigned, others) match {
         case (Some(user), Some(true)) =>
@@ -75,6 +83,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
 
     val objs = ds
       .filter(d => dateFilter(d.forMonth))
+      .filter(d => isAssignedFilter(d.assigned))
       .filter(d => othersFilter(d.assigned))
       .map { d =>
         val link = routes.Documents.show(d.id)
@@ -110,7 +119,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       objs.filter(d => d \ "isPaid" == JsBoolean(b))
     } getOrElse objs
 
-    val self = routes.Documents.list(offset, limit, mailbox, forTenant, creator, assigned, forMonth, isPaid, others)
+    val self = routes.Documents.list(offset, limit, mailbox, forTenant, creator, assigned, forMonth, isPaid, others, isAssigned)
     val blank = HalJsObject.create(self.absoluteURL())
       .withCurie("hoa", Application.defaultCurie)
       .withLink("profile", "collection")
@@ -173,13 +182,18 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
             case (None, None, None, None, None) =>
               BadRequest("No editable fields matched. Please check your request.")
             case (titleOpt, bodyOpt, commentsOpt, assignedOpt, amountPaidOpt) =>
-              // TODO: Get user responsible for this request
+              // TODO: Get user responsible for this request and only allow if this is the assigned user
+
+              val toBeAssigned: Option[String] =
+                if (assignedOpt.exists(_ != "none")) assignedOpt
+                else None
+
               val newDoc =
                 d.copy(
                   title = titleOpt getOrElse d.title,
                   body = bodyOpt getOrElse d.body,
                   comments = commentsOpt getOrElse d.comments,
-                  assigned = assignedOpt.map(Option(_)) getOrElse d.assigned,
+                  assigned = toBeAssigned,
                   amountPaid = amountPaidOpt getOrElse d.amountPaid)
 
               Document.update(newDoc) match {
