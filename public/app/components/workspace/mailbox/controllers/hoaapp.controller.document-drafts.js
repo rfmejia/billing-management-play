@@ -98,8 +98,7 @@ function draftsCtrl(documentsHelper, documentsResponse, documentsService, commen
     }
 
     function returnToList() {
-        console.log("return to list");
-        $state.go("workspace.pending.drafts", {reload : true});
+        $state.go("workspace.pending.drafts", documentsHelper.getQueryParameters(), {reload : true});
     }
 
     /**

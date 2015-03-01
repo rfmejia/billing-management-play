@@ -2,16 +2,17 @@
 angular
     .module("module.mailbox")
     .controller("controller.documents", [
-    "$state",
-    "documentsResponse",
-    "userDetails",
-    "documentsHelper",
-    "documentsService",
-    "requestedParameters",
-    documentsCtrl
-]);
+        'service.hoadialog',
+        "$state",
+        "documentsResponse",
+        "userDetails",
+        "documentsHelper",
+        "documentsService",
+        "requestedParameters",
+        documentsCtrl
+    ]);
 
-function documentsCtrl($state, documentsResponse, userDetails, documentsHelper,documentsService, requestedParameters) {
+function documentsCtrl(dialogProvider, $state, documentsResponse, userDetails, documentsHelper,documentsService, requestedParameters) {
     var vm = this;
     vm.documents = [];
     vm.pages = [];
@@ -32,7 +33,6 @@ function documentsCtrl($state, documentsResponse, userDetails, documentsHelper,d
     var minSlice = 0;
     var maxSlice = 0;
     var limitRequest = 0;
-    var user = userDetails;
     activate();
 
     function activate() {
@@ -94,14 +94,25 @@ function documentsCtrl($state, documentsResponse, userDetails, documentsHelper,d
 
     function onDocumentItemClicked(item) {
         var state = "";
-        var success = function(response) {
-            $state.go(state, {"id" : item.id});
-        };
+        var goToDrafts = goToDrafts;
+        var getDocument = getDocument;
 
         if(vm.queryParameters.mailbox == "drafts") state = "workspace.edit-view";
         else state = "workspace.fixed-view";
 
-        documentsService.assignDocument(item.id, userDetails.userId).then(success);
+        if(!vm.queryParameters.isAssigned) {
+            dialogProvider.getConfirmDialog(getDocument, null, "This document will be assigned to you.");
+        }
+        else goToDrafts();
+
+
+        function goToDrafts(response) {
+            $state.go(state, {"id" : item.id});
+        }
+
+        function getDocument() {
+            documentsService.assignDocument(item.id, userDetails.userId).then(goToDrafts);
+        }
     }
 
     function onChangePageClicked(selectedPage) {

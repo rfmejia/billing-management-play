@@ -131,6 +131,7 @@ function mailboxModuleConfig ($stateProvider) {
             documentsService        : "service.hoadocuments",
             documentsHelper         : 'helper.documents',
             documentsApiResponse    : function(documentsService, $stateParams) {
+                console.log($stateParams.id);
                 return documentsService.getDocument($stateParams.id);
             },
             documentsResponse       :  function(documentsApiResponse, documentsHelper) {

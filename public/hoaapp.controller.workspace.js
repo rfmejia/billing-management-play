@@ -7,6 +7,9 @@ angular
         '$modal',
         'userDetails',
         'userService',
+        '$state',
+        '$location',
+        'helper.documents',
         workspaceController
     ]);
 
@@ -21,15 +24,20 @@ angular
         modalController
     ]);
 
-function workspaceController($modal ,userDetails, userService) {
+function workspaceController($modal ,userDetails, userService, $state, $location, documentsHelper) {
     var vm = this;
 
     /** On click of logout option launch a dialog **/
     vm.onLogOutClicked = onLogoutClicked;
-
     vm.userDetails = userDetails;
 
+    activate();
+
     //region FUNCTION_CALL
+    function activate() {
+        if($location.path() == '/') $state.go("workspace.pending.drafts", documentsHelper.getQueryParameters(), {reload : true});
+    }
+
     function onLogoutClicked() {
         openModal();
     }
