@@ -2,7 +2,7 @@ package com.nooovle
 
 import com.nooovle.ModelInfo._
 import com.nooovle.slick.ConnectionFactory
-import com.nooovle.slick.models.documents
+import com.nooovle.slick.models.{ actionLogs, documents }
 import org.joda.time.DateTime
 import play.api.libs.json.JsObject
 import scala.slick.driver.H2Driver.simple._
@@ -32,6 +32,11 @@ object Document extends ((Int, Option[String], String, String, String, String, D
   def findById(id: Int): Option[Document] =
     ConnectionFactory.connect withSession { implicit session =>
       (for (d <- documents if d.id === id) yield d).firstOption
+    }
+
+  def actionLogsOf(id: Int): List[ActionLog] =
+    ConnectionFactory.connect withSession { implicit session =>
+      (for (l <- actionLogs if l.what === id) yield l).sortBy(_.when).list
     }
 
   def insert(creator: User, title: String, docType: String, forTenant: Int, forMonth: DateTime,
