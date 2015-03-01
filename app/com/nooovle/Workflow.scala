@@ -25,7 +25,7 @@ object Workflow {
 
   val start = drafts
 
-  def exists(box: String): Option[Mailbox] =
+  def find(box: String): Option[Mailbox] =
     (pending ++ delivered).find(_.name == box)
 
   def next(box: String): Option[Mailbox] = box match {

@@ -3,6 +3,7 @@ package com.nooovle
 import com.nooovle.ModelInfo._
 import com.nooovle.slick.ConnectionFactory
 import com.nooovle.slick.models.{ actionLogs, documents }
+import com.nooovle.slick.DocumentsModel
 import org.joda.time.DateTime
 import play.api.libs.json.JsObject
 import scala.slick.driver.H2Driver.simple._
@@ -49,7 +50,7 @@ object Document extends ((Int, Option[String], String, String, String, String, D
       // Return ID of newly inserted tenant
       val id = (documents returning documents.map(_.id)) += doc
 
-      // Log this action
+      // Log this action like this, because we need the new document's generated ID
       ActionLog.log(creator.userId, id, "Created document") map { log =>
         val newDoc = doc.copy(id = id, lastAction = Some(log.id))
         update(newDoc).get
@@ -66,6 +67,34 @@ object Document extends ((Int, Option[String], String, String, String, String, D
         query.first
       }
     }
+  }
+
+  private def logAction(log: ActionLog, doc: Query[scala.slick.lifted.Column[Option[Int]], Option[Int], Seq]): Try[ActionLog] = Try {
+    ConnectionFactory.connect withSession { implicit session =>
+      if (!doc.exists.run) throw new IndexOutOfBoundsException
+      else {
+        doc.update(Some(log.id))
+        log
+      }
+    }
+  }
+
+  def logLastAction(log: ActionLog): Try[ActionLog] =
+    logAction(log, for (d <- documents if d.id === log.what) yield d.lastAction)
+
+  def logPreparedAction(log: ActionLog): Try[ActionLog] = {
+    logAction(log, for (d <- documents if d.id === log.what) yield d.preparedAction)
+      .flatMap(logLastAction(_))
+  }
+
+  def logCheckedAction(log: ActionLog): Try[ActionLog] = {
+    logAction(log, for (d <- documents if d.id === log.what) yield d.checkedAction)
+      .flatMap(logLastAction(_))
+  }
+
+  def logApprovedAction(log: ActionLog): Try[ActionLog] = {
+    logAction(log, for (d <- documents if d.id === log.what) yield d.approvedAction)
+      .flatMap(logLastAction(_))
   }
 
   val modelName = "DOCUMENTS"
