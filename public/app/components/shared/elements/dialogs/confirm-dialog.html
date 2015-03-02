@@ -1,8 +1,9 @@
 <md-dialog>
     <md-content>
+        <h5>{{dialogCtrl.title}}</h5>
         <p>{{dialogCtrl.message}}</p>
         <div class="md-actions" layout="row">
-            <md-button ng-click="dialogCtrl.cancel()">Cancel</md-button>
+            <md-button class="md-warn md-hue-3" ng-click="dialogCtrl.cancel()">Cancel</md-button>
             <md-button ng-click="dialogCtrl.confirm()">Okay</md-button>
         </div>
     </md-content>

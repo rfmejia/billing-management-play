@@ -1,5 +1,5 @@
 <div>
-    <section ng-if="commentsView.isRecentOnly && !commentsView.isEmpty">
+    <section ng-if="commentsView.isRecentOnly && !commentsView.isEmpty && commentsView.comments.hasRecent">
         <div ng-show="commentsView.isVisible" class="hoa-fade-right">
             <p class="comment-top">Fresh comments</p>
             <md-whiteframe class="comments recent-only md-whiteframe-z4" layout="column">

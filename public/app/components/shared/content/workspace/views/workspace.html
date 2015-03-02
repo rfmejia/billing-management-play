@@ -1,19 +1,23 @@
-<div layout="row" flex>
-    <md-sidenav layout="column" class="md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="$media('gt-sm')">
-        <div ui-view="sidebar">
-
-        </div>
-    </md-sidenav>
-    <div layout="column" flex id="content">
+<div layout="column" flex>
         <md-toolbar layout="row" class="white-out">
             <button hide-gt-sm class="menuBtn menuBtn-hamburger">
                 <span class="visually-hidden">Menu</span>
             </button>
             <h1>Hobbies of Asia</h1>
         </md-toolbar>
-        <md-content layout="column" flex class="md-padding md-default-theme" ui-view="contentArea">
+        <div layout="row" flex>
+            <md-sidenav layout="column" class="md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="$media('gt-md')">
+                <div ui-view="sidebar">
 
-        </md-content>
-    </div>
+                </div>
+            </md-sidenav>
+            <md-content layout="column" flex class="md-padding md-default-theme" ui-view="contentArea">
 
+            </md-content>
+            <md-sidenav layout="column" class="md-sidenav-right md-whiteframe-z2" md-component-id="left" md-is-locked-open="$media('gt-lg')">
+                <div ui-view="sidebar">
+
+                </div>
+            </md-sidenav>
+        </div>
 </div>

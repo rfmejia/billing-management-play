@@ -1,0 +1,70 @@
+
+<div>
+    <p class="whiteframe-small-heading">Previous Month</p>
+</div>
+<md-card ng-repeat="approval in approvals.previous.sections">
+    <md-card-content layout-fill layout="row" layout-padding layout-align="space-between center">
+        <div layout="column" layout-align="center center" flex="33" class="static-bill-section">
+            <div class="primary-text static-bill-total">
+                {{approval.total}}
+            </div>
+            <div class="static-bill-total-label secondary-text">
+                OVERDUE TOTAL
+            </div>
+        </div>
+        <div flex="66" class="static-bill-entries">
+            <div layout="row" class="static-bill-entry" ng-repeat="field in approval.fields">
+                <div flex="30" class="static-bill-entry-title" primary-text>{{field.title}}</div>
+                <div flex="70" clsss="static-bill-entry-value">{{field.value}}</div>
+            </div>
+        </div>
+    </md-card-content>
+</md-card>
+<div>
+    <p class="whiteframe-small-heading">This Month</p>
+</div>
+<md-card ng-repeat="approval in approvals.thisMonth.sections">
+    <md-card-content layout-fill layout="row" layout-padding layout-align="space-between center">
+        <div layout="column" layout-align="center center" flex="33" class="static-bill-section">
+            <div class="primary-text static-bill-total">
+                {{approval.total}}
+            </div>
+            <div class="static-bill-total-label secondary-text">
+                {{approval.title | uppercase}} TOTAL
+            </div>
+        </div>
+        <div flex="66" class="static-bill-entries">
+            <div layout="row" class="static-bill-entry" ng-repeat="field in approval.fields">
+                <div flex="30" class="static-bill-entry-title" primary-text>{{field.title}}</div>
+                <div flex="70" clsss="static-bill-entry-value">{{field.value}}</div>
+            </div>
+        </div>
+    </md-card-content>
+</md-card>
+
+<div class="static-bill-summary-block">
+    <p class="whiteframe-small-heading">Summary</p>
+    <md-card>
+        <md-card-content layout-fill layout="row" layout-padding layout-align="space-between center">
+            <div layout="column" layout-align="center center" flex="33" class="static-bill-section">
+                <div class="primary-text static-bill-total">
+                    {{approvals.summary.value}}
+                </div>
+                <div class="static-bill-total-label secondary-text">
+                    TOTAL
+                </div>
+            </div>
+            <div flex="66" class="static-bill-entries">
+                <div layout="row" class="static-bill-entry">
+                    <div flex="30" class="static-bill-entry-title" primary-text>Previous charges</div>
+                    <div flex="70" clsss="static-bill-entry-value">{{approvals.previous.summary.value}}</div>
+                </div>
+                <div layout="row" class="static-bill-entry">
+                    <div flex="30" class="static-bill-entry-title" primary-text>This month's charges</div>
+                    <div flex="70" clsss="static-bill-entry-value">{{approvals.thisMonth.summary.value}}</div>
+                </div>
+            </div>
+        </md-card-content>
+    </md-card>
+</div>
+

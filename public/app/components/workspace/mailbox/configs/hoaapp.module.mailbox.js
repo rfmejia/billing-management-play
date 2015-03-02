@@ -50,6 +50,12 @@ function mailboxModuleConfig ($stateProvider) {
     //region WORKSPACE.LIST
     var list = {
         url:'list?mailbox&limit&offset&forTenant&creator&assigned&forMonth&isPaid&isAssigned&others',
+        views : {
+            "contentArea@workspace": {
+                templateUrl : "app/components/workspace/mailbox/views/maincontent-documents-list.html",
+                controller  : "controller.documents as draftsCtrl"
+            }
+        },
         abstract    : true,
         template    : '<ui-view/>',
         resolve     : {
@@ -87,35 +93,9 @@ function mailboxModuleConfig ($stateProvider) {
         }
     };
 
-    var draftsList = {
-        url   : "/drafts",
-        views : {
-            "contentArea@workspace": {
-                templateUrl : "app/components/workspace/mailbox/views/maincontent-list-drafts.html",
-                controller  : "controller.documents as draftsCtrl"
-            }
-        }
-    };
-
-    var forCheckingList = {
-        url   : "/forChecking",
-        views : {
-            "contentArea@workspace": {
-                templateUrl : "app/components/workspace/mailbox/views/maincontent-list-forchecking.html",
-                controller  : "controller.documents"
-            }
-        }
-    };
-
-    var forApprovalList = {
-        url   : "/forApproval",
-        views : {
-            "contentArea@workspace": {
-                templateUrl : "app/components/workspace/mailbox/views/maincontent-list-forapproval.html",
-                controller  : "controller.documents"
-            }
-        }
-    };
+    var draftsList = { url   : "/drafts" };
+    var forCheckingList = { url   : "/forChecking" };
+    var forApprovalList = { url   : "/forApproval" };
     //endregion
 
     //region WORKSPACE.DOC
@@ -129,13 +109,24 @@ function mailboxModuleConfig ($stateProvider) {
         },
         resolve : {
             documentsService        : "service.hoadocuments",
+            userService             : "service.hoacurrentuser",
             documentsHelper         : 'helper.documents',
-            documentsApiResponse    : function(documentsService, $stateParams) {
-                console.log($stateParams.id);
-                return documentsService.getDocument($stateParams.id);
+            apiResponse             : function(documentsService, userService, $stateParams, $q) {
+                var deferred = $q.defer();
+                var documentsPromise = documentsService.getDocument($stateParams.id);
+                var userPromise = userService.getUserDetails();
+                var success = function(response) {
+                    deferred.resolve(response);
+                };
+
+                $q.all([documentsPromise, userPromise]).then(success);
+                return deferred.promise;
             },
-            documentsResponse       :  function(documentsApiResponse, documentsHelper) {
-                return documentsHelper.formatEditResponse(documentsApiResponse);
+            documentsResponse       :  function(apiResponse, documentsHelper) {
+                return documentsHelper.formatEditResponse(apiResponse[0]);
+            },
+            userResponse            : function(apiResponse) {
+                return apiResponse[1];
             }
 
         }
@@ -145,19 +136,32 @@ function mailboxModuleConfig ($stateProvider) {
         url     :'view/:id',
         views   : {
             "contentArea@workspace" : {
-                templateUrl : "app/components/workspace/mailbox/views/maincontent-document-approval.html",
-                controller  : "controller.approval"
+                templateUrl : "app/components/workspace/mailbox/views/maincontent-document-approvals.html",
+                controller  : "controller.approvals as approvals"
             }
         },
         resolve : {
-            documentsService    : "service.hoadocuments",
-            documentsHelper     : 'helper.documents',
-            documentsApiResponse   : function(documentsService, $stateParams) {
-                return documentsService.getDocument($stateParams.id);
+            documentsService        : "service.hoadocuments",
+            userService             : "service.hoacurrentuser",
+            documentsHelper         : 'helper.documents',
+            apiResponse             : function(documentsService, userService, $stateParams, $q) {
+                var deferred = $q.defer();
+                var documentsPromise = documentsService.getDocument($stateParams.id);
+                var userPromise = userService.getUserDetails();
+                var success = function(response) {
+                    deferred.resolve(response);
+                };
+
+                $q.all([documentsPromise, userPromise]).then(success);
+                return deferred.promise;
             },
-            documentsResponse   : function(documenetsApiResponse, documentsHelper) {
-                return documentsHelper.formatEditResponse(documenetsApiResponse);
+            documentsResponse       :  function(apiResponse, documentsHelper) {
+                return documentsHelper.formatEditResponse(apiResponse[0]);
+            },
+            userResponse            : function(apiResponse) {
+                return apiResponse[1];
             }
+
         }
     };
 

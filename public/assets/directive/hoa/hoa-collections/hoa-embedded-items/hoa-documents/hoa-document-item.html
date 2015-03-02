@@ -1,5 +1,6 @@
 
 <div ng-click="item.onItemClick()">
+    <md-divider ng-if="!$last"></md-divider>
     <md-item-content>
         <div layout="row" layout-margin layout-fill class="md-tile-content">
             <div flex="20">
@@ -20,11 +21,10 @@
             </div>
             <div flex layout="column" layout-align="start end">
                 <p>
-                    Total: {{item.document.total}}
+                    Total: {{item.document.total}} {{$parent.$index}}
                 </p>
             </div>
-
         </div>
     </md-item-content>
-    <md-divider ng-if="!$last"></md-divider>
-</div>
+
+</div>si

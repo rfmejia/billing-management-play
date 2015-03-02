@@ -94,17 +94,16 @@ function documentsCtrl(dialogProvider, $state, documentsResponse, userDetails, d
 
     function onDocumentItemClicked(item) {
         var state = "";
-        var goToDrafts = goToDrafts;
-        var getDocument = getDocument;
+        var title = "Opening unassigned document";
+        var message = "This document will be locked to you";
 
         if(vm.queryParameters.mailbox == "drafts") state = "workspace.edit-view";
         else state = "workspace.fixed-view";
 
         if(!vm.queryParameters.isAssigned) {
-            dialogProvider.getConfirmDialog(getDocument, null, "This document will be assigned to you.");
+            dialogProvider.getConfirmDialog(getDocument, null, message, title);
         }
         else goToDrafts();
-
 
         function goToDrafts(response) {
             $state.go(state, {"id" : item.id});

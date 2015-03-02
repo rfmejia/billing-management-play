@@ -105,10 +105,11 @@ hoaDirectives.directive('nooovleInputs', function() {
         replace     : false,
         transclude  : false,
         scope : {
-            field       : "=",
-            parentForm  : "=",
-            dateChangeCallback : "&",
-            dateConfig         : "="
+            field               : "=",
+            parentForm          : "=",
+            dateChangeCallback  : "&",
+            dateConfig          : "=",
+            isDisabled          : "="
         },
         templateUrl: 'assets/directive/directive-nooovle-inputs.html'
     }
@@ -141,7 +142,6 @@ hoaDirectives.directive('removeFocus', function() {
         restrict : 'A',
         link: function postLink(scope, element, attrs) {
             element.bind('focus', function () {
-                console.log('blur');
                 element[0].blur();
             });
         }

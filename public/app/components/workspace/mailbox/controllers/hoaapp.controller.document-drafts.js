@@ -1,16 +1,15 @@
 /**
  * Created by juancarlos.yu on 2/15/15.
  */
-var drafts = angular.module("module.mailbox");
-
 angular
     .module('module.mailbox')
     .controller('controller.drafts', [
         'documentsHelper',
         'documentsResponse',
+        'userResponse',
         'documentsService',
         'helper.comments',
-        '$modal',
+        'service.hoadialog',
         'moment',
         '$state',
         '$stateParams',
@@ -18,62 +17,57 @@ angular
         draftsCtrl
     ]);
 
-function draftsCtrl(documentsHelper, documentsResponse, documentsService, commentsHelper, $modal,  moment, $state, $stateParams, toaster){
+function draftsCtrl(documentsHelper, documentsResponse, userResponse, documentsService, commentsHelper, dialogProvider,  moment, $state, $stateParams, toaster){
 
     var vm = this;
     /** Previous months template **/
-    vm.previous;
+    vm.previous = documentsResponse.viewModel.body.previous;
     /** This months template **/
-    vm.thisMonth;
+    vm.thisMonth = documentsResponse.viewModel.body.thisMonth;
     /** Summary template **/
-    vm.summary;
+    vm.summary = documentsResponse.viewModel.body.summary;
     /** Current comment made in this phase of the workflow **/
-    vm.currentComment;
+    vm.currentComment = "";
     /** Previous comments made in different phases of the workflow **/
     vm.comments;
     /** Next box **/
-    vm.submitUrl;
+    vm.submitUrl = documentsResponse.viewModel.nextAction.nextBox.url;
     /** Document title for display **/
-    vm.documentTitle;
+    vm.documentTitle = documentsResponse.viewModel.documentTitle;
     /** Format used for all dates **/
-    vm.format;
-    /** Modal button positive **/
-    vm.positiveButton = {};
-    /** Modal button negative **/
-    vm.negativeButton = {};
-    /** Modal information **/
-    vm.modal = {};
+    vm.format = "MMMM-YYYY";
     /** Display for month **/
-    vm.billDate;
+    vm.billDate = documentsResponse.viewModel.billDate;
     /** Display for tenant name **/
-    vm.tenantName;
+    vm.tenantName = documentsResponse.viewModel.tenantName;
     /** If null, this means that this document has not been pushed to the server yet **/
-    var documentId;
-    /** Callback for unlinked action **/
-    vm.onUnlinkClicked = onUnlinkClicked;
+    var documentId = documentsResponse.viewModel.documentId;
+    /** User assigned to this document **/
+    vm.assigned = documentsResponse.viewModel.assigned;
+    /** Current user **/
+    vm.currentUser = userResponse.userId;
+    /** Disables the editing of this document if it's not locked to the user **/
+    vm.isDisabled;
 
+    //Function mapping
+    vm.onDateRangeSet       = onDateRangeSet;
+    vm.onUnlinkClicked      = onUnlinkClicked;
+    vm.validateDateRange    = validateDateRange;
+    vm.onSubmitClicked      = onSubmitClicked;
+    vm.onSaveClicked        = onSaveClicked;
+    vm.onCancelClicked      = onCancelClicked;
+    vm.onDeleteClicked      = onDeleteClicked;
+    vm.computeSubtotal      = computeSubtotal;
     activate();
 
     function activate() {
-        vm.previous = documentsResponse.viewModel.body.previous;
-        vm.thisMonth = documentsResponse.viewModel.body.thisMonth;
-        vm.summary = documentsResponse.viewModel.body.summary;
-        vm.currentComment = "";
-        documentId = documentsResponse.viewModel.documentId;
-        vm.submitUrl = documentsResponse.viewModel.nextAction.nextBox.url;
-        vm.documentTitle = documentsResponse.viewModel.documentTitle;
-        vm.tenantName = documentsResponse.viewModel.tenantName;
-        vm.billDate = documentsResponse.viewModel.billDate;
-        vm.format = "MMMM-YYYY";
-
-
         if(documentsResponse.viewModel.comments.hasOwnProperty('all')) {
             vm.comments = documentsResponse.viewModel.comments;
         }
         else {
             vm.comments = commentsHelper.parseComments(null, null);
         }
-
+        vm.isDisabled = (vm.assigned.userId != vm.currentUser);
     }
 
 
@@ -84,10 +78,10 @@ function draftsCtrl(documentsHelper, documentsResponse, documentsService, commen
      * @param oldDate
      * @param field
      */
-    vm.onDateRangeSet = function(newDate, oldDate, field, inputField) {
+    function onDateRangeSet(newDate, oldDate, field, inputField) {
         inputField.$setValidity("date", true);
         field.value = moment(newDate).format(vm.format);
-    };
+    }
 
     /**
      * Laucnhes a dialog for confirmation. If yes, make a network call to unlink user.
@@ -106,39 +100,37 @@ function draftsCtrl(documentsHelper, documentsResponse, documentsService, commen
      * @param field
      * @param inputField
      */
-    vm.validateDateRange = function(field, inputField) {
+    function validateDateRange(field, inputField) {
         var newDate = moment(field.value, vm.format);
         if(!moment(newDate).isValid()) {
             inputField.$setValidity("date", false);
         }
         else inputField.$setValidity("date", true);
-    };
+    }
 
     /**
      * Submits the current document to the next box
      */
-    vm.onSubmitClicked = function() {
+    function onSubmitClicked() {
         preparePostData();
         var postData = documentsHelper.formatServerData(documentsResponse);
         var success = function(response) {
             toaster.pop('success', 'Submitted!', 'Your document was sent for checking.');
-            $state.go("workspace.pending.drafts")
+            $state.go("workspace.pending.drafts", documentsHelper.getQueryParameters(), {reload : true})
         };
 
         var error = function(error) {};
 
         documentsService.moveToBox(documentId, vm.submitUrl, postData)
             .then(success);
-
-    };
+    }
 
     /**
      * Callback for when the save button is clicked
      */
-    vm.onSaveClicked = function(billingForm) {
+    function onSaveClicked(billingForm) {
         preparePostData();
         var postData = documentsHelper.formatServerData(documentsResponse);
-        console.log(postData);
         documentsService.editDocument(documentId, postData)
             .then(function(response) {
                 if(billingForm.$invalid) {
@@ -151,34 +143,56 @@ function draftsCtrl(documentsHelper, documentsResponse, documentsService, commen
             }, function() {
                 toaster.pop('error', 'Error', 'We couldn\'t save your document');
             });
-    };
+    }
 
     /**
      * Callback for when the cancel button is clicked
      */
-    vm.onCancelClicked = function() {
-        if(vm.billingForm.$pristine) {
-            $state.go("workspace.pending.drafts");
+    function onCancelClicked(billingForm) {
+        if(billingForm.$pristine) {
+            $state.go("workspace.pending.drafts", documentsHelper.getQueryParameters(), {reload : true});
         }
-        else {
-            vm.prepareCancelModal();
-            vm.openModal();
-        }
-    };
+        else openCancelModal();
+    }
+
+    /**
+     * Handles the cancel modal
+     */
+    function openCancelModal() {
+        var message = "Are you sure you want to exit?";
+        var title = "Changes have not been saved";
+        var okFxn  = function(response) {
+            $state.go("workspace.pending.drafts", documentsHelper.getQueryParameters(), {reload : true});
+        };
+
+        dialogProvider.getConfirmDialog(okFxn, null, message, title);
+    }
 
     /**
      * Callback for when the delete button is clicked
      */
-    vm.onDeleteClicked = function() {
-        vm.prepareDeleteModal();
-        vm.openModal();
-    };
+    function onDeleteClicked() {
+        var message = "Delete document"
+        var title = "This will delete the document permanently"
+        var okFxn = function(response) {
+            documentsService.deleteDocument(documentId)
+                .then(function(response) {
+                    toaster.pop("warning", "Delete successful");
+                    $state.go("workspace.pending.drafts", documentsHelper.getQueryParameters(), {reload : true});
+                }, function(error) {
+                    toaster.pop("error", "We couldn't delete your document");
+                });
+        };
+
+        dialogProvider.getConfirmDialog(okFxn, null, message, title);
+    }
 
     /**
      * Called when one of the total values is changed to compute the summary value of the whole billing
      * @param section
      */
-    vm.computeSubtotal = function(section) {
+    function computeSubtotal(section) {
+        console.log(section);
         var total = 0;
         angular.forEach(section.sections, function(subsection) {
             total += subsection.total;
@@ -186,146 +200,15 @@ function draftsCtrl(documentsHelper, documentsResponse, documentsService, commen
         section.summary.value = total;
 
         vm.summary.value = vm.previous.summary.value + vm.thisMonth.summary.value;
-    };
-
-    /**
-     * Holder for the positive button click
-     * @param response
-     */
-    vm.modalPositive = function(response) {};
-
-    /**
-     * Holder for negative button click
-     * @param negative
-     */
-    vm.modalNegative = function(negative){};
-
-    /**
-     * Opens the modal
-     */
-    vm.openModal = function() {
-        var modalInstance = $modal.open({
-            templateUrl : 'app/components/workspace/mailbox/views/modal-document-create.html',
-            controller  : "controller.create.modal",
-            backdrop    : 'static',
-            resolve     : {
-                modal   : function() {
-                    return vm.modal;
-                },
-                negativeButton : function() {
-                    return vm.negativeButton;
-                },
-                positiveButton : function() {
-                    return vm.positiveButton;
-                }
-            }
-        });
-
-        modalInstance.result.then(function(response) {
-            vm.modalPositive(response);
-        }, function(negative) {
-            vm.modalNegative(negative);
-        });
-    };
-
-    /**
-     * Handles the delete modal values
-     */
-    vm.prepareDeleteModal = function() {
-        vm.negativeButton.type = "btn-default";
-        vm.negativeButton.message = "Cancel";
-
-        vm.positiveButton.type = "btn-danger";
-        vm.positiveButton.message = "Delete";
-
-        vm.modal.title = "Delete draft";
-        vm.modal.message = "Are you sure you want to permanently delete this document?";
-
-        vm.modalPositive = function(response) {
-            documentsService.deleteDocument(documentId)
-                .then(function(response) {
-                    toaster.pop("warning", "Delete successful");
-                    $state.go("workspace.pending.drafts");
-                }, function(error) {
-                    toaster.pop("error", "We couldn't delete your document");
-                });
-        };
-
-        vm.modalNegative = function(error){
-
-        };
-    };
-
-    /**
-     * Handles the cancel modal
-     */
-    vm.prepareCancelModal = function() {
-        vm.negativeButton.type = "btn-default";
-        vm.negativeButton.message = "No";
-
-        vm.positiveButton.type = "btn-warning";
-        vm.positiveButton.message = "Yes";
-
-        vm.modal.title = "Changes not saved.";
-        vm.modal.message = "Are you sure you want to cancel?";
-
-        vm.modalPositive = function(response) {
-            $state.go("workspace.pending.drafts");
-        };
-
-        vm.modalNegative = function(error) {};
-    };
-
-    /**
-     * Will change the helper text's decoration depending on validity
-     * @param input
-     * @returns {string}
-     */
-    vm.isRequiredMuted = function(input) {
-        if(!input.$pristine && input.$invalid) return 'text-danger';
-        else return 'muted';
-    };
-
-    /**
-     * Will determine which error message to show
-     * @param input
-     * @param isRequired
-     * @returns {string}
-     */
-    vm.showErrorMessage = function(input, isRequired) {
-        if(input.$pristine && !isRequired) return "";
-        if(input.$pristine && isRequired) return "Required";
-        if(!input.$pristine && isRequired && !input.$invalid) return "Required";
-        if(!input.$pristine) {
-            if(input.$error.required) return "Required";
-            else if(input.$error.number) return "Invalid number";
-            else if(input.$error.min) return "Positive numbers only";
-            else if(input.$error.date) return "Invalid format";
-        }
-    };
+    }
 
     function preparePostData() {
         documentsResponse.viewModel.body.previous = vm.previous;
         documentsResponse.viewModel.body.thisMonth = vm.thisMonth;
         documentsResponse.viewModel.body.summary = vm.summary;
         documentsResponse.viewModel.comments = commentsHelper.parseComments(vm.currentComment, vm.comments);
+        documentsResponse.viewModel.assigned = vm.currentUser;
     }
     //endregion
 
 }
-
-drafts.controller("controller.create.modal",["$scope", "$modalInstance", "modal", "negativeButton", "positiveButton",
-    function($scope, $modalInstance, modal, negativeButton, positiveButton) {
-
-        $scope.modal = modal;
-        $scope.negativeButton = negativeButton;
-        $scope.positiveButton = positiveButton;
-
-        $scope.onPositiveClicked = function() {
-            $modalInstance.close();
-        };
-
-        $scope.onNegativeClicked = function() {
-            console.log("on negative clicked");
-        };
-}]);

@@ -7,7 +7,8 @@
                     <span><i class="fa fa-calendar iconed-text"></i>{{drafts.billDate | momentString:"MMMM-YYYY"}}</span>
                 </div>
                 <div md-theme="bills-dark" class="whiteframe-padded" flex="50" layout="column" layout-align="center end">
-                    <md-button remove-focus class="md-primary" ng-click="drafts.onUnlinkClicked()"><span><i class="fa fa-link iconed-text"></i>Unlock</span></md-button>
+                    <md-button ng-show="!drafts.isDisabled" remove-focus class="md-primary" ng-click="drafts.onUnlinkClicked()"><span><i class="fa fa-link iconed-text"></i>Unlock</span></md-button>
+                    <span ng-show="drafts.isDisabled"><i class="iconed-text fa fa-lock"></i>Locked to {{drafts.assigned.userName}}</span>
                 </div>
             </md-whiteframe>
         </section>
@@ -32,7 +33,7 @@
                             <label flex for="{{field.id}}" class="control-label col-xs-4 pull-left secondary-text">{{field.title}}</label>
 
                             <div flex class="col-xs-8" ng-switch on="drafts.field.datatype">
-                                <nooovle-inputs field="field" parent-form="previousForm"></nooovle-inputs>
+                                <nooovle-inputs is-disabled="drafts.isDisabled" field="field" parent-form="previousForm"></nooovle-inputs>
                             </div>
                         </div>
                         <div class="whiteframe-footer" layout="row" layout-align="center center">
@@ -45,9 +46,10 @@
                                          ng-class="{'has-error': previousFormTotal.previousTotal.$dirty && previousFormTotal.previousTotal.$invalid}">
                                         <input id="previousTotal" class="form-control input-md" name="previousTotal"
                                                type="number" min="0" step="0.01" ignore-mouse-wheel
+                                               ng-disabled="drafts.isDisabled"
                                                placeholder="Input {{sections.title}} total"
                                                required ng-model="sections.total"
-                                               ng-change="drafts.computeSubtotal(previous)"
+                                               ng-change="drafts.computeSubtotal(drafts.previous)"
                                                number-valid/>
                                         <nooovle-error-block parent-form="previousFormTotal" field="previousTotal"
                                                              is-required="true"></nooovle-error-block>
@@ -75,13 +77,14 @@
                             <label flex for="{{field.id}}" class="control-label col-xs-4 pull-left secondary-text">{{field.title}}</label>
 
                             <div flex class="col-xs-8" ng-switch on="field.datatype">
-                                <nooovle-inputs field="field" parent-form="thisMonthForm"></nooovle-inputs>
+                                <nooovle-inputs field="field" is-disabled="drafts.isDisabled" parent-form="thisMonthForm"></nooovle-inputs>
                                 <div ng-if="field.datatype == 'date'" ng-switch-when="date" dropdown>
                                     <a class="dropdown-toggle" id="{{field.id}}" role="button" data-toggle="dropdown"
                                        data-target="#" href>
                                         <div class="col-xs-12 input-group"
                                              ng-class="{'has-error': billingForm.billDate.$dirty && billingForm.billDate.$invalid}">
                                             <input type="text" class="form-control" name="input"
+                                                   ng-disabled="drafts.isDisabled"
                                                    data-ng-model="field.value"
                                                    placeholder="Input {{field.title}}"
                                                    ng-change="drafts.validateDateRange(field, thisMonth.input)">
@@ -108,9 +111,10 @@
                                          ng-class="{'has-error': currentFormTotal.inputTotal.$dirty && currentFormTotal.inputTotal.$invalid}">
                                         <input id="thisTotal" class="form-control input-md" name="inputTotal"
                                                type="number" min="0" step="0.01" ignore-mouse-wheel
+                                               ng-disabled="drafts.isDisabled"
                                                placeholder="Input {{sections.title}} total"
                                                required ng-model="sections.total"
-                                               ng-change="drafts.computeSubtotal(thisMonth)"
+                                               ng-change="drafts.computeSubtotal(drafts.thisMonth)"
                                                number-valid/>
                                         <nooovle-error-block parent-form="currentFormTotal" field="inputTotal"
                                                              is-required="true"></nooovle-error-block>
@@ -151,7 +155,7 @@
                     </div>
                 </section>
 
-                <div id="documentControls">
+                <div ng-show="!drafts.isDisabled" id="documentControls">
                     <div class="form-group">
                         <div class="col-lg-12 textContainer">
                         <textarea class="form-control" rows="5" id="documentComments"
@@ -159,34 +163,32 @@
                             <span class="help-block">Notes or comments for the current document (Will not be visible in final document).</span>
                         </div>
                     </div>
-
-                    <section layout="row" layout-align="center center">
-                        <div class="documentButtonGroup" flex="80" layout="row" layout-align="start center">
-                            <md-button remove-focus class="md-primary md-raised md-hue-3"
-                                       ng-click="drafts.onCancelClicked()">
-                                Cancel
-                            </md-button>
-                            <md-button remove-focus type="button" class="md-primary md-raised md-hue-3"
-                                       ng-click="drafts.onSaveClicked(billingForm)">Save
-                            </md-button>
-                            <md-button remove-focus type="submit" class="md-primary md-raised md-hue-3"
-                                       ng-click="drafts.onSubmitClicked()"
-                                       ng-disabled="billingForm.$invalid">Submit
-                            </md-button>
-                        </div>
-                        <div flex="20" layout="column" layout-align="center end">
-                            <md-button type="button" class="md-warn md-hue-3 md-raised"
-                                       ng-click="drafts.onDeleteClicked()">Delete
-                            </md-button>
-                        </div>
-
-                    </section>
-                    <p class="md-warn" ng-show="billingForm.$invalid">Can't submit document with invalid fields</p>
-
                 </div>
             </div>
         </form>
-        <section class="comments">
+        <section layout="row" layout-align="center center">
+            <div class="documentButtonGroup" flex="80" layout="row" layout-align="start center">
+                <md-button remove-focus class="md-primary md-raised md-hue-3"
+                           ng-click="drafts.onCancelClicked(billingForm)">
+                    Cancel
+                </md-button>
+                <md-button remove-focus type="button" class="md-primary md-raised md-hue-3"
+                           ng-click="drafts.onSaveClicked(billingForm)">Save
+                </md-button>
+                <md-button remove-focus type="submit" class="md-primary md-raised md-hue-3"
+                           ng-click="drafts.onSubmitClicked()"
+                           ng-disabled="billingForm.$invalid">Submit
+                </md-button>
+            </div>
+            <div flex="20" layout="column" layout-align="center end">
+                <md-button type="button" class="md-warn md-hue-3 md-raised"
+                           ng-click="drafts.onDeleteClicked()">Delete
+                </md-button>
+            </div>
+
+        </section>
+        <p class="md-warn" ng-show="billingForm.$invalid">Can't submit document with invalid fields</p>
+        <section class="comments bottom-comments">
             <hoa-comments is-recent-only="false" comments="drafts.comments" is-hidden="true"></hoa-comments>
         </section>
     </section>

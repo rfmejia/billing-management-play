@@ -19,13 +19,13 @@ function sidebarController ($state, documentsHelper, mailbox, userDetails) {
     };
     vm.onSidebarItemClicked = onSidebarItemClicked;
     vm.onCreateDocumentClicked = onCreateDocumentClicked;
-
     //region FUNCTION_CALLS
     function onSidebarItemClicked(folder) {
         var query = documentsHelper.getQueryParameters();
         query.mailbox = folder.queryParam;
         query.isAssigned = true;
         query.assigned = userDetails.userId;
+
         $state.go(folder.path, query, {reload : true});
     }
 

@@ -37,12 +37,10 @@ function hoaCommentsCtrl() {
     activate();
     function toggleVisibility() {
         vm.isVisible = !vm.isVisible;
-        console.log(vm.isShown);
     }
 
     function activate() {
         vm.isVisible = !vm.isHidden;
-        vm.isEmpty = (vm.comments.all.length < 1);
-        console.log(vm.isEmpty);
+        vm.isEmpty = (vm.comments == null || vm.comments.all.length < 1);
     }
 }

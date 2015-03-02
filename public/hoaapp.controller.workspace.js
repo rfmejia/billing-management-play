@@ -35,6 +35,7 @@ function workspaceController($modal ,userDetails, userService, $state, $location
 
     //region FUNCTION_CALL
     function activate() {
+        console.log($state.$current.path.toString());
         if($location.path() == '/') $state.go("workspace.pending.drafts", documentsHelper.getQueryParameters(), {reload : true});
     }
 
