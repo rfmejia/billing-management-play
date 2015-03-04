@@ -74,6 +74,7 @@ object User extends ((String, String, Option[String], Option[String], Option[Str
       query.list.toSet
     }
 
+  // TODO: Simplify when removing role editing in the original PUT request
   def updateWithRoles(userId: String, firstName: Option[String], lastName: Option[String],
     email: Option[String], rs: Set[String]): Try[String] =
     Try {
@@ -100,6 +101,21 @@ object User extends ((String, String, Option[String], Option[String], Option[Str
         }
       }
     }
+
+  def updateRoles(userId: String, rs: Set[String]): Try[String] = Try {
+    ConnectionFactory.connect withTransaction { implicit session =>
+      val query = for (u <- users if u.userId === userId) yield u
+
+      if (!query.exists.run) throw new IndexOutOfBoundsException
+      else { // Update user
+        rs foreach (role => roles.insertOrUpdate(role))
+        // The following does not use insertOrUpdate because userId is an
+        // auto-incrementing foreign key (bug exists)
+        rs foreach (role => userRoles += ((userId, role)))
+        userId
+      }
+    }
+  }
 
   val modelName = "USERS"
   lazy val modelInfos = Seq(
