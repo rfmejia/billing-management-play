@@ -140,7 +140,7 @@ class Tenants(override implicit val env: RuntimeEnvironment[User])
     }
   }
 
-  def delete(id: Int) = SecuredAction { implicit request =>
+  def delete(id: Int) = SecuredAction(WithRoles("administrator")) { implicit request =>
     val deleted = ConnectionFactory.connect withSession { implicit session =>
       val query = for (t <- tenants if t.id === id) yield t
       query.delete
