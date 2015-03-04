@@ -191,7 +191,7 @@ The following sections are default routes supplied by [SecureSocial](http://secu
 - [x] ...to **admin role** (locking is unrestricted)
 - [ ] Restrict document mailbox movement to assigned user **with the appropriate workflow role**
 - [x] Restrict **document deletion** to **assigned user when in drafts mailbox**, or...
-- [ ] ...to **admin role**
+- [x] ...to **admin role**
 
 ### Reports
 

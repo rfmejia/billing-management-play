@@ -227,20 +227,24 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
   }
 
   def delete(id: Int) = SecuredAction { implicit request =>
-    // Permissions: currently assigned user if in drafts, or administrator
-    val hasAccess = {
-      d.assigned.contains(request.user.userId) && d.mailbox == Workflow.drafts.name ||
-        User.findRoles(request.user.userId).contains("administrator")
-    }
+    Document.findById(id) match {
+      case Some(d) =>
+        // Permissions: currently assigned user if in drafts, or administrator
+        val hasAccess = {
+          d.assigned.contains(request.user.userId) && d.mailbox == Workflow.drafts.name ||
+            User.findRoles(request.user.userId).contains("administrator")
+        }
 
-    if (hasAccess) {
-      val deleted = ConnectionFactory.connect withSession { implicit session =>
-        val query = for (d <- documents if d.id === id) yield d
-        query.delete
-      }
-      if (deleted == 0) NotFound
-      else Ok
-    } else Forbidden
+        if (hasAccess) {
+          val deleted = ConnectionFactory.connect withSession { implicit session =>
+            val query = for (d <- documents if d.id === id) yield d
+            query.delete
+          }
+          if (deleted == 0) NotFound
+          else Ok
+        } else Forbidden
+      case None => NotFound
+    }
   }
 
   def assignToMe(id: Int) = SecuredAction { implicit request =>
