@@ -235,6 +235,38 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
     else Ok
   }
 
+  def assignToMe(id: Int) = SecuredAction { implicit request =>
+    Document.findById(id) match {
+      case Some(d) =>
+        val newDoc = d.copy(assigned = Some(request.user.userId))
+        Document.update(newDoc) match {
+          case Success(id) => NoContent
+          case Failure(err) => InternalServerError(err.getMessage)
+        }
+      case None => NotFound
+    }
+  }
+
+  def unassign(id: Int) = SecuredAction { implicit request =>
+    Document.findById(id) match {
+      case Some(d) =>
+        // Permissions: currently assigned user, or administrator
+        val hasAccess = {
+          d.assigned.contains(request.user.userId) ||
+            User.findRoles(request.user.userId).contains("administrator")
+        }
+
+        if (hasAccess) {
+          val newDoc = d.copy(assigned = Some(request.user.userId))
+          Document.update(newDoc) match {
+            case Success(id) => NoContent
+            case Failure(err) => InternalServerError(err.getMessage)
+          }
+        } else Forbidden
+      case None => NotFound
+    }
+  }
+
   private def documentToHalJsObject(d: Document)(implicit req: RequestHeader): HalJsObject = {
     val self = routes.Documents.show(d.id).absoluteURL()
     val obj = HalJsObject.create(self)

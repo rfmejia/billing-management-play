@@ -58,13 +58,13 @@ Request bodies are expected to conform to the supplied templates.
 
 User IDs in this system are email addresses. These cannot be changed.
 
-| Method   | URL            | Parameters    | Roles | Description |
-|----------|----------------|---------------|-------|-------------|
-| GET      | /api/users     | offset, limit | `*`     | Summarize all users
-| GET      | /api/users/me  |               | `c`     | Show full info about currently logged on user
-| GET      | /api/users/:id | user ID       | `*`     | Show full user info
+| Method   | URL            | Parameters    | Roles     | Description |
+|----------|----------------|---------------|-----------|-------------|
+| GET      | /api/users     | offset, limit | `*`       | Summarize all users
+| GET      | /api/users/me  |               | `c`       | Show full info about currently logged on user
+| GET      | /api/users/:id | user ID       | `*`       | Show full user info
 | PUT      | /api/users/:id | user ID       | `c`, `Ad` | Edit user info using `edit` template shown in /api/users/:id
-| DELETE   | /api/users/:id | user ID       | `*`     | Remove user from system (isolated deletion)
+| DELETE   | /api/users/:id | user ID       | `Ad`      | Remove user from system (isolated deletion)
 
 #### Documents
 
@@ -151,6 +151,7 @@ The following sections are default routes supplied by [SecureSocial](http://secu
 
 	Working draft
 
+
 <a id="tasks"></a>
 ## Tasks
 
@@ -159,7 +160,8 @@ The following sections are default routes supplied by [SecureSocial](http://secu
 - [ ] Prefix admin-only routes with */api/admin*, and...
 - [ ] ...perform **token authentication and authorization** on all routes
 - [ ] Separate link for role admin with User editing
-- [ ] Separate link for document un/assignment
+- [x] Separate link for document un/assignment
+- [ ] Remove changing of `assigned` field from PUT /api/documents/:id
 
 ### Backend
 
@@ -176,17 +178,17 @@ The following sections are default routes supplied by [SecureSocial](http://secu
 
 #### Users
 
-- [ ] Restrict deletion of user to admin role
+- [x] Restrict deletion of user to admin role
 
 #### Tenants
 
-- [ ] Restrict deletion of tenant to admin role
+- [x] Restrict deletion of tenant to admin role
 
 #### Documents
 
 - [ ] Restrict document editing to assigned user
-- [ ] Restrict **document unlocking** to **assigned user**, or...
-- [ ] ...to **admin role** (locking is unrestricted)
+- [x] Restrict **document unlocking** to **assigned user**, or...
+- [x] ...to **admin role** (locking is unrestricted)
 - [ ] Restrict document mailbox movement to assigned user **with the appropriate workflow role**
 - [ ] Restrict **document deletion** to **assigned user when in drafts mailbox**, or...
 - [ ] ...to **admin role**

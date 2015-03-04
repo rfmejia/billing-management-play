@@ -32,6 +32,9 @@ DELETE   /api/documents/:id            @controllers.Documents.delete(id: Int)
 
 GET      /api/documents/:id/logs       @controllers.ActionLogs.show(id: Int)
 
+PUT      /api/documents/:id/assigned   @controllers.Documents.assignToMe(id: Int)
+DELETE   /api/documents/:id/assigned   @controllers.Documents.unassign(id: Int)
+
 # Templates
 GET      /api/templates                @controllers.Templates.list(offset: Int ?= 0, limit: Int ?= 10)
 GET      /api/templates/:docType       @controllers.Templates.show(docType: String)
