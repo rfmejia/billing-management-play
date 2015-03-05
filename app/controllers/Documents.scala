@@ -218,7 +218,21 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
                   amountPaid = amountPaidOpt getOrElse d.amountPaid)
 
               Document.update(newDoc) match {
-                case Success(id) => NoContent
+                case Success(doc) =>
+                  val changes = Seq(
+                    titleOpt.map(v => s"Title: '${d.title}' -> '${v}'"),
+                    amountPaidOpt.map(v => s"Amount paid: '${d.amountPaid}' -> '${v}'"),
+                    bodyOpt.map(v => "Body updated"),
+                    commentsOpt.map(v => "Comments updated"))
+                    .flatten
+                    .mkString(", ")
+
+                  ActionLog.log(request.user.userId, doc.id, "Updates: " + changes) match {
+                    case Success(log) =>
+                      Document.logLastAction(log)
+                      NoContent
+                    case Failure(err) => Ok("Updates saved, but encountered error " + err.getMessage)
+                  }
                 case Failure(err) => InternalServerError(err.getMessage)
               }
             case _ => BadRequest("Some required values are missing. Please check your request.")
