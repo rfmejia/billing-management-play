@@ -14,11 +14,11 @@ angular
                     'moment',
                     '$state',
                     '$stateParams',
-                    'toaster',
+                    'service.hoatoasts',
                     draftsCtrl
                 ]);
 
-function draftsCtrl(documentsHelper, documentsResponse, userResponse, tenantsResponse, documentsService, commentsHelper, dialogProvider,  moment, $state, $stateParams, toaster){
+function draftsCtrl(documentsHelper, documentsResponse, userResponse, tenantsResponse, documentsService, commentsHelper, dialogProvider, moment, $state, $stateParams, hoaToasts) {
     var vm = this;
     /** Previous months template **/
     vm.previous = documentsResponse.viewModel.body.previous;
@@ -53,18 +53,18 @@ function draftsCtrl(documentsHelper, documentsResponse, userResponse, tenantsRes
 
 
     //Function mapping
-    vm.onDateRangeSet       = onDateRangeSet;
-    vm.onUnlinkClicked      = onUnlinkClicked;
-    vm.validateDateRange    = validateDateRange;
-    vm.onSubmitClicked      = onSubmitClicked;
-    vm.onSaveClicked        = onSaveClicked;
-    vm.onCancelClicked      = onCancelClicked;
-    vm.onDeleteClicked      = onDeleteClicked;
-    vm.computeSubtotal      = computeSubtotal;
+    vm.onDateRangeSet = onDateRangeSet;
+    vm.onUnlinkClicked = onUnlinkClicked;
+    vm.validateDateRange = validateDateRange;
+    vm.onSubmitClicked = onSubmitClicked;
+    vm.onSaveClicked = onSaveClicked;
+    vm.onCancelClicked = onCancelClicked;
+    vm.onDeleteClicked = onDeleteClicked;
+    vm.computeSubtotal = computeSubtotal;
     activate();
 
     function activate() {
-        if(documentsResponse.viewModel.comments.hasOwnProperty('all')) {
+        if (documentsResponse.viewModel.comments.hasOwnProperty('all')) {
             vm.comments = documentsResponse.viewModel.comments;
         }
         else {
@@ -105,10 +105,12 @@ function draftsCtrl(documentsHelper, documentsResponse, userResponse, tenantsRes
      */
     function validateDateRange(field, inputField) {
         var newDate = moment(field.value, vm.format);
-        if(!moment(newDate).isValid()) {
+        if (!moment(newDate).isValid()) {
             inputField.$setValidity("date", false);
         }
-        else inputField.$setValidity("date", true);
+        else {
+            inputField.$setValidity("date", true);
+        }
     }
 
     /**
@@ -118,7 +120,7 @@ function draftsCtrl(documentsHelper, documentsResponse, userResponse, tenantsRes
         preparePostData();
         var postData = documentsHelper.formatServerData(documentsResponse);
         var success = function(response) {
-            toaster.pop('success', 'Submitted!', 'Your document was sent for checking.');
+            hoaToasts.showSimpleToast('Your document was sent for checking.');
             $state.go("workspace.pending.drafts", documentsHelper.getQueryParameters(), {reload : true})
         };
 
@@ -136,15 +138,15 @@ function draftsCtrl(documentsHelper, documentsResponse, userResponse, tenantsRes
         var postData = documentsHelper.formatServerData(documentsResponse);
         documentsService.editDocument(documentId, postData)
             .then(function(response) {
-                      if(billingForm.$invalid) {
-                          toaster.pop('warning', 'Saved but...', 'Still can\'t submit your document because of missing or invalid fields.');
+                      if (billingForm.$invalid) {
+                          hoaToasts.showSimpleToast('Saved but there are missing fields');
                           vm.currentComment = null;
                       }
                       else {
-                          toaster.pop('success', 'All done!', 'Document can now be submitted to the next phase.')
+                          hoaToasts.showSimpleToast('Ready for submission');
                       }
                   }, function() {
-                      toaster.pop('error', 'Error', 'We couldn\'t save your document');
+                      hoaToasts.showSimpleToast('We couldn\t save your document');
                   });
     }
 
@@ -152,10 +154,12 @@ function draftsCtrl(documentsHelper, documentsResponse, userResponse, tenantsRes
      * Callback for when the cancel button is clicked
      */
     function onCancelClicked(billingForm) {
-        if(billingForm.$pristine) {
+        if (billingForm.$pristine) {
             $state.go("workspace.pending.drafts", documentsHelper.getQueryParameters(), {reload : true});
         }
-        else openCancelModal();
+        else {
+            openCancelModal();
+        }
     }
 
     /**
@@ -164,7 +168,7 @@ function draftsCtrl(documentsHelper, documentsResponse, userResponse, tenantsRes
     function openCancelModal() {
         var message = "Are you sure you want to exit?";
         var title = "Changes have not been saved";
-        var okFxn  = function(response) {
+        var okFxn = function(response) {
             $state.go("workspace.pending.drafts", documentsHelper.getQueryParameters(), {reload : true});
         };
 
@@ -180,10 +184,10 @@ function draftsCtrl(documentsHelper, documentsResponse, userResponse, tenantsRes
         var okFxn = function(response) {
             documentsService.deleteDocument(documentId)
                 .then(function(response) {
-                          toaster.pop("warning", "Delete successful");
+                          hoaToasts.showSimpleToast("Delete successful");
                           $state.go("workspace.pending.drafts", documentsHelper.getQueryParameters(), {reload : true});
                       }, function(error) {
-                          toaster.pop("error", "We couldn't delete your document");
+                                     hoaToasts.showSimpleToast("We couldn't delete your document");
                       });
         };
 
@@ -211,6 +215,7 @@ function draftsCtrl(documentsHelper, documentsResponse, userResponse, tenantsRes
         documentsResponse.viewModel.comments = commentsHelper.parseComments(vm.currentComment, vm.comments);
         documentsResponse.viewModel.assigned = vm.currentUser;
     }
+
     //endregion
 
 }

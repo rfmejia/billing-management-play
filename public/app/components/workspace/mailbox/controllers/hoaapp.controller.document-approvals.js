@@ -3,22 +3,22 @@
  */
 angular
     .module('module.mailbox')
-    .controller('controller.approvals',[
-        'documentsHelper',
-        'documentsResponse',
-        'userResponse',
-        'tenantsResponse',
-        'documentsService',
-        'helper.comments',
-        'service.hoadialog',
-        '$mdSidenav',
-        '$state',
-        '$stateParams',
-        'toaster',
-        approvalsCtrl
-    ]);
+    .controller('controller.approvals', [
+                    'documentsHelper',
+                    'documentsResponse',
+                    'userResponse',
+                    'tenantsResponse',
+                    'documentsService',
+                    'helper.comments',
+                    'service.hoadialog',
+                    '$mdSidenav',
+                    '$state',
+                    '$stateParams',
+                    "service.hoatoasts",
+                    approvalsCtrl
+                ]);
 
-function approvalsCtrl(documentsHelper, documentsResponse, userResponse, tenantsResponse, documentsService, commentsHelper, dialogProvider,  $mdSidenav, $state, $stateParams, toaster) {
+function approvalsCtrl(documentsHelper, documentsResponse, userResponse, tenantsResponse, documentsService, commentsHelper, dialogProvider, $mdSidenav, $state, $stateParams, hoaToasts) {
     var vm = this;
     /** Previous months template **/
     vm.previous = documentsResponse.viewModel.body.previous;
@@ -60,7 +60,7 @@ function approvalsCtrl(documentsHelper, documentsResponse, userResponse, tenants
     vm.onSubmitClicked = onSubmitClicked;
     //region FUNCTION_CALL
     function activate() {
-        if(documentsResponse.viewModel.comments.hasOwnProperty('all')) {
+        if (documentsResponse.viewModel.comments.hasOwnProperty('all')) {
             vm.comments = documentsResponse.viewModel.comments;
         }
         else {
@@ -68,11 +68,11 @@ function approvalsCtrl(documentsHelper, documentsResponse, userResponse, tenants
         }
         vm.isDisabled = (vm.assigned.userId != vm.currentUser);
     }
+
     /**
      * Laucnhes a dialog for confirmation. If yes, make a network call to unlink user.
      */
     function onUnlinkClicked() {
-        console.log($stateParams);
         documentsService.assignDocument($stateParams.id, "none")
             .then(returnToList);
     }
@@ -85,7 +85,7 @@ function approvalsCtrl(documentsHelper, documentsResponse, userResponse, tenants
         preparePostData();
         var postData = documentsHelper.formatServerData(documentsResponse);
         var success = function(response) {
-            toaster.pop('success', 'Successful', 'Document was returned to the previous phase.');
+            hoaToasts.showSimpleToast("Document was returned to the previous phase.");
             returnToList();
         };
 
@@ -99,7 +99,7 @@ function approvalsCtrl(documentsHelper, documentsResponse, userResponse, tenants
         preparePostData();
         var postData = documentsHelper.formatServerData(documentsResponse);
         var success = function(response) {
-            toaster.pop('success', 'Submitted!', 'Your document was sent for checking.');
+            hoaToasts.showSimpleToast("Your document was sent to the next phase");
             returnToList();
         };
 
@@ -116,5 +116,6 @@ function approvalsCtrl(documentsHelper, documentsResponse, userResponse, tenants
         documentsResponse.viewModel.comments = commentsHelper.parseComments(vm.currentComment, vm.comments);
         documentsResponse.viewModel.assigned = vm.currentUser;
     }
+
     //endregion
 }

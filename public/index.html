@@ -13,7 +13,6 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.0/paper/bootstrap.min.css"/>
     <link rel="stylesheet" href="assets/css/HOAmods.css">
     <link rel="stylesheet" href="assets/css/datetimepicker.css"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/0.4.9/toaster.min.css"/>
     <link rel="stylesheet" href="assets/directive/hoa/hoa-tenants/tenant-card.css"/>
     <link rel="stylesheet" href="assets/css/material/workspace.css"/>
     <link rel="stylesheet" href="assets/animation/animate.css"/>
@@ -64,7 +63,6 @@
 <script src="assets/bower_components/moment/moment.js"></script>
 <script src="assets/bower_components/angular-moment/angular-moment.js"></script>
 <script src="assets/js/datetimepicker.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/0.4.9/toaster.min.js"></script>
 <!-- end.widgets-->
 
 <!-- components.tenants -->
@@ -118,15 +116,9 @@
 <script src="assets/directive/hoa/hoa-collections/hoa-embedded-items/hoa-documents/hoa-document-item.js"></script>
 <script src="assets/directive/hoa/hoa-collections/hoa-embedded-items/hoa-embedded-items.js"></script>
 <script src="app/components/shared/elements/dialogs/hoaapp.provider.dialog.js"></script>
-<!-- Widgets config -->
-<toaster-container toaster-options="{
-    'position-class' :'toast-bottom-right',
-    'time-out' : 5000,
-    'showEasing': 'swing',
-    'hideEasing': 'linear',
-    'showMethod': 'fadeIn',
-    'hideMethod': 'fadeOut'
-    }"></toaster-container>
+<script src="app/components/shared/elements/toasts/hoaapp.provider.toast.js"></script>
+
+
 
 <nooovle-error-messages></nooovle-error-messages>
 </body>

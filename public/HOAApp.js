@@ -11,12 +11,12 @@ angular
                 "angularSpinner",
                 "ui.bootstrap.datetimepicker",
                 "angularMoment",
-                'toaster',
                 "ngAnimate",
                 "module.users",
                 "module.tenants",
                 "module.mailbox",
-                "module.directives"
+                "module.directives",
+                "hoa.providers"
             ])
     .config([
                 "$stateProvider",

@@ -4,17 +4,16 @@
 angular
     .module('module.mailbox')
     .controller('controller.create', [
-        'documentsHelper',
-        'documentsService',
-        '$scope',
-        '$state',
-        'template',
-        'tenantsList',
-        'toaster',
-        createCtrl
-    ]);
+                    'documentsHelper',
+                    'documentsService',
+                    '$state',
+                    'template',
+                    'tenantsList',
+                    'service.hoatoasts',
+                    createCtrl
+                ]);
 
-function createCtrl(documentsHelper, documentsService, $scope, $state, template, tenantsList, toaster) {
+function createCtrl(documentsHelper, documentsService, $state, template, tenantsList, hoaToast) {
 
     var vm = this;
 
@@ -31,6 +30,7 @@ function createCtrl(documentsHelper, documentsService, $scope, $state, template,
     /** The query search text **/
     vm.searchText = null;
 
+    //Function bindings
     vm.onTenantSelected = onTenantSelected;
     vm.onCreateDocumentClicked = onCreateDocumentClicked;
     vm.isDocumentReady = isDocumentReady;
@@ -46,6 +46,7 @@ function createCtrl(documentsHelper, documentsService, $scope, $state, template,
         });
     }
 
+    //region FUNCTION_CALL
     /**
      * Callback for when a tenant is selected. We also take note of the index to switch to an active state
      * @param tenant
@@ -61,11 +62,11 @@ function createCtrl(documentsHelper, documentsService, $scope, $state, template,
      */
     function onCreateDocumentClicked() {
         var success = function(response) {
-            $state.go("workspace.edit-view", {id: response.id});
+            $state.go("workspace.edit-view", {id : response.id});
         };
 
         var error = function(response) {
-            toaster.pop('error', 'Error', 'We couldn\'t create your document');
+            hoaToast.showSimpleToast("Sorry, we couldn't create your document")
         };
 
         prepareDraftPost();
@@ -104,9 +105,10 @@ function createCtrl(documentsHelper, documentsService, $scope, $state, template,
     function filterTenantList(queryText) {
         var lowercaseQuery = angular.lowercase(queryText);
         return function filterFn(tenant) {
-            var boo = (tenant.value.indexOf(lowercaseQuery) === 0);
-            return boo;
+            return (tenant.value.indexOf(lowercaseQuery) === 0);
 
         }
     }
+
+    //endregion
 }
