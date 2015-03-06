@@ -6,27 +6,24 @@
                ignore-mouse-wheel
                placeholder="Input {{field.title | lowercase}}"
                ng-required="field.required" ng-model="field.value"
-               number-valid
                ng-model-options="{updateOn: 'blur'}" />
     </div>
     <div ng-switch-when="double">
-        <input type="number" min="0.1" step="1"
+        <input type="number" min="0.0" step="1"
                id="{{field.id}}" class="form-control input-md" name="input"
                ng-disabled="isDisabled"
                ignore-mouse-wheel
                placeholder="Input {{field.title | lowercase}}"
                ng-required="field.required" ng-model="field.value"
-               number-valid
                ng-model-options="{updateOn: 'blur'}"/>
     </div>
     <div ng-switch-when="currency">
-        <input type="number" min="0.1" step="1"
+        <input type="number" min="0.0" step="1"
                id="{{field.id}}" class="form-control input-md" name="input"
                ng-disabled="isDisabled"
                ignore-mouse-wheel
                placeholder="Input {{field.title | lowercase}}"
                ng-required="field.required" ng-model="field.value"
-               number-valid
                ng-model-options="{updateOn: 'blur'}"/>
     </div>
     <div ng-switch-when="string">

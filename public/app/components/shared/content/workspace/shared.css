@@ -28,10 +28,6 @@
     text-transform: none;
 }
 
-#userName.md-button {
-
-}
-
 .nav-sidebar-heading {
     display: block;
     font-size: inherit;
@@ -69,7 +65,8 @@ md-toolbar.nav-sidebar {
 
 .main-secton a,
 .main-secton a:hover,
-.main-secton a:focus {
+.main-secton a:focus,
+.list-item {
     color: rgba(33, 33, 33, .87);
 }
 
@@ -80,14 +77,15 @@ md-toolbar.nav-sidebar {
     padding: 0 16px;
 }
 
-.dropdown-menu .divider {
+.navbar-collapse .dropdown-menu .divider {
     margin: 0;
 }
 
-.dropdown-menu>li>a {
+.navbar-collapse .dropdown-menu>li>a {
     padding: 10px 20px;
 }
-.dropdown-menu {
+
+.navbar-collapse .dropdown-menu {
     top:80%;
     left: 12%;
 }

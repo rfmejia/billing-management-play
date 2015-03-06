@@ -1,9 +1,13 @@
-<div ng-switch on="hoaItemsCtrl.item._links.profile.href">
-    <hoa-documents ng-switch-when="hoa:document"
-                   on-click="hoaItemsCtrl.onItemClick(item)"
-                   document="hoaItemsCtrl.item"
-                   theme="{{hoaItemsCtrl.theme}}"></hoa-documents>
+<section>
+    <hoa-documents
+            ng-if="hoaItemsCtrl.profile == 'hoa:document'"
+            on-click="hoaItemsCtrl.onItemClick(item)"
+            document="hoaItemsCtrl.item"
+            theme="{{hoaItemsCtrl.theme}}">
+    </hoa-documents>
 
-    <div ng-switch-when="hoa:tenant">
-    </div>
-</div>
+    <hoa-tenant ng-if="hoaItemsCtrl.profile == 'hoa:tenant'"
+                on-click="hoaItemsCtrl.onItemClick(item)"
+                tenant="hoaItemsCtrl.item">
+    </hoa-tenant>
+</section>

@@ -1,0 +1,12 @@
+<div class="md-toolbar-tools" layout="row" layout-align="start center">
+    <button hide-gt-sm class="menuBtn menuBtn-hamburger">
+        <span class="visually-hidden">Menu</span>
+    </button>
+    <h3 flex class="toolbar-title">{{viewCtrl.pageTitle}}</h3>
+
+    <md-button class="filter-button options no-uppercase" ng-click="viewCtrl.onEditClicked()">
+        <span><i class="fa fa-pencil iconed-text"></i>Edit</span></md-button>
+
+    <md-button class="filter-button options no-uppercase md-warn" ng-click="viewCtrl.onDeleteClicked()">
+        <span><i class="fa fa-trash iconed-text"></i>Delete</span></md-button>
+</div>

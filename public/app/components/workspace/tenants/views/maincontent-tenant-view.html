@@ -1,21 +1,33 @@
-<div class="well-sm">
-    <button class="btn btn-default btn-sm" ng-click="tenantView.onBackClicked()">back</button>
-</div>
-<br/>
-<div >
-    <legend>{{tenantView.tradeName}}
-        <button type="button" class="btn btn-default btn-sm pull-right" ng-click="tenantView.toggleInfo()">
-            <span ng-class="{true : 'glyphicon glyphicon-chevron-up', false : 'glyphicon glyphicon-chevron-down'}[tenantView.isInfoOpen]"></span> Info
-        </button>
-    </legend>
-    <div collapse="!tenantView.isInfoOpen">
-        <div class="row" ng-repeat="detail in tenantView.tenant">
-            <h6 class="col-xs-4">{{detail.title}}</h6> <h6 class="col-xs-1">:</h6> <h6>{{detail.value}}</h6>
-        </div>
-        <br/>
-        <btn type="button" class="btn btn-primary btn-sm" ng-click="tenantView.onEditClicked()">
-            <span class="glyphicon glyphicon-btn glyphicon-pencil"></span> edit
-        </btn>
-            <hr/>
-    </div>
-</div>
+<md-toolbar md-theme="tenants" ng-include="'app/components/workspace/tenants/views/partials-tenant-view-toolbar.html'">
+</md-toolbar>
+
+<md-content layout="column" flex class="md-padding">
+    <hoa-tenant-card tenant="viewCtrl.tenant"
+                     for-billing="false"
+                     format="YYYY-MMMM"
+                     trade-name-color="viewCtrl.tradeNameColor">
+
+    </hoa-tenant-card>
+
+    <md-whiteframe class="md-whiteframe-z1 cards-margin">
+        <md-toolbar md-theme="tenants" class="tenant-docs white-out">
+            <div class="md-toolbar-tools" class="md-toolbar-tools" layout="row" layout-align="start center">
+                <h5 flex ng-style="{color: '#689F38'}">Tenant documents</h5>
+                <md-button data-toggle="dropdown"
+                           class="button-white options no-uppercase md-default">
+                    <span><i class="fa fa-filter iconed-text"></i>Filters</span>
+                </md-button>
+                <ul class="dropdown-menu" role="menu">
+                    <li ng-repeat="filter in viewCtrl.filters"><a class="md-button button-white no-uppercase" ng-click="viewCtrl.onFilterClicked(filter)">{{filter.title}}</a></li>
+                </ul>
+            </div>
+        </md-toolbar>
+        <md-list>
+            <hoa-embedded-items
+                    layout="row" ng-repeat="document in viewCtrl.documents"
+                    theme="list"
+                    item="document"
+                    on-click="draftsCtrl.onDocumentItemClicked(item)"></hoa-embedded-items>
+        </md-list>
+    </md-whiteframe>
+</md-content>

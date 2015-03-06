@@ -1,25 +1,42 @@
-var tenantInvite = angular.module("module.tenants");
+angular
+    .module("module.tenants")
+    .controller("controller.tenantcreate", [
+                    "tenantsService",
+                    "tenantHelper",
+                    "tenantModel",
+                    "service.hoatoasts",
+                    "$state",
+                    "$stateParams",
+                    tenantCreateCtrl
+                ]);
 
-tenantInvite.controller("controller.tenantcreate", ["$scope", "$modalInstance", "tenantsService", "tenantCreateTemplate",
-	function($scope, $modalInstance, tenantsService, template){
-		$scope.controlData = [];
-		var editedData = angular.copy(template.postTemplate);
-		$scope.controlData = template.details;
+function tenantCreateCtrl(tenantsService, tenantHelper, tenantModel, toastSrvc, $state, $stateParams) {
+    var vm = this;
+    vm.tenantTemplate = tenantModel.viewModel;
+    vm.pageTitle = $state.current.data.title;
+    vm.onCreateTenantClicked = onCreateTenantClicked;
 
-		$scope.onCancelClicked = function() {
-			$modalInstance.dismiss("cancel");
-		};
+    //region FUNCTION_CALL
+    function onCreateTenantClicked() {
+        var postData = tenantHelper.formatPostData(tenantModel);
+        if($stateParams.id == null) {
+            tenantsService.createTenant(postData)
+                .then(success, error);
+        }
+        else {
+            tenantsService.editTenant($stateParams.id, postData)
+                .then(success, error);
+        }
+    }
 
-		$scope.onCreateClicked = function() {
-            angular.forEach($scope.controlData, function(field) {
-                editedData[field.name] = field.value;
-            });
+    function success(response) {
+        toastSrvc.showSimpleToast("Tenant entry saved");
+        $state.go("workspace.tenants-list", {}, {reload : true});
+    }
 
-            console.log(editedData);
+    function error(response) {
+        toastSrvc.showSimpleToast("Sorry, tenant wasn't saved");
+    }
 
-			tenantsService.createTenant(editedData);
-
-			$modalInstance.close(editedData);
-		};
-
-	}]);
+    //endregion
+}

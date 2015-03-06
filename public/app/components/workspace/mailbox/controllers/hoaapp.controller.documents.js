@@ -28,6 +28,8 @@ function documentsCtrl(dialogProvider, $state, documentsResponse, userDetails, d
     vm.onChangePageClicked = onChangePageClicked;
     vm.onChangeSliceClicked = onChangeSliceClicked;
     vm.onFilterTabClicked = onFilterTabClicked;
+    vm.pageTitle = $state.current.data.title;
+    vm.tabTitle = null;
 
     var maxPages = 0;
     var minSlice = 0;
@@ -57,16 +59,19 @@ function documentsCtrl(dialogProvider, $state, documentsResponse, userDetails, d
             vm.tabState.mine = false;
             vm.tabState.others = true;
             vm.tabState.open = false;
+            vm.tabTitle = "Assigned to others";
         }
         else if(vm.queryParameters.isAssigned && vm.queryParameters.assigned){
             vm.tabState.mine = true;
             vm.tabState.others = false;
             vm.tabState.open = false;
+            vm.tabTitle = "Assigned to me";
         }
         else if(!vm.queryParameters.isAssigned && vm.queryParameters.assigned == undefined) {
             vm.tabState.mine = false;
             vm.tabState.others = false;
             vm.tabState.open = true;
+            vm.tabTitle = "Open documents";
         }
     }
 

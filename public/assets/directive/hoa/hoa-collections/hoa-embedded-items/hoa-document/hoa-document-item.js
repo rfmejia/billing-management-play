@@ -17,14 +17,14 @@ function hoaDocuments() {
             onClick  : '&',
             document : '='
         },
-        templateUrl      : "assets/directive/hoa/hoa-collections/hoa-embedded-items/hoa-documents/hoa-document-item.html",
+        templateUrl      : "assets/directive/hoa/hoa-collections/hoa-embedded-items/hoa-document/hoa-document-item.html",
         controller       : "hoaDocumentItemCtrl",
         controllerAs     : "item",
         bindToController : true
     }
 }
 
-angular.module("hoaApp")
+angular.module("module.directives")
     .controller("hoaDocumentItemCtrl", [
                     "$log",
                     hoaDocumentItemCtrl

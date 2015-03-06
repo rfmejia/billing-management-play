@@ -16,9 +16,9 @@ angular
 function createCtrl(documentsHelper, documentsService, $state, template, tenantsList, hoaToast) {
 
     var vm = this;
-
+    console.log(tenantsList._embedded.item)
     /** list of tenants **/
-    vm.tenantsList = tenantsList.tenants;
+    vm.tenantsList = tenantsList._embedded.item;
     /** selected tenant from the list **/
     vm.selectedTenant = null;
     /** the index in the list of the selected tenant for ng-class='active' purposes **/
@@ -41,7 +41,7 @@ function createCtrl(documentsHelper, documentsService, $state, template, tenants
     activate();
 
     function activate() {
-        angular.forEach(tenantsList.tenants, function(tenant) {
+        angular.forEach(vm.tenantsList, function(tenant) {
             tenant.value = angular.lowercase(tenant.tradeName);
         });
     }

@@ -1,46 +1,27 @@
 var tenants = angular.module("module.tenants");
 
-tenants.controller("controller.tenantslist", ["$scope", "$state", "$modal", "tenantsService", "tenantList",
-    function($scope, $state, $modal, tenantsService, response){
-        console.log(response);
-        $scope.tenants = response.tenants;
-        //Callback for tenant item clicked
-        $scope.onTenantClick = function(tenant) {
-            $state.go("workspace.management.tenants.tenant-view", {"id" : tenant.id});
-        };
+angular
+    .module("module.tenants")
+    .controller("controller.tenantslist", [
+                    "$state",
+                    "apiResponse",
+                    tenantCtrl
+                ]);
 
-        //Callback for invite button clicked
-        $scope.onCreateTenantClicked = function() {
-        	$scope.opts = {
-        		scope 	: $scope,
-        		templateUrl : "app/components/workspace/tenants/views/maincontent-tenant-create.html",
-        		controller : "controller.tenantcreate",
-        		resolve : {
-                    tenantsService        : function() {
-                        return tenantsService;
-                    },
-        			tenantCreateTemplate  : function() {
-        				return response.template;
-        			}
-        		}
-        	}//opts end
+function tenantCtrl($state, apiResponse) {
+    var vm = this;
+    vm.apiResponse = apiResponse;
+    vm.onTenantClicked = onTenantClicked;
+    vm.onCreateTenantClicked = onCreateTenantClicked;
+    vm.pageTitle = $state.current.data.title;
+    vm.profile = apiResponse._links.profile.href;
+    vm.tenants = apiResponse._embedded.item;
 
-        	//open modal
-        	$scope.createTenantModal = $modal.open($scope.opts);
+    function onTenantClicked(tenant) {
+        $state.go("workspace.tenant-view", {"id" : tenant.id});
+    }
 
-        	//create action callback
-        	var create =  function(data) {
-                console.log("create");
-                $state.go("workspace.management.tenants", {}, {reload : true});
-        	};
-
-        	//cancelled action callback
-        	var cancelled = function() {
-
-        	};
-
-        	$scope.createTenantModal.result.then(create, cancelled);
-        };
-
-    }]);
-
+    function onCreateTenantClicked() {
+        $state.go("workspace.tenant-create")
+    }
+}

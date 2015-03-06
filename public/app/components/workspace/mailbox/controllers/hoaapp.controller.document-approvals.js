@@ -40,10 +40,8 @@ function approvalsCtrl(documentsHelper, documentsResponse, userResponse, tenants
     vm.format = "MMMM-YYYY";
     /** Display for month **/
     vm.billDate = documentsResponse.viewModel.billDate;
-    /** Display for tenant details **/
-    vm.tenantDetails = tenantsResponse.viewModel;
-    /** Display for tenant name **/
-    vm.tenantName = documentsResponse.viewModel.tenant.tradeName;
+    /** Tenant model **/
+    vm.tenant = tenantsResponse.viewModel;
     /** If null, this means that this document has not been pushed to the server yet **/
     var documentId = documentsResponse.viewModel.documentId;
     /** User assigned to this document **/
@@ -52,6 +50,7 @@ function approvalsCtrl(documentsHelper, documentsResponse, userResponse, tenants
     vm.currentUser = userResponse.userId;
     /** Disables the editing of this document if it's not locked to the user **/
     vm.isDisabled;
+    vm.tradeNameColor = {color : "#F44336"}
 
     activate();
 

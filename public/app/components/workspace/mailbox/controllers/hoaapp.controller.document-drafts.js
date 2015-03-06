@@ -38,10 +38,8 @@ function draftsCtrl(documentsHelper, documentsResponse, userResponse, tenantsRes
     vm.format = "MMMM-YYYY";
     /** Display for month **/
     vm.billDate = documentsResponse.viewModel.billDate;
-    /** Display for tenant name **/
-    vm.tenantName = documentsResponse.viewModel.tenant.tradeName;
-    /** Display for tenant details **/
-    vm.tenantDetails = tenantsResponse.viewModel;
+    /** Tenant model **/
+    vm.tenant = tenantsResponse.viewModel;
     /** If null, this means that this document has not been pushed to the server yet **/
     var documentId = documentsResponse.viewModel.documentId;
     /** User assigned to this document **/
@@ -50,6 +48,7 @@ function draftsCtrl(documentsHelper, documentsResponse, userResponse, tenantsRes
     vm.currentUser = userResponse.userId;
     /** Disables the editing of this document if it's not locked to the user **/
     vm.isDisabled;
+    vm.tradeNameColor = {color: "#009688"};
 
 
     //Function mapping

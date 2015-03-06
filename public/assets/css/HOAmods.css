@@ -502,3 +502,13 @@ md-button.toolbar-tools {
 .md-button.no-uppercase{
     text-transform: none;
 }
+
+.stacked-inputs {
+    margin-top: 16px;
+    margin-bottom: 16px;
+}
+
+md-toolbar.md-tenants-theme .md-button.button-white,
+button.button-white{
+    color: rgba(114, 114, 114, .87);
+}

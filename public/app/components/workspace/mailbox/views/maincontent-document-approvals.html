@@ -1,24 +1,16 @@
-<md-toolbar ng-include="'app/components/workspace/mailbox/views/partials-hoaapp-approvals-toolbar.html'">
+<md-toolbar md-theme="approvals" ng-include="'app/components/workspace/mailbox/views/partials-hoaapp-approvals-toolbar.html'">
 
 </md-toolbar>
 
 <md-content layout="column" flex class="md-padding md-default-theme">
     <div>
         <section>
-            <md-card class="tenant-card">
-                <md-card-content layout="row">
-                    <div flex="33"layout="column" layout-align="center center">
-                        <p class="tenant-tradename primary-text">{{approvals.tenantName}}</p>
-                        <p class="billdate secondary-text">{{approvals.billDate | momentString: approvals.format}}</p>
-                    </div>
-                    <div flex="66" class="tenant-details" layout-padding layout="column">
-                        <div layout="row" ng-repeat="tenant in approvals.tenantDetails">
-                            <div flex="30" class="static-bill-entry-title" primary-text>{{tenant.title}}</div>
-                            <div flex="70" clsss="static-bill-entry-value">{{tenant.value}}</div>
-                        </div>
-                    </div>
-                </md-card-content>
-            </md-card>
+            <hoa-tenant-card tenant="approvals.tenant"
+                             for-billing="true"
+                             bill-date="approvals.billDate"
+                             format="approvals.format"
+                             trade-name-color="approvals.tradeNameColor">
+            </hoa-tenant-card>
         </section>
         <section class="cards-margin comments">
             <hoa-comments is-recent-only="true" comments="approvals.comments" is-hidden="false"></hoa-comments>

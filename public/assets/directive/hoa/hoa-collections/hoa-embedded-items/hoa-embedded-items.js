@@ -23,7 +23,7 @@ function hoaEmbeddedItems() {
 }
 
 angular
-    .module('hoaApp')
+    .module('module.directives')
     .controller('hoaEmbeddedItemsCtrl', [
                     hoaEmbeddedItemsCtrl
                 ]);
@@ -31,6 +31,7 @@ angular
 function hoaEmbeddedItemsCtrl() {
     var vm = this;
     vm.onItemClick = onItemClick;
+    vm.profile = vm.item._links.profile.href;
     function onItemClick(item) {
         vm.onClick({item : item})
     }

@@ -14,66 +14,6 @@ tenants.service("service.hoatenants", ["$resource", "$q", "service.hoalinks", "h
             });
         };
 
-        //Function to get the list of tenants and add a template to creating tenants
-        var extractTenantList    = function(response) {
-            return {
-                "tenants"         : response._embedded.item,
-                "template"        : extractCreateTemplate(response)
-            };
-        };
-
-        //Function get a tenant and add a template to edit the tenant + adds the values to each field
-        var formatServerResponse        = function(response) {
-
-           return tenantHelper.formatResponse(response);
-        };
-
-        //Function to extract the template for creating tenants and adds a post template for the server
-        var extractCreateTemplate      = function(response) {
-            var raw = response._template.create.data[0];
-            var details = [];
-            angular.forEach(raw,
-                function(value){
-                    var template = angular.copy(value);
-                    template.value = "";
-                    details.push(template);
-                }
-            );
-            return {
-                "details" : details,
-                "postTemplate" : extractPostTemplate(raw)
-            };
-        };
-
-        //Function to extract the edit template for a tenant and adds a post template for the server
-        var extractEditTemplate      = function(response) {
-            var raw = response._template.edit.data[0];
-            var details = [];
-            angular.forEach(raw,
-                function(value){
-                    var template = angular.copy(value);
-                    template.value = "";
-                    details.push(template);
-                }
-            );
-            return {
-                "details" : details,
-                "id"      : response.id,
-                "postTemplate" : extractPostTemplate(raw)
-            };
-        };
-
-        //Function that creates a post template for the server
-        var extractPostTemplate  = function(response) {
-            var postTemplate = {};
-            angular.forEach(response,
-                function(value){
-                    postTemplate[value.name] = "";
-                }
-            );
-            return postTemplate;
-        };
-
         //Function that makes the actual request
         var makeRequest = function(tenantId, tenantData, type) {
             var deferred  = $q.defer();
@@ -90,22 +30,23 @@ tenants.service("service.hoatenants", ["$resource", "$q", "service.hoalinks", "h
                 switch(type) {
                     case requestType.GET:
                         resource.get(id).$promise
-                            .then(formatServerResponse, error)
-                            .then(success);
+                            .then(success, error);
                         break;
                     case requestType.QUERY:
                         resource.get().$promise
-                            .then(extractTenantList, error)
-                            .then(success);
+                            .then(success, error);
                         break;
                     case requestType.EDIT:
-                        resource.edit(id, tenantData).$promise.then(success, error);
+                        resource.edit(id, tenantData).$promise
+                            .then(success, error);
                         break;
                     case requestType.CREATE:
-                        resource.create(tenantData).$promise.then(success, error);
+                        resource.create(tenantData).$promise
+                            .then(success, error);
                         break;
                     case requestType.DELETE:
-                        resource.delete(id).$promise.then(success, error);
+                        resource.delete(id).$promise
+                            .then(success, error);
                 }
             };
 

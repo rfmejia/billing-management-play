@@ -69,6 +69,12 @@ function hoaAppConfig($stateProvider, $urlRouterProvider, $httpProvider, usSpinn
     $mdThemingProvider.theme('toolbars', 'default')
         .primaryPalette('blue-grey');
 
+    $mdThemingProvider.theme('tenants', 'default')
+        .primaryPalette('light-green');
+    $mdThemingProvider.theme('approvals', 'default')
+        .primaryPalette('red');
+
+
 
     usSpinnerConfigProvider.setDefaults({color : '#2196F3', lines : 9, corners : 1, length : 1});
     var workspace = {

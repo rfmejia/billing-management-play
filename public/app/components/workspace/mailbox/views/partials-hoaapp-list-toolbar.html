@@ -2,7 +2,7 @@
     <button hide-gt-sm class="menuBtn menuBtn-hamburger">
         <span class="visually-hidden">Menu</span>
     </button>
-    <h3 flex class="toolbar-title">Hobbies of Asia</h3>
+    <h3 flex class="toolbar-title">{{draftsCtrl.pageTitle}}</h3>
     <span class="filter-header options"><i class="fa fa-filter iconed-text"></i>FILTER</span>
 
     <md-button class="filter-button options" ng-click="draftsCtrl.onFilterTabClicked('mine')" ng-class="{true: 'active', false: ''}[draftsCtrl.tabState.mine]">

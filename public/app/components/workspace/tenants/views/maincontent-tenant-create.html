@@ -1,16 +1,27 @@
-<div class="modal-header colored-header-primary">
-    <h5>Create tenant</h5>
-</div>
-<div class="modal-body">
-    <form name="myForm">
-        <div ng-repeat="data in controlData" ng-form="tenant">
-            <label class="control-label" for="{{data.name}}">{{data.prompt}}</label>
-            <nooovle-inputs parent-form="tenant" field="data"></nooovle-inputs>
-        </div>
-    </form>
-</div>
+<md-toolbar  md-theme="tenants" >
+    <div class="md-toolbar-tools" layout="row" layout-align="start center">
+        <button hide-gt-sm class="menuBtn menuBtn-hamburger">
+            <span class="visually-hidden">Menu</span>
+        </button>
+        <h3 flex class="toolbar-title">{{createCtrl.pageTitle}}</h3>
 
-<div class="modal-footer">
-    <button class="btn btn-default" ng-click="onCancelClicked()">Cancel</button>
-    <button type="submit" class="btn btn-primary" ng-click="onCreateClicked()">Create</button>
-</div><!-- /modal-footer end -->
+        <md-button class="filter-button options no-uppercase" ng-disabled="myForm.$invalid" ng-click="createCtrl.onCreateTenantClicked()">
+            <span><i class="fa fa-floppy-o iconed-text"></i>Save tenant</span></md-button>
+    </div>
+
+</md-toolbar>
+<md-content layout="column" layout-fill flex class="md-padding">
+    <div>
+        <md-card flex class="cards-margin bottom-margin">
+            <md-card-content>
+                <form name="myForm">
+                    <div class="stacked-inputs" ng-repeat="data in createCtrl.tenantTemplate" ng-form="tenant">
+                        <label class="control-label">{{data.title}}</label>
+                        <nooovle-inputs parent-form="tenant" field="data"></nooovle-inputs>
+                    </div>
+                </form>
+            </md-card-content>
+        </md-card>
+    </div>
+</md-content>
+

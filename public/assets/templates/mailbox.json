@@ -22,7 +22,7 @@
     "queryParam": "",
     "subFolders": [
       {
-        "title": "Workspace",
+        "title": "Workflow",
         "path" : "workspace.pending",
         "link" : "pending",
         "queryKey": "mailbox",
@@ -55,6 +55,15 @@
             "link": "forApproval",
             "type" : "hoa:mailbox-link",
             "subFolders": []
+          },
+          {
+            "title": "For sending",
+            "path" : "workspace.pending.for-sending",
+            "queryKey": "mailbox",
+            "queryParam": "forSending",
+            "link": "forSending",
+            "type" : "hoa:mailbox-link",
+            "subFolders": []
           }
         ]
       },
@@ -83,7 +92,7 @@
                 "subFolders": []
               },
               {
-                "title": "unpaid",
+                "title": "Unpaid",
                 "path": "workspace.management.delivered.unpaid",
                 "queryKey": "mailbox",
                 "queryParam": "unpaid",
@@ -94,7 +103,7 @@
           },
           {
             "title": "Tenants",
-            "path": "workspace.management.tenants",
+            "path": "workspace.tenants-list",
             "queryKey": "",
             "queryParam": "",
             "link": "tenants",

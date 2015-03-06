@@ -1,0 +1,18 @@
+.tenant-search {
+    margin-bottom: 16px;
+}
+
+input[type=text].tenant-input  {
+    padding: 0 6px;
+    height: 40px;
+    line-height: 40px;
+}
+
+.bottom-margin {
+    margin-bottom: 32px;
+}
+
+.tenant-docs .dropdown-menu {
+    top:80%;
+    left: 84%;
+}

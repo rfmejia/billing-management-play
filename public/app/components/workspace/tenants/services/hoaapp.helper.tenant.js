@@ -3,20 +3,21 @@
  */
 angular
     .module("module.tenants")
-    .factory("helper.tenant",[
-        tenantHelper
-    ]);
+    .factory("helper.tenant", [
+                 tenantHelper
+             ]);
 
 function tenantHelper() {
     var helper = {
-        formatResponse : formatResponse
+        formatResponse : formatResponse,
+        formatPostData : formatPostData
     };
 
     return helper;
 
     function formatResponse(serverResponse) {
         return {
-            viewModel : getViewModel(serverResponse),
+            viewModel   : getViewModel(serverResponse),
             serverModel : getTemplate(serverResponse)
         };
     }
@@ -27,24 +28,44 @@ function tenantHelper() {
         angular.forEach(template, function(value) {
             serverModel[value.name] = value.value;
         });
+
         return serverModel;
     }
 
     function getViewModel(serverResponse) {
-        console.log(serverResponse);
-        if(serverResponse._template.hasOwnProperty("create")) {
-            angular.forEach(serverResponse._template.create.data[0], function(detail){
-                if(detail.hasOwnProperty("value"))temmplate.value = serverResponse[detail.name];
-                else detail.value = null;
+        var template = {};
+        if (serverResponse._template.hasOwnProperty("create")) {
+            angular.forEach(serverResponse._template.create.data[0], function(detail) {
+                if (detail.hasOwnProperty("value")) {
+                    template.value = serverResponse[detail.name];
+                }
+                else {
+                    detail.value = null;
+                }
             });
+            template = serverResponse._template.create.data[0];
         }
-        else if(serverResponse._template.hasOwnProperty("edit")) {
-            angular.forEach(serverResponse._template.edit.data[0], function(detail){
-                if(detail.hasOwnProperty("value"))detail.value = serverResponse[detail.name];
-                else detail.value = null;
+        else if (serverResponse._template.hasOwnProperty("edit")) {
+            angular.forEach(serverResponse._template.edit.data[0], function(detail) {
+                if (detail.hasOwnProperty("value")) {
+                    detail.value = serverResponse[detail.name];
+                }
+                else {
+                    detail.value = null;
+                }
             });
+            template = serverResponse._template.edit.data[0];
         }
+        return template
+    }
 
-        return serverResponse._template.edit.data[0];
+    function formatPostData(data) {
+        var postData = {};
+        angular.forEach(data.viewModel, function(value) {
+            if(data.serverModel.hasOwnProperty(value.name)) {
+                postData[value.name] = value.value;
+            }
+        });
+        return postData;
     }
 }
