@@ -4,7 +4,7 @@ tenant.controller("controller.tenantedit", ["$scope", "$state", "tenant", "tenan
 	function($scope, $state, tenant, tenantsService){
         $scope.tenant = angular.copy(tenant.details);
         $scope.editedData = angular.copy(tenant.postTemplate);
-        $scope.tenantName = {};
+        $scope.tenant = {};
         console.log($scope.tenant);
 
         $scope.resetData = function() {

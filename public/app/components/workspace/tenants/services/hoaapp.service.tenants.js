@@ -1,7 +1,7 @@
 var tenants = angular.module("module.tenants");
 
-tenants.service("service.hoatenants", ["$resource", "$q", "service.hoalinks",
-    function($resource, $q, hoalinks){
+tenants.service("service.hoatenants", ["$resource", "$q", "service.hoalinks", "helper.tenant",
+    function($resource, $q, hoalinks, tenantHelper){
         var resource       = null;
         var requestType    = Object.freeze({"QUERY" : 0, "GET" : 1, "EDIT" : 2, "CREATE" : 3, "DELETE" : 4});
        
@@ -23,14 +23,9 @@ tenants.service("service.hoatenants", ["$resource", "$q", "service.hoalinks",
         };
 
         //Function get a tenant and add a template to edit the tenant + adds the values to each field
-        var extractTenant        = function(response) {
-            var tenant = extractEditTemplate(response);
-            angular.forEach(tenant.details,
-                function(templateContents) {
-                    templateContents.value = response[templateContents.name];
-                }
-            );
-           return tenant;
+        var formatServerResponse        = function(response) {
+
+           return tenantHelper.formatResponse(response);
         };
 
         //Function to extract the template for creating tenants and adds a post template for the server
@@ -95,7 +90,7 @@ tenants.service("service.hoatenants", ["$resource", "$q", "service.hoalinks",
                 switch(type) {
                     case requestType.GET:
                         resource.get(id).$promise
-                            .then(extractTenant, error)
+                            .then(formatServerResponse, error)
                             .then(success);
                         break;
                     case requestType.QUERY:

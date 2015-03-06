@@ -1,47 +1,56 @@
-<div>
-    <section class="documents-info-bar cards-margin">
-        <md-whiteframe layout="row" class="md-whiteframe-z4">
-            <div class="whiteframe-padded" flex="50" layout="column" layout-align="start start">
-                <span><i class="fa fa-user iconed-text"></i>{{approvals.tenantName}}</span>
-                <span><i class="fa fa-calendar iconed-text"></i>{{approvals.billDate | momentString:"MMMM-YYYY"}}</span>
-            </div>
-            <div md-theme="bills-dark" class="whiteframe-padded" flex="50" layout="column" layout-align="center end">
-                <md-button ng-show="!approvals.isDisabled" remove-focus class="md-primary" ng-click="approvals.onUnlinkClicked()"><span><i class="fa fa-link iconed-text"></i>Unlock</span></md-button>
-                <span ng-show="approvals.isDisabled"><i class="iconed-text fa fa-lock"></i>Locked to {{approvals.assigned.userName}}</span>
-            </div>
-        </md-whiteframe>
-    </section>
+<md-toolbar ng-include="'app/components/workspace/mailbox/views/partials-hoaapp-approvals-toolbar.html'">
 
-    <section class="cards-margin comments">
-        <hoa-comments is-recent-only="true" comments="approvals.comments" is-hidden="false"></hoa-comments>
-    </section>
+</md-toolbar>
 
-    <section ng-include="'app/components/workspace/mailbox/views/partials-hoaapp-static-bill-tmpl.html'">
+<md-content layout="column" flex class="md-padding md-default-theme">
+    <div>
+        <section>
+            <md-card class="tenant-card">
+                <md-card-content layout="row">
+                    <div flex="33"layout="column" layout-align="center center">
+                        <p class="tenant-tradename primary-text">{{approvals.tenantName}}</p>
+                        <p class="billdate secondary-text">{{approvals.billDate | momentString: approvals.format}}</p>
+                    </div>
+                    <div flex="66" class="tenant-details" layout-padding layout="column">
+                        <div layout="row" ng-repeat="tenant in approvals.tenantDetails">
+                            <div flex="30" class="static-bill-entry-title" primary-text>{{tenant.title}}</div>
+                            <div flex="70" clsss="static-bill-entry-value">{{tenant.value}}</div>
+                        </div>
+                    </div>
+                </md-card-content>
+            </md-card>
+        </section>
+        <section class="cards-margin comments">
+            <hoa-comments is-recent-only="true" comments="approvals.comments" is-hidden="false"></hoa-comments>
+        </section>
 
-    </section>
+        <section ng-include="'app/components/workspace/mailbox/views/partials-hoaapp-static-bill-tmpl.html'">
 
-    <div ng-show="!approvals.isDisabled" class="cards-margin">
-        <div class="form-group">
-            <div class="textContainer">
+        </section>
+
+        <div ng-show="!approvals.isDisabled" class="cards-margin">
+            <div class="form-group">
+                <div class="textContainer">
                         <textarea class="form-control" rows="5" id="documentComments"
                                   ng-model="approvals.currentComment" placeholder="Add comments here"></textarea>
-                <span class="help-block">Notes or comments for the current document (Will not be visible in final document).</span>
+                    <span class="help-block">Notes or comments for the current document (Will not be visible in final document).</span>
+                </div>
             </div>
         </div>
-    </div>
-    <div layout="row" class="cards-margin">
-        <div flex="90">
-            <md-button type="button" class="md-warn md-hue-3 md-raised"
-                       ng-click="approvals.onRejectClicked()">Reject
-            </md-button>
+        <div layout="row" class="cards-margin">
+            <div flex="90">
+                <md-button type="button" class="md-warn md-hue-3 md-raised"
+                           ng-click="approvals.onRejectClicked()">Reject
+                </md-button>
+            </div>
+            <div flex="10">
+                <md-button remove-focus type="submit" class="pull-right md-primary md-raised md-hue-3"
+                           ng-click="approvals.onSubmitClicked()">Submit
+                </md-button>
+            </div>
         </div>
-        <div flex="10">
-            <md-button remove-focus type="submit" class="pull-right md-primary md-raised md-hue-3"
-                       ng-click="approvals.onSubmitClicked()">Submit
-            </md-button>
-        </div>
+        <section class="comments bottom-comments cards-margin">
+            <hoa-comments is-recent-only="false" comments="approvals.comments" is-hidden="true"></hoa-comments>
+        </section>
     </div>
-    <section class="comments bottom-comments cards-margin">
-        <hoa-comments is-recent-only="false" comments="approvals.comments" is-hidden="true"></hoa-comments>
-    </section>
-</div>
+</md-content>

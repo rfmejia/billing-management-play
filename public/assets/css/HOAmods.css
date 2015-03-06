@@ -122,11 +122,11 @@ label.vertical-aligned {
 }
 
 .subtotal {
-    margin-top: 30px;
+    margin-top: 16px;
+    margin-bottom : 16px
 }
 
-legend,
-.subtotal {
+legend {
   color: rgba(102, 102, 102, .87);
 }
 
@@ -302,45 +302,6 @@ input[type=number]::-webkit-outer-spin-button {
     overflow-y:scroll;
 }
 
-
-.nav-sidebar .nav-justified a {
-    text-align: left;
-}
-
-.nav-sidebar .nav-pills>li>a:hover,
-.nav-sidebar .nav-pills>li>a:focus {
-    border-left: 1px solid #FF4081;
-    color: rgba(0, 0, 0, .54);
-}
-
-.nav-sidebar .nav-justified>li.active>a,
-.nav-sidebar .nav-justified>li.active>a:hover,
-.nav-sidebar .nav-justified>li.active>a:focus {
-    color: #727272;
-    background-color: #CFD8DC;
-    border-left: 1px solid #FF4081;
-}
-
-.nav-sidebar .nav-justified>li>a {
-    border-left: 1px solid transparent;
-}
-
-.nav-sidebar .nav-justified>li>a:hover,
-.nav-sidebar .nav-justified>li>a:focus {
-    color: #FF4081;
-    background-color: #CFD8DC;
-    border-left: 1px solid #FF4081;
-}
-
-.nav-sidebar h6 {
-    margin-left: 5px;
-}
-
-.nav-sidebar .nav-justified>li>a {
-    border-radius: 0px;
-}
-
-
 .list-group-unbordered:first-child {
     border-radius: 0 !important;
 }
@@ -409,19 +370,21 @@ input[type=number],
 
 .text-accented {
     color: #FF4081;
+    margin-left: 2px;
+    margin-right: 2px;
 }
 
-.well-emphasis {
-    min-height: 20px;
-    padding: 19px;
-    margin-bottom: 20px;
-    background-color: #f9f9f9;
-    border-right: 1px solid transparent;
-    border-top: 1px solid transparent;
-    border-bottom: 1px solid transparent;
-    border-left: 2px solid #FF4081;
-    border-radius: 0;
-}
+/*.well-emphasis {*/
+    /*min-height: 20px;*/
+    /*padding: 19px;*/
+    /*margin-bottom: 20px;*/
+    /*background-color: #f9f9f9;*/
+    /*border-right: 1px solid transparent;*/
+    /*border-top: 1px solid transparent;*/
+    /*border-bottom: 1px solid transparent;*/
+    /*border-left: 2px solid #FF4081;*/
+    /*border-radius: 0;*/
+/*}*/
 
 .well-emphasis h6.bold {
     font-weight: bold;
@@ -460,8 +423,8 @@ i.leftQuote {
 }
 
 #documentControls {
-    margin-left: 10px;
-    margin-right: 10px;
+    margin-left: 0px;
+    margin-right: 0px;
     margin-top: 80px;
     margin-bottom: 40px;
 }
@@ -476,7 +439,6 @@ i.leftQuote {
 }
 
 i.iconed-text {
-    margin-left: 10px;
     margin-right: 10px;
 
 }
@@ -525,9 +487,18 @@ i.iconed-text {
     margin-bottom: 20px;
 }
 
-.temp {
-    float: right;
+.toolbar-tools {
+    font-size: 12px;
 }
 
+md-button.toolbar-tools {
+    font-size:12px;
+}
 
+.md-toolbar-tools .options {
+    font-size: 12px;
+}
 
+.md-button.no-uppercase{
+    text-transform: none;
+}

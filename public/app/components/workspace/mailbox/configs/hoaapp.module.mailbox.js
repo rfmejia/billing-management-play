@@ -42,7 +42,7 @@ function mailboxModuleConfig ($stateProvider) {
         views   : {
             "contentArea@workspace" : {
                 templateUrl : "app/components/workspace/mailbox/views/maincontent-document-create.html",
-                controller  : "controller.create"
+                controller  : "controller.create as documentCreate"
             }
         }
     };
@@ -111,7 +111,9 @@ function mailboxModuleConfig ($stateProvider) {
             documentsService        : "service.hoadocuments",
             userService             : "service.hoacurrentuser",
             documentsHelper         : 'helper.documents',
+            tenantsService           : "service.hoatenants",
             apiResponse             : function(documentsService, userService, $stateParams, $q) {
+                console.log("test");
                 var deferred = $q.defer();
                 var documentsPromise = documentsService.getDocument($stateParams.id);
                 var userPromise = userService.getUserDetails();
@@ -127,8 +129,10 @@ function mailboxModuleConfig ($stateProvider) {
             },
             userResponse            : function(apiResponse) {
                 return apiResponse[1];
+            },
+            tenantsResponse         : function(tenantsService, documentsResponse) {
+                return tenantsService.getTenant(documentsResponse.viewModel.tenant.id);
             }
-
         }
     };
 
@@ -144,6 +148,7 @@ function mailboxModuleConfig ($stateProvider) {
             documentsService        : "service.hoadocuments",
             userService             : "service.hoacurrentuser",
             documentsHelper         : 'helper.documents',
+            tenantsService           : "service.hoatenants",
             apiResponse             : function(documentsService, userService, $stateParams, $q) {
                 var deferred = $q.defer();
                 var documentsPromise = documentsService.getDocument($stateParams.id);
@@ -156,10 +161,14 @@ function mailboxModuleConfig ($stateProvider) {
                 return deferred.promise;
             },
             documentsResponse       :  function(apiResponse, documentsHelper) {
+                console.log("test2");
                 return documentsHelper.formatEditResponse(apiResponse[0]);
             },
             userResponse            : function(apiResponse) {
                 return apiResponse[1];
+            },
+            tenantsResponse         : function(tenantsService, documentsResponse) {
+                return tenantsService.getTenant(documentsResponse.viewModel.tenant.id);
             }
 
         }

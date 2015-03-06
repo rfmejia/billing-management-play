@@ -43,7 +43,7 @@ function documentHelper() {
             "body"      : serverResponse.body,
             "comments"  : serverResponse.comments,
             "billDate"  : serverResponse.forMonth,
-            "tenantName" : serverResponse._embedded.tenant.tradeName,
+            "tenant"    : serverResponse._embedded.tenant,
             "assigned"   : serverResponse.assigned,
             "nextAction"  : {
                 "nextBox" : searchForBox(serverResponse, "hoa:nextBox"),

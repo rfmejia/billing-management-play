@@ -1,0 +1,19 @@
+.small-content {
+    min-height: 480px;
+}
+
+.vertical-align {
+    margin: 0;
+    line-height: 35px;
+    max-height: 35px;
+}
+
+md-autocomplete input[type=text] {
+    padding: 0 15px;
+    height: 40px;
+    line-height: 40px;
+}
+
+.create-workflow .workflow-info {
+    margin-bottom: 16px;
+}

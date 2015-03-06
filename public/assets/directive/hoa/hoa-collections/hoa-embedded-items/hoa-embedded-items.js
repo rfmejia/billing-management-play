@@ -7,29 +7,29 @@ angular
 
 function hoaEmbeddedItems() {
     return {
-        restrict : 'E',
-        replace  : true,
-        transclude : false,
-        scope : {
-            item : '=',
+        restrict         : 'E',
+        replace          : true,
+        transclude       : false,
+        scope            : {
+            theme   : '@',
+            item    : '=',
             onClick : '&'
         },
-        templateUrl : 'assets/directive/hoa/hoa-collections/hoa-embedded-items/hoa-embedded-items.html',
-        controller : 'hoaEmbeddedItemsCtrl',
-        controllerAs : 'hoaItemsCtrl',
+        templateUrl      : 'assets/directive/hoa/hoa-collections/hoa-embedded-items/hoa-embedded-items.html',
+        controller       : 'hoaEmbeddedItemsCtrl',
+        controllerAs     : 'hoaItemsCtrl',
         bindToController : true
     }
 }
 
 angular
     .module('hoaApp')
-    .controller('hoaEmbeddedItemsCtrl',[
-        hoaEmbeddedItemsCtrl
-    ]);
+    .controller('hoaEmbeddedItemsCtrl', [
+                    hoaEmbeddedItemsCtrl
+                ]);
 
 function hoaEmbeddedItemsCtrl() {
     var vm = this;
-
     vm.onItemClick = onItemClick;
     function onItemClick(item) {
         vm.onClick({item : item})

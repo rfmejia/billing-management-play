@@ -1,34 +1,54 @@
-<md-toolbar class="md-default-theme">
-    <span layout="row" layout-align="center center" flex><h4 id="userName">Juan Carlos Yu</h4>
-        <div id="test" class="row navbar-collapse collapse" role="navigation">
-        <ul class="nav navbar-nav navbar-right">
-            <md-button remove-focus href class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                <i class="white-out fa fa-cog"></i>
+<div class="nav-sidebar">
+    <md-toolbar class="white-out">
+        <div layout="row" layout-align="center center" class="md-toolbar-tools userName">
+            <div flex class="navbar-collapse collapse" role="navigation">
+                <md-button remove-focus
+                           id="userName"
+                           href
+                           class="dropdown-toggle"
+                           data-toggle="dropdown"
+                           role="button"
+                           aria-expanded="false">
+                    <span><i class="iconed-text fa fa-cog"></i>{{sidebar.fullName}}</span>
+                </md-button>
+                <ul class="dropdown-menu" role="menu">
+                    <li><a href="#">Settings</a></li>
+                    <li class="divider"></li>
+                    <li><a href ng-click="sidebar.onLogOutClicked()">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </md-toolbar>
+
+    <div>
+        <div layout="row" layout-align="center center">
+            <md-button flex
+                       id="startWorkflow"
+                       remove-focus
+                       ng-click='sidebar.onCreateDocumentClicked()'
+                       aria-label="Profile">
+                <span><i class="fa fa-pencil-square-o"></i>Start workflow</span>
             </md-button>
-            <ul class="dropdown-menu" role="menu">
-                <li><a href="#">Settings</a></li>
-                <li class="divider"></li>
-                <li><a href ng-click="workspace.onLogOutClicked()">Logout</a></li>
+        </div>
+
+        <section>
+            <ul>
+                <li class="main-secton" ng-repeat="children in sidebar.mailboxItems.mailbox.subFolders">
+                    <section ng-if="children.type == 'hoa:mailbox-heading'">
+                        <h6 class="nav-sidebar-heading">{{children.title}}</h6>
+                        <ul>
+                            <li ng-repeat="grandchildren in children.subFolders">
+                                <a hoa-activate path="{{grandchildren.link}}"
+                                   ng-if="grandchildren.type == 'hoa:mailbox-link'"
+                                   class="md-button md-default-theme nav-sidebar-button"
+                                   ng-click="sidebar.onSidebarItemClicked(grandchildren)">{{grandchildren.title}}
+                                </a>
+                            </li>
+                        </ul>
+                    </section>
+                </li>
             </ul>
-        </ul>
-    </div></span>
-
-
-</md-toolbar>
-
-<div layout="column" layout-align="center center">
-    <div class="row md-toolbar-tools md-toolbar-tools-bottom" layout-align="center center">
-        <md-button remove-focus class="md-primary md-hue-1" ng-click='sidebar.onCreateDocumentClicked()' aria-label="Profile">
-            <i class="white-out fa fa-pencil-square-o"></i>Start workflow
-        </md-button>
-    </div>
-
-    <div class="nav-sidebar" ng-repeat="children in sidebar.mailboxItems.mailbox.subFolders">
-        <h6 class="h6-margin-bs text-muted">{{children.title | uppercase}}</h6>
-        <md-divider></md-divider>
-        <ul class="nav nav-justified" ng-repeat="grandchildren in children.subFolders">
-            <li class="" hoa-activate path="{{grandchildren.link}}"><a href class="text-muted" ng-click="sidebar.onSidebarItemClicked(grandchildren)">{{grandchildren.title | uppercase}}</a></li>
-        </ul>
+        </section>
     </div>
 </div>
 

@@ -4,30 +4,31 @@
 angular
     .module("module.directives")
     .directive("hoaDocuments", [
-        hoaDocuments
-    ]);
+                   hoaDocuments
+               ]);
 
 function hoaDocuments() {
     return {
-        restrict : 'E',
-        replace  : true,
-        transclude : false,
-        scope : {
+        restrict         : 'E',
+        replace          : true,
+        transclude       : false,
+        scope            : {
+            theme    : '@',
             onClick  : '&',
             document : '='
         },
-        templateUrl : "assets/directive/hoa/hoa-collections/hoa-embedded-items/hoa-documents/hoa-document-item.html",
-        controller : "hoaDocumentItemCtrl",
-        controllerAs : "item",
+        templateUrl      : "assets/directive/hoa/hoa-collections/hoa-embedded-items/hoa-documents/hoa-document-item.html",
+        controller       : "hoaDocumentItemCtrl",
+        controllerAs     : "item",
         bindToController : true
     }
 }
 
 angular.module("hoaApp")
-    .controller("hoaDocumentItemCtrl" ,[
-        "$log",
-        hoaDocumentItemCtrl
-    ]);
+    .controller("hoaDocumentItemCtrl", [
+                    "$log",
+                    hoaDocumentItemCtrl
+                ]);
 
 function hoaDocumentItemCtrl() {
     var vm = this;

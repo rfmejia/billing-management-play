@@ -1,0 +1,78 @@
+.invoice-view {
+    margin-top: 64px;
+    margin-bottom: 64px;
+}
+
+.invoice-view .title {
+    font-size: 34px;
+    margin-top: 8px;
+    font-weight: 400;
+    margin-bottom: 30px;
+    line-height: 40px;
+}
+
+.invoice-view .content {
+    margin-top: 8px;
+    margin-bottom: 8px;
+    line-height: 32px;
+}
+
+/*remove margins from cards*/
+.invoice-view md-card {
+    margin: 0px;
+}
+
+.draftsSection .title {
+    color: #009688;
+}
+
+.draftsSection .tenant-tradename,
+.draftsSection .invoice-total{
+    color: #009688
+}
+
+.draftsSection .subtitle {
+    margin-bottom: 30px;
+    color: #757575;
+    font-weight: 400;
+}
+
+.draftsSection .entry-title {
+    color: #212121;
+    font-size: 16px;
+    margin-bottom: 48px;
+}
+
+.draftsSection .entry {
+    margin-bottom: 48px;
+}
+
+md-card-content.subtotal {
+    padding: 0;
+    margin-top: 16px;
+    margin-bottom: 0px;
+    border-bottom-left-radius: 2px;
+    border-bottom-right: 2px;
+}
+
+md-card-content.subtotal .form-control {
+    color: #ffffff;
+}
+
+md-card-content.subtotal
+
+.comments-box{
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-top: 80px;
+    margin-bottom: 40px;
+}
+
+.comments-box .textContainer {
+    padding: 0px;
+}
+
+
+
+
+

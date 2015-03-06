@@ -12,7 +12,6 @@ img {
     border: none;
     height: 38px;
     margin: 16px;
-    position: absolute;
     width: 36px;
 }
 
@@ -74,31 +73,19 @@ md-content.grey-it{
     background-color: #ececec;
 }
 
-md-sidenav {
-    background-color: #455A64;
-}
 
-md-toolbar {
-    font-size: 1.250em;
-    font-weight: 400;
-    margin: auto;
-}
 
 md-toolbar.white-out {
     background: #FFFFFF;
     color: #727272;
 }
 
-md-toolbar.white-out h1,
-md-toolbar.white-out h2,
-md-toolbar.white-out h3,
-md-toolbar.white-out h4,
-md-toolbar.white-out h5,
-md-toolbar.white-out h6 {
+md-toolbar .toolbar-title {
     font-size: 1.250em;
     font-weight: 400;
-    margin: auto;
-    color: #727272;
+    color: #FFFFFF;
+    margin-left: 16px;
+    margin-right: 16px;
 }
 
 button i {
@@ -118,11 +105,6 @@ button i.secondary-text {
     float: left;
 }
 
-#userName {
-    color: #ffffff;
-    font-weight: bold;
-}
-
 .secondary-text {
     color: #727272;
 }
@@ -137,19 +119,6 @@ md-card.md-default-theme {
 
 .documents-info-bar {
     margin-bottom: 50px;
-}
-
-.pagination>.active>a,
-.pagination>.active>span,
-.pagination>.active>a:hover,
-.pagination>.active>span:hover,
-.pagination>.active>a:focus,
-.pagination>.active>span:focus {
-    z-index: 2;
-    color: #FFFFFF;
-    background-color: #00BCD4;
-    border-color: #00BCD4;
-    cursor: default;
 }
 
 button.list-filter {

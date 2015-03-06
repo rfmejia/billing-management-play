@@ -4,21 +4,21 @@
 angular
     .module('module.mailbox')
     .controller('controller.drafts', [
-        'documentsHelper',
-        'documentsResponse',
-        'userResponse',
-        'documentsService',
-        'helper.comments',
-        'service.hoadialog',
-        'moment',
-        '$state',
-        '$stateParams',
-        'toaster',
-        draftsCtrl
-    ]);
+                    'documentsHelper',
+                    'documentsResponse',
+                    'userResponse',
+                    'tenantsResponse',
+                    'documentsService',
+                    'helper.comments',
+                    'service.hoadialog',
+                    'moment',
+                    '$state',
+                    '$stateParams',
+                    'toaster',
+                    draftsCtrl
+                ]);
 
-function draftsCtrl(documentsHelper, documentsResponse, userResponse, documentsService, commentsHelper, dialogProvider,  moment, $state, $stateParams, toaster){
-
+function draftsCtrl(documentsHelper, documentsResponse, userResponse, tenantsResponse, documentsService, commentsHelper, dialogProvider,  moment, $state, $stateParams, toaster){
     var vm = this;
     /** Previous months template **/
     vm.previous = documentsResponse.viewModel.body.previous;
@@ -39,7 +39,9 @@ function draftsCtrl(documentsHelper, documentsResponse, userResponse, documentsS
     /** Display for month **/
     vm.billDate = documentsResponse.viewModel.billDate;
     /** Display for tenant name **/
-    vm.tenantName = documentsResponse.viewModel.tenantName;
+    vm.tenantName = documentsResponse.viewModel.tenant.tradeName;
+    /** Display for tenant details **/
+    vm.tenantDetails = tenantsResponse.viewModel;
     /** If null, this means that this document has not been pushed to the server yet **/
     var documentId = documentsResponse.viewModel.documentId;
     /** User assigned to this document **/
@@ -48,6 +50,7 @@ function draftsCtrl(documentsHelper, documentsResponse, userResponse, documentsS
     vm.currentUser = userResponse.userId;
     /** Disables the editing of this document if it's not locked to the user **/
     vm.isDisabled;
+
 
     //Function mapping
     vm.onDateRangeSet       = onDateRangeSet;
@@ -133,16 +136,16 @@ function draftsCtrl(documentsHelper, documentsResponse, userResponse, documentsS
         var postData = documentsHelper.formatServerData(documentsResponse);
         documentsService.editDocument(documentId, postData)
             .then(function(response) {
-                if(billingForm.$invalid) {
-                    toaster.pop('warning', 'Saved but...', 'Still can\'t submit your document because of missing or invalid fields.');
-                    vm.currentComment = null;
-                }
-                else {
-                    toaster.pop('success', 'All done!', 'Document can now be submitted to the next phase.')
-                }
-            }, function() {
-                toaster.pop('error', 'Error', 'We couldn\'t save your document');
-            });
+                      if(billingForm.$invalid) {
+                          toaster.pop('warning', 'Saved but...', 'Still can\'t submit your document because of missing or invalid fields.');
+                          vm.currentComment = null;
+                      }
+                      else {
+                          toaster.pop('success', 'All done!', 'Document can now be submitted to the next phase.')
+                      }
+                  }, function() {
+                      toaster.pop('error', 'Error', 'We couldn\'t save your document');
+                  });
     }
 
     /**
@@ -177,11 +180,11 @@ function draftsCtrl(documentsHelper, documentsResponse, userResponse, documentsS
         var okFxn = function(response) {
             documentsService.deleteDocument(documentId)
                 .then(function(response) {
-                    toaster.pop("warning", "Delete successful");
-                    $state.go("workspace.pending.drafts", documentsHelper.getQueryParameters(), {reload : true});
-                }, function(error) {
-                    toaster.pop("error", "We couldn't delete your document");
-                });
+                          toaster.pop("warning", "Delete successful");
+                          $state.go("workspace.pending.drafts", documentsHelper.getQueryParameters(), {reload : true});
+                      }, function(error) {
+                          toaster.pop("error", "We couldn't delete your document");
+                      });
         };
 
         dialogProvider.getConfirmDialog(okFxn, null, message, title);
@@ -192,7 +195,6 @@ function draftsCtrl(documentsHelper, documentsResponse, userResponse, documentsS
      * @param section
      */
     function computeSubtotal(section) {
-        console.log(section);
         var total = 0;
         angular.forEach(section.sections, function(subsection) {
             total += subsection.total;

@@ -15,33 +15,52 @@ angular
     ]);
 
 function createCtrl(documentsHelper, documentsService, $scope, $state, template, tenantsList, toaster) {
+
+    var vm = this;
+
     /** list of tenants **/
-    $scope.tenantsList = tenantsList.tenants;
+    vm.tenantsList = tenantsList.tenants;
     /** selected tenant from the list **/
-    $scope.selectedTenant = null;
+    vm.selectedTenant = null;
     /** the index in the list of the selected tenant for ng-class='active' purposes **/
-    $scope.selectedIndex = null;
+    vm.selectedIndex = null;
     /** the billing period **/
-    $scope.billingDate = null;
+    vm.billingDate = null;
     /** Format used for all dates **/
-    $scope.format = "MMMM-YYYY";
+    vm.format = "MMMM-YYYY";
+    /** The query search text **/
+    vm.searchText = null;
+
+    vm.onTenantSelected = onTenantSelected;
+    vm.onCreateDocumentClicked = onCreateDocumentClicked;
+    vm.isDocumentReady = isDocumentReady;
+    vm.title = title;
+    vm.prepareDraftPost = prepareDraftPost;
+    vm.getMatches = getMatches;
+
+    activate();
+
+    function activate() {
+        angular.forEach(tenantsList.tenants, function(tenant) {
+            tenant.value = angular.lowercase(tenant.tradeName);
+        });
+    }
 
     /**
      * Callback for when a tenant is selected. We also take note of the index to switch to an active state
      * @param tenant
      * @param index
      */
-    $scope.onTenantSelected = function(tenant, index) {
-        $scope.selectedTenant = tenant;
-        $scope.selectedIndex = index;
-    };
+    function onTenantSelected(tenant, index) {
+        vm.selectedTenant = tenant;
+        vm.selectedIndex = index;
+    }
 
     /**
      * Posts a draft to the API
      */
-    $scope.onCreateDocumentClicked = function() {
+    function onCreateDocumentClicked() {
         var success = function(response) {
-            console.log(response);
             $state.go("workspace.edit-view", {id: response.id});
         };
 
@@ -52,29 +71,42 @@ function createCtrl(documentsHelper, documentsService, $scope, $state, template,
         prepareDraftPost();
         documentsService.createDocument(documentsHelper.formatServerData(template))
             .then(success, error);
-    };
+    }
 
     /**
      * Convenience function that returns true if we can now submit the document to drafts
      * @returns {boolean}
      */
-    $scope.isDocumentReady = function() {
-        return ($scope.selectedTenant != null && $scope.billingDate != null);
-    };
+    function isDocumentReady() {
+        return (vm.selectedTenant != null && vm.billingDate != null);
+    }
 
     /**
      * Creates the title for our document.
      * @returns {string}
      */
-    $scope.title = function() {
-        return ($scope.isDocumentReady())
-            ? $scope.selectedTenant.tradeName + " - " + moment($scope.billingDate).format($scope.format)
+    function title() {
+        return (vm.isDocumentReady())
+            ? vm.selectedTenant.tradeName + " - " + moment(vm.billingDate).format(vm.format)
             : '';
-    };
+    }
 
-    var prepareDraftPost = function() {
-        template.viewModel.title = $scope.title();
-        template.viewModel.forMonth = $scope.billingDate;
-        template.viewModel.forTenant = $scope.selectedTenant.id;
-    };
+    function prepareDraftPost() {
+        template.viewModel.title = vm.title();
+        template.viewModel.forMonth = vm.billingDate;
+        template.viewModel.forTenant = vm.selectedTenant.id;
+    }
+
+    function getMatches(queryText) {
+        return queryText ? vm.tenantsList.filter(filterTenantList(queryText)) : [];
+    }
+
+    function filterTenantList(queryText) {
+        var lowercaseQuery = angular.lowercase(queryText);
+        return function filterFn(tenant) {
+            var boo = (tenant.value.indexOf(lowercaseQuery) === 0);
+            return boo;
+
+        }
+    }
 }

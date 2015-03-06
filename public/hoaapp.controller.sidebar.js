@@ -4,21 +4,23 @@
 angular
     .module('hoaApp')
     .controller('sidebarController', [
-        '$state',
-        'helper.documents',
-        'mailbox',
-        'userDetails',
-        sidebarController
-    ]);
+                    '$state',
+                    'helper.documents',
+                    'mailbox',
+                    'userDetails',
+                    sidebarController
+                ]);
 
-function sidebarController ($state, documentsHelper, mailbox, userDetails) {
+function sidebarController($state, documentsHelper, mailbox, userDetails) {
     var vm = this;
 
     vm.mailboxItems = {
-        "mailbox": mailbox.workflow
+        "mailbox" : mailbox.workflow
     };
     vm.onSidebarItemClicked = onSidebarItemClicked;
     vm.onCreateDocumentClicked = onCreateDocumentClicked;
+    vm.fullName = userDetails.fullName;
+
     //region FUNCTION_CALLS
     function onSidebarItemClicked(folder) {
         var query = documentsHelper.getQueryParameters();
@@ -29,8 +31,9 @@ function sidebarController ($state, documentsHelper, mailbox, userDetails) {
         $state.go(folder.path, query, {reload : true});
     }
 
-    function onCreateDocumentClicked () {
+    function onCreateDocumentClicked() {
         $state.go('workspace.create');
     }
+
     //endregion
 }

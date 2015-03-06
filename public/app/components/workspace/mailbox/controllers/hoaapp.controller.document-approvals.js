@@ -7,17 +7,18 @@ angular
         'documentsHelper',
         'documentsResponse',
         'userResponse',
+        'tenantsResponse',
         'documentsService',
         'helper.comments',
         'service.hoadialog',
-        'moment',
+        '$mdSidenav',
         '$state',
         '$stateParams',
         'toaster',
         approvalsCtrl
     ]);
 
-function approvalsCtrl(documentsHelper, documentsResponse, userResponse, documentsService, commentsHelper, dialogProvider,  moment, $state, $stateParams, toaster) {
+function approvalsCtrl(documentsHelper, documentsResponse, userResponse, tenantsResponse, documentsService, commentsHelper, dialogProvider,  $mdSidenav, $state, $stateParams, toaster) {
     var vm = this;
     /** Previous months template **/
     vm.previous = documentsResponse.viewModel.body.previous;
@@ -39,8 +40,10 @@ function approvalsCtrl(documentsHelper, documentsResponse, userResponse, documen
     vm.format = "MMMM-YYYY";
     /** Display for month **/
     vm.billDate = documentsResponse.viewModel.billDate;
+    /** Display for tenant details **/
+    vm.tenantDetails = tenantsResponse.viewModel;
     /** Display for tenant name **/
-    vm.tenantName = documentsResponse.viewModel.tenantName;
+    vm.tenantName = documentsResponse.viewModel.tenant.tradeName;
     /** If null, this means that this document has not been pushed to the server yet **/
     var documentId = documentsResponse.viewModel.documentId;
     /** User assigned to this document **/
@@ -49,8 +52,6 @@ function approvalsCtrl(documentsHelper, documentsResponse, userResponse, documen
     vm.currentUser = userResponse.userId;
     /** Disables the editing of this document if it's not locked to the user **/
     vm.isDisabled;
-
-    console.log(vm.thisMonth);
 
     activate();
 
@@ -71,6 +72,7 @@ function approvalsCtrl(documentsHelper, documentsResponse, userResponse, documen
      * Laucnhes a dialog for confirmation. If yes, make a network call to unlink user.
      */
     function onUnlinkClicked() {
+        console.log($stateParams);
         documentsService.assignDocument($stateParams.id, "none")
             .then(returnToList);
     }

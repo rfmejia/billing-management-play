@@ -27,6 +27,7 @@
         "link" : "pending",
         "queryKey": "mailbox",
         "queryParam": "pending",
+        "type" : "hoa:mailbox-heading",
         "subFolders": [
           {
             "title": "Drafts",
@@ -34,6 +35,7 @@
             "queryKey": "mailbox",
             "queryParam": "drafts",
             "link" : "drafts",
+            "type" : "hoa:mailbox-link",
             "subFolders": []
           },
           {
@@ -42,6 +44,7 @@
             "queryKey": "mailbox",
             "queryParam": "forChecking",
             "link": "forChecking",
+            "type" : "hoa:mailbox-link",
             "subFolders": []
           },
           {
@@ -50,6 +53,7 @@
             "queryKey": "mailbox",
             "queryParam": "forApproval",
             "link": "forApproval",
+            "type" : "hoa:mailbox-link",
             "subFolders": []
           }
         ]
@@ -60,6 +64,7 @@
         "link" : "management",
         "queryKey": "",
         "queryParam": "",
+        "type" : "hoa:mailbox-heading",
         "subFolders": [
           {
             "title": "Delivered",
@@ -67,6 +72,7 @@
             "link" : "delivered",
             "queryKey": "mailbox",
             "queryParam": "delivered",
+            "type" : "hoa:mailbox-link",
             "subFolders": [
               {
                 "title": "Paid",
@@ -92,6 +98,7 @@
             "queryKey": "",
             "queryParam": "",
             "link": "tenants",
+            "type" : "hoa:mailbox-link",
             "subFolders": []
           }
         ]

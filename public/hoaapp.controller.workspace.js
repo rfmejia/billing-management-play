@@ -35,7 +35,6 @@ function workspaceController($modal ,userDetails, userService, $state, $location
 
     //region FUNCTION_CALL
     function activate() {
-        console.log($state.$current.path.toString());
         if($location.path() == '/') $state.go("workspace.pending.drafts", documentsHelper.getQueryParameters(), {reload : true});
     }
 
@@ -94,8 +93,6 @@ function modalController($scope, $modalInstance, modal, negativeButton, positive
     $scope.modal = modal;
     $scope.negativeButton = negativeButton;
     $scope.positiveButton = positiveButton;
-
-    console.log(negativeButton);
 
     $scope.onPositiveClicked = function() {
         $modalInstance.close();

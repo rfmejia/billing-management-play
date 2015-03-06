@@ -42,7 +42,7 @@ md-whiteframe .whiteframe-title,
 bill-title{
     padding-left: 20px;
     padding-right: 20px;
-    padding-bottom: 10px;
+    padding-bottom: 30px;
     padding-top: 10px;
 }
 
@@ -78,7 +78,12 @@ md-whiteframe.billframe {
 }
 
 .md-button:not(.md-fab) {
-    min-width: 5em; }
+    min-width: 5em;
+}
+
+.md-button.icon-only {
+    min-width: 2em;
+}
 
 .documentButtonGroup button{
     margin-right: 10px;
