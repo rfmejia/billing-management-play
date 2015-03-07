@@ -443,8 +443,12 @@ i.iconed-text {
 
 }
 
+.static-bill-total-label {
+    margin-right: 6px;
+}
+
 .static-bill-total {
-    font-size: 36px;
+    font-size: 18px;
 }
 
 .primary-text {
@@ -461,12 +465,15 @@ i.iconed-text {
 }
 
 .static-bill-entries {
-    border-left: 1px solid #B6B6B6;
+    border-right: 1px solid #B6B6B6;
 }
 
 .static-bill-entry-title {
     margin-left: 10px;
     font-weight: bold;
+}
+.static-bill-entry-value {
+    text-align: right;
 }
 
 .static-bill-summary-block {
