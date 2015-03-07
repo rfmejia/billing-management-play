@@ -28,14 +28,35 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
   }
 
   def moveMailbox(id: Int, mailbox: String) = SecuredAction { implicit request =>
-    (Document.findById(id), Workflow.exists(mailbox)) match {
-      case (Some(d), Some(box)) =>
-        Document.update(d.copy(mailbox = box.name)) match {
-          case Success(d) => NoContent
-          case Failure(err) => InternalServerError(err.getMessage)
+    Document.findById(id) match {
+      case Some(d) =>
+        // TODO: Only the assigned user can move this mailbox
+        // And that assigned user has the correct privileges
+        (Workflow.find(d.mailbox), Workflow.find(mailbox)) match {
+          case (Some(oldBox), Some(newBox)) =>
+            Document.update(d.copy(mailbox = newBox.name)) match {
+              case Success(updated) =>
+                val msg = s"Moved document from '${oldBox.title}' to '${newBox.title}'"
+                ActionLog.log(request.user.userId, updated.id, msg) map { log =>
+                  // Check if the target box is the next box in the workflow
+                  // To properly log for movements
+                  (oldBox, Workflow.next(oldBox.name)) match {
+                    case (Workflow.drafts, Some(newBox)) =>
+                      Document.logPreparedAction(log)
+                    case (Workflow.forChecking, Some(newBox)) =>
+                      Document.logCheckedAction(log)
+                    case (Workflow.forApproval, Some(newBox)) =>
+                      Document.logApprovedAction(log)
+                    case _ => Document.logLastAction(log)
+                  }
+                }
+                NoContent
+              case Failure(err) => InternalServerError(err.getMessage)
+            }
+          case (None, _) => NotFound("Current mailbox cannot be found")
+          case (_, None) => NotFound("Target mailbox cannot be found")
         }
-      case (None, _) => NotFound("Document cannot be found")
-      case (_, None) => NotFound("Mailbox cannot be found")
+      case None => NotFound("Document cannot be found")
     }
   }
 
@@ -222,6 +243,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       .withLink("collection", routes.Documents.list().absoluteURL())
       .withField("_template", editForm)
       .withLink("edit", routes.Documents.edit(d.id).absoluteURL())
+      .withLink("hoa:logs", routes.ActionLogs.show(d.id).absoluteURL())
       .withField("id", d.id)
       .withField("serialId", d.serialId)
       .withField("title", d.title)
