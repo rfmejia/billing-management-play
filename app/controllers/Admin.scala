@@ -32,7 +32,7 @@ class Admin(override implicit val env: RuntimeEnvironment[User])
 
   val startForm = Form(
     "email" -> email.verifying(nonEmpty)
-    // "roles" -> checkbox
+    // "admin" -> checkbox
   )
 
   private def SecureInvitePage = CSRFAddToken {
