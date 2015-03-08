@@ -71,7 +71,7 @@ class Users(override implicit val env: RuntimeEnvironment[User])
     }
   }
 
-  def edit(userId: String) = SecuredAction(WithRoles("administrator"))(parse.json) { implicit request =>
+  def edit(userId: String) = SecuredAction(parse.json) { implicit request =>
     val json = request.body
     ((json \ "firstName").as[Option[String]], (json \ "lastName").as[Option[String]],
       (json \ "email").as[Option[String]], (json \ "roles").asOpt[Seq[String]]) match {
@@ -85,6 +85,26 @@ class Users(override implicit val env: RuntimeEnvironment[User])
           }
         case _ => BadRequest("Some required values are missing. Please check your request.")
       }
+  }
+
+  def editRoles(userId: String) = SecuredAction(parse.json) { implicit request =>
+    // Permissions: Administrator
+    val hasAccess = User.findRoles(request.user.userId).contains("administrator")
+
+    if (hasAccess) {
+      val json = request.body
+      (json \ "roles").asOpt[Seq[String]] match {
+        case Some(rs) =>
+          User.updateRoles(userId, rs.toSet) match {
+            case Success(userId) => NoContent
+            case Failure(err) => err match {
+              case e: IndexOutOfBoundsException => NotFound
+              case e: Throwable => throw e
+            }
+          }
+        case _ => BadRequest("Some required values are missing. Please check your request.")
+      }
+    } else Forbidden
   }
 
   def delete(userId: String) = SecuredAction(WithRoles("administrator")) { implicit request =>

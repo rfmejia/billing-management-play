@@ -40,14 +40,31 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
                 ActionLog.log(request.user.userId, updated.id, msg) map { log =>
                   // Check if the target box is the next box in the workflow
                   // To properly log for movements
-                  (oldBox, Workflow.next(oldBox.name)) match {
-                    case (Workflow.drafts, Some(newBox)) =>
-                      Document.logPreparedAction(log)
-                    case (Workflow.forChecking, Some(newBox)) =>
-                      Document.logCheckedAction(log)
-                    case (Workflow.forApproval, Some(newBox)) =>
-                      Document.logApprovedAction(log)
-                    case _ => Document.logLastAction(log)
+                  if (Option(newBox) == Workflow.next(oldBox.name)) {
+                    oldBox match {
+                      case Workflow.drafts =>
+                        Document.logPreparedAction(log)
+                      case Workflow.forChecking =>
+                        Document.logCheckedAction(log)
+                      case Workflow.forApproval =>
+                        Document.logApprovedAction(log)
+                      case _ => Document.logLastAction(log)
+                    }
+                  } else { // Clear existing logs, if any
+                    val (clearPrepared, clearChecked, clearApproved) = newBox match {
+                      case Workflow.drafts => (true, true, true)
+                      case Workflow.forChecking => (false, true, true)
+                      case Workflow.forApproval => (false, false, true)
+                      case _ => (false, false, false)
+                    }
+
+                    Document.update(
+                        d.copy(
+                          preparedAction = if(clearPrepared) None else d.preparedAction,
+                          checkedAction = if(clearChecked) None else d.checkedAction,
+                          approvedAction = if(clearApproved) None else d.approvedAction
+                          )
+                      )
                   }
                 }
                 NoContent
@@ -115,7 +132,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
           .withField("title", d.title)
           .withField("docType", d.docType)
           .withField("mailbox", d.mailbox)
-          .withField("forTenant", d.forTenant)
+          .withField("forTenant", tenantToObj(d.forTenant))
           .withField("forMonth", d.forMonth)
           .withField("amountPaid", d.amountPaid)
           .withField("creator", d.creator)
@@ -218,7 +235,21 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
                   amountPaid = amountPaidOpt getOrElse d.amountPaid)
 
               Document.update(newDoc) match {
-                case Success(id) => NoContent
+                case Success(doc) =>
+                  val changes = Seq(
+                    titleOpt.map(v => s"Title: '${d.title}' -> '${v}'"),
+                    amountPaidOpt.map(v => s"Amount paid: '${d.amountPaid}' -> '${v}'"),
+                    bodyOpt.map(v => "Body updated"),
+                    commentsOpt.map(v => "Comments updated"))
+                    .flatten
+                    .mkString(", ")
+
+                  ActionLog.log(request.user.userId, doc.id, "Updates: " + changes) match {
+                    case Success(log) =>
+                      Document.logLastAction(log)
+                      NoContent
+                    case Failure(err) => Ok("Updates saved, but encountered error " + err.getMessage)
+                  }
                 case Failure(err) => InternalServerError(err.getMessage)
               }
             case _ => BadRequest("Some required values are missing. Please check your request.")
@@ -227,12 +258,56 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
   }
 
   def delete(id: Int) = SecuredAction { implicit request =>
-    val deleted = ConnectionFactory.connect withSession { implicit session =>
-      val query = for (d <- documents if d.id === id) yield d
-      query.delete
+    Document.findById(id) match {
+      case Some(d) =>
+        // Permissions: currently assigned user if in drafts, or administrator
+        val hasAccess = {
+          d.assigned.contains(request.user.userId) && d.mailbox == Workflow.drafts.name ||
+            User.findRoles(request.user.userId).contains("administrator")
+        }
+
+        if (hasAccess) {
+          val deleted = ConnectionFactory.connect withSession { implicit session =>
+            val query = for (d <- documents if d.id === id) yield d
+            query.delete
+          }
+          if (deleted == 0) NotFound
+          else Ok
+        } else Forbidden
+      case None => NotFound
     }
-    if (deleted == 0) NotFound
-    else Ok
+  }
+
+  def assignToMe(id: Int) = SecuredAction { implicit request =>
+    Document.findById(id) match {
+      case Some(d) =>
+        val newDoc = d.copy(assigned = Some(request.user.userId))
+        Document.update(newDoc) match {
+          case Success(id) => NoContent
+          case Failure(err) => InternalServerError(err.getMessage)
+        }
+      case None => NotFound
+    }
+  }
+
+  def unassign(id: Int) = SecuredAction { implicit request =>
+    Document.findById(id) match {
+      case Some(d) =>
+        // Permissions: currently assigned user, or administrator
+        val hasAccess = {
+          d.assigned.contains(request.user.userId) ||
+            User.findRoles(request.user.userId).contains("administrator")
+        }
+
+        if (hasAccess) {
+          val newDoc = d.copy(assigned = Some(request.user.userId))
+          Document.update(newDoc) match {
+            case Success(id) => NoContent
+            case Failure(err) => InternalServerError(err.getMessage)
+          }
+        } else Forbidden
+      case None => NotFound
+    }
   }
 
   private def documentToHalJsObject(d: Document)(implicit req: RequestHeader): HalJsObject = {
@@ -252,7 +327,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       .withField("created", d.created)
       .withField("creator", d.creator)
       .withField("assigned", (d.assigned.map { userToObj(_) }))
-      .withField("forTenant", d.forTenant)
+      .withField("forTenant", tenantToObj(d.forTenant))
       .withField("forMonth", d.forMonth)
       .withField("amountPaid", d.amountPaid)
       .withField("hoa:nextBox", Workflow.next(d.mailbox).map(_.asJsObject))
@@ -322,4 +397,12 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       case None => JsObject(Seq("userId" -> JsString(userId)))
     }
 
+  def tenantToObj(tenantId: Int): JsObject =
+    Tenant.findById(tenantId) match {
+      case Some(t) =>
+        JsObject(Seq(
+          "id" -> JsNumber(t.id),
+          "tradeName" -> JsString(t.tradeName)))
+      case None => JsObject(Seq("id" -> JsNumber(tenantId)))
+    }
 }

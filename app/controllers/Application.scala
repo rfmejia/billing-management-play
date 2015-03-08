@@ -43,16 +43,14 @@ class Application(override implicit val env: RuntimeEnvironment[User])
     }
   }
 
-  def documentation = play.api.mvc.Action {
+  def documentation = SecuredAction {
     val filename = "public/assets/docs/api-docs.md"
     Play.current.resourceAsStream(filename) match {
       case Some(stream) =>
         val md = scala.io.Source.fromInputStream(stream).getLines().mkString("\n")
         val doc = s"""
 <head><title>HOA API Documentation</title></head>
-<xmp theme="united" style="display:none;">
-${md}
-</xmp>
+<xmp theme="united" style="display:none;">${md}</xmp>
 <script src="http://strapdownjs.com/v/0.2/strapdown.js"></script>
         """
         Ok(doc).as(HTML)
