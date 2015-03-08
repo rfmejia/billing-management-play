@@ -25,8 +25,14 @@ function sidebarController($state, documentsHelper, mailbox, userDetails) {
     function onSidebarItemClicked(folder) {
         var query = documentsHelper.getQueryParameters();
         query.mailbox = folder.queryParam;
-        query.isAssigned = true;
-        query.assigned = userDetails.userId;
+        if(folder.link != 'forSending') {
+            query.isAssigned = true;
+            query.assigned = userDetails.userId;
+        }
+        else {
+            query.isAssigned = null;
+            query.others = null;
+        }
 
         $state.go(folder.path, query, {reload : true});
     }

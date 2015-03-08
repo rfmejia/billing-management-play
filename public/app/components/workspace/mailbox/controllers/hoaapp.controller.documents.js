@@ -1,18 +1,18 @@
-
 angular
     .module("module.mailbox")
     .controller("controller.documents", [
-        'service.hoadialog',
-        "$state",
-        "documentsResponse",
-        "userDetails",
-        "documentsHelper",
-        "documentsService",
-        "requestedParameters",
-        documentsCtrl
-    ]);
+                    'service.hoadialog',
+                    "$state",
+                    "$stateParams",
+                    "documentsResponse",
+                    "userDetails",
+                    "documentsHelper",
+                    "documentsService",
+                    "requestedParameters",
+                    documentsCtrl
+                ]);
 
-function documentsCtrl(dialogProvider, $state, documentsResponse, userDetails, documentsHelper,documentsService, requestedParameters) {
+function documentsCtrl(dialogProvider, $state, $stateParams, documentsResponse, userDetails, documentsHelper, documentsService, requestedParameters) {
     var vm = this;
     vm.documents = [];
     vm.pages = [];
@@ -30,6 +30,7 @@ function documentsCtrl(dialogProvider, $state, documentsResponse, userDetails, d
     vm.onFilterTabClicked = onFilterTabClicked;
     vm.pageTitle = $state.current.data.title;
     vm.tabTitle = null;
+    vm.isForSending = false;
 
     var maxPages = 0;
     var minSlice = 0;
@@ -41,45 +42,50 @@ function documentsCtrl(dialogProvider, $state, documentsResponse, userDetails, d
         vm.documents = documentsResponse._embedded.item;
         splitPages();
         vm.queryParameters = documentsHelper.getQueryParameters();
-        for(var key in requestedParameters) {
-            if(vm.queryParameters.hasOwnProperty(key)) {
+        for (var key in requestedParameters) {
+            if (vm.queryParameters.hasOwnProperty(key)) {
                 vm.queryParameters[key] = requestedParameters[key];
             }
         }
+        vm.isForSending = $stateParams.mailbox == 'forSending';
         changeTabState();
     }
 
     function changeTabState() {
         vm.tabState = {
-            "mine" : true,
+            "mine"   : true,
             "others" : false,
-            "open" : false
+            "open"   : false
         };
-        if(vm.queryParameters.others) {
+        if (vm.queryParameters.others) {
             vm.tabState.mine = false;
             vm.tabState.others = true;
             vm.tabState.open = false;
             vm.tabTitle = "Assigned to others";
         }
-        else if(vm.queryParameters.isAssigned && vm.queryParameters.assigned){
+        else if (vm.queryParameters.isAssigned && vm.queryParameters.assigned) {
             vm.tabState.mine = true;
             vm.tabState.others = false;
             vm.tabState.open = false;
             vm.tabTitle = "Assigned to me";
         }
-        else if(!vm.queryParameters.isAssigned && vm.queryParameters.assigned == undefined) {
+        else if (!vm.queryParameters.isAssigned && vm.queryParameters.assigned == undefined) {
             vm.tabState.mine = false;
             vm.tabState.others = false;
             vm.tabState.open = true;
             vm.tabTitle = "Open documents";
+        }
+
+        if(vm.isForSending){
+            vm.tabTitle = "Approved documents"
         }
     }
 
     function splitPages() {
         maxPages = parseInt(documentsResponse.count / requestedParameters.limit);
         var remainder = documentsResponse.total;
-        if(remainder > 0) maxPages++;
-        for(var j = 1; j <= maxPages; ++j) vm.pages.push(j);
+        if (remainder > 0) maxPages++;
+        for (var j = 1; j <= maxPages; ++j) vm.pages.push(j);
         maxSlice = (maxPages > 5) ? 5 : maxPages;
         vm.pagesSliced = vm.pages.slice(minSlice, maxSlice);
     }
@@ -90,7 +96,7 @@ function documentsCtrl(dialogProvider, $state, documentsResponse, userDetails, d
     }
 
     function isIncrementPagePossible() {
-        return vm.pagesSliced[vm.pagesSliced.length-1] != maxPages;
+        return vm.pagesSliced[vm.pagesSliced.length - 1] != maxPages;
     }
 
     function isDecrementPagePossible() {
@@ -98,17 +104,33 @@ function documentsCtrl(dialogProvider, $state, documentsResponse, userDetails, d
     }
 
     function onDocumentItemClicked(item) {
+        if(vm.isForSending) printableView(item.id);
+        else workflowView(item);
+    }
+
+    function printableView(docId) {
+        console.log(docId);
+        $state.go("workspace.print-view", {id : docId}, {reload:true});
+    }
+
+    function workflowView(item) {
         var state = "";
         var title = "Opening unassigned document";
         var message = "This document will be locked to you";
 
-        if(vm.queryParameters.mailbox == "drafts") state = "workspace.edit-view";
-        else state = "workspace.fixed-view";
+        if (vm.queryParameters.mailbox == "drafts") {
+            state = "workspace.edit-view";
+        }
+        else {
+            state = "workspace.fixed-view";
+        }
 
-        if(!vm.queryParameters.isAssigned) {
+        if (!vm.queryParameters.isAssigned) {
             dialogProvider.getConfirmDialog(getDocument, null, message, title);
         }
-        else goToDrafts();
+        else {
+            goToDrafts();
+        }
 
         function goToDrafts(response) {
             $state.go(state, {"id" : item.id});
@@ -127,7 +149,7 @@ function documentsCtrl(dialogProvider, $state, documentsResponse, userDetails, d
     function onFilterTabClicked(filter) {
         vm.queryParameters.isAssigned = (filter != "open");
         vm.queryParameters.others = (filter == "others");
-        if(filter == "mine") {
+        if (filter == "mine") {
             vm.queryParameters.assigned = userDetails.userId;
             vm.queryParameters.isAssigned = true;
         }
@@ -139,11 +161,11 @@ function documentsCtrl(dialogProvider, $state, documentsResponse, userDetails, d
     }
 
     function onChangeSliceClicked(step) {
-        if(!vm.isDecrementPagePossible() && step < 0) return;
-        if(!vm.isIncrementPagePossible() && step > 0) return;
+        if (!vm.isDecrementPagePossible() && step < 0) return;
+        if (!vm.isIncrementPagePossible() && step > 0) return;
         minSlice += step;
         maxSlice += step;
-        vm.pagesSliced = vm.pages.slice(minSlice, (maxSlice > maxPages-1)? maxPages : maxSlice);
+        vm.pagesSliced = vm.pages.slice(minSlice, (maxSlice > maxPages - 1) ? maxPages : maxSlice);
         vm.onChangePageClicked(vm.pagesSliced[0]);
     }
 }

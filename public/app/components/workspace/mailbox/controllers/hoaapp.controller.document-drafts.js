@@ -60,6 +60,7 @@ function draftsCtrl(documentsHelper, documentsResponse, userResponse, tenantsRes
     vm.onCancelClicked = onCancelClicked;
     vm.onDeleteClicked = onDeleteClicked;
     vm.computeSubtotal = computeSubtotal;
+    vm.preventBack = preventBack;
     activate();
 
     function activate() {
@@ -74,6 +75,10 @@ function draftsCtrl(documentsHelper, documentsResponse, userResponse, tenantsRes
 
 
     //region FUNCTIONS
+    function preventBack(event, input) {
+        if(event.keyCode == 8) event.preventDefault();
+        console.log(input);
+    }
     /**
      * Sets the string date for other input fields
      * @param newDate

@@ -91,6 +91,7 @@ function mailboxModuleConfig($stateProvider) {
                 return deferred.promise;
             },
             documentsResponse   : function(response) {
+                console.log(response);
                 return response[0]
             },
             userDetails         : function(response) {
@@ -100,19 +101,11 @@ function mailboxModuleConfig($stateProvider) {
         }
     };
 
-    var forSendingList = {
-        url :  "/forSending",
-        views : {
-            "contentArea@workspace" : {
-                templateUrl : "app/components/workspace/mailbox/views/maincontent-documents-list.html",
-                controller  : "controller.documents as draftsCtrl"
-            }
-        }
-    };
 
     var draftsList = {url : "/drafts", data: {title : "Drafts"}};
     var forCheckingList = {url : "/forChecking", data: {title : "For checking"}};
     var forApprovalList = {url : "/forApproval", data: {title : "For approval"}};
+    var forSendingList = { url :  "/forSending", data : {title : 'Ready for sending'}};
     //endregion
 
     //region WORKSPACE.DOC
@@ -198,6 +191,26 @@ function mailboxModuleConfig($stateProvider) {
         }
     };
 
+    var printView = {
+        url     : 'printView/:id',
+        views   : {
+            "contentArea@workspace" : {
+                templateUrl : "app/components/workspace/mailbox/views/maincontent-document-print.html",
+                controller  : "controller.print as printCtrl"
+            }
+        },
+        resolve : {
+            documentsService  : "service.hoadocuments",
+            documentsHelper   : "helper.documents",
+            apiResponse       : function(documentsService, $stateParams) {
+                return documentsService.getDocument($stateParams.id);
+            },
+            documentsResponse : function(apiResponse, documentsHelper) {
+                return documentsHelper.formatEditResponse(apiResponse);
+            }
+        }
+    };
+
     //endregion
 
     $stateProvider
@@ -206,6 +219,9 @@ function mailboxModuleConfig($stateProvider) {
         .state("workspace.pending.drafts", draftsList)
         .state("workspace.pending.for-checking", forCheckingList)
         .state("workspace.pending.for-approval", forApprovalList)
+        .state("workspace.pending.for-sending", forSendingList)
         .state("workspace.fixed-view", fixedView)
-        .state("workspace.edit-view", editView);
+        .state("workspace.edit-view", editView)
+        .state("workspace.print-view", printView);
+
 }

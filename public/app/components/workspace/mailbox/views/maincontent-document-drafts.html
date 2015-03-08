@@ -101,6 +101,7 @@
                                                      ng-switch-when="date"
                                                      dropdown>
                                                     <a class="dropdown-toggle"
+                                                       ng-keydown="drafts.preventBack($event, input)"
                                                        id="{{field.id}}"
                                                        role="button"
                                                        data-toggle="dropdown"
@@ -108,7 +109,9 @@
                                                        href>
                                                         <div class="col-xs-12 input-group"
                                                              ng-class="{'has-error': billingForm.billDate.$dirty && billingForm.billDate.$invalid}">
-                                                            <input type="text" class="form-control" name="input"
+                                                            <input type="text"
+                                                                   class="form-control"
+                                                                   name="input"
                                                                    ng-disabled="drafts.isDisabled"
                                                                    data-ng-model="field.value"
                                                                    placeholder="Input {{field.title}}"
@@ -144,7 +147,7 @@
                                                            name="inputTotal"
                                                            type="number"
                                                            min="0"
-                                                           step="0.01"
+                                                           step="0.0"
                                                            ignore-mouse-wheel
                                                            ng-disabled="drafts.isDisabled"
                                                            placeholder="Input {{sections.title}} total"

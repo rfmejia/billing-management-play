@@ -11,14 +11,13 @@ angular
                     'documentsService',
                     'helper.comments',
                     'service.hoadialog',
-                    '$mdSidenav',
                     '$state',
                     '$stateParams',
                     "service.hoatoasts",
                     approvalsCtrl
                 ]);
 
-function approvalsCtrl(documentsHelper, documentsResponse, userResponse, tenantsResponse, documentsService, commentsHelper, dialogProvider, $mdSidenav, $state, $stateParams, hoaToasts) {
+function approvalsCtrl(documentsHelper, documentsResponse, userResponse, tenantsResponse, documentsService, commentsHelper, dialogProvider, $state, $stateParams, hoaToasts) {
     var vm = this;
     /** Previous months template **/
     vm.previous = documentsResponse.viewModel.body.previous;
@@ -53,11 +52,7 @@ function approvalsCtrl(documentsHelper, documentsResponse, userResponse, tenants
     /** Disables the editing of this document if it's not locked to the user **/
     vm.isDisabled;
     vm.tradeNameColor = {color : "#F44336"}
-    vm.actions = documentsResponse.viewModel.assigned;
-
-    console.log(vm.actions);
-
-    console.log(vm.tenant);
+    vm.actions = documentsResponse.viewModel.actions;
     activate();
 
     vm.onUnlinkClicked = onUnlinkClicked;

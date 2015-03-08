@@ -40,21 +40,21 @@ function documentHelper() {
 
     function createEditViewModel(serverResponse) {
         return {
-            "body"          : serverResponse.body,
-            "comments"      : serverResponse.comments,
-            "billDate"      : serverResponse.forMonth,
-            "tenant"        : serverResponse._embedded.tenant,
-            "assigned"      : serverResponse.assigned,
-            "nextAction"    : {
+            "body"       : serverResponse.body,
+            "comments"   : serverResponse.comments,
+            "billDate"   : serverResponse.forMonth,
+            "assigned"   : serverResponse.assigned,
+            "nextAction" : {
                 "nextBox" : searchForBox(serverResponse, "hoa:nextBox"),
                 "prevBox" : searchForBox(serverResponse, "hoa:prevBox")
             },
-            "actions"       : [
-                serverResponse.lastAction,
-                serverResponse.preparedAction,
-                serverResponse.checkedAction,
-                serverResponse.approvedAction
-            ],
+            "actions"    : {
+                last     : serverResponse.lastAction,
+                prepared : serverResponse.preparedAction,
+                checked  : serverResponse.checkedAction,
+                approved : serverResponse.approvedAction
+            },
+
             "mailbox"       : serverResponse.mailbox,
             "amountPaid"    : serverResponse.amountPaid,
             "documentId"    : serverResponse.id,
