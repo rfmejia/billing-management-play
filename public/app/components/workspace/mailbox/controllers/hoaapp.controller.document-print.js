@@ -14,7 +14,6 @@ angular
 
 function printCtrl(docsHelper, docsSrvc, docsResponse, $state, $stateParams) {
     var vm = this;
-    console.log(docsResponse.viewModel.tenant.tradeName);
     vm.document = docsResponse.viewModel;
 
 
