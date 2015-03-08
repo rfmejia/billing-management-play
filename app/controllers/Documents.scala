@@ -115,7 +115,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
           .withField("title", d.title)
           .withField("docType", d.docType)
           .withField("mailbox", d.mailbox)
-          .withField("forTenant", d.forTenant)
+          .withField("forTenant", tenantToObj(d.forTenant))
           .withField("forMonth", d.forMonth)
           .withField("amountPaid", d.amountPaid)
           .withField("creator", d.creator)
@@ -310,7 +310,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       .withField("created", d.created)
       .withField("creator", d.creator)
       .withField("assigned", (d.assigned.map { userToObj(_) }))
-      .withField("forTenant", d.forTenant)
+      .withField("forTenant", tenantToObj(d.forTenant))
       .withField("forMonth", d.forMonth)
       .withField("amountPaid", d.amountPaid)
       .withField("hoa:nextBox", Workflow.next(d.mailbox).map(_.asJsObject))
@@ -380,4 +380,12 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       case None => JsObject(Seq("userId" -> JsString(userId)))
     }
 
+  def tenantToObj(tenantId: Int): JsObject =
+    Tenant.findById(tenantId) match {
+      case Some(t) =>
+        JsObject(Seq(
+          "id" -> JsNumber(t.id),
+          "tradeName" -> JsString(t.tradeName)))
+      case None => JsObject(Seq("id" -> JsNumber(tenantId)))
+    }
 }
