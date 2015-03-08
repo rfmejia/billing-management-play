@@ -40,14 +40,31 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
                 ActionLog.log(request.user.userId, updated.id, msg) map { log =>
                   // Check if the target box is the next box in the workflow
                   // To properly log for movements
-                  (oldBox, Workflow.next(oldBox.name)) match {
-                    case (Workflow.drafts, Some(newBox)) =>
-                      Document.logPreparedAction(log)
-                    case (Workflow.forChecking, Some(newBox)) =>
-                      Document.logCheckedAction(log)
-                    case (Workflow.forApproval, Some(newBox)) =>
-                      Document.logApprovedAction(log)
-                    case _ => Document.logLastAction(log)
+                  if (Option(newBox) == Workflow.next(oldBox.name)) {
+                    oldBox match {
+                      case Workflow.drafts =>
+                        Document.logPreparedAction(log)
+                      case Workflow.forChecking =>
+                        Document.logCheckedAction(log)
+                      case Workflow.forApproval =>
+                        Document.logApprovedAction(log)
+                      case _ => Document.logLastAction(log)
+                    }
+                  } else { // Clear existing logs, if any
+                    val (clearPrepared, clearChecked, clearApproved) = newBox match {
+                      case Workflow.drafts => (true, true, true)
+                      case Workflow.forChecking => (false, true, true)
+                      case Workflow.forApproval => (false, false, true)
+                      case _ => (false, false, false)
+                    }
+
+                    Document.update(
+                        d.copy(
+                          preparedAction = if(clearPrepared) None else d.preparedAction,
+                          checkedAction = if(clearChecked) None else d.checkedAction,
+                          approvedAction = if(clearApproved) None else d.approvedAction
+                          )
+                      )
                   }
                 }
                 NoContent
