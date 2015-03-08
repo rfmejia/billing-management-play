@@ -29,15 +29,15 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
 
   def moveMailbox(id: Int, mailbox: String) = SecuredAction { implicit request =>
     Document.findById(id) match {
-      case Some(d) =>
+      case Some(oldDoc) =>
         // TODO: Only the assigned user can move this mailbox
         // And that assigned user has the correct privileges
-        (Workflow.find(d.mailbox), Workflow.find(mailbox)) match {
+        (Workflow.find(oldDoc.mailbox), Workflow.find(mailbox)) match {
           case (Some(oldBox), Some(newBox)) =>
-            Document.update(d.copy(mailbox = newBox.name)) match {
-              case Success(updated) =>
+            Document.update(oldDoc.copy(mailbox = newBox.name)) match {
+              case Success(newDoc) =>
                 val msg = s"Moved document from '${oldBox.title}' to '${newBox.title}'"
-                ActionLog.log(request.user.userId, updated.id, msg) map { log =>
+                ActionLog.log(request.user.userId, newDoc.id, msg) map { log =>
                   // Check if the target box is the next box in the workflow
                   // To properly log for movements
                   if (Option(newBox) == Workflow.next(oldBox.name)) {
@@ -59,12 +59,13 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
                     }
 
                     Document.update(
-                        d.copy(
-                          preparedAction = if(clearPrepared) None else d.preparedAction,
-                          checkedAction = if(clearChecked) None else d.checkedAction,
-                          approvedAction = if(clearApproved) None else d.approvedAction
-                          )
-                      )
+                      newDoc.copy(
+                        preparedAction = if (clearPrepared) None else newDoc.preparedAction,
+                        checkedAction = if (clearChecked) None else newDoc.checkedAction,
+                        approvedAction = if (clearApproved) None else newDoc.approvedAction)) match {
+                        case Success(_) => Document.logLastAction(log)
+                        case Failure(err) => InternalServerError(err.getMessage)
+                      }
                   }
                 }
                 NoContent
