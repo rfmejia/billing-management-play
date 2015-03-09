@@ -133,11 +133,11 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
           .withField("title", d.title)
           .withField("docType", d.docType)
           .withField("mailbox", d.mailbox)
-          .withField("forTenant", tenantToObj(d.forTenant))
+          .withField("forTenant", tenantToJsObject(d.forTenant))
           .withField("forMonth", d.forMonth)
           .withField("amountPaid", d.amountPaid)
           .withField("creator", d.creator)
-          .withField("assigned", (d.assigned.map { userToObj(_) }))
+          .withField("assigned", (d.assigned.map { userToJsObject(_) }))
 
         val withTotal = Templates.getTotal(d) match {
           case Right(total) =>
@@ -327,8 +327,8 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       .withField("mailbox", d.mailbox)
       .withField("created", d.created)
       .withField("creator", d.creator)
-      .withField("assigned", (d.assigned.map { userToObj(_) }))
-      .withField("forTenant", tenantToObj(d.forTenant))
+      .withField("assigned", (d.assigned.map { userToJsObject(_) }))
+      .withField("forTenant", tenantToJsObject(d.forTenant))
       .withField("forMonth", d.forMonth)
       .withField("amountPaid", d.amountPaid)
       .withField("hoa:nextBox", Workflow.next(d.mailbox).map(_.asJsObject))
@@ -371,15 +371,6 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
           .withField("warning", warning)
     }
 
-    def actionToJsObject(id: Int) = ActionLog.findById(id) map { log =>
-      JsObject(Seq(
-        "id" -> JsNumber(log.id),
-        "who" -> JsString(log.who),
-        "what" -> JsNumber(log.what),
-        "when" -> JsString(log.when.toString),
-        "why" -> JsString(log.why)))
-    }
-
     val withActions = withTotal
       .withField("lastAction", d.lastAction flatMap (actionToJsObject(_)))
       .withField("preparedAction", d.preparedAction flatMap (actionToJsObject(_)))
@@ -389,7 +380,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
     withActions
   }
 
-  def userToObj(userId: String): JsObject =
+  def userToJsObject(userId: String): JsObject =
     User.findById(userId) match {
       case Some(u) =>
         JsObject(Seq(
@@ -398,12 +389,21 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       case None => JsObject(Seq("userId" -> JsString(userId)))
     }
 
-  def tenantToObj(tenantId: Int): JsObject =
+  def tenantToJsObject(tenantId: Int): JsObject =
     Tenant.findById(tenantId) match {
       case Some(t) =>
         JsObject(Seq(
           "id" -> JsNumber(t.id),
           "tradeName" -> JsString(t.tradeName)))
       case None => JsObject(Seq("id" -> JsNumber(tenantId)))
+    }
+
+    def actionToJsObject(id: Int) = ActionLog.findById(id) map { log =>
+      JsObject(Seq(
+        "id" -> JsNumber(log.id),
+        "who" -> userToJsObject(log.who),
+        "what" -> JsNumber(log.what),
+        "when" -> JsString(log.when.toString),
+        "why" -> JsString(log.why)))
     }
 }
