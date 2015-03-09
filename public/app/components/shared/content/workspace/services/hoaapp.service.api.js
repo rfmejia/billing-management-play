@@ -3,13 +3,13 @@ angular
     .factory('service.hoalinks', [
         '$resource',
         '$q',
+                "$window",
         hoaAppLinksService
     ]);
 
 
-function hoaAppLinksService ($resource, $q) {
-    // var topUrl   = "http://hoa-play-scala.herokuapp.com/api";
-    var topUrl   = "http://localhost:9000/api/";
+function hoaAppLinksService ($resource, $q, $window) {
+    var topUrl   = $window.location.origin + "/api/";
     var usersLink       = null;
     var tenantsLink     = null;
     var currentUserLink = null;
