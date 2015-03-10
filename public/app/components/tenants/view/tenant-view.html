@@ -1,0 +1,33 @@
+<md-toolbar md-theme="tenants" ng-include="'app/components/tenants/view/partials-tenant-view-toolbar.html'">
+</md-toolbar>
+
+<md-content layout="column" flex class="md-padding">
+    <hoa-tenant-card tenant="viewCtrl.tenant"
+                     for-billing="false"
+                     format="YYYY-MMMM"
+                     trade-name-color="viewCtrl.tradeNameColor">
+
+    </hoa-tenant-card>
+
+    <md-whiteframe class="md-whiteframe-z1 cards-margin">
+        <md-toolbar md-theme="tenants" class="tenant-docs white-out">
+            <div class="md-toolbar-tools" layout="row" layout-align="start center">
+                <h5 flex ng-style="{color: '#689F38'}">Tenant documents</h5>
+                <md-button data-toggle="dropdown"
+                           class="button-white options no-uppercase md-default">
+                    <span><i class="fa fa-filter iconed-text"></i>Filters</span>
+                </md-button>
+                <ul class="dropdown-menu" role="menu">
+                    <li ng-repeat="filter in viewCtrl.filters"><a class="md-button button-white no-uppercase" ng-click="viewCtrl.onFilterClicked(filter)">{{filter.title}}</a></li>
+                </ul>
+            </div>
+        </md-toolbar>
+        <md-list>
+            <hoa-embedded-items
+                    layout="row" ng-repeat="document in viewCtrl.documents"
+                    theme="list"
+                    item="document"
+                    on-click="draftsCtrl.onDocumentItemClicked(item)"></hoa-embedded-items>
+        </md-list>
+    </md-whiteframe>
+</md-content>

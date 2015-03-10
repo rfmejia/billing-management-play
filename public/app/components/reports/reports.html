@@ -1,0 +1,160 @@
+<md-toolbar md-theme="reports">
+    <button hide-gt-sm class="menuBtn menuBtn-hamburger">
+        <span class="visually-hidden">Menu</span>
+    </button>
+    <h3 flex class="toolbar-title">{{ctrl.pageTitle}}</h3>
+</md-toolbar>
+
+<md-content layout="column" flex class="md-padding reports content">
+    <div>
+        <md-card flex>
+            <md-card-content>
+                <h5 class="card-title">Summary for January 2015</h5>
+                <div class="summary-block" flex>
+                    <h6 class="report-section">
+                        TOTAL
+                    <span>
+                        <md-button class="info-button" ng-click="ctrl.toggleTotal()" remove-focus>
+                            <i class="fa fa-info-circle"></i>
+                        </md-button>
+                    </span>
+                        <span class="pull-right">1000000000000000000000</span>
+                    </h6>
+
+                    <div ng-hide="!ctrl.isTotalOpen" class="hoa-fade-in-down hoa-fade-out-up">
+                        <div>
+                            <div class="entry-block" layout="row">
+                                <div flex="20" class="entry-title"><span>Previous charges</span></div>
+                                <div flex class="entry-value-guide"></div>
+                                <div><span>1000000</span></div>
+                            </div>
+                            <div class="entry-block" layout="row">
+                                <div flex="20" class="entry-title"><span>Rent</span></div>
+                                <div flex class="entry-value-guide"></div>
+                                <div><span>2000000</span></div>
+                            </div>
+                            <div class="entry-block" layout="row">
+                                <div flex="20" class="entry-title"><span>Water</span></div>
+                                <div flex class="entry-value-guide"></div>
+                                <div><span>40000</span></div>
+                            </div>
+                            <div class="entry-block" layout="row">
+                                <div flex="20" class="entry-title"><span>Electricity</span></div>
+                                <div flex class="entry-value-guide"></div>
+                                <div><span>3000</span></div>
+                            </div>
+                            <div class="entry-block" layout="row">
+                                <div flex="20" class="entry-title"><span>Cusa</span></div>
+                                <div flex class="entry-value-guide"></div>
+                                <div><span>1000000</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="summary-block" flex>
+                    <h6 class="report-section">
+                        PAID
+                    <span>
+                        <md-button class="info-button" ng-click="ctrl.togglePaid()" remove-focus>
+                            <i class="fa fa-info-circle"></i>
+                        </md-button>
+                    </span>
+                        <span class="pull-right">1000000000000000000000</span>
+                    </h6>
+                    <div ng-hide="!ctrl.isPaidOpen" class="hoa-fade-in-down hoa-fade-out-up">
+                        <div class="entry-block" layout="row">
+                            <div flex="20" class="entry-title"><span>Previous charges</span></div>
+                            <div flex class="entry-value-guide"></div>
+                            <div><span>1000000</span></div>
+                        </div>
+                        <div class="entry-block" layout="row">
+                            <div flex="20" class="entry-title"><span>Rent</span></div>
+                            <div flex class="entry-value-guide"></div>
+                            <div><span>2000000</span></div>
+                        </div>
+                        <div class="entry-block" layout="row">
+                            <div flex="20" class="entry-title"><span>Water</span></div>
+                            <div flex class="entry-value-guide"></div>
+                            <div><span>40000</span></div>
+                        </div>
+                        <div class="entry-block" layout="row">
+                            <div flex="20" class="entry-title"><span>Electricity</span></div>
+                            <div flex class="entry-value-guide"></div>
+                            <div><span>3000</span></div>
+                        </div>
+                        <div class="entry-block" layout="row">
+                            <div flex="20" class="entry-title"><span>Cusa</span></div>
+                            <div flex class="entry-value-guide"></div>
+                            <div><span>1000000</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="summary-block" flex>
+                    <h6 class="report-section">
+                        UNPAID
+                    <span>
+                        <md-button class="info-button" ng-click="ctrl.toggleUnpaid()" remove-focus>
+                            <i class="fa fa-info-circle"></i>
+                        </md-button>
+                    </span>
+                        <span class="pull-right">1000000000000000000000</span>
+                    </h6>
+
+                    <div ng-hide="!ctrl.isUnpaidOpen" class="hoa-fade-in-down hoa-fade-out-up">
+                        <div>
+                            <div class="entry-block" layout="row">
+                                <div flex="20" class="entry-title"><span>Previous charges</span></div>
+                                <div flex class="entry-value-guide"></div>
+                                <div><span>1000000</span></div>
+                            </div>
+                            <div class="entry-block" layout="row">
+                                <div flex="20" class="entry-title"><span>Rent</span></div>
+                                <div flex class="entry-value-guide"></div>
+                                <div><span>2000000</span></div>
+                            </div>
+                            <div class="entry-block" layout="row">
+                                <div flex="20" class="entry-title"><span>Water</span></div>
+                                <div flex class="entry-value-guide"></div>
+                                <div><span>40000</span></div>
+                            </div>
+                            <div class="entry-block" layout="row">
+                                <div flex="20" class="entry-title"><span>Electricity</span></div>
+                                <div flex class="entry-value-guide"></div>
+                                <div><span>3000</span></div>
+                            </div>
+                            <div class="entry-block" layout="row">
+                                <div flex="20" class="entry-title"><span>Cusa</span></div>
+                                <div flex class="entry-value-guide"></div>
+                                <div><span>1000000</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </md-card-content>
+        </md-card>
+        <div class="cards-margin">
+            <md-whiteframe class="md-whiteframe-z1" layout="column">
+                <md-toolbar md-theme="reports" class="white-out">
+                    <div class="md-toolbar-tools" layout="row" layout-align="start center">
+                        <h5 flex ng-style="{color: '#9C27B0'}">Invoices</h5>
+                        <md-button md-theme="reports" data-toggle="dropdown"
+                                   class="button-white options no-uppercase md-default md-primary">
+                            <span><i class="fa fa-files-o iconed-text"></i>All</span>
+                        </md-button>
+                        <md-button md-theme="reports" data-toggle="dropdown"
+                                   class="button-white options no-uppercase md-default md-primary">
+                            <span><i class="fa fa-check iconed-text"></i>Paid</span>
+                        </md-button>
+                        <md-button md-theme="reports" data-toggle="dropdown"
+                                   class="button-white options no-uppercase md-default md-primary">
+                            <span><i class="fa fa-close iconed-text"></i>Unpaid</span>
+                        </md-button>
+                    </div>
+                </md-toolbar>
+                <div>
+                    <h1>TODO</h1>
+                </div>
+            </md-whiteframe>
+        </div>
+    </div>
+</md-content>

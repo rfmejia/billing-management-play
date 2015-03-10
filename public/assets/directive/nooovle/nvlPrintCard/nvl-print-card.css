@@ -60,10 +60,6 @@
 }
 
 @media screen {
-    body {
-        line-height: 1;
-    }
-
     .nvl-print-card .header {
         margin-bottom: 16px;
         padding-bottom: 8px;

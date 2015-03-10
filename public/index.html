@@ -16,14 +16,15 @@
     <link rel="stylesheet" href="assets/directive/hoa/hoa-tenants/tenant-card.css"/>
     <link rel="stylesheet" href="assets/css/material/workspace.css"/>
     <link rel="stylesheet" href="assets/animation/animate.css"/>
-    <link rel="stylesheet" href="app/components/workspace/mailbox/billing.css"/>
-    <link rel="stylesheet" href="app/components/workspace/mailbox/document-create.css"/>
-    <link rel="stylesheet" href="app/components/workspace/mailbox/list.css"/>
-    <link rel="stylesheet" href="app/components/workspace/tenants/tenants.css"/>
+    <link rel="stylesheet" href="app/components/mailbox/css/billing.css"/>
+    <link rel="stylesheet" href="app/components/mailbox/css/document-create.css"/>
+    <link rel="stylesheet" href="app/components/mailbox/css/list.css"/>
+    <link rel="stylesheet" href="app/components/tenants/tenants.css"/>
     <link rel="stylesheet" href="app/components/shared/content/workspace/shared.css"/>
     <link rel="stylesheet" href="assets/directive/nooovle/nvlPrint/nvlPrint.css"/>
     <link rel="stylesheet" href="assets/directive/nooovle/nvlPrintCard/nvl-print-card.css"/>
     <link rel="stylesheet" href="assets/css/hoa-coreanimation.css"/>
+    <link rel="stylesheet" href="app/components/reports/reports.css"/>
 
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -33,7 +34,7 @@
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 </head>
-<body ng-app="hoaApp" layout="row" ng-controller="controller.root">
+<body ng-app="hoa-app" layout="row" ng-controller="controller.root">
 <div layout='column' layout-fill ui-view="rootView">
 
 </div>
@@ -58,7 +59,26 @@
 <script src="assets/bower_components/angular-ui-router/release/angular-ui-router.js"></script>
 
 <!-- App -->
-<script src="HOAApp.js"></script>
+<script src="app/hoaapp.js"></script>
+<script src="app/hoaapp.config.js"></script>
+<script src="app/hoaapp.run.js"></script>
+
+<!-- Core -->
+<script src="app/components/core/hoaapp.core.js"></script>
+<script src="app/components/core/hoaapp.api.service.js"></script>
+<script src="app/components/core/hoaapp.templates.service.js"></script>
+
+<!-- Layout module -->
+<script src="app/components/layout/hoaapp.layout.module.js"></script>
+<script src="app/components/layout/hoaapp.root.controller.js"></script>
+<script src="app/components/layout/hoaapp.workspace.controller.js"></script>
+<script src="app/components/layout/hoaapp.sidebar.controller.js"></script>
+
+<!-- Authentication -->
+<script src="app/components/authentication/hoaapp.auth.module.js"></script>
+<script src="app/components/authentication/hoaapp.http-interceptor.service.js"></script>
+<script src="app/components/authentication/hoaapp.token-handler.service.js"></script>
+<script src="app/components/authentication/hoaapp.current-user.service.js"></script>
 
 <!-- widgets -->
 <script src="http://fgnass.github.io/spin.js/spin.min.js"></script>
@@ -69,53 +89,41 @@
 <!-- end.widgets-->
 
 <!-- components.tenants -->
-<script src="app/components/workspace/tenants/configs/hoaapp.module.tenants.js"></script>
-<script src="app/components/workspace/tenants/services/hoaapp.service.tenants.js"></script>
-<script src="app/components/workspace/tenants/controllers/hoaapp.controller.tenantslist.js"></script>
-<script src="app/components/workspace/tenants/controllers/hoaapp.controller.tenantview.js"></script>
-<script src="app/components/workspace/tenants/controllers/hoaapp.controller.tenantedit.js"></script>
-<script src="app/components/workspace/tenants/controllers/hoaapp.controller.tenantcreate.js"></script>
-<script src="app/components/workspace/tenants/services/hoaapp.helper.tenant.js"></script>
+<script src="app/components/tenants/hoaapp.tenants.module.js"></script>
+<script src="app/components/tenants/hoaapp.tenants.service.js"></script>
+<script src="app/components/tenants/list/hoaapp.tenants-list.controller.js"></script>
+<script src="app/components/tenants/view/hoaapp.tenant-view.controller.js"></script>
+<script src="app/components/tenants/edit/hoaapp.tenant-edit.controller.js"></script>
+<script src="app/components/tenants/create/hoaapp.tenant-create.controller.js"></script>
+<script src="app/components/tenants/hoaapp.tenant.helper.js"></script>
 <!-- end.compnents.tenants -->
 
-<!-- components.users/invites -->
-<script src="app/components/workspace/users/services/hoaapp.service.users.js"></script>
-<script src="app/components/workspace/users/services/hoaapp.service.invites.js"></script>
-<script src="app/components/workspace/users/configs/hoaapp.module.users.js"></script>
-<script src="app/components/workspace/users/controllers/hoaapp.controller.completeusers.js"></script>
-<script src="app/components/workspace/users/controllers/hoaapp.controller.userview.js"></script>
-<script src="app/components/workspace/users/controllers/hoaapp.controller.inviteuser.js"></script>
-<!-- end.components.users -->
-
 <!-- compnents.mailbox -->
-<script src="app/components/workspace/mailbox/configs/hoaapp.module.mailbox.js"></script>
-<script src="app/components/workspace/mailbox/controllers/hoaapp.controller.documents.js"></script>
-<script src="app/components/workspace/mailbox/controllers/hoaapp.controller.document-create.js"></script>
-<script src="app/components/workspace/mailbox/controllers/hoaapp.controller.document-drafts.js"></script>
-<script src="app/components/workspace/mailbox/controllers/hoaapp.controller.document-approvals.js"></script>
-<script src="app/components/workspace/mailbox/controllers/hoaapp.controller.document-print.js"></script>
-<script src="app/components/workspace/mailbox/services/hoaapp.helper.documents.js"></script>
+<script src="app/components/mailbox/hoaapp.mailbox.module.js"></script>
+<script src="app/components/mailbox/list/hoaapp.documents-list.controller.js"></script>
+<script src="app/components/mailbox/create/hoaapp.document-create.controller.js"></script>
+<script src="app/components/mailbox/drafts/hoaapp.document-drafts.controller.js"></script>
+<script src="app/components/mailbox/approvals/hoaapp.document-approvals.controller.js"></script>
+<script src="app/components/mailbox/sending/hoaapp.document-sending.controller.js"></script>
+<script src="app/components/mailbox/hoaapp.documents.helper.js"></script>
+<script src="app/components/mailbox/hoaapp.mailbox.service.js"></script>
+<script src="app/components/mailbox/hoaapp.documents.service.js"></script>
+<script src="app/components/mailbox/hoaapp.comments.helper.js"></script>
 <!-- end.components.mailbox -->
 
-<script src="app/components/shared/content/authentication/service/hoaapp.service.httpinterceptor.js"></script>
-<script src="app/components/shared/content/authentication/service/hoaapp.service.tokenhandler.js"></script>
-<script src="app/components/shared/content/authentication/service/hoaapp.service.currentuser.js"></script>
-<script src="app/components/workspace/mailbox/services/hoaapp.service.mailbox.js"></script>
+<!-- Filters -->
+<script src="assets/filter/filters.js"></script>
+<script src="assets/filter/nooovle/nvl-filters.js"></script>
+<script src="assets/filter/hoa/hoa-filters.js"></script>
+<script src="assets/filter/nooovle/nvl.moment.filter.js"></script>
 
-<script src="app/components/shared/content/workspace/services/hoaapp.service.api.js"></script>
-<script src="app/components/shared/content/workspace/services/hoaapp.service.templates.js"></script>
-<script src="app/components/workspace/mailbox/services/hoaapp.service.documents.js"></script>
-<script src="app/components/workspace/mailbox/services/hoaapp.helper.comments.js"></script>
+<!-- Reports -->
+<script src="app/components/reports/hoaapp.reports.module.js"></script>
+<script src="app/components/reports/hoaapp.reports.config.js"></script>
+<script src="app/components/reports/hoaapp.reports.controller.js"></script>
+
+<!-- Directives -->
 <script src="assets/directive/HOADirectives.js"></script>
-<script src="hoaapp.controller.root.js"></script>
-<script src="hoaapp.controller.workspace.js"></script>
-<script src="hoaapp.controller.sidebar.js"></script>
-<script src="HOAFilters.js"></script>
-<script src="assets/filter/nooovle/nooovle.moment.js"></script>
-
-<script src="assets/directive/hoa/hoa-comments/directive-hoa-comments.js"></script>
-
-<!-- Directives and helpers -->
 <script src="assets/directive/hoaapp.directives.js"></script>
 <script src="assets/directive/hoa/hoa-collections/hoa-embedded-items/hoa-document/hoa-document-item.js"></script>
 <script src="assets/directive/hoa/hoa-collections/hoa-embedded-items/hoa-tenant/hoa-tenant-item.js"></script>
@@ -123,8 +131,12 @@
 <script src="assets/directive/nooovle/nvlPrint/nvl-print-directive.js"></script>
 <script src="assets/directive/nooovle/nvlPrintCard/nvl-print-card.js"></script>
 <script src="assets/directive/hoa/hoa-tenants/hoa-tenant-card.js"></script>
-<script src="app/components/shared/elements/dialogs/hoaapp.provider.dialog.js"></script>
-<script src="app/components/shared/elements/toasts/hoaapp.provider.toast.js"></script>
+<script src="assets/directive/hoa/hoa-comments/directive-hoa-comments.js"></script>
+
+<!-- Providers -->
+<script src="app/components/providers/hoaapp.providers.js"></script>
+<script src="app/components/providers/hoaapp.dialog.provider.js"></script>
+<script src="app/components/providers/hoaapp.toast.provider.js"></script>
 
 
 

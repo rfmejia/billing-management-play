@@ -462,7 +462,8 @@ i.iconed-text {
     text-align: right;
 }
 
-.static-bill-entry-guide {
+.static-bill-entry-guide,
+.entry-value-guide {
     border-bottom: 1px dotted rgba(225, 225, 225, .87);
 }
 

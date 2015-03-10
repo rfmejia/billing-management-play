@@ -3,3 +3,14 @@
     animation: fadeOutRight 0.3s;
     display: block !important;
 }
+
+.ng-hide-remove.hoa-fade-in-down {
+    -webkit-animation: fadeIn 0.4s;
+    animation: fadeIn 0.4s;
+}
+
+.ng-hide-add.hoa-fade-out-up {
+    -webkit-animation: fadeOutRight 0.4s;
+    animation: fadeOutRight 0.4s;
+    display: block !important;
+}

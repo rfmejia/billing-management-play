@@ -1,0 +1,19 @@
+<md-toolbar ng-if="viewCtrl.profile === 'collection'" md-theme="tenants" ng-include="'app/components/tenants/list/partials-tenants-list-toolbar.html'">
+</md-toolbar>
+
+<md-content layout="column" flex class="md-padding">
+    <md-whiteframe class="md-whiteframe-z1">
+        <md-content md-theme="tenants">
+            <div ng-if="viewCtrl.profile === 'collection'">
+                <div class="tenant-search">
+                    <input type="text" class="form-control tenant-input" placeholder="Filter tenants" ng-model="query">
+                </div>
+                <md-list>
+                    <hoa-embedded-items layout="row" ng-repeat="tenant in viewCtrl.tenants | filter: query" item="tenant" on-click="viewCtrl.onTenantClicked(tenant)">
+                    </hoa-embedded-items>
+                </md-list>
+            </div>
+        </md-content>
+    </md-whiteframe>
+</md-content>
+

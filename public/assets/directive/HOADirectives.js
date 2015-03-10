@@ -1,4 +1,4 @@
-var hoaDirectives = angular.module("hoaApp");
+var hoaDirectives = angular.module("hoa-app");
 
 hoaDirectives.directive('dynamicName', ["$compile", "$parse", function ($compile, $parse) {
     return {
@@ -13,32 +13,6 @@ hoaDirectives.directive('dynamicName', ["$compile", "$parse", function ($compile
         }
     };
 }]);
-
-hoaDirectives.directive('validatedForm', [
-    function () {
-        return {
-            restrict: 'E',
-            scope: {
-                element: '='
-            },
-            templateUrl: '../../app/components/shared/elements/validated-form.html',
-            replace: false,
-            transclude: true
-        };
-    }]);
-
-hoaDirectives.directive("hoaAlert", function () {
-    return {
-        restrict: 'E',
-        scope: {
-            title: '@',
-            description: '@',
-            isDanger: '='
-        },
-        templateUrl: '../../app/components/shared/elements/alert.html',
-        replace: false
-    };
-});
 
 hoaDirectives.directive('ignoreMouseWheel', function ($rootScope) {
     return {
