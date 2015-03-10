@@ -1,44 +1,44 @@
 angular
     .module("hoaApp")
     .factory('service.hoalinks', [
-        '$resource',
-        '$q',
-                "$window",
-        hoaAppLinksService
-    ]);
+                 '$resource',
+                 '$q',
+                 "$window",
+                 hoaAppLinksService
+             ]);
 
 
-function hoaAppLinksService ($resource, $q, $window) {
-    var topUrl   = $window.location.origin + "/api/";
-    var usersLink       = null;
-    var tenantsLink     = null;
+function hoaAppLinksService($resource, $q, $window) {
+    var topUrl = $window.location.origin + "/api/";
+    var usersLink = null;
+    var tenantsLink = null;
     var currentUserLink = null;
-    var mailboxesLink   = null;
-    var documentsLink   = null;
-    var templatesLink   = null;
-    var logoutLink      = null;
+    var mailboxesLink = null;
+    var documentsLink = null;
+    var templatesLink = null;
+    var logoutLink = null;
 
     var resource = $resource(topUrl, {}, {
-        get   : {method: "GET", isArray: false}
+        get : {method : "GET", isArray : false}
     });
 
     var service = {
-        getResource         : getResource,
-        getLinks            : getLinks,
-        getUsersLinks       : getUsersLinks,
-        getTenantsLinks     : getTenantsLinks,
-        getCurrentUserLink  : getCurrentUserLink,
-        getDocumentsLink    : getDocumentsLink,
-        getTemplatesLink    : getTemplatesLink,
-        getMailboxesLink    : getMailboxesLink,
-        getLogoutLink       : getLogoutLink
+        getResource        : getResource,
+        getLinks           : getLinks,
+        getUsersLinks      : getUsersLinks,
+        getTenantsLinks    : getTenantsLinks,
+        getCurrentUserLink : getCurrentUserLink,
+        getDocumentsLink   : getDocumentsLink,
+        getTemplatesLink   : getTemplatesLink,
+        getMailboxesLink   : getMailboxesLink,
+        getLogoutLink      : getLogoutLink
     };
 
     return service;
 
     //Functions
 
-    function getResource (){
+    function getResource() {
         return resource;
     }
 
@@ -62,11 +62,11 @@ function hoaAppLinksService ($resource, $q, $window) {
         return templatesLink;
     }
 
-    function getMailboxesLink () {
+    function getMailboxesLink() {
         return mailboxesLink;
     }
 
-    function getLogoutLink () {
+    function getLogoutLink() {
         return logoutLink;
     }
 
@@ -76,19 +76,20 @@ function hoaAppLinksService ($resource, $q, $window) {
         resource.get().$promise
             .then(success, error);
         function success(data) {
-            usersLink       = data._links["hoa:users"].href;
-            tenantsLink     = data._links["hoa:tenants"].href;
-            documentsLink   = data._links["hoa:documents"].href;
-            templatesLink   = data._links["hoa:templates"].href;
-            mailboxesLink   = data._links["hoa:mailboxes"].href;
+            usersLink = data._links["hoa:users"].href;
+            tenantsLink = data._links["hoa:tenants"].href;
+            documentsLink = data._links["hoa:documents"].href;
+            templatesLink = data._links["hoa:templates"].href;
+            mailboxesLink = data._links["hoa:mailboxes"].href;
             currentUserLink = data._links["hoa:currentUser"].href;
-            logoutLink      = data._links["hoa:logout"].href;
+            logoutLink = data._links["hoa:logout"].href;
             deferred.resolve(data);
         }
 
         function error(data) {
             deferred.reject("Error");
         }
+
         return deferred.promise;
     }
 }

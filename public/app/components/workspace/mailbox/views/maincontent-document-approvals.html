@@ -4,20 +4,22 @@
 
 <md-content layout="column" flex class="md-padding md-default-theme">
     <div>
-        <section>
-            <hoa-tenant-card tenant="approvals.tenant"
-                             for-billing="true"
-                             bill-date="approvals.billDate"
-                             format="approvals.format"
-                             trade-name-color="approvals.tradeNameColor">
-            </hoa-tenant-card>
-        </section>
+        <div>
+            <section>
+                <hoa-tenant-card tenant="approvals.tenant"
+                                 for-billing="true"
+                                 bill-date="approvals.billDate"
+                                 format="approvals.format"
+                                 trade-name-color="approvals.tradeNameColor">
+                </hoa-tenant-card>
+            </section>
+        </div>
         <section class="cards-margin comments">
             <hoa-comments is-recent-only="true" comments="approvals.comments" is-hidden="false"></hoa-comments>
         </section>
 
-        <section ng-include="'app/components/workspace/mailbox/views/partials-hoaapp-static-bill-tmpl.html'">
-
+        <section>
+            <nvl-print-card is-printable="false" document="approvals.document"></nvl-print-card>
         </section>
 
         <div ng-show="!approvals.isDisabled" class="cards-margin">

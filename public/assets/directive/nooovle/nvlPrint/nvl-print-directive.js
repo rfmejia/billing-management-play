@@ -18,6 +18,9 @@ function nvlPrint() {
 
     function printElement(element) {
         var domClone = element.cloneNode(true);
+        while(printSection.firstChild) {
+            printSection.removeChild(printSection.firstChild);
+        }
         printSection.appendChild(domClone);
     }
 

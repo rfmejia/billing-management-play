@@ -19,12 +19,7 @@ angular
 
 function approvalsCtrl(documentsHelper, documentsResponse, userResponse, tenantsResponse, documentsService, commentsHelper, dialogProvider, $state, $stateParams, hoaToasts) {
     var vm = this;
-    /** Previous months template **/
-    vm.previous = documentsResponse.viewModel.body.previous;
-    /** This months template **/
-    vm.thisMonth = documentsResponse.viewModel.body.thisMonth;
-    /** Summary template **/
-    vm.summary = documentsResponse.viewModel.body.summary;
+    vm.document = documentsResponse.viewModel;
     /** Current comment made in this phase of the workflow **/
     vm.currentComment = "";
     /** Previous comments made in different phases of the workflow **/
@@ -52,7 +47,7 @@ function approvalsCtrl(documentsHelper, documentsResponse, userResponse, tenants
     /** Disables the editing of this document if it's not locked to the user **/
     vm.isDisabled;
     vm.tradeNameColor = {color : "#F44336"}
-    vm.actions = documentsResponse.viewModel.actions;
+
     activate();
 
     vm.onUnlinkClicked = onUnlinkClicked;

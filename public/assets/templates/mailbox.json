@@ -77,7 +77,7 @@
         "subFolders": [
           {
             "title": "Delivered",
-            "path": "management.management.delivered",
+            "path": "management.delivered",
             "link" : "delivered",
             "queryKey": "mailbox",
             "queryParam": "delivered",
