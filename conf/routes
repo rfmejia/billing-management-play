@@ -44,7 +44,8 @@ GET      /api/templates/:docType       @controllers.Templates.show(docType: Stri
 GET      /api/setupTestEnvironment     @controllers.TestEnvironment.setup
 GET      /api/testFail                 @controllers.TestEnvironment.fail
 
-GET      /admin/invite                 @controllers.Admin.invite
+GET      /admin/invite                 @controllers.Invitation.startInvite
+POST     /admin/invite                 @controllers.Invitation.handleStartInvite
 
 # ---- SecureSocial (master-SNAPSHOT) routes ----
 # Note: Many SecureSocial LOCs come from http://www.filtercode.com/play/play-scala-securesocial
@@ -54,7 +55,7 @@ GET      /login                        @securesocial.controllers.LoginPage.login
 GET      /logout                       @securesocial.controllers.LoginPage.logout
 
 # User registration and password handling
-#GET      /signup                       @securesocial.controllers.Registration.startSignUp
+GET      /signup                       @securesocial.controllers.Registration.startSignUp
 POST     /signup                       @securesocial.controllers.Registration.handleStartSignUp
 GET      /signup/:token                @securesocial.controllers.Registration.signUp(token)
 POST     /signup/:token                @securesocial.controllers.Registration.handleSignUp(token)

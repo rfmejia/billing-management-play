@@ -1,18 +1,16 @@
 package services;
 
+import com.nooovle.slick.ConnectionFactory
+import com.nooovle.slick.models.{ invitations, mailTokens, users }
+import com.nooovle.User
+import controllers.InvitationMailToken
+import org.joda.time.DateTime
 import scala.concurrent.Future
 import scala.slick.driver.H2Driver.simple._
 import scala.util.Try
-
-import org.joda.time.DateTime
-
-import com.nooovle.User
-import com.nooovle.slick.ConnectionFactory
-import com.nooovle.slick.models.{ users, mailTokens }
-
-import securesocial.core.{ BasicProfile, PasswordInfo }
 import securesocial.core.providers.MailToken
 import securesocial.core.services.{ SaveMode, UserService }
+import securesocial.core.{ BasicProfile, PasswordInfo }
 
 class CustomUserService extends UserService[User] {
 
@@ -80,12 +78,24 @@ class CustomUserService extends UserService[User] {
     Future.fromTry {
       Try {
         ConnectionFactory.connect withSession { implicit session =>
-          val existingToken = (for (t <- mailTokens if (t.uuid === token.uuid)) yield t)
+          val existingToken = for (t <- mailTokens if (t.uuid === token.uuid)) yield t
           if (existingToken.exists.run) {
             existingToken.update(token)
           } else {
             mailTokens += token
           }
+
+          token match {
+            case inv: InvitationMailToken =>
+              val existingInvite = for(i <- invitations if i.uuid === inv.uuid) yield i
+              if(existingInvite.exists.run) {
+                existingInvite.update(inv.invitationInfo)
+              } else {
+                invitations += inv.invitationInfo
+              }
+            case _ => // do nothing
+          }
+
           token
         }
       }

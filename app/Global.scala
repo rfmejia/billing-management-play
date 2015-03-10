@@ -18,7 +18,7 @@ import scala.util.{ Try, Success, Failure }
 import securesocial.core.providers._
 import securesocial.core.RuntimeEnvironment
 import services.CustomUserService
-import views.CustomSecureSocialTemplates
+import views.CustomViewTemplates
 
 object Global extends WithFilters(CorsFilter, new GzipFilter()) with GlobalSettings {
   val logger = Logger(this.getClass.getName)
@@ -93,7 +93,7 @@ object Global extends WithFilters(CorsFilter, new GzipFilter()) with GlobalSetti
     override lazy val userService: CustomUserService = new CustomUserService
     override lazy val providers = ListMap(
       include(new UsernamePasswordProvider[User](userService, avatarService, viewTemplates, passwordHashers)))
-    override lazy val viewTemplates = new CustomSecureSocialTemplates(this)
+    override lazy val viewTemplates = new CustomViewTemplates(this)
   }
 
   /**
