@@ -85,7 +85,6 @@ function tenantViewCtrl($state, $stateParams, tenant, documents, documentsServic
 
         function success(response) {
             vm.documents = response._embedded.item;
-            console.log(response);
         }
     }
 

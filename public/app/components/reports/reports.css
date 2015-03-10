@@ -22,3 +22,11 @@
     min-width: 2em;
     padding: 0;
 }
+
+.reports a#reportMonth:hover {
+    color :#9C27B0;
+}
+
+.reports a#reportMonth i {
+    font-size: 14px;
+}

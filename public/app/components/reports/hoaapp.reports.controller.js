@@ -6,49 +6,36 @@ angular
     .controller("reportsCtrl", controller);
 
 controller.$inject = ["documentsHelper", "documentsService", "documentsList", "$state", "$q"];
-function controller(docsHelper, docsSrvc, docsList, $state, $q) {
+function controller(docsHelper, docsSrvc, documents, $state, $q) {
     var vm = this;
     vm.pageTitle = $state.current.data.title;
-    /** When null, defaults to all documents **/
+    //vm.documents = documents._embedded.item;
     vm.isPaid = null;
-    /** Report filters **/
-    vm.filters;
     vm.isPaidOpen = false;
     vm.isUnpaidOpen = false;
     vm.isTotalOpen = true;
-
-    //function mapping
-    vm.onFilterClicked = onFilterClicked;
     vm.selectedFilter = null;
-
     vm.toggleTotal = toggleTotal;
     vm.togglePaid = togglePaid;
     vm.toggleUnpaid = toggleUnpaid;
+    vm.reportMonth = new Date();
+
+    //function mapping
+    vm.onFilterClicked = onFilterClicked;
+    vm.onReportMonthSelected = onReportMonthSelected;
+    vm.onDocumentItemClicked = onDocumentItemClicked;
 
     activate();
 
     //region FUNCTION_CALL
     function activate() {
-        vm.filters = [
-            {
-                title : "All",
-                value : null
-            },
-            {
-                title : "Paid",
-                value : true
-            },
-            {
-                title : "Unpaid",
-                value : false
-            }
-        ]
+        vm.allFilter = {title : "All", params : {mailbox : "delivered"}};
+        vm.paidFilter = {title : "Paid", params : {mailbox: "delivered", isPaid: true}};
+        vm.unpaidFilter = {title : "Paid", params : {mailbox: "delivered", isPaid: false}};
     }
 
-    function onFilterClicked(filter) {
-        var deferred = $q.defer();
-        //TODO call for reports and associated doc
-
+    function onFilterClicked(params) {
+        refresDocuments(params);
     }
 
     function toggleTotal() {
@@ -59,6 +46,24 @@ function controller(docsHelper, docsSrvc, docsList, $state, $q) {
     }
     function toggleUnpaid() {
         vm.isUnpaidOpen = !vm.isUnpaidOpen;
+    }
+
+    function onReportMonthSelected(newDate, oldDate) {
+        var params = {mailbox : "delivered", forMonth: newDate}
+        refresDocuments(params);
+    }
+
+    function refresDocuments(params) {
+        vm.documents = [];
+        docsSrvc.getDocumentList(params)
+            .then(success);
+        function success(response) {
+            vm.documents = response._embedded.item;
+        }
+    }
+
+    function onDocumentItemClicked(item) {
+
     }
     //endregion
 
