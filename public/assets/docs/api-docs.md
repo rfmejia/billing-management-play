@@ -172,6 +172,7 @@ The following sections are default routes supplied by [SecureSocial](http://secu
 - [ ] Remove editing of `assigned` field from PUT /api/documents/:id
 - [ ] Force HTTPS
 - [ ] Add default admin role upon installation
+- [x] Add mailbox filtering using on top-level boxes (pending, delivered)
 
 ### Backend
 
