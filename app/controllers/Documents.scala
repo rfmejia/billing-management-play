@@ -80,17 +80,21 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
 
   def list(offset: Int = 0, limit: Int = 10, mailbox: String, forTenant: Int, creator: String, assigned: Option[String], forMonth: Option[String], isPaid: Option[Boolean], others: Option[Boolean], isAssigned: Option[Boolean]) = SecuredAction { implicit request =>
 
-    val (ds, total) = ConnectionFactory.connect withSession { implicit session =>
+    val ds = ConnectionFactory.connect withSession { implicit session =>
       // Filtering level 1: Query-level filters
       // Filter values by comparing to their default values in the router
       // (workaround to Slick limitations)
-      val query = documents.drop(offset).take(limit).sortBy(_.created.desc)
-        .filter(d => d.mailbox === mailbox || mailbox.isEmpty)
+
+      // TODO: Check if adding the limit here and filters in other levels may affect
+      // the final result (items.length < limit)
+      val query = documents
+        .filter(d => (d.mailbox inSetBind Workflow.getSubboxes(mailbox)) || mailbox.isEmpty)
         .filter(d => d.forTenant === forTenant || forTenant < 1)
         .filter(d => d.creator === creator || creator.isEmpty)
         .filter(d => d.assigned === assigned || assigned.isEmpty)
+        .drop(offset).take(limit).sortBy(_.created.desc)
 
-      (query.list, documents.length.run)
+      query.list
     }
 
     // Filtering level 2: Post-fetch, pre-mapping to JS value
@@ -128,16 +132,17 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
         val link = routes.Documents.show(d.id)
         val obj = HalJsObject.create(link.absoluteURL())
           .withLink("profile", "hoa:document")
+          .withLink("hoa:assign", routes.Documents.assignToMe(d.id).absoluteURL())
           .withField("id", d.id)
           .withField("serialId", d.serialId)
           .withField("title", d.title)
           .withField("docType", d.docType)
           .withField("mailbox", d.mailbox)
-          .withField("forTenant", tenantToObj(d.forTenant))
+          .withField("forTenant", tenantToJsObject(d.forTenant))
           .withField("forMonth", d.forMonth)
           .withField("amountPaid", d.amountPaid)
           .withField("creator", d.creator)
-          .withField("assigned", (d.assigned.map { userToObj(_) }))
+          .withField("assigned", (d.assigned.map { userToJsObject(_) }))
 
         val withTotal = Templates.getTotal(d) match {
           case Right(total) =>
@@ -168,17 +173,17 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
         Some("List of document templates"))
       .withField("_template", createForm)
       .withField("count", ds.length)
-      .withField("total", total)
       .withField("offset", offset)
       .withField("limit", limit)
 
     val withList = blank.withEmbedded(HalJsObject.empty.withField("item", withIsPaid))
 
-    val y = listNavLinks(self.absoluteURL(), offset, limit, total).foldLeft(withList) {
-      (obj, pair) => obj.withLink(pair._1, pair._2.href)
-    }
+    val withNavLinks = listNavLinks(self.absoluteURL(), offset, limit, ds.length)
+      .foldLeft(withList) {
+        (obj, pair) => obj.withLink(pair._1, pair._2.href)
+      }
 
-    Ok(y.asJsValue)
+    Ok(withNavLinks.asJsValue)
   }
 
   def create() = SecuredAction(parse.json) { implicit request =>
@@ -301,7 +306,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
         }
 
         if (hasAccess) {
-          val newDoc = d.copy(assigned = Some(request.user.userId))
+          val newDoc = d.copy(assigned = None)
           Document.update(newDoc) match {
             case Success(id) => NoContent
             case Failure(err) => InternalServerError(err.getMessage)
@@ -320,6 +325,8 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       .withField("_template", editForm)
       .withLink("edit", routes.Documents.edit(d.id).absoluteURL())
       .withLink("hoa:logs", routes.ActionLogs.show(d.id).absoluteURL())
+      .withLink("hoa:assign", routes.Documents.assignToMe(d.id).absoluteURL())
+      .withLink("hoa:unassign", routes.Documents.unassign(d.id).absoluteURL())
       .withField("id", d.id)
       .withField("serialId", d.serialId)
       .withField("title", d.title)
@@ -327,8 +334,8 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       .withField("mailbox", d.mailbox)
       .withField("created", d.created)
       .withField("creator", d.creator)
-      .withField("assigned", (d.assigned.map { userToObj(_) }))
-      .withField("forTenant", tenantToObj(d.forTenant))
+      .withField("assigned", (d.assigned.map { userToJsObject(_) }))
+      .withField("forTenant", tenantToJsObject(d.forTenant))
       .withField("forMonth", d.forMonth)
       .withField("amountPaid", d.amountPaid)
       .withField("hoa:nextBox", Workflow.next(d.mailbox).map(_.asJsObject))
@@ -371,15 +378,6 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
           .withField("warning", warning)
     }
 
-    def actionToJsObject(id: Int) = ActionLog.findById(id) map { log =>
-      JsObject(Seq(
-        "id" -> JsNumber(log.id),
-        "who" -> JsString(log.who),
-        "what" -> JsNumber(log.what),
-        "when" -> JsString(log.when.toString),
-        "why" -> JsString(log.why)))
-    }
-
     val withActions = withTotal
       .withField("lastAction", d.lastAction flatMap (actionToJsObject(_)))
       .withField("preparedAction", d.preparedAction flatMap (actionToJsObject(_)))
@@ -389,7 +387,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
     withActions
   }
 
-  def userToObj(userId: String): JsObject =
+  def userToJsObject(userId: String): JsObject =
     User.findById(userId) match {
       case Some(u) =>
         JsObject(Seq(
@@ -398,7 +396,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       case None => JsObject(Seq("userId" -> JsString(userId)))
     }
 
-  def tenantToObj(tenantId: Int): JsObject =
+  def tenantToJsObject(tenantId: Int): JsObject =
     Tenant.findById(tenantId) match {
       case Some(t) =>
         JsObject(Seq(
@@ -406,4 +404,13 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
           "tradeName" -> JsString(t.tradeName)))
       case None => JsObject(Seq("id" -> JsNumber(tenantId)))
     }
+
+  def actionToJsObject(id: Int) = ActionLog.findById(id) map { log =>
+    JsObject(Seq(
+      "id" -> JsNumber(log.id),
+      "who" -> userToJsObject(log.who),
+      "what" -> JsNumber(log.what),
+      "when" -> JsString(log.when.toString),
+      "why" -> JsString(log.why)))
+  }
 }

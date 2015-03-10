@@ -20,13 +20,25 @@ object Workflow {
   val unpaid = Mailbox("unpaid", "Unpaid")
   val paid = Mailbox("paid", "Paid")
 
-  val pending = Vector(drafts, forChecking, forApproval, forSending)
-  val delivered = Vector(unpaid, paid)
+  val pending = Mailbox("pending", "Pending")
+  val pendingSubboxes = Vector(drafts, forChecking, forApproval, forSending)
+
+  val delivered = Mailbox("delivered", "Delivered")
+  val deliveredSubboxes = Vector(unpaid, paid)
 
   val start = drafts
 
   def find(box: String): Option[Mailbox] =
-    (pending ++ delivered).find(_.name == box)
+    (pendingSubboxes ++ deliveredSubboxes).find(_.name == box)
+
+  def getSubboxes(box: String): Set[String] = box match {
+    case pending.name => pendingSubboxes.map(_.name).toSet
+    case delivered.name => deliveredSubboxes.map(_.name).toSet
+    case _ => find(box) match {
+      case Some(_) => Set(box)
+      case None => Set.empty
+    }
+  }
 
   def next(box: String): Option[Mailbox] = box match {
     case drafts.name => Some(forChecking)
@@ -58,8 +70,8 @@ object Workflow {
         "subFolders" -> JsArray(subFolders)))
     }
 
-    val pendingBoxes = boxAsJson(Mailbox("pending", "Pending"), pending.map(boxAsJson(_)))
-    val deliveredBoxes = boxAsJson(Mailbox("delivered", "Delivered"), delivered.map(boxAsJson(_)))
+    val pendingBoxes = boxAsJson(pending, pendingSubboxes.map(boxAsJson(_)))
+    val deliveredBoxes = boxAsJson(delivered, deliveredSubboxes.map(boxAsJson(_)))
     val allBoxes = boxAsJson(Mailbox("all", "Mailbox"), Vector(pendingBoxes, deliveredBoxes))
 
     allBoxes
