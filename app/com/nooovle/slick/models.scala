@@ -1,5 +1,7 @@
 package com.nooovle.slick
 
+import controllers.InvitationInfo
+
 import scala.slick.driver.H2Driver.simple._
 import scala.slick.jdbc.meta.MTable
 import scala.util.{ Success, Try }
@@ -21,6 +23,7 @@ object models {
   val documents = TableQuery[DocumentsModel]
   val userRoles = TableQuery[UserRolesModel]
   val mailTokens = TableQuery[MailTokensModel]
+  val invitations = TableQuery[InvitationsModel]
   val actionLogs = TableQuery[ActionLogsModel]
   val tables = List(modelTemplates, roles, settings, tenants, users, documents,
     userRoles, mailTokens, actionLogs)
@@ -121,8 +124,8 @@ class UserRolesModel(tag: Tag) extends Table[(String, String)](tag, "USER_ROLES"
   def roleName = column[String]("ROLE_NAME", O.NotNull)
 
   def pk = primaryKey("PK", (userId, roleName))
-  def user = foreignKey("USER_FK", userId, models.users)(_.userId, onDelete=ForeignKeyAction.Cascade)
-  def role = foreignKey("ROLE_FK", roleName, models.roles)(_.name, onDelete=ForeignKeyAction.Cascade)
+  def user = foreignKey("USER_FK", userId, models.users)(_.userId, onDelete = ForeignKeyAction.Cascade)
+  def role = foreignKey("ROLE_FK", roleName, models.roles)(_.name, onDelete = ForeignKeyAction.Cascade)
 
   def * = (userId, roleName)
 }
@@ -148,8 +151,8 @@ class DocumentsModel(tag: Tag) extends Table[Document](tag, "DOCUMENTS") {
   def checkedAction = column[Option[Int]]("CHECKED_ACTION_ID")
   def approvedAction = column[Option[Int]]("APPROVED_ACTION_ID")
 
-  def _creator = foreignKey("USER_FK", creator, models.users)(_.userId, onDelete=ForeignKeyAction.SetNull)
-  def _forTenant = foreignKey("TENANT_FK", forTenant, models.tenants)(_.id, onDelete=ForeignKeyAction.SetNull)
+  def _creator = foreignKey("USER_FK", creator, models.users)(_.userId, onDelete = ForeignKeyAction.SetNull)
+  def _forTenant = foreignKey("TENANT_FK", forTenant, models.tenants)(_.id, onDelete = ForeignKeyAction.SetNull)
 
   def * = (id, serialId, title, docType, mailbox, creator, created, forTenant, forMonth, amountPaid, body, comments, assigned, lastAction, preparedAction, checkedAction, approvedAction) <> (Document.tupled, Document.unapply)
 }
@@ -165,6 +168,20 @@ class MailTokensModel(tag: Tag) extends Table[MailToken](tag, "MAIL_TOKENS") {
     (MailToken.tupled, MailToken.unapply)
 }
 
+class InvitationsModel(tag: Tag) extends Table[InvitationInfo](tag, "INVITATIONS") {
+  def uuid = column[String]("UUID", O.PrimaryKey)
+  def email = column[String]("EMAIL", O.NotNull)
+  def isEncoder = column[Boolean]("IS_ENCODER", O.NotNull)
+  def isChecker = column[Boolean]("IS_CHECKER", O.NotNull)
+  def isApprover = column[Boolean]("IS_APPROVER", O.NotNull)
+  def isAdmin = column[Boolean]("IS_ADMIN", O.NotNull)
+
+  def mailToken = foreignKey("MAIL_TOKEN_FK", uuid, models.mailTokens)(_.uuid, onDelete = ForeignKeyAction.SetNull)
+
+  def * = (email, isEncoder, isChecker, isApprover, isAdmin) <>
+    (InvitationInfo.tupled, InvitationInfo.unapply)
+}
+
 class ActionLogsModel(tag: Tag) extends Table[ActionLog](tag, "ACTION_LOGS") {
   def id = column[Int]("ID", O.PrimaryKey, O.AutoInc)
   def who = column[String]("WHO", O.NotNull)
@@ -172,8 +189,8 @@ class ActionLogsModel(tag: Tag) extends Table[ActionLog](tag, "ACTION_LOGS") {
   def when = column[DateTime]("WHEN", O.NotNull)
   def why = column[String]("WHY", O.NotNull)
 
-  def _who = foreignKey("USER_FK", who, models.users)(_.userId, onDelete=ForeignKeyAction.SetNull)
-  def _what = foreignKey("DOCUMENT_FK", what, models.documents)(_.id, onDelete=ForeignKeyAction.Cascade)
+  def _who = foreignKey("USER_FK", who, models.users)(_.userId, onDelete = ForeignKeyAction.SetNull)
+  def _what = foreignKey("DOCUMENT_FK", what, models.documents)(_.id, onDelete = ForeignKeyAction.Cascade)
 
   def * = (id, who, what, when, why) <> (ActionLog.tupled, ActionLog.unapply)
 }

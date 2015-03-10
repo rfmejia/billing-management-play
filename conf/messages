@@ -1,0 +1,15 @@
+hoa.errors.NotCustomViewTemplates=The view template of the runtime environment is not the valid custom view template
+
+hoa.invite.title=Invite user
+hoa.invite.email=Email
+
+hoa.invite.roles.title=Grant the following roles
+hoa.invite.roles.encoder=Encoder
+hoa.invite.roles.checker=Checker
+hoa.invite.roles.approver=Approver
+hoa.invite.roles.admin=Administrator
+
+hoa.invite.sendInvite=Send invitation
+hoa.invite.cancel=Cancel
+
+hoa.invite.inviteSent=Invitation has been sent
