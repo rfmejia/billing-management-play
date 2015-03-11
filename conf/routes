@@ -55,10 +55,10 @@ GET      /login                        @securesocial.controllers.LoginPage.login
 GET      /logout                       @securesocial.controllers.LoginPage.logout
 
 # User registration and password handling
-GET      /signup                       @securesocial.controllers.Registration.startSignUp
-POST     /signup                       @securesocial.controllers.Registration.handleStartSignUp
+#GET      /signup                       @securesocial.controllers.Registration.startSignUp
+#POST     /signup                       @securesocial.controllers.Registration.handleStartSignUp
 GET      /signup/:token                @securesocial.controllers.Registration.signUp(token)
-POST     /signup/:token                @securesocial.controllers.Registration.handleSignUp(token)
+POST     /signup/:token                @controllers.Invitation.handleSignUp(token)
 GET      /password                     @securesocial.controllers.PasswordChange.page
 POST     /password                     @securesocial.controllers.PasswordChange.handlePasswordChange
 

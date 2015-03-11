@@ -63,10 +63,10 @@ trait BaseInvitation[U] extends securesocial.controllers.BaseRegistration[U] wit
   val invitationForm: Form[InvitationInfo] = Form(
     mapping(
       "email" -> email.verifying(nonEmpty),
-      "isEncoder" -> boolean,
-      "isChecker" -> boolean,
-      "isApprover" -> boolean,
-      "isAdmin" -> boolean)(InvitationInfo.apply)(InvitationInfo.unapply))
+      "encoder" -> boolean,
+      "checker" -> boolean,
+      "approver" -> boolean,
+      "admin" -> boolean)(InvitationInfo.apply)(InvitationInfo.unapply))
 
   lazy val customViewTemplate = env.viewTemplates match {
     case custom: CustomViewTemplates => custom
@@ -94,9 +94,8 @@ trait BaseInvitation[U] extends securesocial.controllers.BaseRegistration[U] wit
                 case None =>
                   createToken(email, isSignUp = true).flatMap { token =>
                     env.mailer.sendSignUpEmail(email, token.uuid)
-                    val inviteToken = new InvitationMailToken(
-                      token.uuid, token.email, token.creationTime, token.expirationTime, token.isSignUp,
-                      form.isEncoder, form.isChecker, form.isApprover, form.isAdmin)
+                    val inviteToken = InvitationMailToken(token, Some(form))
+                    Logger.debug(s"Invitation to ${email} contains invitation info: ${form}")
                     env.userService.saveToken(inviteToken)
                   }
               }
@@ -105,6 +104,24 @@ trait BaseInvitation[U] extends securesocial.controllers.BaseRegistration[U] wit
         })
     }
   }
+
+  /**
+   * Saves roles of a user if the supplied token was created from an invitation
+   * @param userId User ID
+   * @param token Mail token
+   */
+  private def saveRoles(userId: String, token: MailToken): Future[String] =
+    token match {
+      case inv: InvitationMailToken =>
+        def f(b: Boolean, s: String): Set[String] = if (b) Set(s) else Set.empty
+        val roles: Set[String] =
+          f(inv.isEncoder, "encoder") ++
+            f(inv.isChecker, "checker") ++
+            f(inv.isApprover, "approver") ++
+            f(inv.isAdmin, "admin")
+        Future.fromTry(User.updateRoles(userId, roles))
+      case _ => Future.successful("Not an invitation, nothing saved")
+    }
 
   override def handleSignUp(token: String) = CSRFCheck {
     Action.async {
@@ -136,11 +153,12 @@ trait BaseInvitation[U] extends securesocial.controllers.BaseRegistration[U] wit
                 }.getOrElse(Future.successful(newUser))
 
                 import securesocial.core.utils._
-                val result = for (
-                  toSave <- withAvatar;
-                  saved <- env.userService.save(toSave, SaveMode.SignUp);
+                val result = for {
+                  toSave <- withAvatar
+                  saved <- env.userService.save(toSave, SaveMode.SignUp)
+                  withRoles <- saveRoles(id, t)
                   deleted <- env.userService.deleteToken(t.uuid)
-                ) yield {
+                } yield {
                   if (UsernamePasswordProvider.sendWelcomeEmail)
                     env.mailer.sendWelcomeEmail(newUser)
                   val eventSession = Events.fire(new SignUpEvent(saved)).getOrElse(request.session)
@@ -184,5 +202,15 @@ class InvitationMailToken(
   val isChecker: Boolean,
   val isApprover: Boolean,
   val isAdmin: Boolean) extends MailToken(uuid, email, creationTime, expirationTime, isSignUp) with BaseInvitationInfo {
+
   lazy val invitationInfo = InvitationInfo(email, isEncoder, isChecker, isApprover, isAdmin)
+}
+
+object InvitationMailToken {
+  def apply(token: MailToken, invitationInfo: Option[InvitationInfo]): InvitationMailToken = {
+    val inv = invitationInfo getOrElse InvitationInfo(token.email, false, false, false, false)
+    new InvitationMailToken(
+      token.uuid, token.email, token.creationTime, token.expirationTime, token.isSignUp,
+      inv.isEncoder, inv.isChecker, inv.isApprover, inv.isAdmin)
+  }
 }

@@ -28,16 +28,20 @@
             <p class="input-xlarge">@Messages("hoa.invite.roles.title")</p>
             <div class="well">
                 @CSRF.formField
-                <input type='checkbox' name='encoder' value=@inviteForm("isEncoder")> @Messages("hoa.invite.roles.encoder")<br>
+                @checkbox(inviteForm("encoder"), '_label -> Messages("hoa.invite.roles.encoder"),
+                    '_showConstraints -> false)
 
                 @CSRF.formField
-                <input type='checkbox' name='checker' value=@inviteForm("isChecker")> @Messages("hoa.invite.roles.checker")<br>
+                @checkbox(inviteForm("checker"), '_label -> Messages("hoa.invite.roles.checker"),
+                    '_showConstraints -> false)
 
                 @CSRF.formField
-                <input type='checkbox' name='approver' value=@inviteForm("isApprover")> @Messages("hoa.invite.roles.approver")<br>
+                @checkbox(inviteForm("approver"), '_label -> Messages("hoa.invite.roles.approver"),
+                    '_showConstraints -> false)
 
                 @CSRF.formField
-                <input type='checkbox' name='admin' value=@inviteForm("isAdmin")> @Messages("hoa.invite.roles.admin")<br>
+                @checkbox(inviteForm("admin"), '_label -> Messages("hoa.invite.roles.admin"),
+                    '_showConstraints -> false)
             </div>
 
             <div class="form-actions">

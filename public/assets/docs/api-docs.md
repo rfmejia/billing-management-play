@@ -171,7 +171,8 @@ The following sections are default routes supplied by [SecureSocial](http://secu
 - [x] Separate link for document un/assignment
 - [ ] Remove editing of `assigned` field from PUT /api/documents/:id
 - [ ] Force HTTPS
-- [ ] Add default admin role upon installation
+- [x] Add user invitation accessible only by the admin role
+- [x] Allow access to user invitation when there is no user with an admin role
 - [x] Add mailbox filtering using on top-level boxes (pending, delivered)
 
 ### Backend

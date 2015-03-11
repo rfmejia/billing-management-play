@@ -42,13 +42,13 @@ class CustomUserService extends UserService[User] {
       Try {
         ConnectionFactory.connect withSession { implicit session =>
           val user = User.fromBasicProfile(profile)
-          val existingToken = for (
+          val existingUser = for (
             u <- users if u.providerId === profile.providerId
               && u.userId === profile.userId
           ) yield u
           // TODO: Review the implications for each save mode (ignored for now)
-          if (existingToken.exists.run) {
-            existingToken.update(user)
+          if (existingUser.exists.run) {
+            existingUser.update(user)
             //            mode match {
             //              case SaveMode.SignUp         => ???
             //              case SaveMode.LoggedIn       => ???
@@ -65,11 +65,23 @@ class CustomUserService extends UserService[User] {
 
   def link(current: User, to: BasicProfile): Future[User] = save(to, SaveMode.SignUp)
 
+  /**
+   * Coneverts to an InvitationMailToken instance if it exists, else returns the same mail token
+   * @param token Mail token
+   */
+  private def withInvitation(token: MailToken)(implicit session: Session): MailToken = {
+    val invite = for (i <- invitations if i.email === token.email) yield i
+    invite.firstOption map { inv =>
+      InvitationMailToken(token, Some(inv))
+    } getOrElse token
+  }
+
   def findToken(uuid: String): Future[Option[MailToken]] =
     Future.fromTry {
       Try {
         ConnectionFactory.connect withSession { implicit session =>
-          (for (t <- mailTokens if (t.uuid === uuid)) yield t).firstOption
+          val mailToken = (for (t <- mailTokens if (t.uuid === uuid)) yield t).firstOption
+          mailToken map withInvitation
         }
       }
     }
@@ -87,8 +99,8 @@ class CustomUserService extends UserService[User] {
 
           token match {
             case inv: InvitationMailToken =>
-              val existingInvite = for(i <- invitations if i.uuid === inv.uuid) yield i
-              if(existingInvite.exists.run) {
+              val existingInvite = for (i <- invitations if i.email === inv.email) yield i
+              if (existingInvite.exists.run) {
                 existingInvite.update(inv.invitationInfo)
               } else {
                 invitations += inv.invitationInfo
@@ -105,14 +117,11 @@ class CustomUserService extends UserService[User] {
     Future.fromTry {
       Try {
         ConnectionFactory.connect withSession { implicit session =>
-          val existingToken = (for (t <- mailTokens if (t.uuid === uuid)) yield t)
-          if (existingToken.exists.run) {
-            val token = existingToken.firstOption
-            existingToken.delete
-            token
-          } else {
-            None
-          }
+          val query = (for (t <- mailTokens if (t.uuid === uuid)) yield t)
+          val existingToken = query.firstOption map withInvitation
+
+          if (existingToken.isDefined) query.delete
+          existingToken
         }
       }
     }
@@ -121,7 +130,7 @@ class CustomUserService extends UserService[User] {
     import com.github.tototoshi.slick.H2JodaSupport._
     ConnectionFactory.connect withSession { implicit session =>
       val query = for (t <- mailTokens if t.expirationTime < DateTime.now) yield t
-
+      query.delete
     }
   }
 

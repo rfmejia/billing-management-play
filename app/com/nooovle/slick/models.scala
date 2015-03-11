@@ -26,7 +26,7 @@ object models {
   val invitations = TableQuery[InvitationsModel]
   val actionLogs = TableQuery[ActionLogsModel]
   val tables = List(modelTemplates, roles, settings, tenants, users, documents,
-    userRoles, mailTokens, actionLogs)
+    userRoles, mailTokens, invitations, actionLogs)
 
   /**
    *  Builds tables one by one if they do not exist.
@@ -169,14 +169,11 @@ class MailTokensModel(tag: Tag) extends Table[MailToken](tag, "MAIL_TOKENS") {
 }
 
 class InvitationsModel(tag: Tag) extends Table[InvitationInfo](tag, "INVITATIONS") {
-  def uuid = column[String]("UUID", O.PrimaryKey)
-  def email = column[String]("EMAIL", O.NotNull)
+  def email = column[String]("EMAIL", O.PrimaryKey)
   def isEncoder = column[Boolean]("IS_ENCODER", O.NotNull)
   def isChecker = column[Boolean]("IS_CHECKER", O.NotNull)
   def isApprover = column[Boolean]("IS_APPROVER", O.NotNull)
   def isAdmin = column[Boolean]("IS_ADMIN", O.NotNull)
-
-  def mailToken = foreignKey("MAIL_TOKEN_FK", uuid, models.mailTokens)(_.uuid, onDelete = ForeignKeyAction.SetNull)
 
   def * = (email, isEncoder, isChecker, isApprover, isAdmin) <>
     (InvitationInfo.tupled, InvitationInfo.unapply)

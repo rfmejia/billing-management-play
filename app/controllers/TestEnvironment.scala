@@ -32,10 +32,11 @@ class TestEnvironment(override implicit val env: RuntimeEnvironment[User])
       //   Document.insert("Document 1", "invoice-1", tenant.id,
       //     DateTime.parse("2015-01-01"), Json.obj())
       // }
-      val creator = users.firstOption.get
-      Tenant.findByTradeName("Jumpin' Juicers").map { tenant =>
-        Document.insert(creator, "Document 2", "invoice-1", tenant.id,
-          DateTime.parse("2015-02-01"), testDocument)
+      users.firstOption map { creator =>
+        Tenant.findByTradeName("Jumpin' Juicers").map { tenant =>
+          Document.insert(creator, "Document 2", "invoice-1", tenant.id,
+            DateTime.parse("2015-02-01"), testDocument)
+        }
       }
       // Tenant.findByTradeName("Beast Burgers").map { tenant =>
       //   Document.insert("Document 3", "statement-of-account-1", tenant.id,
