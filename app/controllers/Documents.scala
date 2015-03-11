@@ -131,7 +131,6 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
         val link = routes.Documents.show(d.id)
         val obj = HalJsObject.create(link.absoluteURL())
           .withLink("profile", "hoa:document")
-          .withLink("hoa:assign", routes.Documents.assignToMe(d.id).absoluteURL())
           .withField("id", d.id)
           .withField("serialId", d.serialId)
           .withField("title", d.title)
@@ -154,7 +153,10 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
             obj.withField("total", JsNull)
               .withField("warning", warning)
         }
-        withTotal.asJsValue
+
+        val withAssignLinks = addAssignLinks(d, withTotal)
+
+        withAssignLinks.asJsValue
       }
 
     // Filtering level 3: Post-mapping to JS value
@@ -310,6 +312,12 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
     }
   }
 
+  private def addAssignLinks(doc: Document, obj: HalJsObject)(implicit request: RequestHeader): HalJsObject =
+    doc.assigned match {
+      case Some(_) => obj.withLink("hoa:unassign", routes.Documents.unassign(doc.id).absoluteURL())
+      case None => obj.withLink("hoa:assign", routes.Documents.assignToMe(doc.id).absoluteURL())
+    }
+
   private def documentToHalJsObject(d: Document)(implicit req: RequestHeader): HalJsObject = {
     val self = routes.Documents.show(d.id).absoluteURL()
     val obj = HalJsObject.create(self)
@@ -319,8 +327,6 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       .withField("_template", editForm)
       .withLink("edit", routes.Documents.edit(d.id).absoluteURL())
       .withLink("hoa:logs", routes.ActionLogs.show(d.id).absoluteURL())
-      .withLink("hoa:assign", routes.Documents.assignToMe(d.id).absoluteURL())
-      .withLink("hoa:unassign", routes.Documents.unassign(d.id).absoluteURL())
       .withField("id", d.id)
       .withField("serialId", d.serialId)
       .withField("title", d.title)
@@ -378,7 +384,9 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       .withField("checkedAction", d.checkedAction flatMap (actionToJsObject(_)))
       .withField("approvedAction", d.approvedAction flatMap (actionToJsObject(_)))
 
-    withActions
+    val withAssignLinks = addAssignLinks(d, withActions)
+
+    withAssignLinks
   }
 
   def userToJsObject(userId: String): JsObject =

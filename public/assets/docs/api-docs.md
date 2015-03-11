@@ -180,6 +180,8 @@ The following sections are default routes supplied by [SecureSocial](http://secu
 - [ ] Generate serial number upon approval
 - [x] Log document updates (as specific as possible)
 - [ ] Limited deletion **after issuing serial number** (must not be permanently deleted)
+- [x] Audit cascade deletions in models
+- [x] Changed amountPaid from double to JsObject, as the basis of reports
 
 ### Authentication
 
