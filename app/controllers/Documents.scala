@@ -215,51 +215,46 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
   def edit(id: Int) = SecuredAction(parse.json) { implicit request =>
     Document.findById(id) map {
       existingDoc =>
-        // TODO: Get user responsible for this request and only allow if this is the assigned user
-        if (existingDoc.assigned.exists(_ != request.user.userId)) true
+        // Get user responsible for this request and only allow if this is the assigned user
+        if (!existingDoc.assigned.exists(_ == request.user.userId)) Forbidden
+        else {
+          val json = request.body
+          ((json \ "title").asOpt[String],
+            (json \ "body").asOpt[JsObject],
+            (json \ "comments").asOpt[JsObject],
+            (json \ "assigned").asOpt[String],
+            (json \ "amountPaid").asOpt[Double]) match {
+              case (None, None, None, None, None) =>
+                BadRequest("No editable fields matched. Please check your request.")
+              case (titleOpt, bodyOpt, commentsOpt, assignedOpt, amountPaidOpt) =>
+                val newDoc =
+                  existingDoc.copy(
+                    title = titleOpt getOrElse existingDoc.title,
+                    body = bodyOpt getOrElse existingDoc.body,
+                    comments = commentsOpt getOrElse existingDoc.comments,
+                    amountPaid = amountPaidOpt getOrElse existingDoc.amountPaid)
 
-        val json = request.body
-        ((json \ "title").asOpt[String],
-          (json \ "body").asOpt[JsObject],
-          (json \ "comments").asOpt[JsObject],
-          (json \ "assigned").asOpt[String],
-          (json \ "amountPaid").asOpt[Double]) match {
-            case (None, None, None, None, None) =>
-              BadRequest("No editable fields matched. Please check your request.")
-            case (titleOpt, bodyOpt, commentsOpt, assignedOpt, amountPaidOpt) =>
+                Document.update(newDoc) match {
+                  case Success(updateDoc) =>
+                    val changes = Seq(
+                      titleOpt.map(v => s"Title: '${existingDoc.title}' -> '${v}'"),
+                      amountPaidOpt.map(v => s"Amount paid: '${existingDoc.amountPaid}' -> '${v}'"),
+                      bodyOpt.map(v => "Body updated"),
+                      commentsOpt.map(v => "Comments updated"))
+                      .flatten
+                      .mkString(", ")
 
-              val toBeAssigned: Option[String] =
-                if (assignedOpt.exists(_ != "none")) assignedOpt
-                else None
-
-              val newDoc =
-                existingDoc.copy(
-                  title = titleOpt getOrElse existingDoc.title,
-                  body = bodyOpt getOrElse existingDoc.body,
-                  comments = commentsOpt getOrElse existingDoc.comments,
-                  assigned = toBeAssigned,
-                  amountPaid = amountPaidOpt getOrElse existingDoc.amountPaid)
-
-              Document.update(newDoc) match {
-                case Success(updateDoc) =>
-                  val changes = Seq(
-                    titleOpt.map(v => s"Title: '${existingDoc.title}' -> '${v}'"),
-                    amountPaidOpt.map(v => s"Amount paid: '${existingDoc.amountPaid}' -> '${v}'"),
-                    bodyOpt.map(v => "Body updated"),
-                    commentsOpt.map(v => "Comments updated"))
-                    .flatten
-                    .mkString(", ")
-
-                  ActionLog.log(request.user.userId, updateDoc.id, "Updates: " + changes) match {
-                    case Success(log) =>
-                      Document.logLastAction(log)
-                      NoContent
-                    case Failure(err) => Ok("Updates saved, but encountered error " + err.getMessage)
-                  }
-                case Failure(err) => InternalServerError(err.getMessage)
-              }
-            case _ => BadRequest("Some required values are missing. Please check your request.")
-          }
+                    ActionLog.log(request.user.userId, updateDoc.id, "Updates: " + changes) match {
+                      case Success(log) =>
+                        Document.logLastAction(log)
+                        NoContent
+                      case Failure(err) => Ok("Updates saved, but encountered error " + err.getMessage)
+                    }
+                  case Failure(err) => InternalServerError(err.getMessage)
+                }
+              case _ => BadRequest("Some required values are missing. Please check your request.")
+            }
+        }
     } getOrElse NotFound
   }
 

@@ -199,7 +199,7 @@ The following sections are default routes supplied by [SecureSocial](http://secu
 
 #### Documents
 
-- [-] Restrict document editing to assigned user
+- [x] Restrict document editing to assigned user
 - [x] Restrict **document unlocking** to **assigned user**, or...
 - [x] ...to **admin role** (locking is unrestricted)
 - [-] Restrict document mailbox movement to assigned user **with the appropriate workflow role**
