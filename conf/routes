@@ -44,11 +44,11 @@ GET      /api/testFail                 @controllers.TestEnvironment.fail
 
 # Reports
 GET      /api/reports                  @controllers.Reports.list(offset: Int ?= 0, limit: Int ?= 10)
-GET      /api/reports/:forMonth        @controllers.Reports.show(forMonth: String)
+GET      /api/reports/:year/:month     @controllers.Reports.show(year: Int, month: Int)
 
 # Admin routes
-GET      /admin/invite                  @controllers.Invitation.startInvite
-POST     /admin/invite                  @controllers.Invitation.handleStartInvite
+GET      /admin/invite                 @controllers.Invitation.startInvite
+POST     /admin/invite                 @controllers.Invitation.handleStartInvite
 
 PUT      /api/admin/users/:userId/roles @controllers.Users.editRoles(userId: String)
 
