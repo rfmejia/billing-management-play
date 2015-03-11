@@ -34,7 +34,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
         // And that assigned user has the correct privileges
         (Workflow.find(oldDoc.mailbox), Workflow.find(mailbox)) match {
           case (Some(oldBox), Some(newBox)) =>
-            Document.update(oldDoc.copy(mailbox = newBox.name)) match {
+            Document.update(oldDoc.copy(mailbox = newBox.name, assigned = None)) match {
               case Success(newDoc) =>
                 val msg = s"Moved document from '${oldBox.title}' to '${newBox.title}'"
                 ActionLog.log(request.user.userId, newDoc.id, msg) map { log =>
