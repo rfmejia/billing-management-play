@@ -9,7 +9,7 @@ function hoaTenantCard() {
     return {
         restrict         : 'E',
         replace          : true,
-        transclued       : false,
+        transclude       : false,
         scope            : {
             tradeNameColor : '=',
             tenant         : '=',

@@ -2,7 +2,7 @@
  * Created by juancarlos.yu on 2/25/15.
  */
 angular
-    .module('hoaApp')
+    .module("module.mailbox")
     .directive('hoaComments', [hoaComments]);
 
 function hoaComments() {
@@ -24,7 +24,7 @@ function hoaComments() {
 }
 
 angular
-    .module('hoaApp')
+    .module("module.mailbox")
     .controller(("hoaCommentsCtrl"), hoaCommentsCtrl);
 
 function hoaCommentsCtrl() {

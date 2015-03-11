@@ -374,24 +374,10 @@ input[type=number],
     margin-right: 2px;
 }
 
-/*.well-emphasis {*/
-    /*min-height: 20px;*/
-    /*padding: 19px;*/
-    /*margin-bottom: 20px;*/
-    /*background-color: #f9f9f9;*/
-    /*border-right: 1px solid transparent;*/
-    /*border-top: 1px solid transparent;*/
-    /*border-bottom: 1px solid transparent;*/
-    /*border-left: 2px solid #FF4081;*/
-    /*border-radius: 0;*/
-/*}*/
-
 .well-emphasis h6.bold {
     font-weight: bold;
     color: rgba(0, 0, 0, .54);
 }
-
-
 
 i.leftQuote {
     position: relative;
@@ -465,7 +451,7 @@ i.iconed-text {
 }
 
 .static-bill-entries {
-    border-right: 1px solid #B6B6B6;
+    margin-bottom: 16px;
 }
 
 .static-bill-entry-title {
@@ -476,14 +462,16 @@ i.iconed-text {
     text-align: right;
 }
 
-.static-bill-summary-block {
-    margin-top: 20px;
-    margin-bottom: 20px;
+.static-bill-entry-guide,
+.entry-value-guide {
+    border-bottom: 1px dotted rgba(225, 225, 225, .87);
 }
 
-.static-bill-summary-block .static-bill-total {
-    color: #F44336;
+.static-bill-section-summary-divider {
+    margin-top: 16px;
+    max-height: 10px;
 }
+
 
 .cards-margin {
     margin: 8px;
