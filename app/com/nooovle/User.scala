@@ -1,20 +1,12 @@
 package com.nooovle
 
-import scala.slick.driver.H2Driver.simple.columnExtensionMethods
-import scala.slick.driver.H2Driver.simple.productQueryToUpdateInvoker
-import scala.slick.driver.H2Driver.simple.queryToAppliedQueryInvoker
-import scala.slick.driver.H2Driver.simple.queryToInsertInvoker
-import scala.slick.driver.H2Driver.simple.repToQueryExecutor
-import scala.slick.driver.H2Driver.simple.stringColumnType
-import scala.slick.driver.H2Driver.simple.valueToConstColumn
-import scala.util.Try
-
 import com.nooovle.ModelInfo._
 import com.nooovle.slick.ConnectionFactory
 import com.nooovle.slick.models.roles
 import com.nooovle.slick.models.userRoles
 import com.nooovle.slick.models.users
-
+import scala.slick.driver.H2Driver.simple._
+import scala.util.Try
 import securesocial.core.AuthenticationMethod
 import securesocial.core.BasicProfile
 import securesocial.core.GenericProfile
@@ -75,32 +67,19 @@ object User extends ((String, String, Option[String], Option[String], Option[Str
     }
 
   // TODO: Simplify when removing role editing in the original PUT request
-  def updateWithRoles(userId: String, firstName: Option[String], lastName: Option[String],
-    email: Option[String], rs: Set[String]): Try[String] =
-    Try {
-      ConnectionFactory.connect withTransaction { implicit transaction =>
-        try {
-          val query = for (u <- users if u.userId === userId) yield u
+  def update(userId: String, firstName: Option[String], lastName: Option[String],
+    email: Option[String]): Try[User] = Try {
+    ConnectionFactory.connect withSession { implicit session =>
+      val query = for (u <- users if u.userId === userId) yield u
 
-          val _username: String =
-            if (!query.exists.run) throw new IndexOutOfBoundsException
-            else { // Update user
-              val _user = query.first.copy(firstName = firstName, lastName = lastName, email = email)
-              query.update(_user)
-              _user.userId
-            }
-          rs foreach (role => roles.insertOrUpdate(role))
-          // The following does not use insertOrUpdate because userId is an
-          // auto-incrementing foreign key (bug exists)
-          rs foreach (role => userRoles += ((_username, role)))
-          _username
-        } catch {
-          case t: Throwable =>
-            transaction.rollback
-            throw t
-        }
+      if (!query.exists.run) throw new IndexOutOfBoundsException
+      else { // Update user
+        val _user = query.first.copy(firstName = firstName, lastName = lastName, email = email)
+        query.update(_user)
+        query.first
       }
     }
+  }
 
   def updateRoles(userId: String, rs: Set[String]): Try[String] = Try {
     ConnectionFactory.connect withTransaction { implicit session =>
@@ -108,6 +87,9 @@ object User extends ((String, String, Option[String], Option[String], Option[Str
 
       if (!query.exists.run) throw new IndexOutOfBoundsException
       else { // Update user
+        // TODO: Delete existing roles
+        userRoles.filter(ur => ur.userId === userId).delete
+
         rs foreach (role => roles.insertOrUpdate(role))
         // The following does not use insertOrUpdate because userId is an
         // auto-incrementing foreign key (bug exists)
@@ -122,7 +104,7 @@ object User extends ((String, String, Option[String], Option[String], Option[Str
     ModelInfo("USERS", "userId", "string", Uneditable, Uneditable, Some("Username")),
     ModelInfo("USERS", "password", "string", Uneditable, Uneditable, Some("Password")),
     ModelInfo("USERS", "email", "email", Uneditable, Uneditable, Some("Email")),
-    ModelInfo("USERS", "roles", "string[]", Uneditable, Required, Some("Roles")),
+    ModelInfo("USERS", "roles", "string[]", Uneditable, Uneditable, Some("Roles")),
     ModelInfo("USERS", "firstName", "string", Uneditable, Required, Some("First name")),
     ModelInfo("USERS", "lastName", "string", Uneditable, Required, Some("Last name")),
     ModelInfo("USERS", "validationCode", "string", Uneditable, Uneditable, Some("Validation code")))

@@ -166,14 +166,14 @@ The following sections are default routes supplied by [SecureSocial](http://secu
 
 - [ ] Prefix admin-only routes with */api/admin*, and...
 - [ ] ...perform **token authentication and authorization** on all routes
+- [ ] Create and use typesafe roles
 - [x] Separate link for role admin with User editing
-- [ ] Remove editing of `roles` field from PUT /users/:userId
+- [x] Remove editing of `roles` field from PUT /users/:userId
 - [x] Separate link for document un/assignment
-- [ ] Remove editing of `assigned` field from PUT /api/documents/:id
+- [x] Remove editing of `assigned` field from PUT /api/documents/:id
 - [x] Add user invitation accessible only by the admin role
 - [x] Allow access to user invitation when there is no user with an admin role
 - [x] Add mailbox filtering using on top-level boxes (pending, delivered)
-- [ ] Create and use typesafe roles
 
 ### Backend
 
@@ -185,8 +185,8 @@ The following sections are default routes supplied by [SecureSocial](http://secu
 
 ### Authentication
 
-- [ ] Customize login page
-- [ ] Show signup (invite) routes to administrators only
+- [x] Customize login page
+- [x] Show signup (invite) routes to administrators only
 
 ### Authorization
 

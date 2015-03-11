@@ -35,7 +35,13 @@ class Users(override implicit val env: RuntimeEnvironment[User])
             .withField("lastName", u.lastName)
             .withField("fullName", u.fullName)
             .withField("roles", rs)
-          obj.asJsValue
+
+          val withEditRoleLink =
+            if (User.findRoles(request.user.userId).contains("admin"))
+              obj.withLink("hoa:editRoles", routes.Users.editRoles(u.userId).absoluteURL())
+            else obj
+
+          withEditRoleLink.asJsValue
         }
       case None => NotFound
     }
@@ -72,12 +78,14 @@ class Users(override implicit val env: RuntimeEnvironment[User])
   }
 
   def edit(userId: String) = SecuredAction(parse.json) { implicit request =>
+    // TODO: Only same user, or admin can edit
     val json = request.body
-    ((json \ "firstName").as[Option[String]], (json \ "lastName").as[Option[String]],
-      (json \ "email").as[Option[String]], (json \ "roles").asOpt[Seq[String]]) match {
-        case (firstName, lastName, email, Some(rs)) =>
-          User.updateWithRoles(userId, firstName, lastName, email, rs.toSet) match {
-            case Success(userId) => NoContent
+    ((json \ "firstName").as[Option[String]],
+      (json \ "lastName").as[Option[String]],
+      (json \ "email").as[Option[String]]) match {
+        case (firstName, lastName, email) =>
+          User.update(userId, firstName, lastName, email) match {
+            case Success(_) => NoContent
             case Failure(err) => err match {
               case e: IndexOutOfBoundsException => NotFound
               case e: Throwable => throw e
@@ -87,10 +95,8 @@ class Users(override implicit val env: RuntimeEnvironment[User])
       }
   }
 
-  def editRoles(userId: String) = SecuredAction(parse.json) { implicit request =>
-    val hasAccess = User.findRoles(request.user.userId).contains("admin")
-
-    if (hasAccess) {
+  def editRoles(userId: String) = SecuredAction(WithRoles("admin"))(parse.json) {
+    implicit request =>
       val json = request.body
       (json \ "roles").asOpt[Seq[String]] match {
         case Some(rs) =>
@@ -103,7 +109,6 @@ class Users(override implicit val env: RuntimeEnvironment[User])
           }
         case _ => BadRequest("Some required values are missing. Please check your request.")
       }
-    } else Forbidden
   }
 
   def delete(userId: String) = SecuredAction(WithRoles("admin")) { implicit request =>

@@ -224,11 +224,10 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
           ((json \ "title").asOpt[String],
             (json \ "body").asOpt[JsObject],
             (json \ "comments").asOpt[JsObject],
-            (json \ "assigned").asOpt[String],
             (json \ "amountPaid").asOpt[JsObject]) match {
-              case (None, None, None, None, None) =>
+              case (None, None, None, None) =>
                 BadRequest("No editable fields matched. Please check your request.")
-              case (titleOpt, bodyOpt, commentsOpt, assignedOpt, amountPaidOpt) =>
+              case (titleOpt, bodyOpt, commentsOpt, amountPaidOpt) =>
                 val newDoc =
                   existingDoc.copy(
                     title = titleOpt getOrElse existingDoc.title,
