@@ -5,7 +5,7 @@ import com.nooovle.slick.ConnectionFactory
 import com.nooovle.slick.models.{ actionLogs, documents }
 import com.nooovle.slick.DocumentsModel
 import org.joda.time.DateTime
-import play.api.libs.json.JsObject
+import play.api.libs.json.{ JsNumber, JsObject }
 import scala.slick.driver.H2Driver.simple._
 import scala.util.Try
 
@@ -19,7 +19,7 @@ case class Document(
   created: DateTime,
   forTenant: Int,
   forMonth: DateTime,
-  amountPaid: Double,
+  amountPaid: JsObject,
   body: JsObject,
   comments: JsObject,
   assigned: Option[String],
@@ -28,7 +28,20 @@ case class Document(
   checkedAction: Option[Int] = None,
   approvedAction: Option[Int] = None)
 
-object Document extends ((Int, Option[String], String, String, String, String, DateTime, Int, DateTime, Double, JsObject, JsObject, Option[String], Option[Int], Option[Int], Option[Int], Option[Int]) => Document) with ModelTemplate {
+object Document extends ((Int, Option[String], String, String, String, String, DateTime, Int, DateTime, JsObject, JsObject, JsObject, Option[String], Option[Int], Option[Int], Option[Int], Option[Int]) => Document) with ModelTemplate {
+
+  private val defaultAmountPaid: JsObject = {
+    val zeroDefaults = JsObject(Seq(
+      "previous" -> JsNumber(0.0),
+      "rental" -> JsNumber(0.0),
+      "electricty" -> JsNumber(0.0),
+      "water" -> JsNumber(0.0),
+      "cusa" -> JsNumber(0.0)))
+    JsObject(Seq(
+      "total" -> zeroDefaults,
+      "paid" -> zeroDefaults,
+      "unpaid" -> zeroDefaults))
+  }
 
   def findById(id: Int): Option[Document] =
     ConnectionFactory.connect withSession { implicit session =>
@@ -44,7 +57,7 @@ object Document extends ((Int, Option[String], String, String, String, String, D
     body: JsObject): Try[Document] = {
     val creationTime = new DateTime()
     val doc = Document(0, None, title, docType, Workflow.start.name, creator.userId,
-      creationTime, forTenant, forMonth, 0.0, body, JsObject(Seq.empty), Some(creator.userId))
+      creationTime, forTenant, forMonth, defaultAmountPaid, body, JsObject(Seq.empty), Some(creator.userId))
 
     ConnectionFactory.connect withSession { implicit session =>
       // Return ID of newly inserted tenant
@@ -108,8 +121,8 @@ object Document extends ((Int, Option[String], String, String, String, String, D
     ModelInfo("DOCUMENTS", "created", "datetime", Uneditable, Uneditable, Some("Created on")),
     ModelInfo("DOCUMENTS", "forTenant", "number", Required, Uneditable, Some("For tenant")),
     ModelInfo("DOCUMENTS", "forMonth", "datetime", Required, Uneditable, Some("For the month of")),
-    ModelInfo("DOCUMENTS", "amountPaid", "number", Uneditable, Editable, Some("Amount paid")),
+    ModelInfo("DOCUMENTS", "amountPaid", "json", Uneditable, Editable, Some("Amount paid")),
     ModelInfo("DOCUMENTS", "body", "json", Required, Editable, Some("Document body (free-form JSON object)")),
     ModelInfo("DOCUMENTS", "comments", "json", Uneditable, Editable, Some("Comments (free-form JSON object)")),
-    ModelInfo("DOCUMENTS", "assigned", "string", Uneditable, Editable, Some("Currently assigned to")))
+    ModelInfo("DOCUMENTS", "assigned", "string", Uneditable, Uneditable, Some("Currently assigned to")))
 }

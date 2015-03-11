@@ -137,11 +137,11 @@ class DocumentsModel(tag: Tag) extends Table[Document](tag, "DOCUMENTS") {
   def title = column[String]("TITLE", O.NotNull)
   def docType = column[String]("DOC_TYPE", O.NotNull)
   def mailbox = column[String]("MAILBOX", O.NotNull)
-  def creator = column[String]("CREATOR", O.NotNull)
+  def creator = column[String]("CREATOR")
   def created = column[DateTime]("CREATED", O.NotNull)
-  def forTenant = column[Int]("FOR_TENANT", O.NotNull)
+  def forTenant = column[Int]("FOR_TENANT")
   def forMonth = column[DateTime]("FOR_MONTH", O.NotNull)
-  def amountPaid = column[Double]("AMOUNT_PAID", O.NotNull)
+  def amountPaid = column[JsObject]("AMOUNT_PAID", O.NotNull)
   def body = column[JsObject]("BODY", O.NotNull)
   def comments = column[JsObject]("COMMENTS", O.NotNull)
   def assigned = column[Option[String]]("ASSIGNED")
@@ -181,7 +181,7 @@ class InvitationsModel(tag: Tag) extends Table[InvitationInfo](tag, "INVITATIONS
 
 class ActionLogsModel(tag: Tag) extends Table[ActionLog](tag, "ACTION_LOGS") {
   def id = column[Int]("ID", O.PrimaryKey, O.AutoInc)
-  def who = column[String]("WHO", O.NotNull)
+  def who = column[String]("WHO")
   def what = column[Int]("WHAT", O.NotNull)
   def when = column[DateTime]("WHEN", O.NotNull)
   def why = column[String]("WHY", O.NotNull)

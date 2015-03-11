@@ -145,7 +145,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
 
         val withTotal = Templates.getTotal(d) match {
           case Right(total) =>
-            val unpaid = total - d.amountPaid
+            val unpaid = total - 0
             obj.withField("isPaid", unpaid <= 0)
               .withField("unpaid", unpaid)
               .withField("total", total)
@@ -223,7 +223,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
             (json \ "body").asOpt[JsObject],
             (json \ "comments").asOpt[JsObject],
             (json \ "assigned").asOpt[String],
-            (json \ "amountPaid").asOpt[Double]) match {
+            (json \ "amountPaid").asOpt[JsObject]) match {
               case (None, None, None, None, None) =>
                 BadRequest("No editable fields matched. Please check your request.")
               case (titleOpt, bodyOpt, commentsOpt, assignedOpt, amountPaidOpt) =>
@@ -362,7 +362,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
 
     val withTotal = Templates.getTotal(d) match {
       case Right(total) =>
-        val unpaid = total - d.amountPaid
+        val unpaid = total - 0
         obj3.withField("isPaid", unpaid <= 0)
           .withField("unpaid", unpaid)
           .withField("total", total)
