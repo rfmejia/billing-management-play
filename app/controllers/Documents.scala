@@ -31,7 +31,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
     Document.findById(id) map {
       oldDoc =>
         // TODO: Only the assigned user can move this mailbox
-        // And that assigned user has the correct privileges
+        // And that assigned user has the correct privileges, or if user is admin
         (Workflow.find(oldDoc.mailbox), Workflow.find(mailbox)) match {
           case (Some(oldBox), Some(newBox)) =>
             Document.update(oldDoc.copy(mailbox = newBox.name, assigned = None)) match {

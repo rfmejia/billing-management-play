@@ -21,8 +21,6 @@ GET      /api/users/:userId            @controllers.Users.show(userId: String)
 PUT      /api/users/:userId            @controllers.Users.edit(userId: String)
 DELETE   /api/users/:userId            @controllers.Users.delete(userId: String)
 
-PUT      /api/admin/users/:userId/roles @controllers.Users.editRoles(userId: String)
-
 # Documents
 POST     /api/documents/:id/:box       @controllers.Documents.moveMailbox(id: Int, box: String)
 
@@ -44,8 +42,15 @@ GET      /api/templates/:docType       @controllers.Templates.show(docType: Stri
 GET      /api/setupTestEnvironment     @controllers.TestEnvironment.setup
 GET      /api/testFail                 @controllers.TestEnvironment.fail
 
-GET      /admin/invite                 @controllers.Invitation.startInvite
-POST     /admin/invite                 @controllers.Invitation.handleStartInvite
+# Reports
+GET      /api/reports                  @controllers.Reports.list(offset: Int ?= 0, limit: Int ?= 10)
+GET      /api/reports/:forMonth        @controllers.Reports.show(forMonth: String)
+
+# Admin routes
+GET      /admin/invite                  @controllers.Invitation.startInvite
+POST     /admin/invite                  @controllers.Invitation.handleStartInvite
+
+PUT      /api/admin/users/:userId/roles @controllers.Users.editRoles(userId: String)
 
 # ---- SecureSocial (master-SNAPSHOT) routes ----
 # Note: Many SecureSocial LOCs come from http://www.filtercode.com/play/play-scala-securesocial
