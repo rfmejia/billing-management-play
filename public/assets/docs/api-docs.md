@@ -58,14 +58,14 @@ Request bodies are expected to conform to the supplied templates.
 
 User IDs in this system are email addresses. These cannot be changed.
 
-| Method   | URL                  | Parameters    | Permissions | Description |
-|----------|----------------------|---------------|-------------|-------------|
-| GET      | /api/users           | offset, limit | `*`         | Summarize all users
-| GET      | /api/users/me        |               | `c`         | Show full info about currently logged on user
-| GET      | /api/users/:id       | user ID       | `*`         | Show full user info
-| PUT      | /api/users/:id       | user ID       | `c`, `Ad`   | Edit user info using `edit` template shown in /api/users/:id
-| DELETE   | /api/users/:id       | user ID       | `Ad`        | Remove user from system (isolated deletion)
-| PUT      | /api/users/:id/roles | user ID       | `Ad`        | Edit user roles
+| Method   | URL                        | Parameters    | Permissions | Description |
+|----------|----------------------------|---------------|-------------|-------------|
+| GET      | /api/users                 | offset, limit | `*`         | Summarize all users
+| GET      | /api/users/me              |               | `c`         | Show full info about currently logged on user
+| GET      | /api/users/:id             | user ID       | `*`         | Show full user info
+| PUT      | /api/users/:id             | user ID       | `c`, `Ad`   | Edit user info using `edit` template shown in /api/users/:id
+| DELETE   | /api/users/:id             | user ID       | `Ad`        | Remove user from system (isolated deletion)
+| PUT      | /api/admin/users/:id/roles | user ID       | `Ad`        | Edit user roles
 
 #### Documents
 
@@ -109,6 +109,16 @@ Documents are created for a specific tenant/month combination, hence these field
 | GET      | /api/templates          | offset, limit | `*`         | Show all document templates available in the system
 | GET      | /api/templates/:docType | docType       | `*`         | Show particular document type
 
+
+#### Reports
+
+Documents are created for a specific tenant/month combination, hence these fields cannot be edited after creation.
+
+| Method   | URL                       | Parameters    | Permissions | Description |
+|----------|---------------------------|---------------|-------------|-------------|
+| GET      | /api/reports              | offset, limit | `*`         | List all available reports
+| GET      | /api/reports/:year/:month | year, month   | `*`         | Show report for a given year and month
+
 <a id="routes/auth"></a>
 #### Authentication
 
@@ -127,8 +137,8 @@ The following sections are default routes supplied by [SecureSocial](http://secu
 
 ##### User registration and password handling
 
-	GET      /signup
-	POST     /signup
+	GET      /admin/invite
+	POST     /admin/invite
 	GET      /signup/:token
 	POST     /signup/:token
 	GET      /password

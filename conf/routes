@@ -47,9 +47,6 @@ GET      /api/reports                  @controllers.Reports.list(offset: Int ?= 
 GET      /api/reports/:year/:month     @controllers.Reports.show(year: Int, month: Int)
 
 # Admin routes
-GET      /admin/invite                 @controllers.Invitation.startInvite
-POST     /admin/invite                 @controllers.Invitation.handleStartInvite
-
 PUT      /api/admin/users/:userId/roles @controllers.Users.editRoles(userId: String)
 
 # ---- SecureSocial (master-SNAPSHOT) routes ----
@@ -60,8 +57,9 @@ GET      /login                        @securesocial.controllers.LoginPage.login
 GET      /logout                       @securesocial.controllers.LoginPage.logout
 
 # User registration and password handling
-#GET      /signup                       @securesocial.controllers.Registration.startSignUp
-#POST     /signup                       @securesocial.controllers.Registration.handleStartSignUp
+GET      /admin/invite                 @controllers.Invitation.startInvite
+POST     /admin/invite                 @controllers.Invitation.handleStartInvite
+
 GET      /signup/:token                @securesocial.controllers.Registration.signUp(token)
 POST     /signup/:token                @controllers.Invitation.handleSignUp(token)
 GET      /password                     @securesocial.controllers.PasswordChange.page
