@@ -28,8 +28,8 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
   }
 
   def moveMailbox(id: Int, mailbox: String) = SecuredAction { implicit request =>
-    Document.findById(id) match {
-      case Some(oldDoc) =>
+    Document.findById(id) map {
+      oldDoc =>
         // TODO: Only the assigned user can move this mailbox
         // And that assigned user has the correct privileges
         (Workflow.find(oldDoc.mailbox), Workflow.find(mailbox)) match {
@@ -74,8 +74,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
           case (None, _) => NotFound("Current mailbox cannot be found")
           case (_, None) => NotFound("Target mailbox cannot be found")
         }
-      case None => NotFound("Document cannot be found")
-    }
+    } getOrElse NotFound("Document cannot be found")
   }
 
   def list(offset: Int = 0, limit: Int = 10, mailbox: String, forTenant: Int, creator: String, assigned: Option[String], forMonth: Option[String], isPaid: Option[Boolean], others: Option[Boolean], isAssigned: Option[Boolean]) = SecuredAction { implicit request =>
@@ -214,9 +213,11 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
   }
 
   def edit(id: Int) = SecuredAction(parse.json) { implicit request =>
-    Document.findById(id) match {
-      case None => NotFound
-      case Some(d) =>
+    Document.findById(id) map {
+      existingDoc =>
+        // TODO: Get user responsible for this request and only allow if this is the assigned user
+        if (existingDoc.assigned.exists(_ != request.user.userId)) true
+
         val json = request.body
         ((json \ "title").asOpt[String],
           (json \ "body").asOpt[JsObject],
@@ -226,31 +227,30 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
             case (None, None, None, None, None) =>
               BadRequest("No editable fields matched. Please check your request.")
             case (titleOpt, bodyOpt, commentsOpt, assignedOpt, amountPaidOpt) =>
-              // TODO: Get user responsible for this request and only allow if this is the assigned user
 
               val toBeAssigned: Option[String] =
                 if (assignedOpt.exists(_ != "none")) assignedOpt
                 else None
 
               val newDoc =
-                d.copy(
-                  title = titleOpt getOrElse d.title,
-                  body = bodyOpt getOrElse d.body,
-                  comments = commentsOpt getOrElse d.comments,
+                existingDoc.copy(
+                  title = titleOpt getOrElse existingDoc.title,
+                  body = bodyOpt getOrElse existingDoc.body,
+                  comments = commentsOpt getOrElse existingDoc.comments,
                   assigned = toBeAssigned,
-                  amountPaid = amountPaidOpt getOrElse d.amountPaid)
+                  amountPaid = amountPaidOpt getOrElse existingDoc.amountPaid)
 
               Document.update(newDoc) match {
-                case Success(doc) =>
+                case Success(updateDoc) =>
                   val changes = Seq(
-                    titleOpt.map(v => s"Title: '${d.title}' -> '${v}'"),
-                    amountPaidOpt.map(v => s"Amount paid: '${d.amountPaid}' -> '${v}'"),
+                    titleOpt.map(v => s"Title: '${existingDoc.title}' -> '${v}'"),
+                    amountPaidOpt.map(v => s"Amount paid: '${existingDoc.amountPaid}' -> '${v}'"),
                     bodyOpt.map(v => "Body updated"),
                     commentsOpt.map(v => "Comments updated"))
                     .flatten
                     .mkString(", ")
 
-                  ActionLog.log(request.user.userId, doc.id, "Updates: " + changes) match {
+                  ActionLog.log(request.user.userId, updateDoc.id, "Updates: " + changes) match {
                     case Success(log) =>
                       Document.logLastAction(log)
                       NoContent
@@ -260,16 +260,16 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
               }
             case _ => BadRequest("Some required values are missing. Please check your request.")
           }
-    }
+    } getOrElse NotFound
   }
 
   def delete(id: Int) = SecuredAction { implicit request =>
-    Document.findById(id) match {
-      case Some(d) =>
+    Document.findById(id) map {
+      doc =>
         // Permissions: currently assigned user if in drafts, or administrator
         val hasAccess = {
-          d.assigned.contains(request.user.userId) && d.mailbox == Workflow.drafts.name ||
-            User.findRoles(request.user.userId).contains("administrator")
+          doc.assigned.contains(request.user.userId) && doc.mailbox == Workflow.drafts.name ||
+            User.findRoles(request.user.userId).contains("admin")
         }
 
         if (hasAccess) {
@@ -280,8 +280,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
           if (deleted == 0) NotFound
           else Ok
         } else Forbidden
-      case None => NotFound
-    }
+    } getOrElse NotFound
   }
 
   def assignToMe(id: Int) = SecuredAction { implicit request =>
@@ -302,7 +301,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
         // Permissions: currently assigned user, or administrator
         val hasAccess = {
           d.assigned.contains(request.user.userId) ||
-            User.findRoles(request.user.userId).contains("administrator")
+            User.findRoles(request.user.userId).contains("admin")
         }
 
         if (hasAccess) {

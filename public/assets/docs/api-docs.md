@@ -170,10 +170,10 @@ The following sections are default routes supplied by [SecureSocial](http://secu
 - [ ] Remove editing of `roles` field from PUT /users/:userId
 - [x] Separate link for document un/assignment
 - [ ] Remove editing of `assigned` field from PUT /api/documents/:id
-- [ ] Force HTTPS
 - [x] Add user invitation accessible only by the admin role
 - [x] Allow access to user invitation when there is no user with an admin role
 - [x] Add mailbox filtering using on top-level boxes (pending, delivered)
+- [ ] Create and use typesafe roles
 
 ### Backend
 
@@ -199,10 +199,10 @@ The following sections are default routes supplied by [SecureSocial](http://secu
 
 #### Documents
 
-- [ ] Restrict document editing to assigned user
+- [-] Restrict document editing to assigned user
 - [x] Restrict **document unlocking** to **assigned user**, or...
 - [x] ...to **admin role** (locking is unrestricted)
-- [ ] Restrict document mailbox movement to assigned user **with the appropriate workflow role**
+- [-] Restrict document mailbox movement to assigned user **with the appropriate workflow role**
 - [x] Restrict **document deletion** to **assigned user when in drafts mailbox**, or...
 - [x] ...to **admin role**
 

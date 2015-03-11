@@ -88,8 +88,7 @@ class Users(override implicit val env: RuntimeEnvironment[User])
   }
 
   def editRoles(userId: String) = SecuredAction(parse.json) { implicit request =>
-    // Permissions: Administrator
-    val hasAccess = User.findRoles(request.user.userId).contains("administrator")
+    val hasAccess = User.findRoles(request.user.userId).contains("admin")
 
     if (hasAccess) {
       val json = request.body
@@ -107,7 +106,7 @@ class Users(override implicit val env: RuntimeEnvironment[User])
     } else Forbidden
   }
 
-  def delete(userId: String) = SecuredAction(WithRoles("administrator")) { implicit request =>
+  def delete(userId: String) = SecuredAction(WithRoles("admin")) { implicit request =>
     val deleted = ConnectionFactory.connect withSession { implicit session =>
       val query = for (u <- users if u.userId === userId) yield u
       query.delete
