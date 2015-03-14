@@ -34,7 +34,7 @@ object Document extends ((Int, Option[String], String, String, String, String, D
   private val defaultAmountPaid: JsObject =
     JsObject(Seq(
       "previous" -> JsNumber(0.0),
-      "rental" -> JsNumber(0.0),
+      "rent" -> JsNumber(0.0),
       "electricity" -> JsNumber(0.0),
       "water" -> JsNumber(0.0),
       "cusa" -> JsNumber(0.0)))
