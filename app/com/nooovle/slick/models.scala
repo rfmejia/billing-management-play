@@ -137,9 +137,9 @@ class DocumentsModel(tag: Tag) extends Table[Document](tag, "DOCUMENTS") {
   def title = column[String]("TITLE", O.NotNull)
   def docType = column[String]("DOC_TYPE", O.NotNull)
   def mailbox = column[String]("MAILBOX", O.NotNull)
-  def creator = column[String]("CREATOR")
+  def creator = column[String]("CREATOR", O.NotNull)
   def created = column[DateTime]("CREATED", O.NotNull)
-  def forTenant = column[Int]("FOR_TENANT")
+  def forTenant = column[Int]("FOR_TENANT", O.NotNull)
   def year = column[Int]("YEAR", O.NotNull)
   def month = column[Int]("MONTH", O.NotNull)
   def amountPaid = column[JsObject]("AMOUNT_PAID", O.NotNull)
@@ -151,9 +151,6 @@ class DocumentsModel(tag: Tag) extends Table[Document](tag, "DOCUMENTS") {
   def preparedAction = column[Option[Int]]("PREPARED_ACTION_ID")
   def checkedAction = column[Option[Int]]("CHECKED_ACTION_ID")
   def approvedAction = column[Option[Int]]("APPROVED_ACTION_ID")
-
-  def _creator = foreignKey("USER_FK", creator, models.users)(_.userId, onDelete = ForeignKeyAction.SetNull)
-  def _forTenant = foreignKey("TENANT_FK", forTenant, models.tenants)(_.id, onDelete = ForeignKeyAction.SetNull)
 
   def * = (id, serialId, title, docType, mailbox, creator, created, forTenant, year, month, amountPaid, body, comments, assigned, lastAction, preparedAction, checkedAction, approvedAction) <> (Document.tupled, Document.unapply)
 }
