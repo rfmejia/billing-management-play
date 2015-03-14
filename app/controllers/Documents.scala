@@ -121,6 +121,8 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       .filter(d => isAssignedFilter(d.assigned))
       .filter(d => othersFilter(d.assigned))
       .map { d =>
+        implicit val doc = d
+
         val link = routes.Documents.show(d.id)
         val obj = HalJsObject.create(link.absoluteURL())
           .withLink("profile", "hoa:document")
@@ -137,26 +139,14 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
           .withField("creator", d.creator)
           .withField("assigned", (d.assigned.map { userToJsObject(_) }))
 
-        val withTotal = Templates.extractTotal(d) match {
-          case Right(total) =>
-            val unpaid = total - 0
-            obj.withField("isPaid", unpaid <= 0)
-              .withField("unpaid", unpaid)
-              .withField("total", total)
-          case Left(warning) =>
-            Logger.warn(warning)
-            obj.withField("total", JsNull)
-              .withField("warning", warning)
-        }
-
-        val withAssignLinks = addAssignLinks(d, withTotal)
+        val withAssignLinks = appendAmounts(appendAssignLinks(obj))
 
         withAssignLinks.asJsValue
       }
 
     // Filtering level 3: Post-mapping to JS value
     val withIsPaid = isPaid map { b =>
-      objs.filter(d => d \ "isPaid" == JsBoolean(b))
+      objs.filter(d => d \ "amounts" \ "isPaid" == JsBoolean(b))
     } getOrElse objs
 
     val self = routes.Documents.list(offset, limit, mailbox, forTenant, creator, assigned, year, month, isPaid, others, isAssigned)
@@ -168,7 +158,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       .withLink("hoa:templates", routes.Templates.list().absoluteURL(),
         Some("List of document templates"))
       .withField("_template", createForm)
-      .withField("count", ds.length)
+      .withField("count", withIsPaid.length)
       .withField("offset", offset)
       .withField("limit", limit)
 
@@ -306,13 +296,15 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
     }
   }
 
-  private def addAssignLinks(doc: Document, obj: HalJsObject)(implicit request: RequestHeader): HalJsObject =
+  private def appendAssignLinks(obj: HalJsObject)(implicit request: RequestHeader, doc: Document): HalJsObject =
     doc.assigned match {
       case Some(_) => obj.withLink("hoa:unassign", routes.Documents.unassign(doc.id).absoluteURL())
       case None => obj.withLink("hoa:assign", routes.Documents.assignToMe(doc.id).absoluteURL())
     }
 
   private def documentToHalJsObject(d: Document)(implicit req: RequestHeader): HalJsObject = {
+    implicit val doc = d
+
     val self = routes.Documents.show(d.id).absoluteURL()
     val obj = HalJsObject.create(self)
       .withCurie("hoa", Application.defaultCurie)
@@ -362,38 +354,32 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       obj2.withEmbedded(embedded.withField("tenant", tenant.asJsValue))
     } getOrElse obj2
 
-    val withTotal = Templates.extractTotal(d) match {
-      case Right(total) =>
-        val unpaid = total - 0
-        obj3.withField("isPaid", unpaid <= 0)
-          .withField("unpaid", unpaid)
-          .withField("total", total)
-      case Left(warning) =>
-        Logger.warn(warning)
-        obj3.withField("total", JsNull)
-          .withField("warning", warning)
-    }
-
-    val withActions = withTotal
+    val withActions = appendAmounts(obj3)
       .withField("lastAction", d.lastAction flatMap (actionToJsObject(_)))
       .withField("preparedAction", d.preparedAction flatMap (actionToJsObject(_)))
       .withField("checkedAction", d.checkedAction flatMap (actionToJsObject(_)))
       .withField("approvedAction", d.approvedAction flatMap (actionToJsObject(_)))
 
-    val withAssignLinks = addAssignLinks(d, withActions)
+    val withAssignLinks = appendAssignLinks(withActions)
 
     withAssignLinks
   }
 
-  def withAmounts(doc: Document)(implicit obj: HalJsObject): Document = ???
-    // Templates.extractTotal(doc) match {
-    //   case Right(total) =>
-    //     obj.withField()
-    //   case Left(warning) =>
-    //     Logger.warn(warning)
-    //     obj.withField("total", None)
-    //       .withField("warning", warning)
-    // }
+  def appendAmounts(obj: HalJsObject)(implicit doc: Document): HalJsObject = {
+    if (doc.docType == "invoice-1") {
+      val total: Amounts = Templates.extractTotals(doc)
+      val paid: Amounts = Templates.extractPaid(doc)
+      val unpaid = total - paid
+
+      obj.withField("amounts",
+        HalJsObject.empty
+          .withField("isPaid", unpaid == Amounts.ZERO)
+          .withField("total", total.asJsObject)
+          .withField("paid", paid.asJsObject)
+          .withField("unpaid", unpaid.asJsObject)
+          .asJsValue)
+    } else obj
+  }
 
   def userToJsObject(userId: String): JsObject =
     User.findById(userId) match {

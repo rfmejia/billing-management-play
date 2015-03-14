@@ -28,7 +28,7 @@ case class Amounts(
   val asJsObject = JsObject(Seq(
     "previous" -> JsNumber(previous),
     "rent" -> JsNumber(rent),
-    "electricty" -> JsNumber(electricity),
+    "electricity" -> JsNumber(electricity),
     "water" -> JsNumber(water),
     "cusa" -> JsNumber(cusa),
     "total" -> JsNumber(total)))

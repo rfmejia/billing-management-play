@@ -23,9 +23,9 @@ class Reports(override implicit val env: RuntimeEnvironment[User])
       query.list
     }
 
-    val totals: Amounts = docs.map(Templates.extractTotals).foldLeft(Amounts.ZERO)(_ + _)
+    val total: Amounts = docs.map(Templates.extractTotals).foldLeft(Amounts.ZERO)(_ + _)
     val paid: Amounts = docs.map(Templates.extractPaid).foldLeft(Amounts.ZERO)(_ + _)
-    val unpaid = totals - paid
+    val unpaid = total - paid
 
     val self = routes.Reports.show(year, month)
     val generationTime = DateTime.now
@@ -42,9 +42,12 @@ class Reports(override implicit val env: RuntimeEnvironment[User])
         "name" -> JsString(generationTime.monthOfYear.getAsText()),
         "month" -> JsNumber(generationTime.getMonthOfYear),
         "year" -> JsNumber(generationTime.getYear))))
-      .withField("total", totals.asJsObject)
-      .withField("paid", paid.asJsObject)
-      .withField("unpaid", unpaid.asJsObject)
+      .withField("amounts",
+        HalJsObject.empty
+          .withField("total", total.asJsObject)
+          .withField("paid", paid.asJsObject)
+          .withField("unpaid", unpaid.asJsObject)
+          .asJsValue)
       .withField("count", docs.size)
     Ok(obj.asJsValue)
   }

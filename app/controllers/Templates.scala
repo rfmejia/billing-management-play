@@ -58,17 +58,6 @@ object Templates {
   // NOTE: The following is a hard-coded lookup of total values.
   // Either standardize the field in the document type(s) or have a
   // template registration system
-  def extractTotal(d: Document): Either[String, Double] = {
-    if (d.docType == "invoice-1") {
-      if (d.body \ "summary" \ "id" == JsString("invoice_summary")) {
-
-        d.body \ "summary" \ "value" match {
-          case JsNumber(value) => Right(value.doubleValue)
-          case _ => Left(s"Invoice summary value is not a number")
-        }
-      } else Left(s"Cannot find invoice_summary field in '${d.docType}'")
-    } else Left(s"The document type '${d.docType}' is not registered")
-  }
 
   def doubleOrZero(value: JsValue): Double = value match {
     case JsNumber(x) => x.doubleValue
