@@ -23,8 +23,8 @@ class Reports(override implicit val env: RuntimeEnvironment[User])
       query.list
     }
 
-    val totals: Amounts = docs.map(extractTotal).foldLeft(Amounts.ZERO)(_ + _)
-    val paid: Amounts = docs.map(extractPaid).foldLeft(Amounts.ZERO)(_ + _)
+    val totals: Amounts = docs.map(Templates.extractTotals).foldLeft(Amounts.ZERO)(_ + _)
+    val paid: Amounts = docs.map(Templates.extractPaid).foldLeft(Amounts.ZERO)(_ + _)
     val unpaid = totals - paid
 
     val self = routes.Reports.show(year, month)
@@ -47,81 +47,5 @@ class Reports(override implicit val env: RuntimeEnvironment[User])
       .withField("unpaid", unpaid.asJsObject)
       .withField("count", docs.size)
     Ok(obj.asJsValue)
-  }
-
-  case class Amounts(
-    previous: Double,
-    rent: Double,
-    electricity: Double,
-    water: Double,
-    cusa: Double) {
-
-    val total = List(previous, rent, electricity, water, cusa).sum
-
-    def +(that: Amounts) = Amounts(
-      this.previous + that.previous,
-      this.rent + that.rent,
-      this.electricity + that.electricity,
-      this.water + that.water,
-      this.cusa + that.cusa)
-
-    def -(that: Amounts) = Amounts(
-      this.previous - that.previous,
-      this.rent - that.rent,
-      this.electricity - that.electricity,
-      this.water - that.water,
-      this.cusa - that.cusa)
-
-    val asJsObject = JsObject(Seq(
-      "previous" -> JsNumber(previous),
-      "rent" -> JsNumber(rent),
-      "electricty" -> JsNumber(electricity),
-      "water" -> JsNumber(water),
-      "cusa" -> JsNumber(cusa),
-      "total" -> JsNumber(total)))
-  }
-
-  object Amounts {
-    val ZERO = Amounts(0.0, 0.0, 0.0, 0.0, 0.0)
-  }
-
-  def doubleOrZero(value: JsValue): Double = value match {
-    case JsNumber(x) => x.doubleValue
-    case JsNull => 0.0
-    case _ => throw new IllegalStateException("Not a valid number")
-  }
-
-  def extractPaid(doc: Document): Amounts = {
-    Logger.debug("amountPaid: " + doc.amountPaid.toString)
-
-    Amounts(
-      doubleOrZero(doc.amountPaid \ "previous"),
-      doubleOrZero(doc.amountPaid \ "rent"),
-      doubleOrZero(doc.amountPaid \ "electricity"),
-      doubleOrZero(doc.amountPaid \ "water"),
-      doubleOrZero(doc.amountPaid \ "cusa"))
-  }
-
-  def extractTotal(doc: Document): Amounts = {
-
-    val sectionTotals = (doc.body \\ "sectionTotal")
-
-    sectionTotals.foreach {
-      total => Logger.debug(total.toString)
-    }
-
-    def findSectionTotal(key: String): Double =
-      sectionTotals
-        .find(_ \ "id" == JsString(key))
-        .map(_ \ "value")
-        .map(doubleOrZero)
-        .getOrElse(0.0)
-
-    Amounts(
-      findSectionTotal("_previous_total"),
-      findSectionTotal("_rent_total"),
-      findSectionTotal("_electricity_total"),
-      findSectionTotal("_water_total"),
-      findSectionTotal("_cusa_total"))
   }
 }

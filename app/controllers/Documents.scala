@@ -137,7 +137,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
           .withField("creator", d.creator)
           .withField("assigned", (d.assigned.map { userToJsObject(_) }))
 
-        val withTotal = Templates.getTotal(d) match {
+        val withTotal = Templates.extractTotal(d) match {
           case Right(total) =>
             val unpaid = total - 0
             obj.withField("isPaid", unpaid <= 0)
@@ -362,7 +362,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       obj2.withEmbedded(embedded.withField("tenant", tenant.asJsValue))
     } getOrElse obj2
 
-    val withTotal = Templates.getTotal(d) match {
+    val withTotal = Templates.extractTotal(d) match {
       case Right(total) =>
         val unpaid = total - 0
         obj3.withField("isPaid", unpaid <= 0)
@@ -384,6 +384,16 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
 
     withAssignLinks
   }
+
+  def withAmounts(doc: Document)(implicit obj: HalJsObject): Document = ???
+    // Templates.extractTotal(doc) match {
+    //   case Right(total) =>
+    //     obj.withField()
+    //   case Left(warning) =>
+    //     Logger.warn(warning)
+    //     obj.withField("total", None)
+    //       .withField("warning", warning)
+    // }
 
   def userToJsObject(userId: String): JsObject =
     User.findById(userId) match {

@@ -1,14 +1,11 @@
 package controllers
 
-import scala.slick.driver.H2Driver.simple._
-import scala.util.{ Try, Success, Failure }
-
-import org.locker47.json.play._
-
 import com.nooovle._
-
+import org.locker47.json.play._
 import play.api._
 import play.api.libs.json._
+import scala.slick.driver.H2Driver.simple._
+import scala.util.{ Try, Success, Failure }
 import securesocial.core.RuntimeEnvironment
 
 class Templates(override implicit val env: RuntimeEnvironment[User])
@@ -61,7 +58,7 @@ object Templates {
   // NOTE: The following is a hard-coded lookup of total values.
   // Either standardize the field in the document type(s) or have a
   // template registration system
-  def getTotal(d: Document): Either[String, Double] = {
+  def extractTotal(d: Document): Either[String, Double] = {
     if (d.docType == "invoice-1") {
       if (d.body \ "summary" \ "id" == JsString("invoice_summary")) {
 
@@ -72,6 +69,57 @@ object Templates {
       } else Left(s"Cannot find invoice_summary field in '${d.docType}'")
     } else Left(s"The document type '${d.docType}' is not registered")
   }
+
+  def doubleOrZero(value: JsValue): Double = value match {
+    case JsNumber(x) => x.doubleValue
+    case JsNull => 0.0
+    case _ =>
+      Logger.warn(s"Supplied value '${value.toString}' is a valid number")
+      0.0
+  }
+
+  def extractWith(extractor: Document => Either[String, Amounts])(doc: Document): Amounts =
+    extractor(doc)
+      .fold(
+        warning => {
+          Logger.warn(warning)
+          Amounts.ZERO
+        }, amount => amount)
+
+  def extractPaid(d: Document): Amounts = extractWith({
+    doc =>
+      if (doc.docType == "invoice-1") {
+        Right(
+          Amounts(
+            doubleOrZero(doc.amountPaid \ "previous"),
+            doubleOrZero(doc.amountPaid \ "rent"),
+            doubleOrZero(doc.amountPaid \ "electricity"),
+            doubleOrZero(doc.amountPaid \ "water"),
+            doubleOrZero(doc.amountPaid \ "cusa")))
+      } else Left(s"The document type '${d.docType}' is not registered")
+  })(d)
+
+  def extractTotals(d: Document): Amounts = extractWith({
+    doc =>
+      if (doc.docType == "invoice-1") {
+        val sectionTotals = (doc.body \\ "sectionTotal")
+
+        def findSectionTotal(key: String): Double =
+          sectionTotals
+            .find(_ \ "id" == JsString(key))
+            .map(_ \ "value")
+            .map(doubleOrZero)
+            .getOrElse(0.0)
+
+        Right(
+          Amounts(
+            findSectionTotal("_previous_total"),
+            findSectionTotal("_rent_total"),
+            findSectionTotal("_electricity_total"),
+            findSectionTotal("_water_total"),
+            findSectionTotal("_cusa_total")))
+      } else Left(s"The document type '${doc.docType}' is not registered")
+  })(d)
 
   lazy val invoice1: JsObject = {
     val filename = "public/assets/templates/invoice-1.json"
