@@ -1,0 +1,23 @@
+.hoa-comments i.leftQuote {
+    position: relative;
+    left: 0;
+    top: 0;
+}
+
+.hoa-comments .comments-header {
+    font-weight: bold;
+    color: #727272;
+}
+
+.hoa-comments .comment-entry + .comment-entry {
+    margin-top: 16px;
+}
+
+.hoa-comments .comments-list .comments-content i {
+    color: #9E9E9E;
+}
+
+.hoa-comments .comments .comment-date {
+    margin-right: 20px;
+    color: #727272;
+}

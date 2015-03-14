@@ -14,14 +14,18 @@ angular
                     'moment',
                     '$state',
                     '$stateParams',
+                    '$resource',
+                    "$anchorScroll",
+                    "$location",
                     'service.hoatoasts',
                     draftsCtrl
                 ]);
 
-function draftsCtrl(documentsHelper, documentsResponse, userResponse, tenantsResponse, documentsService, commentsHelper, dialogProvider, moment, $state, $stateParams, hoaToasts) {
+function draftsCtrl(documentsHelper, documentsResponse, userResponse, tenantsResponse, documentsService, commentsHelper, dialogProvider, moment, $state, $stateParams, $resource, $anchorScroll, $location, toastsProvider) {
     var vm = this;
     /** Previous months template **/
     vm.previous = documentsResponse.viewModel.body.previous;
+
     /** This months template **/
     vm.thisMonth = documentsResponse.viewModel.body.thisMonth;
     /** Summary template **/
@@ -46,9 +50,10 @@ function draftsCtrl(documentsHelper, documentsResponse, userResponse, tenantsRes
     vm.assigned = documentsResponse.viewModel.assigned;
     /** Current user **/
     vm.currentUser = userResponse.userId;
+    /** Links **/
+    vm.links = documentsResponse.viewModel.links;
     /** Disables the editing of this document if it's not locked to the user **/
-    vm.isDisabled;
-    vm.tradeNameColor = {color: "#009688"};
+    vm.tradeNameColor = {color : "#009688"};
 
 
     //Function mapping
@@ -60,7 +65,6 @@ function draftsCtrl(documentsHelper, documentsResponse, userResponse, tenantsRes
     vm.onCancelClicked = onCancelClicked;
     vm.onDeleteClicked = onDeleteClicked;
     vm.computeSubtotal = computeSubtotal;
-    vm.preventBack = preventBack;
     activate();
 
     function activate() {
@@ -70,15 +74,16 @@ function draftsCtrl(documentsHelper, documentsResponse, userResponse, tenantsRes
         else {
             vm.comments = commentsHelper.parseComments(null, null);
         }
+
+        if(vm.comments.hasRecent) {
+            toastsProvider.showPersistentToast("1 new comment", "view").then(goToComments)
+        }
+
         vm.isDisabled = (vm.assigned.userId != vm.currentUser);
     }
 
 
     //region FUNCTIONS
-    function preventBack(event, input) {
-        if(event.keyCode == 8) event.preventDefault();
-        console.log(input);
-    }
     /**
      * Sets the string date for other input fields
      * @param newDate
@@ -94,8 +99,10 @@ function draftsCtrl(documentsHelper, documentsResponse, userResponse, tenantsRes
      * Laucnhes a dialog for confirmation. If yes, make a network call to unlink user.
      */
     function onUnlinkClicked() {
-        documentsService.assignDocument($stateParams.id, "none")
-            .then(returnToList);
+        if(vm.links.hasOwnProperty("hoa:unassign")) {
+            var url = vm.links["hoa:unassign"].href;
+            documentsService.unassignDocument(url).then(returnToList);
+        }
     }
 
     function returnToList() {
@@ -107,31 +114,35 @@ function draftsCtrl(documentsHelper, documentsResponse, userResponse, tenantsRes
      * @param field
      * @param inputField
      */
-    function validateDateRange(field, inputField) {
-        var newDate = moment(field.value, vm.format);
-        if (!moment(newDate).isValid()) {
-            inputField.$setValidity("date", false);
-        }
-        else {
-            inputField.$setValidity("date", true);
-        }
+    function validateDateRange(field) {
+        var newDate = moment(field.value);
+        field.value = newDate.format(vm.format);
     }
 
     /**
      * Submits the current document to the next box
      */
     function onSubmitClicked() {
-        preparePostData();
-        var postData = documentsHelper.formatServerData(documentsResponse);
+        dialogProvider.getCommentDialog("For Checking").then(okayClicked);
+
+        //Save the document first, then submit
+        function okayClicked(comment) {
+            vm.currentComment = comment;
+            preparePostData();
+            var postData = documentsHelper.formatServerData(documentsResponse);
+            documentsService.editDocument(documentId, postData).then(submit, error);
+        }
+
+        function submit() {
+            documentsService.moveToBox(vm.submitUrl).then(success, error);
+        }
+
         var success = function(response) {
-            hoaToasts.showSimpleToast('Your document was sent for checking.');
+            toastsProvider.showSimpleToast('Your document was sent for checking.');
             $state.go("workspace.pending.drafts", documentsHelper.getQueryParameters(), {reload : true})
         };
 
         var error = function(error) {};
-
-        documentsService.moveToBox(documentId, vm.submitUrl, postData)
-            .then(success);
     }
 
     /**
@@ -143,14 +154,14 @@ function draftsCtrl(documentsHelper, documentsResponse, userResponse, tenantsRes
         documentsService.editDocument(documentId, postData)
             .then(function(response) {
                       if (billingForm.$invalid) {
-                          hoaToasts.showSimpleToast('Saved but there are missing fields');
+                          toastsProvider.showSimpleToast('Saved but there are missing fields');
                           vm.currentComment = null;
                       }
                       else {
-                          hoaToasts.showSimpleToast('Ready for submission');
+                          toastsProvider.showSimpleToast('Ready for submission');
                       }
                   }, function() {
-                      hoaToasts.showSimpleToast('We couldn\t save your document');
+                      toastsProvider.showSimpleToast('We couldn\t save your document');
                   });
     }
 
@@ -188,10 +199,10 @@ function draftsCtrl(documentsHelper, documentsResponse, userResponse, tenantsRes
         var okFxn = function(response) {
             documentsService.deleteDocument(documentId)
                 .then(function(response) {
-                          hoaToasts.showSimpleToast("Delete successful");
+                          toastsProvider.showSimpleToast("Delete successful");
                           $state.go("workspace.pending.drafts", documentsHelper.getQueryParameters(), {reload : true});
                       }, function(error) {
-                                     hoaToasts.showSimpleToast("We couldn't delete your document");
+                          toastsProvider.showSimpleToast("We couldn't delete your document");
                       });
         };
 
@@ -202,14 +213,31 @@ function draftsCtrl(documentsHelper, documentsResponse, userResponse, tenantsRes
      * Called when one of the total values is changed to compute the summary value of the whole billing
      * @param section
      */
-    function computeSubtotal(section) {
+    function computeSubtotal() {
         var total = 0;
-        angular.forEach(section.sections, function(subsection) {
-            total += subsection.total;
-        });
-        section.summary.value = total;
 
-        vm.summary.value = vm.previous.summary.value + vm.thisMonth.summary.value;
+        angular.forEach(vm.previous.sections, function(subsection) {
+            if(subsection.hasOwnProperty("total")) total += subsection.sectionTotal.value;
+        });
+        vm.previous.summary.value = total;
+
+        total = 0;
+        angular.forEach(vm.thisMonth.sections, function(subsection) {
+            if(subsection.hasOwnProperty("total")) total += subsection.sectionTotal.value;
+        });
+        vm.thisMonth.summary.value = total;
+
+        if(isFinite(vm.previous.summary.value) && isFinite(vm.thisMonth.summary.value)) {
+            vm.summary.value = vm.previous.summary.value + vm.thisMonth.summary.value;
+        }
+    }
+
+    function goToComments() {
+        console.log("go");
+        var oldHash = $location.hash();
+        $location.hash("comments");
+        $anchorScroll();
+        $location.hash(oldHash);
     }
 
     function preparePostData() {

@@ -4,6 +4,7 @@ angular
                     'service.hoadialog',
                     "$state",
                     "$stateParams",
+                    "$resource",
                     "documentsResponse",
                     "userDetails",
                     "documentsHelper",
@@ -12,7 +13,7 @@ angular
                     documentsCtrl
                 ]);
 
-function documentsCtrl(dialogProvider, $state, $stateParams, documentsResponse, userDetails, documentsHelper, documentsService, requestedParameters) {
+function documentsCtrl(dialogProvider, $state, $stateParams, $resource, documentsResponse, userDetails, documentsHelper, documentsService, requestedParameters) {
     var vm = this;
     vm.documents = [];
     vm.pages = [];
@@ -76,7 +77,7 @@ function documentsCtrl(dialogProvider, $state, $stateParams, documentsResponse, 
             vm.tabTitle = "Open documents";
         }
 
-        if(vm.isForSending){
+        if (vm.isForSending) {
             vm.tabTitle = "Approved documents"
         }
     }
@@ -104,13 +105,17 @@ function documentsCtrl(dialogProvider, $state, $stateParams, documentsResponse, 
     }
 
     function onDocumentItemClicked(item) {
-        if(vm.isForSending) printableView(item.id);
-        else workflowView(item);
+        if (vm.isForSending) {
+            printableView(item.id);
+        }
+        else {
+            workflowView(item);
+        }
     }
 
     function printableView(docId) {
         console.log(docId);
-        $state.go("workspace.print-view", {id : docId}, {reload:true});
+        $state.go("workspace.print-view", {id : docId}, {reload : true});
     }
 
     function workflowView(item) {
@@ -125,19 +130,30 @@ function documentsCtrl(dialogProvider, $state, $stateParams, documentsResponse, 
             state = "workspace.fixed-view";
         }
 
-        if (!vm.queryParameters.isAssigned) {
-            dialogProvider.getConfirmDialog(getDocument, null, message, title);
+        //Check if clicked document is assigned
+        if (item.assigned) {
+            goToViewer();
         }
         else {
-            goToDrafts();
+            dialogProvider.getConfirmDialog(assignDocument, null, message, title);
         }
 
-        function goToDrafts(response) {
+        function goToViewer(response) {
             $state.go(state, {"id" : item.id});
         }
 
-        function getDocument() {
-            documentsService.assignDocument(item.id, userDetails.userId).then(goToDrafts);
+        function assignDocument() {
+            if (item._links.hasOwnProperty("hoa:assign")) {
+                var url = item._links["hoa:assign"].href;
+                documentsService.assignDocument(url).then(goToViewer, error);
+            }
+            else {
+                error({title : "Error", message : "Please refresh the page"})
+            }
+        }
+
+        function error(dialogContent) {
+            dialogProvider.getInformDialog(null, dialogContent.title, dialogContent.message);
         }
     }
 

@@ -1,0 +1,7 @@
+<md-toast layout="row">
+    <div flex>
+        <md-button class="close-button" ng-click="toast.close()"><i class="fa fa-times iconed-text"></i></md-button>
+        <span>{{toast.message}}</span>
+    </div>
+    <md-button class="action-button" ng-click="toast.action()">{{toast.buttonTitle}}</md-button>
+</md-toast>

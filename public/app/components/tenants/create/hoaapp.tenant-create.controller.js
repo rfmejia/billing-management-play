@@ -15,6 +15,7 @@ function tenantCreateCtrl(tenantsService, tenantHelper, tenantModel, toastSrvc, 
     vm.tenantTemplate = tenantModel.viewModel;
     vm.pageTitle = $state.current.data.title;
     vm.onCreateTenantClicked = onCreateTenantClicked;
+    vm.des = "";
 
     //region FUNCTION_CALL
     function onCreateTenantClicked() {

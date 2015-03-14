@@ -59,7 +59,8 @@ function documentHelper() {
             "amountPaid"    : serverResponse.amountPaid,
             "documentId"    : serverResponse.id,
             "documentTitle" : serverResponse.documentTitle,
-            "tenant"        : serverResponse._embedded.tenant
+            "tenant"        : serverResponse._embedded.tenant,
+            "links"         : serverResponse._links
         };
     }
 

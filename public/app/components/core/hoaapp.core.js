@@ -17,5 +17,7 @@ angular
                 "ui.router",
                 "ui.bootstrap.datetimepicker",
                 "angularSpinner",
-                "angularMoment"
+                "angularMoment",
+                "vAccordion",
+                "fcsa-number"
             ]);

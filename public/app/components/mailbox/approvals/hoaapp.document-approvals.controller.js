@@ -13,11 +13,12 @@ angular
                     'service.hoadialog',
                     '$state',
                     '$stateParams',
+                    '$resource',
                     "service.hoatoasts",
                     approvalsCtrl
                 ]);
 
-function approvalsCtrl(documentsHelper, documentsResponse, userResponse, tenantsResponse, documentsService, commentsHelper, dialogProvider, $state, $stateParams, hoaToasts) {
+function approvalsCtrl(documentsHelper, documentsResponse, userResponse, tenantsResponse, documentsService, commentsHelper, dialogProvider, $state, $stateParams, $resource, hoaToasts) {
     var vm = this;
     vm.document = documentsResponse.viewModel;
     /** Current comment made in this phase of the workflow **/
@@ -44,6 +45,8 @@ function approvalsCtrl(documentsHelper, documentsResponse, userResponse, tenants
     vm.assigned = documentsResponse.viewModel.assigned;
     /** Current user **/
     vm.currentUser = userResponse.userId;
+    /** Document item links **/
+    vm.links = documentsResponse.viewModel.links;
     /** Disables the editing of this document if it's not locked to the user **/
     vm.isDisabled;
     vm.tradeNameColor = {color : "#F44336"}
@@ -68,8 +71,11 @@ function approvalsCtrl(documentsHelper, documentsResponse, userResponse, tenants
      * Laucnhes a dialog for confirmation. If yes, make a network call to unlink user.
      */
     function onUnlinkClicked() {
-        documentsService.assignDocument($stateParams.id, "none")
-            .then(returnToList);
+        if (vm.links.hasOwnProperty("hoa:unassign")) {
+            var url = vm.links["hoa:unassign"].href;
+            var resource = $resource(url);
+            resource.delete().$promise.then(returnToList);
+        }
     }
 
     function returnToList() {
@@ -85,9 +91,7 @@ function approvalsCtrl(documentsHelper, documentsResponse, userResponse, tenants
         };
 
         var error = function(error) {};
-
-        documentsService.moveToBox(documentId, vm.rejectUrl, postData)
-            .then(success);
+        documentsService.moveToBox(vm.rejectUrl).then(success);
     }
 
     function onSubmitClicked() {
@@ -100,14 +104,15 @@ function approvalsCtrl(documentsHelper, documentsResponse, userResponse, tenants
 
         var error = function(error) {};
 
-        documentsService.moveToBox(documentId, vm.submitUrl, postData)
-            .then(success);
+        function submit() {
+            documentsService.moveToBox(vm.submitUrl).then(success, error);
+        }
+        //Save the document first, then submit
+        documentsService.editDocument(documentId, postData).then(submit);
+
     }
 
     function preparePostData() {
-        documentsResponse.viewModel.body.previous = vm.previous;
-        documentsResponse.viewModel.body.thisMonth = vm.thisMonth;
-        documentsResponse.viewModel.body.summary = vm.summary;
         documentsResponse.viewModel.comments = commentsHelper.parseComments(vm.currentComment, vm.comments);
         documentsResponse.viewModel.assigned = vm.currentUser;
     }

@@ -1,28 +1,28 @@
 <md-item flex layout="row">
     <md-button flex
-               class="no-uppercase md-tile-content"
+               class="no-uppercase md-tile-content button-white"
                layout="row"
                ng-click="item.onItemClick()">
         <div flex="15">
-            <h3>{{item.document.forMonth | momentString: "MMMM-YYYY"}}</h3>
+            <h3 class="pull-left">{{item.document.forMonth | momentString: "MMMM-YYYY"}}</h3>
         </div>
-        <div flex="30">
-            <h4>{{item.document.forTenant.tradeName}}</h4>
+        <div flex>
+            <h4 class="pull-right">{{item.document.forTenant.tradeName}}</h4>
         </div>
-        <div flex layout="column" layout-align="start end">
-            <p>
-                Paid: {{item.document.amountPaid}}
-            </p>
-        </div>
-        <div flex layout="column" layout-align="start end">
-            <p>
-                Unpaid: {{item.document.unpaid}}
-            </p>
-        </div>
-        <div flex layout="column" layout-align="start end">
-            <p>
-                Total: {{item.document.total}} {{$parent.$index}}
-            </p>
-        </div>
+        <!--<div flex layout="column" layout-align="start end">-->
+            <!--<p>-->
+                <!--Paid: {{item.document.amountPaid}}-->
+            <!--</p>-->
+        <!--</div>-->
+        <!--<div flex layout="column" layout-align="start end">-->
+            <!--<p>-->
+                <!--Unpaid: {{item.document.unpaid}}-->
+            <!--</p>-->
+        <!--</div>-->
+        <!--<div flex layout="column" layout-align="start end">-->
+            <!--<p>-->
+                <!--Total: {{item.document.total}} {{$parent.$index}}-->
+            <!--</p>-->
+        <!--</div>-->
     </md-button>
 </md-item>

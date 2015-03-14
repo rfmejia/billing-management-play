@@ -27,7 +27,7 @@
 }
 
 .draftsSection .tenant-tradename,
-.draftsSection .invoice-total{
+.draftsSection .invoice-total {
     color: #009688
 }
 
@@ -60,8 +60,7 @@ md-card-content.subtotal .form-control {
 }
 
 md-card-content.subtotal
-
-.comments-box{
+.comments-box {
     margin-left: 0px;
     margin-right: 0px;
     margin-top: 80px;
@@ -72,6 +71,95 @@ md-card-content.subtotal
     padding: 0px;
 }
 
+/*
+Drafts specific
+*/
+
+/*accordion*/
+.drafts .vAccordion--default v-accordion {
+    margin-top: 20px;
+    padding-left: 20px;
+}
+
+.drafts .vAccordion--default v-pane {
+    -webkit-transition: -webkit-transform 0.5s;
+    transition: transform 0.5s;
+}
+
+.drafts .vAccordion--default v-pane.is-expanded > v-pane-header {
+    border-bottom-color: #009688;
+}
+
+.drafts .vAccordion--default v-pane.is-expanded > v-pane-header::after {
+    -webkit-transform: rotate(90deg);
+    -ms-transform: rotate(90deg);
+    transform: rotate(90deg);
+    opacity: 0;
+}
+
+.drafts .vAccordion--default v-pane.is-expanded > v-pane-header::before {
+    -webkit-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    transform: rotate(0deg);
+}
+
+.drafts .vAccordion--default v-pane.is-expanded > v-pane-content > div {
+    opacity: 1;
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+}
+
+.drafts .vAccordion--default v-pane.is-expanded-add > v-pane-content, .drafts .vAccordion--default v-pane.is-expanded-remove > v-pane-content {
+    -webkit-transition: max-height 0.5s;
+    transition: max-height 0.5s;
+}
+
+.drafts .vAccordion--default v-pane-header {
+    padding: 5px 0;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #D8D8D8;
+    -webkit-transition: color 0.25s, border-color 0.5s;
+    transition: color 0.25s, border-color 0.5s;
+}
+
+.drafts .vAccordion--default v-pane-header::after,
+.drafts .vAccordion--default v-pane-header::before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 50%;
+    right: 0;
+    width: 10px;
+    height: 1px;
+    background-color: #009688;
+    -webkit-transform-origin: 50% 50%;
+    -ms-transform-origin: 50% 50%;
+    transform-origin: 50% 50%;
+    -webkit-transition: all 0.25s;
+    transition: all 0.25s;
+}
+
+.drafts .vAccordion--default v-pane-header::before {
+    -webkit-transform: rotate(-90deg);
+    -ms-transform: rotate(-90deg);
+    transform: rotate(-90deg);
+}
+
+.drafts .vAccordion--default v-pane-header:hover,
+.drafts .vAccordion--default v-pane-header:focus {
+    color: #009688;
+}
+
+.drafts .vAccordion--default v-pane-content > div {
+    padding-bottom: 20px;
+    will-change: transform, opacity;
+    opacity: 0;
+    -webkit-transform: translate3d(0, 30px, 0);
+    transform: translate3d(0, 30px, 0);
+    -webkit-transition: -webkit-transform 0.5s, opacity 0.5s;
+    transition: transform 0.5s, opacity 0.5s;
+}
+/*accordion*/
 
 
 

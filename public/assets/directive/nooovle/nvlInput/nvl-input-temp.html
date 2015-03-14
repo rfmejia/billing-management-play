@@ -1,0 +1,16 @@
+<md-input-container ng-form="b">
+    <label>{{inputCtrl.field.title}}</label>
+    <input
+            name="input"
+            type="text"
+            ng-required="inputCtrl.field.required"
+            ng-disabled="isDisabled"
+            ng-model="inputCtrl.field.value"
+            ng-change="inputCtrl.changeFunction()"/>
+    <div ng-messages="b.input.$error">
+        <div ng-message="required">This is required</div>
+        <div ng-message="number">Oops! Numbers only please.</div>
+        <div ng-message="min">Positive numbers only</div>
+        <div ng-message="email">Please enter a valid-email address</div>
+    </div>
+</md-input-container>
