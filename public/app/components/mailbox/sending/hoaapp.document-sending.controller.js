@@ -15,7 +15,9 @@ angular
 function printCtrl(docsHelper, docsSrvc, docsResponse, $state, $stateParams) {
     var vm = this;
     vm.document = docsResponse.viewModel;
+    console.log(docsResponse);
 
+    vm.onSentClicked = onSentClicked;
 
     activate();
 
@@ -24,6 +26,13 @@ function printCtrl(docsHelper, docsSrvc, docsResponse, $state, $stateParams) {
     }
 
     //region FUNCTION_CALL
+    function onSentClicked() {
+        var url = docsResponse.viewModel.nextAction.nextBox.url;
+        docsSrvc.moveToBox(url).then(moveToReports);
+    }
 
+    function moveToReports() {
+        $state.go("workspace.reports");
+    }
     //endregion
 }

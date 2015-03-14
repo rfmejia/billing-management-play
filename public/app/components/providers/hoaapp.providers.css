@@ -1,0 +1,7 @@
+md-toast .md-button.close-button{
+    min-width: 0;
+}
+
+md-toast .md-button.action-button{
+    color: #E91E63;
+}

@@ -3,8 +3,8 @@
         <h5>{{dialogCtrl.title}}</h5>
         <p>{{dialogCtrl.message}}</p>
         <div class="md-actions" layout="row">
-            <md-button class="md-warn md-hue-3" ng-click="dialogCtrl.cancel()">Cancel</md-button>
-            <md-button ng-click="dialogCtrl.confirm()">Okay</md-button>
+            <md-button class="md-warn" ng-click="dialogCtrl.cancel()">Cancel</md-button>
+            <md-button md-theme="list" class="md-raised md-primary" ng-click="dialogCtrl.confirm()">Okay</md-button>
         </div>
     </md-content>
 </md-dialog>

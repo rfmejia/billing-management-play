@@ -1,50 +1,21 @@
-<div>
-    <section ng-if="commentsView.isRecentOnly && !commentsView.isEmpty && commentsView.comments.hasRecent">
-        <div ng-show="commentsView.isVisible" class="hoa-fade-right">
-            <p class="comment-top">Fresh comments</p>
-            <md-whiteframe class="comments recent-only md-whiteframe-z4" layout="column">
-                <p><span class="comments-header">{{commentsView.comments.all[0].userName}}</span> said <span
-                        class="pull-right comment-date">{{commentsView.comments.all[0].timestamp | momentString : 'MMM-DD-YY HH:mm'}}</span>
-                </p>
-
+<v-accordion class="vAccordion--default" multiple>
+    <v-pane>
+        <v-pane-header>
+            <h5><i class="fa fa-comment-o iconed-text"></i>Comments ({{commentsView.count}})</h5>
+        </v-pane-header>
+        <v-pane-content class="comments-list">
+            <div class="comment-entry" ng-repeat="comment in commentsView.comments.all">
+                <p><span class="comments-header">{{comment.userName}} said</span>
+                    <span class="comment-date pull-right">{{comment.timestamp | momentString : 'MMM-DD-YYYY HH:mm'}}</span></p>
                 <div class="comments-content" layout="row" layout-align="start start">
-                    <div flex="100">
+                    <div flex>
                         <i class="fa fa-quote-left pull-left"></i>
 
-                        <p>{{commentsView.comments.all[0].comment}} </p>
+                        <p>{{comment.comment}}</p>
                     </div>
                 </div>
-
-                <div>
-                    <md-button flex="30" class="pull-right" ng-click="commentsView.toggleVisibility()" remove-focus>
-                        <i class="fa fa-check"></i>Got it!
-                    </md-button>
-                </div>
-            </md-whiteframe>
-        </div>
-    </section>
-
-    <div ng-if="!commentsView.isRecentOnly">
-        <md-button remove-focus ng-click="commentsView.toggleVisibility()"><i class="fa fa-comment-o"></i>Comments
-        </md-button>
-        <div ng-show="commentsView.isVisible && !commentsView.isEmpty">
-            <md-whiteframe class="comments md-whiteframe-z4" layout="column">
-                <div flex="100" class="comments-list" ng-repeat="comment in commentsView.comments.all">
-                    <p><span class="comments-header">{{comment.userName}}</span> said <span
-                            class="pull-right comment-date">{{comment.timestamp | momentString : 'MMM-DD-YY HH:mm'}}</span>
-                    </p>
-
-                    <div class="comments-content" layout="row" layout-align="start start">
-                        <div flex="100">
-                            <i class="fa fa-quote-left pull-left"></i>
-
-                            <p>{{comment.comment}} </p>
-                        </div>
-                    </div>
-                    <md-divider class="comments-divider" ng-show="!$last"></md-divider>
-                </div>
-            </md-whiteframe>
-        </div>
-
-    </div>
-</div>
+                <md-divider class="comments-divider" ng-show="!$last"></md-divider>
+            </div>
+        </v-pane-content>
+    </v-pane>
+</v-accordion>

@@ -32,15 +32,20 @@ function config($stateProvider, $urlRouterProvider, $httpProvider, usSpinnerConf
                                 'hue-2'   : '600',
                                 'hue-3'   : 'A100'
                             })
-            .accentPalette('pink', {
-                               'default' : 'A200'
-                           });
+            .accentPalette('pink')
+            .backg;
 
         $mdThemingProvider.theme('bills-dark', 'default')
-            .primaryPalette('teal');
+            .primaryPalette('teal')
+            .accentPalette('pink');
+
+
 
         $mdThemingProvider.theme('list', 'default')
-            .primaryPalette('blue');
+            .primaryPalette('blue')
+            .accentPalette('pink', {
+                               'default' : 'A100'
+                           });
 
         $mdThemingProvider.theme('toolbars', 'default')
             .primaryPalette('blue-grey');
@@ -48,8 +53,13 @@ function config($stateProvider, $urlRouterProvider, $httpProvider, usSpinnerConf
         $mdThemingProvider.theme('tenants', 'default')
             .primaryPalette('light-green');
 
-        $mdThemingProvider.theme('approvals', 'default')
-            .primaryPalette('red');
+        $mdThemingProvider.theme('docs-view', 'default')
+            .primaryPalette('red')
+            .accentPalette('pink');
+
+        $mdThemingProvider.theme('docs-view-inverse', 'default')
+            .primaryPalette('red')
+            .dark();
 
         $mdThemingProvider.theme('reports', 'default')
             .primaryPalette('purple');

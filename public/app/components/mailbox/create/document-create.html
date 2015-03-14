@@ -17,9 +17,8 @@
                         Workflow for <span class="text-accented"> {{documentCreate.selectedTenant.tradeName}} </span> on
                         <span class="text-accented"> {{documentCreate.billingDate | momentString:documentCreate.format}} </span>
                     </p>
-
                 </div>
-                <div layout="row" layout-align="end center" flex>
+                <div layout="row" layout-align="end center">
                     <md-button remove-focus
                                class="no-uppercase button-white"
                                ng-click="documentCreate.onCreateDocumentClicked()"

@@ -9,9 +9,12 @@ angular
 hoaToastProvider.$inject = ["$mdToast"];
 function hoaToastProvider($mdToast) {
     var service = {
-        showSimpleToast : showSimpleToast,
-        showActionToast : showActionToast
+        showSimpleToast     : showSimpleToast,
+        showActionToast     : showActionToast,
+        showPersistentToast : showPersistentToast
     };
+
+    var position = 'top left';
 
     return service;
 
@@ -19,7 +22,7 @@ function hoaToastProvider($mdToast) {
     function showSimpleToast(content) {
         var toast = $mdToast.simple()
             .content(content)
-            .position('top left')
+            .position(position)
             .hideDelay(3000);
 
         return $mdToast.show(toast);
@@ -29,9 +32,39 @@ function hoaToastProvider($mdToast) {
         var toast = $mdToast.simple()
             .content(content)
             .action('OK')
-            .position('top left')
+            .position(position)
             .hideDelay(3000);
         return $mdToast.show(toast);
+    }
+
+    function showPersistentToast(shortMessage, buttonTitle) {
+        var toast = {
+            controller       : persistentCtrl,
+            controllerAs     : "toast",
+            bindToController : true,
+            templateUrl      : 'app/components/providers/persistent.toast.tmpl.html',
+            hideDelay        : 0,
+            position         : position,
+            locals           : {message : shortMessage, buttonTitle : buttonTitle}
+        };
+        return $mdToast.show(toast);
+    }
+
+    function persistentCtrl(message, buttonTitle) {
+        var vm = this;
+
+        vm.close = close;
+        vm.action = action;
+        vm.message = message;
+        vm.buttonTitle = buttonTitle;
+
+        function close() {
+            $mdToast.cancel();
+        }
+
+        function action() {
+            $mdToast.hide();
+        }
     }
 
     //endregion

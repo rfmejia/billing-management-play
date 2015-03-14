@@ -1,11 +1,13 @@
-<md-toolbar  md-theme="tenants" >
+<md-toolbar md-theme="tenants">
     <div class="md-toolbar-tools" layout="row" layout-align="start center">
         <button hide-gt-sm class="menuBtn menuBtn-hamburger">
             <span class="visually-hidden">Menu</span>
         </button>
         <h3 flex class="toolbar-title">{{createCtrl.pageTitle}}</h3>
 
-        <md-button class="filter-button options no-uppercase" ng-disabled="myForm.$invalid" ng-click="createCtrl.onCreateTenantClicked()">
+        <md-button class="filter-button options no-uppercase"
+                   ng-disabled="myForm.$invalid"
+                   ng-click="createCtrl.onCreateTenantClicked()">
             <span><i class="fa fa-floppy-o iconed-text"></i>Save tenant</span></md-button>
     </div>
 
@@ -14,11 +16,32 @@
     <div>
         <md-card flex class="cards-margin bottom-margin">
             <md-card-content>
-                <form name="myForm">
-                    <div class="stacked-inputs" ng-repeat="data in createCtrl.tenantTemplate" ng-form="tenant">
-                        <label class="control-label">{{data.title}}</label>
-                        <nooovle-inputs parent-form="tenant" field="data"></nooovle-inputs>
-                    </div>
+                <form name="myForm" novalidate>
+                    <md-input-container ng-form="a">
+                        <label>Description</label>
+                        <input md-maxlength="30" required name="des" ng-model="createCtrl.des">
+                        <div ng-messages="a.des.$error">
+                            <div ng-message="required">This is required.</div>
+                            <div ng-message="md-maxlength">The name has to be less than 30 characters long.</div>
+                        </div>
+                    </md-input-container>
+                    <md-input-container ng-form="b">
+                        <label>Description</label>
+                        <input md-maxlength="30" required name="des" ng-model="createCtrl.des">
+                        <div ng-messages="b.des.$error">
+                            <div ng-message="required">This is required.</div>
+                            <div ng-message="md-maxlength">The name has to be less than 30 characters long.</div>
+                        </div>
+                    </md-input-container>
+                    <md-input-container>
+                        <label>Description</label>
+                        <input md-maxlength="30" required name="des" ng-model="createCtrl.des">
+                        <div ng-messages="myForm.des.$error">
+                            <div ng-message="required">This is required.</div>
+                            <div ng-message="md-maxlength">The name has to be less than 30 characters long.</div>
+                        </div>
+                    </md-input-container>
+                    <nvl-input field="data" ng-repeat="data in createCtrl.tenantTemplate"></nvl-input>
                 </form>
             </md-card-content>
         </md-card>

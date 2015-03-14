@@ -3,21 +3,27 @@
  */
 angular
     .module('module.mailbox')
-    .controller('controller.approvals', [
-                    'documentsHelper',
-                    'documentsResponse',
-                    'userResponse',
-                    'tenantsResponse',
-                    'documentsService',
-                    'helper.comments',
-                    'service.hoadialog',
-                    '$state',
-                    '$stateParams',
-                    "service.hoatoasts",
-                    approvalsCtrl
-                ]);
+    .controller('controller.approvals', approvalsCtrl);
 
-function approvalsCtrl(documentsHelper, documentsResponse, userResponse, tenantsResponse, documentsService, commentsHelper, dialogProvider, $state, $stateParams, hoaToasts) {
+approvalsCtrl.$inject = [
+    //Resolve
+    'documentsHelper',
+    'documentsResponse',
+    'userResponse',
+    'tenantsResponse',
+    'documentsService',
+    'helper.comments',
+    //Providers
+    'service.hoadialog',
+    "service.hoatoasts",
+    //Shared
+    '$state',
+    '$stateParams',
+    '$resource',
+    "$location",
+    "$anchorScroll"];
+
+function approvalsCtrl(documentsHelper, documentsResponse, userResponse, tenantsResponse, documentsService, commentsHelper, dialogProvider, toastsProvider, $state, $stateParams, $resource, $location, $anchorScroll) {
     var vm = this;
     vm.document = documentsResponse.viewModel;
     /** Current comment made in this phase of the workflow **/
@@ -25,9 +31,9 @@ function approvalsCtrl(documentsHelper, documentsResponse, userResponse, tenants
     /** Previous comments made in different phases of the workflow **/
     vm.comments;
     /** Next box **/
-    vm.submitUrl = documentsResponse.viewModel.nextAction.nextBox.url;
+    vm.nextAction = documentsResponse.viewModel.nextAction.nextBox;
     /** Prev box **/
-    vm.rejectUrl = documentsResponse.viewModel.nextAction.prevBox.url;
+    vm.prevAction = documentsResponse.viewModel.nextAction.prevBox;
     /** Document title for display **/
     vm.documentTitle = documentsResponse.viewModel.documentTitle;
     /** Format used for all dates **/
@@ -44,9 +50,12 @@ function approvalsCtrl(documentsHelper, documentsResponse, userResponse, tenants
     vm.assigned = documentsResponse.viewModel.assigned;
     /** Current user **/
     vm.currentUser = userResponse.userId;
+    /** Document item links **/
+    vm.links = documentsResponse.viewModel.links;
     /** Disables the editing of this document if it's not locked to the user **/
     vm.isDisabled;
-    vm.tradeNameColor = {color : "#F44336"}
+    vm.tradeNameColor = {color : "#F44336"};
+
 
     activate();
 
@@ -61,6 +70,10 @@ function approvalsCtrl(documentsHelper, documentsResponse, userResponse, tenants
         else {
             vm.comments = commentsHelper.parseComments(null, null);
         }
+
+        if (vm.comments.hasRecent) {
+            toastsProvider.showPersistentToast("1 new comment", "view").then(goToComments)
+        }
         vm.isDisabled = (vm.assigned.userId != vm.currentUser);
     }
 
@@ -68,8 +81,11 @@ function approvalsCtrl(documentsHelper, documentsResponse, userResponse, tenants
      * Laucnhes a dialog for confirmation. If yes, make a network call to unlink user.
      */
     function onUnlinkClicked() {
-        documentsService.assignDocument($stateParams.id, "none")
-            .then(returnToList);
+        if (vm.links.hasOwnProperty("hoa:unassign")) {
+            var url = vm.links["hoa:unassign"].href;
+            var resource = $resource(url);
+            resource.delete().$promise.then(returnToList);
+        }
     }
 
     function returnToList() {
@@ -77,39 +93,62 @@ function approvalsCtrl(documentsHelper, documentsResponse, userResponse, tenants
     }
 
     function onRejectClicked() {
-        preparePostData();
-        var postData = documentsHelper.formatServerData(documentsResponse);
+        dialogProvider.getCommentDialog(vm.prevAction.title).then(okayClicked);
+
+        //Save the document first, then submit
+        function okayClicked(comment) {
+            vm.currentComment = comment;
+            preparePostData();
+            var postData = documentsHelper.formatServerData(documentsResponse);
+            documentsService.editDocument(documentId, postData).then(submit, error);
+        }
+
+        function submit() {
+            documentsService.moveToBox(vm.prevAction.url).then(success, error);
+        }
+
         var success = function(response) {
-            hoaToasts.showSimpleToast("Document was returned to the previous phase.");
+            toastsProvider.showSimpleToast('Your document was sent for checking.');
             returnToList();
         };
 
         var error = function(error) {};
-
-        documentsService.moveToBox(documentId, vm.rejectUrl, postData)
-            .then(success);
     }
 
     function onSubmitClicked() {
-        preparePostData();
-        var postData = documentsHelper.formatServerData(documentsResponse);
+        dialogProvider.getCommentDialog(vm.nextAction.title).then(okayClicked);
+
+        //Save the document first, then submit
+        function okayClicked(comment) {
+            vm.currentComment = comment;
+            preparePostData();
+            var postData = documentsHelper.formatServerData(documentsResponse);
+            documentsService.editDocument(documentId, postData).then(submit, error);
+        }
+
+        function submit() {
+            documentsService.moveToBox(vm.nextAction.url).then(success, error);
+        }
+
         var success = function(response) {
-            hoaToasts.showSimpleToast("Your document was sent to the next phase");
+            toastsProvider.showSimpleToast('Your document was sent for checking.');
             returnToList();
         };
 
         var error = function(error) {};
 
-        documentsService.moveToBox(documentId, vm.submitUrl, postData)
-            .then(success);
+    }
+
+    function goToComments() {
+        var oldHash = $location.hash();
+        $location.hash("comments");
+        $anchorScroll();
+        $location.hash(oldHash);
     }
 
     function preparePostData() {
-        documentsResponse.viewModel.body.previous = vm.previous;
-        documentsResponse.viewModel.body.thisMonth = vm.thisMonth;
-        documentsResponse.viewModel.body.summary = vm.summary;
-        documentsResponse.viewModel.comments = commentsHelper.parseComments(vm.currentComment, vm.comments);
-        documentsResponse.viewModel.assigned = vm.currentUser;
+        vm.document.comments = commentsHelper.parseComments(vm.currentComment, vm.comments);
+        vm.document.assigned = vm.currentUser;
     }
 
     //endregion

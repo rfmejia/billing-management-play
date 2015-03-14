@@ -1,31 +1,32 @@
 angular
     .module('module.mailbox')
     .factory('documents.service', [
-        '$q',
-        '$resource',
-        'service.hoalinks',
-        documentSrv
-    ]);
+                 '$q',
+                 '$resource',
+                 'service.hoalinks',
+                 documentSrv
+             ]);
 
 function documentSrv($q, $resource, hoalinks) {
     var service = {
-        getDocument         : getDocument,
-        getDocumentList     : getDocumentList,
-        editDocument        : editDocument,
-        deleteDocument      : deleteDocument,
-        createDocument      : createDocument,
-        assignDocument      : assignDocument,
-        moveToBox           : moveToBox
+        getDocument      : getDocument,
+        getDocumentList  : getDocumentList,
+        editDocument     : editDocument,
+        deleteDocument   : deleteDocument,
+        createDocument   : createDocument,
+        assignDocument   : assignDocument,
+        unassignDocument : unassignDocument,
+        moveToBox        : moveToBox
     };
 
-    var resource		= null;
-    var requestType     = Object.freeze({
-        "QUERY"     : 0,
-        "GET"       : 1,
-        "EDIT"      : 2,
-        "CREATE"    : 3,
-        "DELETE"    : 4
-    });
+    var resource = null;
+    var requestType = Object.freeze({
+                                        "QUERY"  : 0,
+                                        "GET"    : 1,
+                                        "EDIT"   : 2,
+                                        "CREATE" : 3,
+                                        "DELETE" : 4
+                                    });
 
     return service;
 
@@ -58,24 +59,30 @@ function documentSrv($q, $resource, hoalinks) {
         return makeRequest(null, null, data, requestType.CREATE);
     }
 
-    function assignDocument(id, assignee) {
-        var data = {"assigned" : assignee};
-        return makeRequest(id, null, data, requestType.EDIT);
-    }
-
-    function moveToBox(id, url, data) {
-        var deferred = $q.defer();
-
-        var  submitResource = $resource(url, {}, {
-            create  : {method: "POST", isArray: false, headers:{"Content-Type" : "application/json"}}
+    function assignDocument(url) {
+        var res = $resource(url, {}, {
+            put : {
+                method  : "PUT",
+                isArray : false,
+                headers : {"Content-Type" : "application/json"}
+            }
         });
 
-        var submitDocument = function() {
-            submitResource.create(data).$promise
-                .then(success, error);
-        };
+        return res.put().$promise
+    }
 
-        var success = function(response){
+    function unassignDocument(url) {
+        var res = $resource(url);
+        return res.delete().$promise;
+    }
+
+    function moveToBox(url) {
+        var deferred = $q.defer();
+        var submitResource = $resource(url, {}, {
+            move : {method : "POST", isArray : false, headers : {"Content-Type" : "application/json"}}
+        });
+
+        var success = function(response) {
             deferred.resolve(response);
         };
 
@@ -83,18 +90,18 @@ function documentSrv($q, $resource, hoalinks) {
             deferred.reject();
         };
 
-        editDocument(id, data)
-            .then(submitDocument);
+        submitResource.move().$promise
+            .then(success, error);
 
         return deferred.promise;
     }
 
     function createResource(url) {
         resource = $resource(url, {}, {
-            get     : {method: "GET", isArray: false},
-            create  : {method: "POST", isArray: false, headers:{"Content-Type" : "application/json"}},
-            edit    : {method: "PUT", isArray: false, headers:{"Content-Type" : "application/json"}},
-            delete  : {method: "DELETE", isArray: false}
+            get    : {method : "GET", isArray : false},
+            create : {method : "POST", isArray : false, headers : {"Content-Type" : "application/json"}},
+            edit   : {method : "PUT", isArray : false, headers : {"Content-Type" : "application/json"}},
+            delete : {method : "DELETE", isArray : false}
         });
     }
 
@@ -111,7 +118,7 @@ function documentSrv($q, $resource, hoalinks) {
         };
 
         var request = function() {
-            switch(type) {
+            switch (type) {
                 case requestType.GET:
                     resource.get(id).$promise
                         .then(success, error);
@@ -134,7 +141,7 @@ function documentSrv($q, $resource, hoalinks) {
             }
         };
 
-        if(resource ==  null) {
+        if (resource == null) {
             var linksResponse = function(response) {
                 var topUrl = hoalinks.getDocumentsLink() + "/:id";
                 createResource(topUrl);
@@ -143,7 +150,9 @@ function documentSrv($q, $resource, hoalinks) {
 
             hoalinks.getLinks().then(linksResponse);
         }
-        else request();
+        else {
+            request();
+        }
 
         return deferred.promise;
     }

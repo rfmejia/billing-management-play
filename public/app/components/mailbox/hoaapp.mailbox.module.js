@@ -121,7 +121,7 @@ function mailboxModuleConfig($stateProvider) {
             userService       : "service.hoacurrentuser",
             tenantsService    : "service.hoatenants",
             documentsHelper   : 'documents.helper',
-            tenantHelper     : "helper.tenant",
+            tenantHelper      : "helper.tenant",
             apiResponse       : function(documentsService, userService, $stateParams, $q) {
                 var deferred = $q.defer();
                 var documentsPromise = documentsService.getDocument($stateParams.id);

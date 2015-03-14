@@ -31,7 +31,7 @@ function controller(docsHelper, docsSrvc, documents, $state, $q) {
     function activate() {
         vm.allFilter = {title : "All", params : {mailbox : "delivered"}};
         vm.paidFilter = {title : "Paid", params : {mailbox: "delivered", isPaid: true}};
-        vm.unpaidFilter = {title : "Paid", params : {mailbox: "delivered", isPaid: false}};
+        vm.unpaidFilter = {title : "Unpaid", params : {mailbox: "delivered", isPaid: false}};
     }
 
     function onFilterClicked(params) {

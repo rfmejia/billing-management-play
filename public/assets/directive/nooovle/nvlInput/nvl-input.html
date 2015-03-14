@@ -1,0 +1,114 @@
+<div>
+    <div ng-if="inputCtrl.field.datatype == 'dateperiod'"
+         layout="row" layout-align="space-between center">
+        <md-input-container flex ng-form="pseudoForm">
+            <label>{{inputCtrl.field.dates.from.title}}</label> <input type="date"
+                                                                       name="input"
+                                                                       ng-required="inputCtrl.field.required"
+                                                                       ng-model="inputCtrl.field.dates.from.value"
+                                                                       ng-change="inputCtrl.changeFunction()"
+                                                                       ng-disabled="isDisabled"/>
+
+            <div ng-messages="pseudoForm.input.$error">
+                <div ng-message="required">This is required</div>
+                <div ng-message="number">Oops! Numbers only please.</div>
+                <div ng-message="min">Positive numbers only</div>
+                <div ng-message="email">Please enter a valid-email address</div>
+            </div>
+        </md-input-container>
+        <md-input-container flex>
+            <label>{{inputCtrl.field.dates.to.title}}</label> <input type="text"
+                                                                     name="input"
+                                                                     ng-required="inputCtrl.field.required"
+                                                                     ng-model="inputCtrl.field.dates.to.value"
+                                                                     ng-change="inputCtrl.changeFunction()"
+                                                                     ng-disabled="isDisabled"
+                                                                     datepicker-popup="yyyy-MM-dd"
+                                                                     datepicker-mode="year"
+                                                                     min-mode="month"/>
+
+            <div ng-messages="pseudoForm.input.$error" ng-show="pseudoForm.input.$dirty">
+                <div ng-message="required">This is required</div>
+                <div ng-message="number">Oops! Numbers only please. No commas.</div>
+                <div ng-message="min">Positive numbers only</div>
+                <div ng-message="email">Please enter a valid-email address</div>
+            </div>
+
+        </md-input-container>
+    </div>
+    <md-input-container ng-if="inputCtrl.field.datatype != 'dateperiod'" ng-form="pseudoForm">
+        <label>{{inputCtrl.field.title}}</label>
+
+        <input ng-if="inputCtrl.field.datatype == 'text'"
+               name="input"
+               type="text"
+               ng-required="inputCtrl.field.required"
+               ng-disabled="isDisabled"
+               ng-model="inputCtrl.field.value"
+               ng-change="inputCtrl.changeFunction()"
+                />
+
+        <input ng-if="inputCtrl.field.datatype == 'number'"
+               name="input"
+               type="number"
+               min="0" step="1"
+               ng-required="inputCtrl.field.required"
+               ng-disabled="isDisabled"
+               ng-model="inputCtrl.field.value"
+               ng-change="inputCtrl.changeFunction()"
+                />
+
+        <input ng-if="inputCtrl.field.datatype == 'integer'"
+               name="input"
+               type="number"
+               min="0" step="1"
+               ng-required="inputCtrl.field.required"
+               ng-disabled="isDisabled"
+               ng-model="inputCtrl.field.value"
+               ng-change="inputCtrl.changeFunction()"
+                />
+
+        <input ng-if="inputCtrl.field.datatype == 'double'"
+               name="input"
+               type="number"
+               min="0.0" step="0.1"
+               ng-required="inputCtrl.field.required"
+               ng-disabled="isDisabled"
+               ng-model="inputCtrl.field.value"
+               ng-change="inputCtrl.changeFunction()"
+                />
+
+        <input ng-if="inputCtrl.field.datatype == 'currency'"
+               name="input"
+               type="number"
+               min="0.0" step="1"
+               ng-required="inputCtrl.field.required"
+               ng-disabled="isDisabled"
+               ng-model="inputCtrl.field.value"
+               ng-change="inputCtrl.changeFunction()"
+                />
+
+        <input ng-if="inputCtrl.field.datatype == 'string'"
+               name="input"
+               type="text"
+               ng-required="inputCtrl.field.required"
+               ng-disabled="isDisabled"
+               ng-model="inputCtrl.field.value"
+               ng-change="inputCtrl.changeFunction()"
+                />
+
+        <input ng-if="inputCtrl.field.datatype == 'email'"
+               type="text" name="input"
+               ng-required="inputCtrl.field.required"
+               ng-disabled="isDisabled"
+               ng-model="inputCtrl.field.value"
+               ng-change="inputCtrl.changeFunction()"/>
+
+        <div ng-messages="pseudoForm.input.$error">
+            <div ng-message="required">This is required</div>
+            <div ng-message="number">Oops! Numbers only please.</div>
+            <div ng-message="min">Positive numbers only</div>
+            <div ng-message="email">Please enter a valid-email address</div>
+        </div>
+    </md-input-container>
+</div>

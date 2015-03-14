@@ -1,6 +1,7 @@
 .tenant-card p.tenant-tradename {
     font-size: 24px;
     margin-bottom: 0px;
+    text-align: center;
 }
 
 .tenant-card p.billdate {

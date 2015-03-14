@@ -8,7 +8,9 @@ angular
 hoaDialogProvider.$inject = ["$mdDialog"];
 function hoaDialogProvider($mdDialog) {
     var service = {
-        getConfirmDialog : getConfirmDialog
+        getConfirmDialog : getConfirmDialog,
+        getInformDialog  : getInformDialog,
+        getCommentDialog : getCommentDialog
     };
 
     return service;
@@ -24,6 +26,29 @@ function hoaDialogProvider($mdDialog) {
 
                   })
             .then(okayFn, cancelFn);
+    }
+
+    function getInformDialog(okayFn, title, message) {
+        $mdDialog.show(
+            $mdDialog.alert()
+                .title(title)
+                .content(message)
+                .ok("Okay")
+        );
+    }
+
+    function getCommentDialog(box) {
+        return $mdDialog
+            .show(
+            {
+                templateUrl  : "app/components/providers/comment.dialog.tmpl.html",
+                controller   : dialogCommentCtrl,
+                controllerAs : "dialog",
+                locals       : {
+                    box : box
+                }
+            }
+        );
     }
 
     //endregion
@@ -42,5 +67,20 @@ function dialogCtrl($mdDialog, message, title) {
 
     function confirm() {
         $mdDialog.hide();
+    }
+}
+
+function dialogCommentCtrl($mdDialog, box) {
+    var vm = this;
+    vm.box = box;
+    vm.cancel = cancel;
+    vm.send = send;
+
+    function cancel() {
+        $mdDialog.cancel();
+    }
+
+    function send(comment) {
+        $mdDialog.hide(comment);
     }
 }

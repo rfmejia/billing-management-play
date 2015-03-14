@@ -97,3 +97,8 @@ md-whiteframe.billframe {
 md-whiteframe.comments {
     padding: 10px;
 }
+
+body p.bill-date {
+    line-height: 56px;
+    margin: 0 16px;
+}
