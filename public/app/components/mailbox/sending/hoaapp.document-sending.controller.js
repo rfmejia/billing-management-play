@@ -27,9 +27,8 @@ function printCtrl(docsHelper, docsSrvc, docsResponse, $state, $stateParams) {
 
     //region FUNCTION_CALL
     function onSentClicked() {
-        console.log("test");
         var url = docsResponse.viewModel.nextAction.nextBox.url;
-        docsSrvc.moveToBox(null, url, null).then(moveToReports);
+        docsSrvc.moveToBox(url).then(moveToReports);
     }
 
     function moveToReports() {

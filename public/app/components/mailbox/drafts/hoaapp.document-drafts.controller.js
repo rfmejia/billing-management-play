@@ -35,7 +35,7 @@ function draftsCtrl(documentsHelper, documentsResponse, userResponse, tenantsRes
     /** Previous comments made in different phases of the workflow **/
     vm.comments;
     /** Next box **/
-    vm.submitUrl = documentsResponse.viewModel.nextAction.nextBox.url;
+    vm.nextAction = documentsResponse.viewModel.nextAction.nextBox;
     /** Document title for display **/
     vm.documentTitle = documentsResponse.viewModel.documentTitle;
     /** Format used for all dates **/
@@ -123,7 +123,7 @@ function draftsCtrl(documentsHelper, documentsResponse, userResponse, tenantsRes
      * Submits the current document to the next box
      */
     function onSubmitClicked() {
-        dialogProvider.getCommentDialog("For Checking").then(okayClicked);
+        dialogProvider.getCommentDialog(vm.nextAction.title).then(okayClicked);
 
         //Save the document first, then submit
         function okayClicked(comment) {
@@ -134,7 +134,7 @@ function draftsCtrl(documentsHelper, documentsResponse, userResponse, tenantsRes
         }
 
         function submit() {
-            documentsService.moveToBox(vm.submitUrl).then(success, error);
+            documentsService.moveToBox(vm.nextAction.url).then(success, error);
         }
 
         var success = function(response) {
@@ -215,15 +215,14 @@ function draftsCtrl(documentsHelper, documentsResponse, userResponse, tenantsRes
      */
     function computeSubtotal() {
         var total = 0;
-
         angular.forEach(vm.previous.sections, function(subsection) {
-            if(subsection.hasOwnProperty("total")) total += subsection.sectionTotal.value;
+            if(subsection.hasOwnProperty("sectionTotal")) total += subsection.sectionTotal.value;
         });
         vm.previous.summary.value = total;
 
         total = 0;
         angular.forEach(vm.thisMonth.sections, function(subsection) {
-            if(subsection.hasOwnProperty("total")) total += subsection.sectionTotal.value;
+            if(subsection.hasOwnProperty("sectionTotal")) total += subsection.sectionTotal.value;
         });
         vm.thisMonth.summary.value = total;
 
@@ -233,7 +232,6 @@ function draftsCtrl(documentsHelper, documentsResponse, userResponse, tenantsRes
     }
 
     function goToComments() {
-        console.log("go");
         var oldHash = $location.hash();
         $location.hash("comments");
         $anchorScroll();

@@ -7,11 +7,17 @@
     <md-content>
         <form name="comment">
             <md-input-container>
-                <label>Attach comment</label> <textarea name="comment"
+                <label>Attach comment</label> <textarea name="text"
                                                         ng-model="dialog.comment"
                                                         cols="60"
-                                                        rows="2"></textarea>
+                                                        rows="2"
+                                                        md-maxlength="140"></textarea>
+
             </md-input-container>
+
+            <div ng-messages="comment.text.$error">
+                <div ng-message="md-maxlength">The comment has to be less than 140 characters long.</div>
+            </div>
         </form>
     </md-content>
     <div class="md-actions" layout="row">
@@ -20,7 +26,10 @@
                 Cancel
             </md-button>
         </div>
-        <md-button class="md-primary" ng-click="dialog.send(dialog.comment)" remove-focus>
+        <md-button ng-disabled="comment.text.$invalid"
+                   class="md-primary"
+                   ng-click="dialog.send(dialog.comment)"
+                   remove-focus>
             Send
         </md-button>
     </div>

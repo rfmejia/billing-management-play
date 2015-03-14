@@ -26,6 +26,8 @@ angular
 function hoaCommentsCtrl() {
 
     var vm = this;
+    vm.count = vm.comments.all.length;
+    console.log(vm.count);
     activate();
     function activate() {
     }

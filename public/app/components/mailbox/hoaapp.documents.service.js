@@ -78,7 +78,6 @@ function documentSrv($q, $resource, hoalinks) {
 
     function moveToBox(url) {
         var deferred = $q.defer();
-
         var submitResource = $resource(url, {}, {
             move : {method : "POST", isArray : false, headers : {"Content-Type" : "application/json"}}
         });

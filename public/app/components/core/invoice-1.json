@@ -9,11 +9,10 @@
       "title": "Previous Charges",
       "sections": [
         {
-          "total": 0,
           "sectionTotal": {
             "id": "_previous_total",
             "title": "Previous charges total",
-            "datatype": "double",
+            "datatype": "currency",
             "value": null,
             "required": true
           },
@@ -21,14 +20,14 @@
             {
               "id": "_overdue_charges",
               "title": "Overdue Charges",
-              "datatype": "double",
+              "datatype": "currency",
               "value": null,
               "required": true
             },
             {
               "id": "_other_charges",
               "title": "Other Charges",
-              "datatype": "double",
+              "datatype": "currency",
               "required": false,
               "value": null
             }
@@ -48,11 +47,10 @@
       "sections": [
         {
           "title": "Rent",
-          "total": null,
           "sectionTotal": {
             "id": "_rent_total",
             "title": "Rent total",
-            "datatype": "double",
+            "datatype": "currency",
             "value": null,
             "required": true
           },
@@ -60,28 +58,28 @@
             {
               "id": "rent_base",
               "title": "Base",
-              "datatype": "double",
+              "datatype": "currency",
               "required": false,
               "value": null
             },
             {
               "id": "rent_vat",
               "title": "+12% VAT",
-              "datatype": "double",
+              "datatype": "currency",
               "required": false,
               "value": null
             },
             {
               "id": "rent_subtotal",
               "title": "Subtotal",
-              "datatype": "double",
+              "datatype": "currency",
               "required": false,
               "value": null
             },
             {
               "id": "rent_whtax",
               "title": "-5% Withholding Tax",
-              "datatype": "double",
+              "datatype": "currency",
               "required": false,
               "value": null
             }
@@ -89,11 +87,10 @@
         },
         {
           "title": "Electricity",
-          "total": null,
           "sectionTotal": {
             "id": "_electricity_total",
             "title": "Electricity total",
-            "datatype": "double",
+            "datatype": "currency",
             "value": null,
             "required": true
           },
@@ -178,11 +175,10 @@
         },
         {
           "title": "Water",
-          "total": null,
           "sectionTotal": {
             "id": "_water_total",
             "title": "Water total",
-            "datatype": "double",
+            "datatype": "currency",
             "value": null,
             "required": true
           },
@@ -253,11 +249,10 @@
         },
         {
           "title": "Cusa",
-          "total": null,
           "sectionTotal": {
             "id": "_cusa_total",
             "title": "Cusa total",
-            "datatype": "double",
+            "datatype": "currency",
             "value": null,
             "required": true
           },

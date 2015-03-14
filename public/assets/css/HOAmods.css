@@ -405,6 +405,10 @@ i.iconed-text {
     text-align: right;
 }
 
+div.static-bill-entry-guide {
+    line-height: 1;
+}
+
 .static-bill-entry-guide,
 .entry-value-guide {
     border-bottom: 1px dotted rgba(225, 225, 225, .87);

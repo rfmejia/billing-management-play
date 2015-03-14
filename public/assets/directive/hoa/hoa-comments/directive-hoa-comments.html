@@ -1,12 +1,12 @@
 <v-accordion class="vAccordion--default" multiple>
     <v-pane>
         <v-pane-header>
-            <h5><i class="fa fa-comment-o iconed-text"></i>Comments</h5>
+            <h5><i class="fa fa-comment-o iconed-text"></i>Comments ({{commentsView.count}})</h5>
         </v-pane-header>
         <v-pane-content class="comments-list">
             <div class="comment-entry" ng-repeat="comment in commentsView.comments.all">
                 <p><span class="comments-header">{{comment.userName}} said</span>
-                    <span class="comment-date pull-right">{{comment.timestamp | momentString : 'MMM-DD-YY HH:mm'}}</span></p>
+                    <span class="comment-date pull-right">{{comment.timestamp | momentString : 'MMM-DD-YYYY HH:mm'}}</span></p>
                 <div class="comments-content" layout="row" layout-align="start start">
                     <div flex>
                         <i class="fa fa-quote-left pull-left"></i>
