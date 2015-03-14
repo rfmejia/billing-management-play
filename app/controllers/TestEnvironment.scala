@@ -3,7 +3,7 @@ package controllers
 import com.nooovle._
 import com.nooovle.slick.ConnectionFactory
 import com.nooovle.slick.models._
-import org.joda.time.DateTime
+import org.joda.time.YearMonth
 import org.locker47.json.play._
 import play.api._
 import play.api.libs.json._
@@ -35,7 +35,7 @@ class TestEnvironment(override implicit val env: RuntimeEnvironment[User])
       users.firstOption map { creator =>
         Tenant.findByTradeName("Jumpin' Juicers").map { tenant =>
           Document.insert(creator, "Document 2", "invoice-1", tenant.id,
-            DateTime.parse("2015-02-01"), testDocument)
+            YearMonth.parse("2015-02"), testDocument)
         }
       }
       // Tenant.findByTradeName("Beast Burgers").map { tenant =>

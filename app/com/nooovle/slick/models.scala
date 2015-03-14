@@ -140,7 +140,8 @@ class DocumentsModel(tag: Tag) extends Table[Document](tag, "DOCUMENTS") {
   def creator = column[String]("CREATOR")
   def created = column[DateTime]("CREATED", O.NotNull)
   def forTenant = column[Int]("FOR_TENANT")
-  def forMonth = column[DateTime]("FOR_MONTH", O.NotNull)
+  def year = column[Int]("YEAR", O.NotNull)
+  def month = column[Int]("MONTH", O.NotNull)
   def amountPaid = column[JsObject]("AMOUNT_PAID", O.NotNull)
   def body = column[JsObject]("BODY", O.NotNull)
   def comments = column[JsObject]("COMMENTS", O.NotNull)
@@ -154,7 +155,7 @@ class DocumentsModel(tag: Tag) extends Table[Document](tag, "DOCUMENTS") {
   def _creator = foreignKey("USER_FK", creator, models.users)(_.userId, onDelete = ForeignKeyAction.SetNull)
   def _forTenant = foreignKey("TENANT_FK", forTenant, models.tenants)(_.id, onDelete = ForeignKeyAction.SetNull)
 
-  def * = (id, serialId, title, docType, mailbox, creator, created, forTenant, forMonth, amountPaid, body, comments, assigned, lastAction, preparedAction, checkedAction, approvedAction) <> (Document.tupled, Document.unapply)
+  def * = (id, serialId, title, docType, mailbox, creator, created, forTenant, year, month, amountPaid, body, comments, assigned, lastAction, preparedAction, checkedAction, approvedAction) <> (Document.tupled, Document.unapply)
 }
 
 class MailTokensModel(tag: Tag) extends Table[MailToken](tag, "MAIL_TOKENS") {

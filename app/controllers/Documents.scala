@@ -3,7 +3,7 @@ package controllers
 import com.nooovle._
 import com.nooovle.slick.models.{ modelTemplates, documents }
 import com.nooovle.slick.ConnectionFactory
-import org.joda.time.DateTime
+import org.joda.time.{ DateTime, YearMonth }
 import org.locker47.json.play._
 import play.api.libs.json._
 import play.api._
@@ -77,7 +77,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
     } getOrElse NotFound("Document cannot be found")
   }
 
-  def list(offset: Int = 0, limit: Int = 10, mailbox: String, forTenant: Int, creator: String, assigned: Option[String], forMonth: Option[String], isPaid: Option[Boolean], others: Option[Boolean], isAssigned: Option[Boolean]) = SecuredAction { implicit request =>
+  def list(offset: Int = 0, limit: Int = 10, mailbox: String, forTenant: Int, creator: String, assigned: Option[String], year: Option[Int], month: Option[Int], isPaid: Option[Boolean], others: Option[Boolean], isAssigned: Option[Boolean]) = SecuredAction { implicit request =>
 
     val ds = ConnectionFactory.connect withSession { implicit session =>
       // Filtering level 1: Query-level filters
@@ -91,6 +91,8 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
         .filter(d => d.forTenant === forTenant || forTenant < 1)
         .filter(d => d.creator === creator || creator.isEmpty)
         .filter(d => d.assigned === assigned || assigned.isEmpty)
+        .filter(d => d.year === year || year.isEmpty)
+        .filter(d => d.month === month || month.isEmpty)
         .drop(offset).take(limit).sortBy(_.created.desc)
 
       query.list
@@ -98,14 +100,6 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
 
     // Filtering level 2: Post-fetch, pre-mapping to JS value
     // TODO: if parsing fails, return bad request
-    def dateFilter(date: DateTime): Boolean = {
-      forMonth.map(dateParam => Try(DateTime.parse(dateParam)) match {
-        case Success(parsedDate) =>
-          date.getMonthOfYear == parsedDate.getMonthOfYear &&
-            date.getYear == parsedDate.getYear
-        case Failure(_) => false
-      }) getOrElse true
-    }
 
     def isAssignedFilter(assigned: Option[String]) = {
       (assigned, isAssigned) match {
@@ -124,7 +118,6 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
     }
 
     val objs = ds
-      .filter(d => dateFilter(d.forMonth))
       .filter(d => isAssignedFilter(d.assigned))
       .filter(d => othersFilter(d.assigned))
       .map { d =>
@@ -137,7 +130,9 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
           .withField("docType", d.docType)
           .withField("mailbox", d.mailbox)
           .withField("forTenant", tenantToJsObject(d.forTenant))
-          .withField("forMonth", d.forMonth)
+          .withField("forMonth", new YearMonth(d.year, d.month))
+          .withField("year", d.year)
+          .withField("month", d.month)
           .withField("amountPaid", d.amountPaid)
           .withField("creator", d.creator)
           .withField("assigned", (d.assigned.map { userToJsObject(_) }))
@@ -164,7 +159,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       objs.filter(d => d \ "isPaid" == JsBoolean(b))
     } getOrElse objs
 
-    val self = routes.Documents.list(offset, limit, mailbox, forTenant, creator, assigned, forMonth, isPaid, others, isAssigned)
+    val self = routes.Documents.list(offset, limit, mailbox, forTenant, creator, assigned, year, month, isPaid, others, isAssigned)
     val blank = HalJsObject.create(self.absoluteURL())
       .withCurie("hoa", Application.defaultCurie)
       .withLink("profile", "collection")
@@ -195,7 +190,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       (json \ "forMonth").asOpt[String],
       (json \ "body").asOpt[JsObject]) match {
         case (Some(title), Some(docType), Some(forTenant), Some(forMonth), Some(body)) =>
-          Try(DateTime.parse(forMonth)) match {
+          Try(YearMonth.parse(forMonth)) match {
             case Success(date) =>
               Document.insert(request.user, title, docType, forTenant, date, body) match {
                 case Success(doc) =>
@@ -335,7 +330,9 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       .withField("creator", d.creator)
       .withField("assigned", (d.assigned.map { userToJsObject(_) }))
       .withField("forTenant", tenantToJsObject(d.forTenant))
-      .withField("forMonth", d.forMonth)
+      .withField("forMonth", new YearMonth(d.year, d.month))
+      .withField("year", d.year)
+      .withField("month", d.month)
       .withField("amountPaid", d.amountPaid)
       .withField("hoa:nextBox", Workflow.next(d.mailbox).map(_.asJsObject))
       .withField("hoa:prevBox", Workflow.prev(d.mailbox).map(_.asJsObject))
