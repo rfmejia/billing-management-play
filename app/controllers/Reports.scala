@@ -48,19 +48,19 @@ class Reports(override implicit val env: RuntimeEnvironment[User])
 
   }
 
-  def list(offset: Int, limit: Int) = SecuredAction { implicit request =>
+  def list(offset: Int, limit: Int) = Action { implicit request =>
     // TODO: Get all unique years and months in documents
     // and list each as a collection of reports
     // Note: No 'select distinct' in Slick for now, so do it in-memory
 
-    val dateStrings = ConnectionFactory.connect withSession { implicit session =>
-      documents.map(_.forMonth).list
+    val dates = ConnectionFactory.connect withSession { implicit session =>
+      documents.sortBy(_.forMonth.desc).map(_.forMonth).list
     }
 
-    val years = dateStrings.groupBy(_.getYear).map(_._1)
-    val months = dateStrings.groupBy(_.getMonthOfYear).map(_._1)
-    val links = for (year <- years; month <- months) yield {
-      JsString(routes.Reports.show(year, month).absoluteURL())
+    val links: List[JsString] = dates.map {
+      case date => (date.getYear, date.getMonthOfYear)
+    } .distinct.map {
+      case (year, month) => JsString(routes.Reports.show(year, month).absoluteURL())
     }
 
     Ok {
