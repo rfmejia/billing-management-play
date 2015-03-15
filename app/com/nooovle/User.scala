@@ -82,12 +82,15 @@ object User extends ((String, String, Option[String], Option[String], Option[Str
   }
 
   def updateRoles(userId: String, rs: Set[String]): Try[String] = Try {
+    if(!(rs subsetOf Roles.All)) throw new IllegalStateException(
+      "Some roles are not valid: " + (rs -- Roles.All))
+
     ConnectionFactory.connect withTransaction { implicit session =>
       val query = for (u <- users if u.userId === userId) yield u
 
       if (!query.exists.run) throw new IndexOutOfBoundsException
       else { // Update user
-        // TODO: Delete existing roles
+        // Delete existing roles
         userRoles.filter(ur => ur.userId === userId).delete
 
         rs foreach (role => roles.insertOrUpdate(role))

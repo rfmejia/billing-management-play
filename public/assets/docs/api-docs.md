@@ -180,7 +180,7 @@ The following sections are default routes supplied by [SecureSocial](http://secu
 
 - [ ] Prefix admin-only routes with */api/admin*, and...
 - [ ] ...perform **token authentication and authorization** on all routes
-- [ ] Create and use typesafe roles
+- [x] Create and use typesafe roles
 - [x] Separate link for role admin with User editing
 - [x] Remove editing of `roles` field from PUT /users/:userId
 - [x] Separate link for document un/assignment

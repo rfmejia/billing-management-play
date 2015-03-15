@@ -250,7 +250,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
         // Permissions: currently assigned user if in drafts, or administrator
         val hasAccess = {
           doc.assigned.contains(request.user.userId) && doc.mailbox == Workflow.drafts.name ||
-            User.findRoles(request.user.userId).contains("admin")
+            User.findRoles(request.user.userId).contains(Roles.Admin.id)
         }
 
         if (hasAccess) {
@@ -282,7 +282,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
         // Permissions: currently assigned user, or administrator
         val hasAccess = {
           d.assigned.contains(request.user.userId) ||
-            User.findRoles(request.user.userId).contains("admin")
+            User.findRoles(request.user.userId).contains(Roles.Admin.id)
         }
 
         if (hasAccess) {

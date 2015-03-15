@@ -2,7 +2,7 @@ package controllers
 
 import com.nooovle.slick.ConnectionFactory
 import com.nooovle.slick.models.userRoles
-import com.nooovle.User
+import com.nooovle.{ Roles, User }
 import org.joda.time.DateTime
 import play.api._
 import play.api.data.Form
@@ -27,7 +27,7 @@ class Invitation(override implicit val env: RuntimeEnvironment[User]) extends Ba
   def startInvite() = {
     val hasAdmin = ConnectionFactory.connect withSession { implicit session =>
       (for {
-        ur <- userRoles if ur.roleName === "admin"
+        ur <- userRoles if ur.roleName === Roles.Admin.id
         u <- ur.user
       } yield ur).exists.run
     }
@@ -37,7 +37,7 @@ class Invitation(override implicit val env: RuntimeEnvironment[User]) extends Ba
   }
 
   private def SecureInvitePage = CSRFAddToken {
-    SecuredAction(WithRoles("admin")) { implicit request =>
+    SecuredAction(WithRoles(Roles.Admin.id)) { implicit request =>
 
       if (SecureSocial.enableRefererAsOriginalUrl) {
         SecureSocial.withRefererAsOriginalUrl(Ok(customViewTemplate.getStartInvitePage(invitationForm)))
@@ -63,10 +63,10 @@ trait BaseInvitation[U] extends securesocial.controllers.BaseRegistration[U] wit
   val invitationForm: Form[InvitationInfo] = Form(
     mapping(
       "email" -> email.verifying(nonEmpty),
-      "encoder" -> boolean,
-      "checker" -> boolean,
-      "approver" -> boolean,
-      "admin" -> boolean)(InvitationInfo.apply)(InvitationInfo.unapply))
+      Roles.Encoder.id -> boolean,
+      Roles.Checker.id -> boolean,
+      Roles.Approver.id -> boolean,
+      Roles.Admin.id -> boolean)(InvitationInfo.apply)(InvitationInfo.unapply))
 
   lazy val customViewTemplate = env.viewTemplates match {
     case custom: CustomViewTemplates => custom
@@ -115,10 +115,10 @@ trait BaseInvitation[U] extends securesocial.controllers.BaseRegistration[U] wit
       case inv: InvitationMailToken =>
         def f(b: Boolean, s: String): Set[String] = if (b) Set(s) else Set.empty
         val roles: Set[String] =
-          f(inv.isEncoder, "encoder") ++
-            f(inv.isChecker, "checker") ++
-            f(inv.isApprover, "approver") ++
-            f(inv.isAdmin, "admin")
+          f(inv.isEncoder, Roles.Encoder.id) ++
+            f(inv.isChecker, Roles.Checker.id) ++
+            f(inv.isApprover, Roles.Approver.id) ++
+            f(inv.isAdmin, Roles.Admin.id)
         Future.fromTry(User.updateRoles(userId, roles))
       case _ => Future.successful("Not an invitation, nothing saved")
     }
