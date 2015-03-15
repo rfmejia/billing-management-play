@@ -177,24 +177,21 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
     ((json \ "title").asOpt[String],
       (json \ "docType").asOpt[String],
       (json \ "forTenant").asOpt[Int],
-      (json \ "forMonth").asOpt[String],
+      (json \ "year").asOpt[Int],
+      (json \ "month").asOpt[Int],
       (json \ "body").asOpt[JsObject]) match {
-        case (Some(title), Some(docType), Some(forTenant), Some(forMonth), Some(body)) =>
-          Try(DateTime.parse(forMonth)) match {
-            case Success(date) =>
-              val yearMonth = new YearMonth(date.getYear, date.getMonthOfYear)
-              Document.insert(request.user, title, docType, forTenant, yearMonth, body) match {
-                case Success(doc) =>
-                  val link = routes.Documents.show(doc.id).absoluteURL()
-                  val body = documentToHalJsObject(doc)
-                  Created(body.asJsValue).withHeaders("Location" -> link)
-                case Failure(err) =>
-                  Logger.error(s"Error in creating document '${title}'", err)
-                  InternalServerError(err.getMessage)
-              }
-            case Failure(msg) =>
-              BadRequest("The supplied date is invalid, please format to ISO8601")
+        case (Some(title), Some(docType), Some(forTenant), Some(year), Some(month), Some(body)) => {
+          val yearMonth = new YearMonth(year, month)
+          Document.insert(request.user, title, docType, forTenant, yearMonth, body) match {
+            case Success(doc) =>
+              val link = routes.Documents.show(doc.id).absoluteURL()
+              val body = documentToHalJsObject(doc)
+              Created(body.asJsValue).withHeaders("Location" -> link)
+            case Failure(err) =>
+              Logger.error(s"Error in creating document '${title}'", err)
+              InternalServerError(err.getMessage)
           }
+        }
         case _ =>
           BadRequest("Some required values are missing. Please check your request.")
       }
