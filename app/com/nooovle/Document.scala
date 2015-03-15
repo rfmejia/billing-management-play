@@ -51,7 +51,7 @@ object Document extends ((Int, Option[String], String, String, String, String, D
 
   def insert(creator: User, title: String, docType: String, forTenant: Int, forMonth: YearMonth, body: JsObject): Try[Document] = {
     val creationTime = new DateTime()
-    val doc = Document(0, None, title, docType, Workflow.start.name, creator.userId,
+    val doc = Document(0, None, title, docType, Mailbox.start.name, creator.userId,
       creationTime, forTenant, forMonth.getYear, forMonth.getMonthOfYear, defaultAmountPaid, body, JsObject(Seq.empty), Some(creator.userId))
 
     ConnectionFactory.connect withSession { implicit session =>

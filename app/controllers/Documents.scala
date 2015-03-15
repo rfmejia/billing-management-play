@@ -27,56 +27,6 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
     }
   }
 
-  def moveMailbox(id: Int, mailbox: String) = SecuredAction { implicit request =>
-    Document.findById(id) map {
-      oldDoc =>
-        // TODO: Only the assigned user can move this mailbox
-        // And that assigned user has the correct privileges, or if user is admin
-        (Workflow.find(oldDoc.mailbox), Workflow.find(mailbox)) match {
-          case (Some(oldBox), Some(newBox)) =>
-            Document.update(oldDoc.copy(mailbox = newBox.name, assigned = None)) match {
-              case Success(newDoc) =>
-                val msg = s"Moved document from '${oldBox.title}' to '${newBox.title}'"
-                ActionLog.log(request.user.userId, newDoc.id, msg) map { log =>
-                  // Check if the target box is the next box in the workflow
-                  // To properly log for movements
-                  if (Option(newBox) == Workflow.next(oldBox.name)) {
-                    oldBox match {
-                      case Workflow.drafts =>
-                        Document.logPreparedAction(log)
-                      case Workflow.forChecking =>
-                        Document.logCheckedAction(log)
-                      case Workflow.forApproval =>
-                        Document.logApprovedAction(log)
-                      case _ => Document.logLastAction(log)
-                    }
-                  } else { // Clear existing logs, if any
-                    val (clearPrepared, clearChecked, clearApproved) = newBox match {
-                      case Workflow.drafts => (true, true, true)
-                      case Workflow.forChecking => (false, true, true)
-                      case Workflow.forApproval => (false, false, true)
-                      case _ => (false, false, false)
-                    }
-
-                    Document.update(
-                      newDoc.copy(
-                        preparedAction = if (clearPrepared) None else newDoc.preparedAction,
-                        checkedAction = if (clearChecked) None else newDoc.checkedAction,
-                        approvedAction = if (clearApproved) None else newDoc.approvedAction)) match {
-                        case Success(_) => Document.logLastAction(log)
-                        case Failure(err) => InternalServerError(err.getMessage)
-                      }
-                  }
-                }
-                NoContent
-              case Failure(err) => InternalServerError(err.getMessage)
-            }
-          case (None, _) => NotFound("Current mailbox cannot be found")
-          case (_, None) => NotFound("Target mailbox cannot be found")
-        }
-    } getOrElse NotFound("Document cannot be found")
-  }
-
   def list(offset: Int = 0, limit: Int = 10, mailbox: String, forTenant: Int, creator: String, assigned: Option[String], year: Option[Int], month: Option[Int], isPaid: Option[Boolean], others: Option[Boolean], isAssigned: Option[Boolean]) = SecuredAction { implicit request =>
 
     val ds = ConnectionFactory.connect withSession { implicit session =>
@@ -87,7 +37,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       // TODO: Check if adding the limit here and filters in other levels may affect
       // the final result (items.length < limit)
       val query = documents
-        .filter(d => (d.mailbox inSetBind Workflow.getSubboxes(mailbox)) || mailbox.isEmpty)
+        .filter(d => (d.mailbox inSetBind Mailbox.getSubboxes(mailbox)) || mailbox.isEmpty)
         .filter(d => d.forTenant === forTenant || forTenant < 1)
         .filter(d => d.creator === creator || creator.isEmpty)
         .filter(d => d.assigned === assigned || assigned.isEmpty)
@@ -247,7 +197,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       doc =>
         // Permissions: currently assigned user if in drafts, or administrator
         val hasAccess = {
-          doc.assigned.contains(request.user.userId) && doc.mailbox == Workflow.drafts.name ||
+          doc.assigned.contains(request.user.userId) && doc.mailbox == Mailbox.drafts.name ||
             User.findRoles(request.user.userId).contains(Roles.Admin.id)
         }
 
@@ -265,11 +215,16 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
   def assignToMe(id: Int) = SecuredAction { implicit request =>
     Document.findById(id) match {
       case Some(d) =>
+        // Forbid if someone is assigned
+        d.assigned match {
+          case None =>
         val newDoc = d.copy(assigned = Some(request.user.userId))
         Document.update(newDoc) match {
           case Success(id) => NoContent
           case Failure(err) => InternalServerError(err.getMessage)
         }
+        case Some(_) => Forbidden("This document is currently assigned to someone")
+      }
       case None => NotFound
     }
   }
@@ -324,16 +279,16 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       .withField("year", d.year)
       .withField("month", d.month)
       .withField("amountPaid", d.amountPaid)
-      .withField("hoa:nextBox", Workflow.next(d.mailbox).map(_.asJsObject))
-      .withField("hoa:prevBox", Workflow.prev(d.mailbox).map(_.asJsObject))
+      .withField("hoa:nextBox", Mailbox.next(d.mailbox).map(_.asJsObject))
+      .withField("hoa:prevBox", Mailbox.prev(d.mailbox).map(_.asJsObject))
       .withField("body", d.body)
       .withField("comments", d.comments)
 
-    val obj1 = Workflow.next(d.mailbox) map { box =>
-      obj.withLink("hoa:nextBox", routes.Documents.moveMailbox(d.id, box.name).absoluteURL())
+    val obj1 = Mailbox.next(d.mailbox) map { box =>
+      obj.withLink("hoa:nextBox", routes.Workflow.moveMailbox(d.id, box.name).absoluteURL())
     } getOrElse obj
-    val obj2 = Workflow.prev(d.mailbox) map { box =>
-      obj1.withLink("hoa:prevBox", routes.Documents.moveMailbox(d.id, box.name).absoluteURL())
+    val obj2 = Mailbox.prev(d.mailbox) map { box =>
+      obj1.withLink("hoa:prevBox", routes.Workflow.moveMailbox(d.id, box.name).absoluteURL())
     } getOrElse obj1
 
     val obj3: HalJsObject = Tenant.findById(d.forTenant) map { t =>

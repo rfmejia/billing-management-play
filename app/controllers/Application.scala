@@ -34,7 +34,7 @@ class Application(override implicit val env: RuntimeEnvironment[User])
           Some("List of document templates"))
         .withLink("hoa:webapp", routes.Assets.at("index.html").absoluteURL(),
           Some("Web application"))
-        .withLink("hoa:mailboxes", routes.Application.listMailboxes.absoluteURL(),
+        .withLink("hoa:mailboxes", routes.Workflow.listMailboxes.absoluteURL(),
           Some("Listing of mailboxes and description of workflow"))
         .withLink("hoa:logout", "/logout")
         .withLink("hoa:currentUser", routes.Users.showCurrentUser().absoluteURL(),
@@ -59,17 +59,6 @@ class Application(override implicit val env: RuntimeEnvironment[User])
       case None =>
         Logger.warn(s"File '${filename}' was not found")
         NotFound
-    }
-  }
-
-  def listMailboxes = SecuredAction { implicit request =>
-    Ok {
-      val self = routes.Application.listMailboxes
-      val obj = HalJsObject.create(self.absoluteURL())
-        .withCurie("hoa", Application.defaultCurie)
-        .withLink("profile", "collection")
-        .withField("mailbox", Workflow.asJsObject)
-      obj.asJsValue
     }
   }
 }
