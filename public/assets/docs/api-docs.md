@@ -162,11 +162,15 @@ The following sections are default routes supplied by [SecureSocial](http://secu
 
 - v0.2 (t. 2015-03-19, r.)
 
-	Beta version for initial user acceptance testing
+	- User invitation workflow
+	- Monthly reports API
+	- Additional document filters
+	- Authorization per action
+	- Document logs
 
 - v0.1 (r. 2015.03.02)
 
-	Working draft
+	- Working draft
 
 
 <a id="tasks"></a>
@@ -188,8 +192,8 @@ The following sections are default routes supplied by [SecureSocial](http://secu
 ### Backend
 
 - [ ] Generate serial number upon approval
-- [x] Log document updates (as specific as possible)
 - [ ] Limited deletion **after issuing serial number** (must not be permanently deleted)
+- [x] Log document updates (as specific as possible)
 - [x] Audit cascade deletions in models
 - [x] Changed amountPaid from double to JsObject, as the basis of reports
 
@@ -222,6 +226,6 @@ The following sections are default routes supplied by [SecureSocial](http://secu
 
 ### Reports
 
-- [ ] Summary of the *TOTAL* Rental, Electricity, Water, CUSA charged *every month*
-- [ ] Summary of the *PAID* Rental, Electricity, Water, CUSA *every month*
-- [ ] Summary of the *UNPAID* Rental, Electricity, Water, CUSA *every month*
+- [x] Summary of the *TOTAL* Rental, Electricity, Water, CUSA charged *every month*
+- [x] Summary of the *PAID* Rental, Electricity, Water, CUSA *every month*
+- [x] Summary of the *UNPAID* Rental, Electricity, Water, CUSA *every month*
