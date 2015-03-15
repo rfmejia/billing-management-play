@@ -180,9 +180,10 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       (json \ "forMonth").asOpt[String],
       (json \ "body").asOpt[JsObject]) match {
         case (Some(title), Some(docType), Some(forTenant), Some(forMonth), Some(body)) =>
-          Try(YearMonth.parse(forMonth)) match {
+          Try(DateTime.parse(forMonth)) match {
             case Success(date) =>
-              Document.insert(request.user, title, docType, forTenant, date, body) match {
+              val yearMonth = new YearMonth(date.getYear, date.getMonthOfYear)
+              Document.insert(request.user, title, docType, forTenant, yearMonth, body) match {
                 case Success(doc) =>
                   val link = routes.Documents.show(doc.id).absoluteURL()
                   val body = documentToHalJsObject(doc)
