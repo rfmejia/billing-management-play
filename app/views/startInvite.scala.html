@@ -28,19 +28,19 @@
             <p class="input-xlarge">@Messages("hoa.invite.roles.title")</p>
             <div class="well">
                 @CSRF.formField
-                @checkbox(inviteForm("encoder"), '_label -> Messages("hoa.invite.roles.encoder"),
+                @checkbox(inviteForm(com.nooovle.Roles.Encoder.id), '_label -> Messages("hoa.invite.roles.encoder"),
                     '_showConstraints -> false)
 
                 @CSRF.formField
-                @checkbox(inviteForm("checker"), '_label -> Messages("hoa.invite.roles.checker"),
+                @checkbox(inviteForm(com.nooovle.Roles.Checker.id), '_label -> Messages("hoa.invite.roles.checker"),
                     '_showConstraints -> false)
 
                 @CSRF.formField
-                @checkbox(inviteForm("approver"), '_label -> Messages("hoa.invite.roles.approver"),
+                @checkbox(inviteForm(com.nooovle.Roles.Approver.id), '_label -> Messages("hoa.invite.roles.approver"),
                     '_showConstraints -> false)
 
                 @CSRF.formField
-                @checkbox(inviteForm("admin"), '_label -> Messages("hoa.invite.roles.admin"),
+                @checkbox(inviteForm(com.nooovle.Roles.Admin.id), '_label -> Messages("hoa.invite.roles.admin"),
                     '_showConstraints -> false)
             </div>
 

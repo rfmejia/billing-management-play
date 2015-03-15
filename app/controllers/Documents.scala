@@ -3,7 +3,7 @@ package controllers
 import com.nooovle._
 import com.nooovle.slick.models.{ modelTemplates, documents }
 import com.nooovle.slick.ConnectionFactory
-import org.joda.time.DateTime
+import org.joda.time.{ DateTime, YearMonth }
 import org.locker47.json.play._
 import play.api.libs.json._
 import play.api._
@@ -77,7 +77,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
     } getOrElse NotFound("Document cannot be found")
   }
 
-  def list(offset: Int = 0, limit: Int = 10, mailbox: String, forTenant: Int, creator: String, assigned: Option[String], forMonth: Option[String], isPaid: Option[Boolean], others: Option[Boolean], isAssigned: Option[Boolean]) = SecuredAction { implicit request =>
+  def list(offset: Int = 0, limit: Int = 10, mailbox: String, forTenant: Int, creator: String, assigned: Option[String], year: Option[Int], month: Option[Int], isPaid: Option[Boolean], others: Option[Boolean], isAssigned: Option[Boolean]) = SecuredAction { implicit request =>
 
     val ds = ConnectionFactory.connect withSession { implicit session =>
       // Filtering level 1: Query-level filters
@@ -91,6 +91,8 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
         .filter(d => d.forTenant === forTenant || forTenant < 1)
         .filter(d => d.creator === creator || creator.isEmpty)
         .filter(d => d.assigned === assigned || assigned.isEmpty)
+        .filter(d => d.year === year || year.isEmpty)
+        .filter(d => d.month === month || month.isEmpty)
         .drop(offset).take(limit).sortBy(_.created.desc)
 
       query.list
@@ -98,14 +100,6 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
 
     // Filtering level 2: Post-fetch, pre-mapping to JS value
     // TODO: if parsing fails, return bad request
-    def dateFilter(date: DateTime): Boolean = {
-      forMonth.map(dateParam => Try(DateTime.parse(dateParam)) match {
-        case Success(parsedDate) =>
-          date.getMonthOfYear == parsedDate.getMonthOfYear &&
-            date.getYear == parsedDate.getYear
-        case Failure(_) => false
-      }) getOrElse true
-    }
 
     def isAssignedFilter(assigned: Option[String]) = {
       (assigned, isAssigned) match {
@@ -124,10 +118,11 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
     }
 
     val objs = ds
-      .filter(d => dateFilter(d.forMonth))
       .filter(d => isAssignedFilter(d.assigned))
       .filter(d => othersFilter(d.assigned))
       .map { d =>
+        implicit val doc = d
+
         val link = routes.Documents.show(d.id)
         val obj = HalJsObject.create(link.absoluteURL())
           .withLink("profile", "hoa:document")
@@ -137,34 +132,24 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
           .withField("docType", d.docType)
           .withField("mailbox", d.mailbox)
           .withField("forTenant", tenantToJsObject(d.forTenant))
-          .withField("forMonth", d.forMonth)
+          .withField("forMonth", new YearMonth(d.year, d.month))
+          .withField("year", d.year)
+          .withField("month", d.month)
           .withField("amountPaid", d.amountPaid)
           .withField("creator", d.creator)
           .withField("assigned", (d.assigned.map { userToJsObject(_) }))
 
-        val withTotal = Templates.getTotal(d) match {
-          case Right(total) =>
-            val unpaid = total - 0
-            obj.withField("isPaid", unpaid <= 0)
-              .withField("unpaid", unpaid)
-              .withField("total", total)
-          case Left(warning) =>
-            Logger.warn(warning)
-            obj.withField("total", JsNull)
-              .withField("warning", warning)
-        }
-
-        val withAssignLinks = addAssignLinks(d, withTotal)
+        val withAssignLinks = appendAmounts(appendAssignLinks(obj))
 
         withAssignLinks.asJsValue
       }
 
     // Filtering level 3: Post-mapping to JS value
     val withIsPaid = isPaid map { b =>
-      objs.filter(d => d \ "isPaid" == JsBoolean(b))
+      objs.filter(d => d \ "amounts" \ "isPaid" == JsBoolean(b))
     } getOrElse objs
 
-    val self = routes.Documents.list(offset, limit, mailbox, forTenant, creator, assigned, forMonth, isPaid, others, isAssigned)
+    val self = routes.Documents.list(offset, limit, mailbox, forTenant, creator, assigned, year, month, isPaid, others, isAssigned)
     val blank = HalJsObject.create(self.absoluteURL())
       .withCurie("hoa", Application.defaultCurie)
       .withLink("profile", "collection")
@@ -173,7 +158,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       .withLink("hoa:templates", routes.Templates.list().absoluteURL(),
         Some("List of document templates"))
       .withField("_template", createForm)
-      .withField("count", ds.length)
+      .withField("count", withIsPaid.length)
       .withField("offset", offset)
       .withField("limit", limit)
 
@@ -195,7 +180,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       (json \ "forMonth").asOpt[String],
       (json \ "body").asOpt[JsObject]) match {
         case (Some(title), Some(docType), Some(forTenant), Some(forMonth), Some(body)) =>
-          Try(DateTime.parse(forMonth)) match {
+          Try(YearMonth.parse(forMonth)) match {
             case Success(date) =>
               Document.insert(request.user, title, docType, forTenant, date, body) match {
                 case Success(doc) =>
@@ -265,7 +250,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
         // Permissions: currently assigned user if in drafts, or administrator
         val hasAccess = {
           doc.assigned.contains(request.user.userId) && doc.mailbox == Workflow.drafts.name ||
-            User.findRoles(request.user.userId).contains("admin")
+            User.findRoles(request.user.userId).contains(Roles.Admin.id)
         }
 
         if (hasAccess) {
@@ -297,7 +282,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
         // Permissions: currently assigned user, or administrator
         val hasAccess = {
           d.assigned.contains(request.user.userId) ||
-            User.findRoles(request.user.userId).contains("admin")
+            User.findRoles(request.user.userId).contains(Roles.Admin.id)
         }
 
         if (hasAccess) {
@@ -311,13 +296,15 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
     }
   }
 
-  private def addAssignLinks(doc: Document, obj: HalJsObject)(implicit request: RequestHeader): HalJsObject =
+  private def appendAssignLinks(obj: HalJsObject)(implicit request: RequestHeader, doc: Document): HalJsObject =
     doc.assigned match {
       case Some(_) => obj.withLink("hoa:unassign", routes.Documents.unassign(doc.id).absoluteURL())
       case None => obj.withLink("hoa:assign", routes.Documents.assignToMe(doc.id).absoluteURL())
     }
 
   private def documentToHalJsObject(d: Document)(implicit req: RequestHeader): HalJsObject = {
+    implicit val doc = d
+
     val self = routes.Documents.show(d.id).absoluteURL()
     val obj = HalJsObject.create(self)
       .withCurie("hoa", Application.defaultCurie)
@@ -335,7 +322,9 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       .withField("creator", d.creator)
       .withField("assigned", (d.assigned.map { userToJsObject(_) }))
       .withField("forTenant", tenantToJsObject(d.forTenant))
-      .withField("forMonth", d.forMonth)
+      .withField("forMonth", new YearMonth(d.year, d.month))
+      .withField("year", d.year)
+      .withField("month", d.month)
       .withField("amountPaid", d.amountPaid)
       .withField("hoa:nextBox", Workflow.next(d.mailbox).map(_.asJsObject))
       .withField("hoa:prevBox", Workflow.prev(d.mailbox).map(_.asJsObject))
@@ -365,27 +354,45 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       obj2.withEmbedded(embedded.withField("tenant", tenant.asJsValue))
     } getOrElse obj2
 
-    val withTotal = Templates.getTotal(d) match {
-      case Right(total) =>
-        val unpaid = total - 0
-        obj3.withField("isPaid", unpaid <= 0)
-          .withField("unpaid", unpaid)
-          .withField("total", total)
-      case Left(warning) =>
-        Logger.warn(warning)
-        obj3.withField("total", JsNull)
-          .withField("warning", warning)
-    }
-
-    val withActions = withTotal
+    val withActions = appendAmounts(obj3)
       .withField("lastAction", d.lastAction flatMap (actionToJsObject(_)))
       .withField("preparedAction", d.preparedAction flatMap (actionToJsObject(_)))
       .withField("checkedAction", d.checkedAction flatMap (actionToJsObject(_)))
       .withField("approvedAction", d.approvedAction flatMap (actionToJsObject(_)))
 
-    val withAssignLinks = addAssignLinks(d, withActions)
+    val withAssignLinks = appendAssignLinks(withActions)
 
     withAssignLinks
+  }
+
+  def appendAmounts(obj: HalJsObject)(implicit doc: Document): HalJsObject = {
+    if (doc.docType == "invoice-1") {
+      val previous = Templates.extractSection(doc, "previous")
+      val rent = Templates.extractSection(doc, "rent")
+      val electricity = Templates.extractSection(doc, "electricity")
+      val water = Templates.extractSection(doc, "water")
+      val cusa = Templates.extractSection(doc, "cusa")
+
+      val isPaid: Boolean =
+        List(previous, rent, electricity, water, cusa)
+          .foldLeft(true)(_ && _.isPaid)
+
+      obj.withField("amounts",
+        HalJsObject.empty
+          .withField("isPaid", JsBoolean(isPaid))
+          .withField("sections", JsArray(List(
+            JsObject(Seq("name" -> JsString("previous"),
+              "amounts" -> previous.asJsObject)),
+            JsObject(Seq("name" -> JsString("rent"),
+              "amounts" -> rent.asJsObject)),
+            JsObject(Seq("name" -> JsString("electricity"),
+              "amounts" -> electricity.asJsObject)),
+            JsObject(Seq("name" -> JsString("water"),
+              "amounts" -> water.asJsObject)),
+            JsObject(Seq("name" -> JsString("cusa"),
+              "amounts" -> cusa.asJsObject)))))
+          .asJsValue)
+    } else obj
   }
 
   def userToJsObject(userId: String): JsObject =

@@ -58,14 +58,14 @@ Request bodies are expected to conform to the supplied templates.
 
 User IDs in this system are email addresses. These cannot be changed.
 
-| Method   | URL                  | Parameters    | Permissions | Description |
-|----------|----------------------|---------------|-------------|-------------|
-| GET      | /api/users           | offset, limit | `*`         | Summarize all users
-| GET      | /api/users/me        |               | `c`         | Show full info about currently logged on user
-| GET      | /api/users/:id       | user ID       | `*`         | Show full user info
-| PUT      | /api/users/:id       | user ID       | `c`, `Ad`   | Edit user info using `edit` template shown in /api/users/:id
-| DELETE   | /api/users/:id       | user ID       | `Ad`        | Remove user from system (isolated deletion)
-| PUT      | /api/users/:id/roles | user ID       | `Ad`        | Edit user roles
+| Method   | URL                        | Parameters    | Permissions | Description |
+|----------|----------------------------|---------------|-------------|-------------|
+| GET      | /api/users                 | offset, limit | `*`         | Summarize all users
+| GET      | /api/users/me              |               | `c`         | Show full info about currently logged on user
+| GET      | /api/users/:id             | user ID       | `*`         | Show full user info
+| PUT      | /api/users/:id             | user ID       | `c`, `Ad`   | Edit user info using `edit` template shown in /api/users/:id
+| DELETE   | /api/users/:id             | user ID       | `Ad`        | Remove user from system (isolated deletion)
+| PUT      | /api/admin/users/:id/roles | user ID       | `Ad`        | Edit user roles
 
 #### Documents
 
@@ -109,6 +109,16 @@ Documents are created for a specific tenant/month combination, hence these field
 | GET      | /api/templates          | offset, limit | `*`         | Show all document templates available in the system
 | GET      | /api/templates/:docType | docType       | `*`         | Show particular document type
 
+
+#### Reports
+
+Documents are created for a specific tenant/month combination, hence these fields cannot be edited after creation.
+
+| Method   | URL                       | Parameters    | Permissions | Description |
+|----------|---------------------------|---------------|-------------|-------------|
+| GET      | /api/reports              | offset, limit | `*`         | List all available reports
+| GET      | /api/reports/:year/:month | year, month   | `*`         | Show report for a given year and month
+
 <a id="routes/auth"></a>
 #### Authentication
 
@@ -127,8 +137,8 @@ The following sections are default routes supplied by [SecureSocial](http://secu
 
 ##### User registration and password handling
 
-	GET      /signup
-	POST     /signup
+	GET      /admin/invite
+	POST     /admin/invite
 	GET      /signup/:token
 	POST     /signup/:token
 	GET      /password
@@ -152,11 +162,15 @@ The following sections are default routes supplied by [SecureSocial](http://secu
 
 - v0.2 (t. 2015-03-19, r.)
 
-	Beta version for initial user acceptance testing
+	- User invitation workflow
+	- Monthly reports API
+	- Additional document filters
+	- Authorization per action
+	- Document logs
 
 - v0.1 (r. 2015.03.02)
 
-	Working draft
+	- Working draft
 
 
 <a id="tasks"></a>
@@ -166,7 +180,7 @@ The following sections are default routes supplied by [SecureSocial](http://secu
 
 - [ ] Prefix admin-only routes with */api/admin*, and...
 - [ ] ...perform **token authentication and authorization** on all routes
-- [ ] Create and use typesafe roles
+- [x] Create and use typesafe roles
 - [x] Separate link for role admin with User editing
 - [x] Remove editing of `roles` field from PUT /users/:userId
 - [x] Separate link for document un/assignment
@@ -178,8 +192,8 @@ The following sections are default routes supplied by [SecureSocial](http://secu
 ### Backend
 
 - [ ] Generate serial number upon approval
-- [x] Log document updates (as specific as possible)
 - [ ] Limited deletion **after issuing serial number** (must not be permanently deleted)
+- [x] Log document updates (as specific as possible)
 - [x] Audit cascade deletions in models
 - [x] Changed amountPaid from double to JsObject, as the basis of reports
 
@@ -212,6 +226,6 @@ The following sections are default routes supplied by [SecureSocial](http://secu
 
 ### Reports
 
-- [ ] Summary of the *TOTAL* Rental, Electricity, Water, CUSA charged *every month*
-- [ ] Summary of the *PAID* Rental, Electricity, Water, CUSA *every month*
-- [ ] Summary of the *UNPAID* Rental, Electricity, Water, CUSA *every month*
+- [x] Summary of the *TOTAL* Rental, Electricity, Water, CUSA charged *every month*
+- [x] Summary of the *PAID* Rental, Electricity, Water, CUSA *every month*
+- [x] Summary of the *UNPAID* Rental, Electricity, Water, CUSA *every month*

@@ -14,17 +14,14 @@
    
     <!-- Styles -->
     <link href="http://lukaszwatroba.github.io/valitycss/dist/vality.min.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/0.8.2/angular-material.min.css">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.2/paper/bootstrap.min.css">
     <!-- <link rel="stylesheet" href="./bower/valitycss/dist/vality.css"> -->
     <link href="./dist/v-accordion.css" rel="stylesheet">
 
     <!-- Scripts -->
-    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.13/angular.min.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.13/angular-animate.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular-animate.min.js"></script>
     <!-- <script src="./bower/angular/angular.js"></script> -->
     <!-- <script src="./bower/angular-animate/angular-animate.js"></script> -->
-    <script src="https://ajax.googleapis.com/ajax/libs/angular_material/0.8.2/angular-material.min.js"></script>
     <script src="./dist/v-accordion.js"></script>
     <script src="./demo/app.js"></script>
   </head>
@@ -44,24 +41,6 @@
         <hr>
 
       </header>
-      <div>
-                  <h4 class="u-marginVm">Allows multiple sections open at once</h4>
-     
-
-          <v-accordion class="vAccordion--default" multiple>
-
-            <v-pane expanded="$first" id="o1">
-              <v-pane-header id="p2">
-                <h5>Test</h5>
-              </v-pane-header>
-
-              <v-pane-content id="p2">
-                <p>Test</p>
-              </v-pane-content>
-            </v-pane>
-
-          </v-accordion>
-      </div>
 
       <div class="Grid Grid--gutters md-Grid--2col">
         <div class="Grid-cell u-marginBl">
@@ -93,6 +72,7 @@
 
           </v-accordion>
 
+
           <div class="ButtonGroup ButtonGroup--hz ButtonGroup--collapse u-marginVm">
             <div class="ButtonGroup-item">
               <button class="Button Button--default" ng-click="accordionA.toggle(0)">Toogle first</button>
@@ -104,7 +84,33 @@
         </div>
 
         <div class="Grid-cell u-marginBl">
+          <h4 class="u-marginVm">Allows multiple sections open at once</h4>
+     
 
+          <v-accordion class="vAccordion--default" multiple control="accordionB">
+
+            <v-pane ng-repeat="pane in panes" expanded="$first" id="pane1{{$index}}">
+              <v-pane-header id="pane2{{$index}}-header" aria-controls="pane2{{$index}}-content">
+                <h5>{{ pane.header }}</h5>
+              </v-pane-header>
+
+              <v-pane-content id="pane2{{$index}}-content" aria-labelledby="pane2{{$index}}-header">
+                <p>{{ pane.content }}</p>
+
+                <v-accordion multiple ng-if="pane.subpanes">
+                  <v-pane ng-repeat="subpane in pane.subpanes" expanded="$first">
+                    <v-pane-header id="pane3{{$index}}-header" aria-controls="pane3{{$index}}-content">
+                      <h5>{{ subpane.header }}</h5>
+                    </v-pane-header>
+                    <v-pane-content id="pane3{{$index}}-content" aria-labelledby="pane3{{$index}}-header">
+                      <p>{{ subpane.content }}</p>
+                    </v-pane-content>
+                  </v-pane>
+                </v-accordion>
+              </v-pane-content>
+            </v-pane>
+
+          </v-accordion>
 
           
           <div class="ButtonGroup ButtonGroup--hz ButtonGroup--collapse u-marginVm">

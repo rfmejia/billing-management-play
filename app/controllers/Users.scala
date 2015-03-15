@@ -37,7 +37,7 @@ class Users(override implicit val env: RuntimeEnvironment[User])
             .withField("roles", rs)
 
           val withEditRoleLink =
-            if (User.findRoles(request.user.userId).contains("admin"))
+            if (User.findRoles(request.user.userId).contains(Roles.Admin.id))
               obj.withLink("hoa:editRoles", routes.Users.editRoles(u.userId).absoluteURL())
             else obj
 
@@ -95,7 +95,7 @@ class Users(override implicit val env: RuntimeEnvironment[User])
       }
   }
 
-  def editRoles(userId: String) = SecuredAction(WithRoles("admin"))(parse.json) {
+  def editRoles(userId: String) = SecuredAction(WithRoles(Roles.Admin.id))(parse.json) {
     implicit request =>
       val json = request.body
       (json \ "roles").asOpt[Seq[String]] match {
@@ -111,7 +111,7 @@ class Users(override implicit val env: RuntimeEnvironment[User])
       }
   }
 
-  def delete(userId: String) = SecuredAction(WithRoles("admin")) { implicit request =>
+  def delete(userId: String) = SecuredAction(WithRoles(Roles.Admin.id)) { implicit request =>
     val deleted = ConnectionFactory.connect withSession { implicit session =>
       val query = for (u <- users if u.userId === userId) yield u
       query.delete

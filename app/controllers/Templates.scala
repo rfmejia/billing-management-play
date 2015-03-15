@@ -1,14 +1,11 @@
 package controllers
 
-import scala.slick.driver.H2Driver.simple._
-import scala.util.{ Try, Success, Failure }
-
-import org.locker47.json.play._
-
 import com.nooovle._
-
+import org.locker47.json.play._
 import play.api._
 import play.api.libs.json._
+import scala.slick.driver.H2Driver.simple._
+import scala.util.{ Try, Success, Failure }
 import securesocial.core.RuntimeEnvironment
 
 class Templates(override implicit val env: RuntimeEnvironment[User])
@@ -61,17 +58,39 @@ object Templates {
   // NOTE: The following is a hard-coded lookup of total values.
   // Either standardize the field in the document type(s) or have a
   // template registration system
-  def getTotal(d: Document): Either[String, Double] = {
-    if (d.docType == "invoice-1") {
-      if (d.body \ "summary" \ "id" == JsString("invoice_summary")) {
 
-        d.body \ "summary" \ "value" match {
-          case JsNumber(value) => Right(value.doubleValue)
-          case _ => Left(s"Invoice summary value is not a number")
-        }
-      } else Left(s"Cannot find invoice_summary field in '${d.docType}'")
-    } else Left(s"The document type '${d.docType}' is not registered")
+  def doubleOrZero(value: JsValue): Double = value match {
+    case JsNumber(x) => x.doubleValue
+    case JsNull => 0.0
+    case _ =>
+      Logger.warn(s"Supplied value '${value.toString}' is a valid number")
+      0.0
   }
+
+  def extractWith(extractor: Document => Either[String, Amounts])(doc: Document): Amounts =
+    extractor(doc)
+      .fold(
+        warning => {
+          Logger.warn(warning)
+          Amounts.Zero
+        }, amount => amount)
+
+  def extractSection(d: Document, s: String): Amounts = extractWith({
+    doc =>
+      if (doc.docType == "invoice-1") {
+        val total: Double = {
+          val fieldName = s"_${s}_total"
+
+          (doc.body \\ "sectionTotal")
+            .find(_ \ "id" == JsString(fieldName))
+            .map(_ \ "value")
+            .map(doubleOrZero)
+            .getOrElse(0.0)
+        }
+        val paid: Double = doubleOrZero(doc.amountPaid \ s)
+        Right(Amounts(total, paid))
+      } else Left(s"The document type '${doc.docType}' is not registered")
+  })(d)
 
   lazy val invoice1: JsObject = {
     val filename = "public/assets/templates/invoice-1.json"

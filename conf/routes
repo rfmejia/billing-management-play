@@ -24,7 +24,7 @@ DELETE   /api/users/:userId            @controllers.Users.delete(userId: String)
 # Documents
 POST     /api/documents/:id/:box       @controllers.Documents.moveMailbox(id: Int, box: String)
 
-GET      /api/documents                @controllers.Documents.list(offset: Int ?= 0, limit: Int ?= 10, mailbox: String ?= "", forTenant: Int ?= -1, creator: String ?= "", assigned: Option[String] ?= None, forMonth: Option[String] ?= None, isPaid: Option[Boolean] ?= None, others: Option[Boolean] ?= None, isAssigned: Option[Boolean] ?= None)
+GET      /api/documents                @controllers.Documents.list(offset: Int ?= 0, limit: Int ?= 10, mailbox: String ?= "", forTenant: Int ?= -1, creator: String ?= "", assigned: Option[String] ?= None, year: Option[Int] ?= None, month: Option[Int] ?= None, isPaid: Option[Boolean] ?= None, others: Option[Boolean] ?= None, isAssigned: Option[Boolean] ?= None)
 GET      /api/documents/:id            @controllers.Documents.show(id: Int)
 POST     /api/documents                @controllers.Documents.create
 PUT      /api/documents/:id            @controllers.Documents.edit(id: Int)
@@ -43,13 +43,9 @@ GET      /api/setupTestEnvironment     @controllers.TestEnvironment.setup
 GET      /api/testFail                 @controllers.TestEnvironment.fail
 
 # Reports
-GET      /api/reports                  @controllers.Reports.list(offset: Int ?= 0, limit: Int ?= 10)
-GET      /api/reports/:year/:month     @controllers.Reports.show(year: Int, month: Int)
+GET      /api/reports                  @controllers.Reports.show(year: Int, month: Int)
 
 # Admin routes
-GET      /admin/invite                 @controllers.Invitation.startInvite
-POST     /admin/invite                 @controllers.Invitation.handleStartInvite
-
 PUT      /api/admin/users/:userId/roles @controllers.Users.editRoles(userId: String)
 
 # ---- SecureSocial (master-SNAPSHOT) routes ----
@@ -60,8 +56,9 @@ GET      /login                        @securesocial.controllers.LoginPage.login
 GET      /logout                       @securesocial.controllers.LoginPage.logout
 
 # User registration and password handling
-#GET      /signup                       @securesocial.controllers.Registration.startSignUp
-#POST     /signup                       @securesocial.controllers.Registration.handleStartSignUp
+GET      /admin/invite                 @controllers.Invitation.startInvite
+POST     /admin/invite                 @controllers.Invitation.handleStartInvite
+
 GET      /signup/:token                @securesocial.controllers.Registration.signUp(token)
 POST     /signup/:token                @controllers.Invitation.handleSignUp(token)
 GET      /password                     @securesocial.controllers.PasswordChange.page

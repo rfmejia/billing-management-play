@@ -4,7 +4,7 @@ import com.nooovle.ModelInfo._
 import com.nooovle.slick.ConnectionFactory
 import com.nooovle.slick.models.{ actionLogs, documents }
 import com.nooovle.slick.DocumentsModel
-import org.joda.time.DateTime
+import org.joda.time.{ DateTime, YearMonth }
 import play.api.libs.json.{ JsNumber, JsObject }
 import scala.slick.driver.H2Driver.simple._
 import scala.util.Try
@@ -18,7 +18,8 @@ case class Document(
   creator: String,
   created: DateTime,
   forTenant: Int,
-  forMonth: DateTime,
+  year: Int,
+  month: Int,
   amountPaid: JsObject,
   body: JsObject,
   comments: JsObject,
@@ -28,20 +29,15 @@ case class Document(
   checkedAction: Option[Int] = None,
   approvedAction: Option[Int] = None)
 
-object Document extends ((Int, Option[String], String, String, String, String, DateTime, Int, DateTime, JsObject, JsObject, JsObject, Option[String], Option[Int], Option[Int], Option[Int], Option[Int]) => Document) with ModelTemplate {
+object Document extends ((Int, Option[String], String, String, String, String, DateTime, Int, Int, Int, JsObject, JsObject, JsObject, Option[String], Option[Int], Option[Int], Option[Int], Option[Int]) => Document) with ModelTemplate {
 
-  private val defaultAmountPaid: JsObject = {
-    val zeroDefaults = JsObject(Seq(
+  private val defaultAmountPaid: JsObject =
+    JsObject(Seq(
       "previous" -> JsNumber(0.0),
-      "rental" -> JsNumber(0.0),
-      "electricty" -> JsNumber(0.0),
+      "rent" -> JsNumber(0.0),
+      "electricity" -> JsNumber(0.0),
       "water" -> JsNumber(0.0),
       "cusa" -> JsNumber(0.0)))
-    JsObject(Seq(
-      "total" -> zeroDefaults,
-      "paid" -> zeroDefaults,
-      "unpaid" -> zeroDefaults))
-  }
 
   def findById(id: Int): Option[Document] =
     ConnectionFactory.connect withSession { implicit session =>
@@ -53,11 +49,10 @@ object Document extends ((Int, Option[String], String, String, String, String, D
       (for (l <- actionLogs if l.what === id) yield l).sortBy(_.when).list
     }
 
-  def insert(creator: User, title: String, docType: String, forTenant: Int, forMonth: DateTime,
-    body: JsObject): Try[Document] = {
+  def insert(creator: User, title: String, docType: String, forTenant: Int, forMonth: YearMonth, body: JsObject): Try[Document] = {
     val creationTime = new DateTime()
     val doc = Document(0, None, title, docType, Workflow.start.name, creator.userId,
-      creationTime, forTenant, forMonth, defaultAmountPaid, body, JsObject(Seq.empty), Some(creator.userId))
+      creationTime, forTenant, forMonth.getYear, forMonth.getMonthOfYear, defaultAmountPaid, body, JsObject(Seq.empty), Some(creator.userId))
 
     ConnectionFactory.connect withSession { implicit session =>
       // Return ID of newly inserted tenant
