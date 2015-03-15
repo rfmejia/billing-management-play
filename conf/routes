@@ -43,7 +43,7 @@ GET      /api/setupTestEnvironment     @controllers.TestEnvironment.setup
 GET      /api/testFail                 @controllers.TestEnvironment.fail
 
 # Reports
-GET      /api/reports                  @controllers.Reports.show(year: Int, month: Int)
+GET      /api/reports                  @controllers.Reports.show(year: Option[Int], month: Option[Int])
 
 # Admin routes
 PUT      /api/admin/users/:userId/roles @controllers.Users.editRoles(userId: String)
