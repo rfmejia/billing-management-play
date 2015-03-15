@@ -116,8 +116,7 @@ Documents are created for a specific tenant/month combination, hence these field
 
 | Method   | URL                       | Parameters    | Permissions | Description |
 |----------|---------------------------|---------------|-------------|-------------|
-| GET      | /api/reports              | offset, limit | `*`         | List all available reports
-| GET      | /api/reports/:year/:month | year, month   | `*`         | Show report for a given year and month
+| GET      | /api/reports              | year, month   | `*`         | Show report; if year or month is missing, a listing of available reports is shown instead
 
 <a id="routes/auth"></a>
 #### Authentication
@@ -178,6 +177,7 @@ The following sections are default routes supplied by [SecureSocial](http://secu
 
 ### API
 
+- [ ] Test with massive data
 - [ ] Prefix admin-only routes with */api/admin*, and...
 - [ ] ...perform **token authentication and authorization** on all routes
 - [x] Create and use typesafe roles
@@ -191,11 +191,14 @@ The following sections are default routes supplied by [SecureSocial](http://secu
 
 ### Backend
 
-- [ ] Generate serial number upon approval
+- [-] Generate serial number upon approval
 - [ ] Limited deletion **after issuing serial number** (must not be permanently deleted)
 - [x] Log document updates (as specific as possible)
 - [x] Audit cascade deletions in models
 - [x] Changed amountPaid from double to JsObject, as the basis of reports
+- [ ] Eliminate in-memory document filtering by moving relevant fields into database model
+- [ ] Write automated tests for API
+- [ ] Remove title from document model
 
 ### Authentication
 
@@ -221,8 +224,8 @@ The following sections are default routes supplied by [SecureSocial](http://secu
 - [ ] Restrict document mailbox movement to assigned user **with the appropriate workflow role**
 - [x] Restrict **document deletion** to **assigned user when in drafts mailbox**, or...
 - [x] ...to **admin role**
-- [ ] Unassign document after moving mailbox
-- [ ] Prevent assigning if someone is already assigned and user is not admin
+- [x] Unassign document after moving mailbox
+- [x] Prevent assigning if someone is already assigned
 
 ### Reports
 
