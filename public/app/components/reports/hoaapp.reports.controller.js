@@ -5,20 +5,14 @@ angular
     .module("module.reports")
     .controller("reportsCtrl", controller);
 
-controller.$inject = ["documentsHelper", "documentsService", "documentsList", "$state", "$q"];
-function controller(docsHelper, docsSrvc, documents, $state, $q) {
+controller.$inject = ["documentsHelper", "documentsService", "documentsList", "reportResponse", "$state", "$q", "moment", "REPORTS_ROUTES"];
+function controller(docsHelper, docsSrvc, documents, reportResponse, $state, $q, moment, reportsRoutes) {
     var vm = this;
     vm.pageTitle = $state.current.data.title;
-    //vm.documents = documents._embedded.item;
+    vm.documents = documents.viewModel.list;
     vm.isPaid = null;
-    vm.isPaidOpen = false;
-    vm.isUnpaidOpen = false;
-    vm.isTotalOpen = true;
     vm.selectedFilter = null;
-    vm.toggleTotal = toggleTotal;
-    vm.togglePaid = togglePaid;
-    vm.toggleUnpaid = toggleUnpaid;
-    vm.reportMonth = new Date();
+    vm.report = reportResponse;
 
     //function mapping
     vm.onFilterClicked = onFilterClicked;
@@ -38,16 +32,6 @@ function controller(docsHelper, docsSrvc, documents, $state, $q) {
         refresDocuments(params);
     }
 
-    function toggleTotal() {
-        vm.isTotalOpen = !vm.isTotalOpen;
-    }
-    function togglePaid() {
-        vm.isPaidOpen = !vm.isPaidOpen;
-    }
-    function toggleUnpaid() {
-        vm.isUnpaidOpen = !vm.isUnpaidOpen;
-    }
-
     function onReportMonthSelected(newDate, oldDate) {
         var params = {mailbox : "delivered", forMonth: newDate}
         refresDocuments(params);
@@ -63,7 +47,7 @@ function controller(docsHelper, docsSrvc, documents, $state, $q) {
     }
 
     function onDocumentItemClicked(item) {
-
+        $state.go(reportsRoutes.reportUpdate, {id: item.id});
     }
     //endregion
 

@@ -17,6 +17,7 @@ function hoaAppLinksService($resource, $q, $window) {
     var documentsLink = null;
     var templatesLink = null;
     var logoutLink = null;
+    var reportsLink = null;
 
     var resource = $resource(topUrl, {}, {
         get : {method : "GET", isArray : false}
@@ -31,7 +32,8 @@ function hoaAppLinksService($resource, $q, $window) {
         getDocumentsLink   : getDocumentsLink,
         getTemplatesLink   : getTemplatesLink,
         getMailboxesLink   : getMailboxesLink,
-        getLogoutLink      : getLogoutLink
+        getLogoutLink      : getLogoutLink,
+        getReportsLink     : getReportsLink
     };
 
     return service;
@@ -70,6 +72,10 @@ function hoaAppLinksService($resource, $q, $window) {
         return logoutLink;
     }
 
+    function getReportsLink() {
+        return reportsLink;
+    }
+
     function getLinks() {
         var deferred = $q.defer();
 
@@ -83,6 +89,7 @@ function hoaAppLinksService($resource, $q, $window) {
             mailboxesLink = data._links["hoa:mailboxes"].href;
             currentUserLink = data._links["hoa:currentUser"].href;
             logoutLink = data._links["hoa:logout"].href;
+            reportsLink = data._links["hoa:reports"].href;
             deferred.resolve(data);
         }
 

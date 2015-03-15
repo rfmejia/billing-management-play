@@ -1,0 +1,39 @@
+<md-toolbar md-theme="reports">
+    <div class="md-toolbar-tools" layout="row" layout-align="start center">
+        <button hide-gt-sm class="menuBtn menuBtn-hamburger">
+            <span class="visually-hidden">Menu</span>
+        </button>
+        <h3 flex class="toolbar-title">{{ctrl.pageTitle}}</h3>
+    </div>
+</md-toolbar>
+
+<md-content layout="column" flex class="md-padding content">
+    <form name="update">
+        <md-card class="reports">
+            <md-card-content
+                    layout-fill
+                    layout-gt-sm="row"
+                    layout-padding
+                    layout-align="space-between center">
+
+               <div flex>
+                   <h5>Previous charges</h5>
+                   <div layout-md="column" layout-gt-md="row" flex>
+                       <md-input-container class="md-accent" flex>
+                           <label>Total</label>
+                           <input ng-model="user.city">
+                       </md-input-container>
+                       <md-input-container class="md-accent" flex>
+                           <label>Unpaid</label>
+                           <input ng-model="user.state">
+                       </md-input-container>
+                       <md-input-container class="md-accent" flex>
+                           <label>Paid</label>
+                           <input ng-model="user.postalCode">
+                       </md-input-container>
+                   </div>
+               </div>
+            </md-card-content>
+        </md-card>
+    </form>
+</md-content>

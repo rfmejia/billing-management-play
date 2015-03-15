@@ -3,16 +3,15 @@
  */
 angular
     .module("module.mailbox")
-    .factory("documents.helper", [
-                 documentHelper
-             ]);
+    .factory("documents.helper", documentHelper);
 
 /**
  * Parse server response for views
  * Parse views data for server
  * @returns {{}}
  */
-function documentHelper() {
+documentHelper.$inject = ["MAILBOX_PARAMS"];
+function documentHelper(mailboxParam) {
     var helper = {
         formatCreateResponse : formatCreateResponse,
         formatEditResponse   : formatEditResponse,
@@ -103,7 +102,7 @@ function documentHelper() {
 
     function getQueryParameters() {
         return {
-            mailbox    : "drafts", //defaults to drafts
+            mailbox    : mailboxParam.drafts, //defaults to drafts
             limit      : 10,
             offset     : 0,
             forTenant  : null,

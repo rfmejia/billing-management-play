@@ -76,7 +76,7 @@
         "type" : "hoa:mailbox-heading",
         "subFolders": [
           {
-            "title": "Delivered",
+            "title": "Monthly Reports",
             "path": "workspace.reports",
             "link" : "delivered",
             "queryKey": "mailbox",

@@ -7,11 +7,11 @@
     </div>
 </md-toolbar>
 
-<md-content layout="column" flex class="md-padding reports content">
-    <div>
-        <md-card flex>
+<md-content flex class="md-padding reports content">
+    <section layout="column">
+        <md-card>
             <md-card-content>
-                <h5 class="card-title">Summary for {{ctrl.reportMonth | momentString:
+                <h5 class="card-title">Summary for {{ctrl.report.date | momentString:
                                        "MMMM-YYYY"}}<span class="dropdown">
                     <a class="dropdown-toggle md-button no-uppercase"
                        id="reportMonth"
@@ -25,155 +25,57 @@
                                 data-on-set-time="ctrl.onReportMonthSelected(newDate, oldDate)"/>
                     </ul>
                 </span></h5>
-
-                <div class="summary-block" flex>
-                    <h6 class="report-section">
-                        TOTAL
-                    <span>
-                        <md-button class="info-button" ng-click="ctrl.toggleTotal()" remove-focus>
-                            <i class="fa fa-info-circle"></i>
-                        </md-button>
-                    </span> <span class="pull-right">1000000000000000000000</span>
-                    </h6>
-                    <div ng-hide="!ctrl.isTotalOpen" class="hoa-fade-in-down hoa-fade-out-up">
-                        <div>
-                            <div class="entry-block" layout="row">
-                                <div flex="20" class="entry-title"><span>Previous charges</span></div>
-                                <div flex class="entry-value-guide"></div>
-                                <div><span>1000000</span></div>
+                <v-accordion class="vAccordion--default" multiple>
+                    <v-pane ng-repeat="section in ctrl.report.breakdown" expanded="$first">
+                        <v-pane-header><h5>{{section.title | capitalize}}</h5></v-pane-header>
+                        <v-pane-content>
+                            <div class="entry-block">
+                                <section layout="row" ng-repeat="(entry, value) in section.details">
+                                    <div flex="20" class="entry-title"><span>{{entry | capitalize}}</span></div>
+                                    <div flex class="entry-value-guide"></div>
+                                    <div><span>{{value | currency: "PHP "}}</span></div>
+                                </section>
+                                <section class="entry-total" layout="row">
+                                    <div flex="20" class="entry-title"><span>Total</span></div>
+                                    <div flex class="entry-value-guide"></div>
+                                    <div><span>{{section.total | currency: "PHP "}}</span></div>
+                                </section>
                             </div>
-                            <div class="entry-block" layout="row">
-                                <div flex="20" class="entry-title"><span>Rent</span></div>
-                                <div flex class="entry-value-guide"></div>
-                                <div><span>2000000</span></div>
-                            </div>
-                            <div class="entry-block" layout="row">
-                                <div flex="20" class="entry-title"><span>Water</span></div>
-                                <div flex class="entry-value-guide"></div>
-                                <div><span>40000</span></div>
-                            </div>
-                            <div class="entry-block" layout="row">
-                                <div flex="20" class="entry-title"><span>Electricity</span></div>
-                                <div flex class="entry-value-guide"></div>
-                                <div><span>3000</span></div>
-                            </div>
-                            <div class="entry-block" layout="row">
-                                <div flex="20" class="entry-title"><span>Cusa</span></div>
-                                <div flex class="entry-value-guide"></div>
-                                <div><span>1000000</span></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="summary-block" flex>
-                    <h6 class="report-section">
-                        PAID
-                    <span>
-                        <md-button class="info-button" ng-click="ctrl.togglePaid()" remove-focus>
-                            <i class="fa fa-info-circle"></i>
-                        </md-button>
-                    </span> <span class="pull-right">1000000000000000000000</span>
-                    </h6>
-                    <div ng-hide="!ctrl.isPaidOpen" class="hoa-fade-in-down hoa-fade-out-up">
-                        <div class="entry-block" layout="row">
-                            <div flex="20" class="entry-title"><span>Previous charges</span></div>
-                            <div flex class="entry-value-guide"></div>
-                            <div><span>1000000</span></div>
-                        </div>
-                        <div class="entry-block" layout="row">
-                            <div flex="20" class="entry-title"><span>Rent</span></div>
-                            <div flex class="entry-value-guide"></div>
-                            <div><span>2000000</span></div>
-                        </div>
-                        <div class="entry-block" layout="row">
-                            <div flex="20" class="entry-title"><span>Water</span></div>
-                            <div flex class="entry-value-guide"></div>
-                            <div><span>40000</span></div>
-                        </div>
-                        <div class="entry-block" layout="row">
-                            <div flex="20" class="entry-title"><span>Electricity</span></div>
-                            <div flex class="entry-value-guide"></div>
-                            <div><span>3000</span></div>
-                        </div>
-                        <div class="entry-block" layout="row">
-                            <div flex="20" class="entry-title"><span>Cusa</span></div>
-                            <div flex class="entry-value-guide"></div>
-                            <div><span>1000000</span></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="summary-block" flex>
-                    <h6 class="report-section">
-                        UNPAID
-                    <span>
-                        <md-button class="info-button" ng-click="ctrl.toggleUnpaid()" remove-focus>
-                            <i class="fa fa-info-circle"></i>
-                        </md-button>
-                    </span> <span class="pull-right">1000000000000000000000</span>
-                    </h6>
-
-                    <div ng-hide="!ctrl.isUnpaidOpen" class="hoa-fade-in-down hoa-fade-out-up">
-                        <div>
-                            <div class="entry-block" layout="row">
-                                <div flex="20" class="entry-title"><span>Previous charges</span></div>
-                                <div flex class="entry-value-guide"></div>
-                                <div><span>1000000</span></div>
-                            </div>
-                            <div class="entry-block" layout="row">
-                                <div flex="20" class="entry-title"><span>Rent</span></div>
-                                <div flex class="entry-value-guide"></div>
-                                <div><span>2000000</span></div>
-                            </div>
-                            <div class="entry-block" layout="row">
-                                <div flex="20" class="entry-title"><span>Water</span></div>
-                                <div flex class="entry-value-guide"></div>
-                                <div><span>40000</span></div>
-                            </div>
-                            <div class="entry-block" layout="row">
-                                <div flex="20" class="entry-title"><span>Electricity</span></div>
-                                <div flex class="entry-value-guide"></div>
-                                <div><span>3000</span></div>
-                            </div>
-                            <div class="entry-block" layout="row">
-                                <div flex="20" class="entry-title"><span>Cusa</span></div>
-                                <div flex class="entry-value-guide"></div>
-                                <div><span>1000000</span></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                        </v-pane-content>
+                    </v-pane>
+                </v-accordion>
             </md-card-content>
         </md-card>
-        <div class="cards-margin">
-            <md-whiteframe class="md-whiteframe-z1" layout="column">
-                <md-toolbar md-theme="reports" class="white-out">
-                    <div class="md-toolbar-tools" layout="row" layout-align="start center">
-                        <h5 flex ng-style="{color: '#9C27B0'}">Invoices</h5>
-                        <md-button md-theme="reports" data-toggle="dropdown" remove-focus
-                                   class="button-white options no-uppercase md-default md-primary"
-                                   ng-click="ctrl.onFilterClicked(ctrl.allFilter.params)">
-                            <span><i class="fa fa-files-o iconed-text"></i>{{ctrl.allFilter.title}}</span>
-                        </md-button>
-                        <md-button md-theme="reports" data-toggle="dropdown" remove-focus
-                                   class="button-white options no-uppercase md-default md-primary"
-                                   ng-click="ctrl.onFilterClicked(ctrl.paidFilter.params)">
-                            <span><i class="fa fa-check iconed-text"></i>{{ctrl.paidFilter.title}}</span>
-                        </md-button>
-                        <md-button md-theme="reports" data-toggle="dropdown" remove-focus
-                                   class="button-white options no-uppercase md-default md-primary"
-                                   ng-click="ctrl.onFilterClicked(ctrl.unpaidFilter.params)">
-                            <span><i class="fa fa-close iconed-text"></i>{{ctrl.unpaidFilter.title}}</span>
-                        </md-button>
-                    </div>
-                </md-toolbar>
-                <md-list>
-                    <hoa-embedded-items
-                            layout="row" ng-repeat="document in ctrl.documents"
-                            theme="list"
-                            item="document"
-                            on-click="ctrl.onDocumentItemClicked(item)"></hoa-embedded-items>
-                </md-list>
-            </md-whiteframe>
-        </div>
-    </div>
+    </section>
+   <section layout="column">
+       <md-whiteframe class="md-whiteframe-z1 cards-margin">
+           <md-toolbar md-theme="reports" class="white-out">
+               <div class="md-toolbar-tools" layout="row" layout-align="start center">
+                   <h5 flex ng-style="{color: '#9C27B0'}">Invoices</h5>
+                   <md-button md-theme="reports" data-toggle="dropdown" remove-focus
+                              class="button-white options no-uppercase md-default md-primary"
+                              ng-click="ctrl.onFilterClicked(ctrl.allFilter.params)">
+                       <span><i class="fa fa-files-o iconed-text"></i>{{ctrl.allFilter.title}}</span>
+                   </md-button>
+                   <md-button md-theme="reports" data-toggle="dropdown" remove-focus
+                              class="button-white options no-uppercase md-default md-primary"
+                              ng-click="ctrl.onFilterClicked(ctrl.paidFilter.params)">
+                       <span><i class="fa fa-check iconed-text"></i>{{ctrl.paidFilter.title}}</span>
+                   </md-button>
+                   <md-button md-theme="reports" data-toggle="dropdown" remove-focus
+                              class="button-white options no-uppercase md-default md-primary"
+                              ng-click="ctrl.onFilterClicked(ctrl.unpaidFilter.params)">
+                       <span><i class="fa fa-close iconed-text"></i>{{ctrl.unpaidFilter.title}}</span>
+                   </md-button>
+               </div>
+           </md-toolbar>
+           <md-list>
+               <hoa-embedded-items
+                       layout="row" ng-repeat="document in ctrl.documents"
+                       theme="list"
+                       item="document"
+                       on-click="ctrl.onDocumentItemClicked(item)"></hoa-embedded-items>
+           </md-list>
+       </md-whiteframe>
+   </section>
 </md-content>
