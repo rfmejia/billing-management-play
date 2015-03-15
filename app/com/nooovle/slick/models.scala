@@ -25,6 +25,7 @@ object models {
   val mailTokens = TableQuery[MailTokensModel]
   val invitations = TableQuery[InvitationsModel]
   val actionLogs = TableQuery[ActionLogsModel]
+  val serialNumbers = TableQuery[SerialNumbersModel]
   val tables = List(modelTemplates, roles, settings, tenants, users, documents,
     userRoles, mailTokens, invitations, actionLogs)
 
@@ -188,4 +189,13 @@ class ActionLogsModel(tag: Tag) extends Table[ActionLog](tag, "ACTION_LOGS") {
   def _what = foreignKey("DOCUMENT_FK", what, models.documents)(_.id, onDelete = ForeignKeyAction.Cascade)
 
   def * = (id, who, what, when, why) <> (ActionLog.tupled, ActionLog.unapply)
+}
+
+class SerialNumbersModel(tag: Tag) extends Table[SerialNumber](tag, ("SERIAL_NUMBERS")) {
+  def id = column[Int]("ID", O.PrimaryKey, O.AutoInc)
+  def docId = column[Int]("DOC_ID")
+
+  def document = foreignKey("DOCUMENT_FK", docId, models.documents)(_.id, onDelete = ForeignKeyAction.Cascade)
+
+  def * = (id, docId) <> (SerialNumber.tupled, SerialNumber.unapply)
 }
