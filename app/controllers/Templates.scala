@@ -72,41 +72,23 @@ object Templates {
       .fold(
         warning => {
           Logger.warn(warning)
-          Amounts.ZERO
+          Amounts.Zero
         }, amount => amount)
 
-  def extractPaid(d: Document): Amounts = extractWith({
+  def extractSection(d: Document, s: String): Amounts = extractWith({
     doc =>
       if (doc.docType == "invoice-1") {
-        Right(
-          Amounts(
-            doubleOrZero(doc.amountPaid \ "previous"),
-            doubleOrZero(doc.amountPaid \ "rent"),
-            doubleOrZero(doc.amountPaid \ "electricity"),
-            doubleOrZero(doc.amountPaid \ "water"),
-            doubleOrZero(doc.amountPaid \ "cusa")))
-      } else Left(s"The document type '${d.docType}' is not registered")
-  })(d)
+        val total: Double = {
+          val fieldName = s"_${s}_total"
 
-  def extractTotals(d: Document): Amounts = extractWith({
-    doc =>
-      if (doc.docType == "invoice-1") {
-        val sectionTotals = (doc.body \\ "sectionTotal")
-
-        def findSectionTotal(key: String): Double =
-          sectionTotals
-            .find(_ \ "id" == JsString(key))
+          (doc.body \\ "sectionTotal")
+            .find(_ \ "id" == JsString(fieldName))
             .map(_ \ "value")
             .map(doubleOrZero)
             .getOrElse(0.0)
-
-        Right(
-          Amounts(
-            findSectionTotal("_previous_total"),
-            findSectionTotal("_rent_total"),
-            findSectionTotal("_electricity_total"),
-            findSectionTotal("_water_total"),
-            findSectionTotal("_cusa_total")))
+        }
+        val paid: Double = doubleOrZero(doc.amountPaid \ s)
+        Right(Amounts(total, paid))
       } else Left(s"The document type '${doc.docType}' is not registered")
   })(d)
 

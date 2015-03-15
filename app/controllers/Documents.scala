@@ -367,16 +367,30 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
 
   def appendAmounts(obj: HalJsObject)(implicit doc: Document): HalJsObject = {
     if (doc.docType == "invoice-1") {
-      val total: Amounts = Templates.extractTotals(doc)
-      val paid: Amounts = Templates.extractPaid(doc)
-      val unpaid = total - paid
+      val previous = Templates.extractSection(doc, "previous")
+      val rent = Templates.extractSection(doc, "rent")
+      val electricity = Templates.extractSection(doc, "electricity")
+      val water = Templates.extractSection(doc, "water")
+      val cusa = Templates.extractSection(doc, "cusa")
+
+      val isPaid: Boolean =
+        List(previous, rent, electricity, water, cusa)
+          .foldLeft(true)(_ && _.isPaid)
 
       obj.withField("amounts",
         HalJsObject.empty
-          .withField("isPaid", unpaid == Amounts.ZERO)
-          .withField("total", total.asJsObject)
-          .withField("paid", paid.asJsObject)
-          .withField("unpaid", unpaid.asJsObject)
+          .withField("isPaid", JsBoolean(isPaid))
+          .withField("sections", JsArray(List(
+            JsObject(Seq("name" -> JsString("previous"),
+              "amounts" -> previous.asJsObject)),
+            JsObject(Seq("name" -> JsString("rent"),
+              "amounts" -> rent.asJsObject)),
+            JsObject(Seq("name" -> JsString("electricity"),
+              "amounts" -> electricity.asJsObject)),
+            JsObject(Seq("name" -> JsString("water"),
+              "amounts" -> water.asJsObject)),
+            JsObject(Seq("name" -> JsString("cusa"),
+              "amounts" -> cusa.asJsObject)))))
           .asJsValue)
     } else obj
   }

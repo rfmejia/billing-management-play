@@ -3,37 +3,27 @@ package com.nooovle
 import play.api.libs.json._
 
 case class Amounts(
-  previous: Double,
-  rent: Double,
-  electricity: Double,
-  water: Double,
-  cusa: Double) {
+  total: Double,
+  paid: Double) {
 
-  val total = List(previous, rent, electricity, water, cusa).sum
+  val unpaid: Double = total - paid
+  val isPaid: Boolean = unpaid == 0
 
   def +(that: Amounts) = Amounts(
-    this.previous + that.previous,
-    this.rent + that.rent,
-    this.electricity + that.electricity,
-    this.water + that.water,
-    this.cusa + that.cusa)
+    this.total + that.total,
+    this.paid + that.paid)
 
   def -(that: Amounts) = Amounts(
-    this.previous - that.previous,
-    this.rent - that.rent,
-    this.electricity - that.electricity,
-    this.water - that.water,
-    this.cusa - that.cusa)
+    this.total - that.total,
+    this.paid - that.paid)
 
   val asJsObject = JsObject(Seq(
-    "previous" -> JsNumber(previous),
-    "rent" -> JsNumber(rent),
-    "electricity" -> JsNumber(electricity),
-    "water" -> JsNumber(water),
-    "cusa" -> JsNumber(cusa),
-    "total" -> JsNumber(total)))
+    "total" -> JsNumber(total),
+    "paid" -> JsNumber(paid),
+    "unpaid" -> JsNumber(unpaid),
+    "isPaid" -> JsBoolean(isPaid)))
 }
 
 object Amounts {
-  val ZERO = Amounts(0.0, 0.0, 0.0, 0.0, 0.0)
+  val Zero = Amounts(0.0, 0.0)
 }
