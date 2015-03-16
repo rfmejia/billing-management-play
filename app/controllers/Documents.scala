@@ -79,7 +79,6 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
           .withLink("profile", "hoa:document")
           .withField("id", d.id)
           .withField("serialId", d.serialId)
-          .withField("title", d.title)
           .withField("docType", d.docType)
           .withField("mailbox", d.mailbox)
           .withField("forTenant", tenantToJsObject(d.forTenant))
@@ -125,21 +124,20 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
 
   def create() = SecuredAction(parse.json) { implicit request =>
     val json = request.body
-    ((json \ "title").asOpt[String],
-      (json \ "docType").asOpt[String],
+    ((json \ "docType").asOpt[String],
       (json \ "forTenant").asOpt[Int],
       (json \ "year").asOpt[Int],
       (json \ "month").asOpt[Int],
       (json \ "body").asOpt[JsObject]) match {
-        case (Some(title), Some(docType), Some(forTenant), Some(year), Some(month), Some(body)) => {
+        case (Some(docType), Some(forTenant), Some(year), Some(month), Some(body)) => {
           val yearMonth = new YearMonth(year, month)
-          Document.insert(request.user, title, docType, forTenant, yearMonth, body) match {
+          Document.insert(request.user, docType, forTenant, yearMonth, body) match {
             case Success(doc) =>
               val link = routes.Documents.show(doc.id).absoluteURL()
               val body = documentToHalJsObject(doc)
               Created(body.asJsValue).withHeaders("Location" -> link)
             case Failure(err) =>
-              Logger.error(s"Error in creating document '${title}'", err)
+              Logger.error(s"Error in creating document", err)
               InternalServerError(err.getMessage)
           }
         }
@@ -158,16 +156,14 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
         }
         else {
           val json = request.body
-          ((json \ "title").asOpt[String],
-            (json \ "body").asOpt[JsObject],
+          ((json \ "body").asOpt[JsObject],
             (json \ "comments").asOpt[JsObject],
             (json \ "amountPaid").asOpt[JsObject]) match {
-              case (None, None, None, None) =>
+              case (None, None, None) =>
                 BadRequest("No editable fields matched. Please check your request.")
-              case (titleOpt, bodyOpt, commentsOpt, amountPaidOpt) =>
+              case (bodyOpt, commentsOpt, amountPaidOpt) =>
                 val newDoc =
                   existingDoc.copy(
-                    title = titleOpt getOrElse existingDoc.title,
                     body = bodyOpt getOrElse existingDoc.body,
                     comments = commentsOpt getOrElse existingDoc.comments,
                     amountPaid = amountPaidOpt getOrElse existingDoc.amountPaid)
@@ -175,7 +171,6 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
                 Document.update(newDoc) match {
                   case Success(updateDoc) =>
                     val changes = Seq(
-                      titleOpt.map(v => s"Title: '${existingDoc.title}' -> '${v}'"),
                       amountPaidOpt.map(v => s"Amount paid: '${existingDoc.amountPaid}' -> '${v}'"),
                       bodyOpt.map(v => "Body updated"),
                       commentsOpt.map(v => "Comments updated"))
@@ -275,7 +270,6 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       .withLink("hoa:logs", routes.ActionLogs.show(d.id).absoluteURL())
       .withField("id", d.id)
       .withField("serialId", d.serialId)
-      .withField("title", d.title)
       .withField("docType", d.docType)
       .withField("mailbox", d.mailbox)
       .withField("created", d.created)

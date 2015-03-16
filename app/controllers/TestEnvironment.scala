@@ -34,7 +34,7 @@ class TestEnvironment(override implicit val env: RuntimeEnvironment[User])
       // }
       users.firstOption map { creator =>
         Tenant.findByTradeName("Jumpin' Juicers").map { tenant =>
-          Document.insert(creator, "Document 2", "invoice-1", tenant.id,
+          Document.insert(creator, "invoice-1", tenant.id,
             YearMonth.parse("2015-02"), testDocument)
         }
       }

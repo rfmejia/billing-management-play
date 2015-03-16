@@ -177,7 +177,6 @@ The following sections are default routes supplied by [SecureSocial](http://secu
 
 ### API
 
-- [ ] Test with massive data
 - [ ] Prefix admin-only routes with */api/admin*, and...
 - [ ] ...perform **token authentication and authorization** on all routes
 - [x] Create and use typesafe roles
@@ -188,17 +187,31 @@ The following sections are default routes supplied by [SecureSocial](http://secu
 - [x] Add user invitation accessible only by the admin role
 - [x] Allow access to user invitation when there is no user with an admin role
 - [x] Add mailbox filtering using on top-level boxes (pending, delivered)
+- [x] Add descriptive error messages in JSON when returning Forbidden responses
 
 ### Backend
 
-- [-] Generate serial number upon approval
+- [ ] Generate serial number upon approval
 - [ ] Limited deletion **after issuing serial number** (must not be permanently deleted)
 - [x] Log document updates (as specific as possible)
 - [x] Audit cascade deletions in models
 - [x] Changed amountPaid from double to JsObject, as the basis of reports
 - [ ] Eliminate in-memory document filtering by moving relevant fields into database model
+- [x] Remove title from document model
+
+### Logging
+
+- [ ] Setup log receiver API
+- [ ] Setup logstash in @deadpool
+
+### Testing
+
+- [ ] Transfer data manipulation logic into services (leave controllers as HTTP-only tasks)
 - [ ] Write automated tests for API
-- [ ] Remove title from document model
+- [ ] Write test scripts for each 
+- [ ] Setup Jenkins in @deadpool
+- [ ] Generate test data
+- [ ] Add action to inject test data
 
 ### Authentication
 

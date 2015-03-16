@@ -135,7 +135,6 @@ class DocumentsModel(tag: Tag) extends Table[Document](tag, "DOCUMENTS") {
   import models._
   def id = column[Int]("ID", O.PrimaryKey, O.AutoInc)
   def serialId = column[Option[String]]("SERIAL_ID")
-  def title = column[String]("TITLE", O.NotNull)
   def docType = column[String]("DOC_TYPE", O.NotNull)
   def mailbox = column[String]("MAILBOX", O.NotNull)
   def creator = column[String]("CREATOR", O.NotNull)
@@ -153,7 +152,7 @@ class DocumentsModel(tag: Tag) extends Table[Document](tag, "DOCUMENTS") {
   def checkedAction = column[Option[Int]]("CHECKED_ACTION_ID")
   def approvedAction = column[Option[Int]]("APPROVED_ACTION_ID")
 
-  def * = (id, serialId, title, docType, mailbox, creator, created, forTenant, year, month, amountPaid, body, comments, assigned, lastAction, preparedAction, checkedAction, approvedAction) <> (Document.tupled, Document.unapply)
+  def * = (id, serialId, docType, mailbox, creator, created, forTenant, year, month, amountPaid, body, comments, assigned, lastAction, preparedAction, checkedAction, approvedAction) <> (Document.tupled, Document.unapply)
 }
 
 class MailTokensModel(tag: Tag) extends Table[MailToken](tag, "MAIL_TOKENS") {
