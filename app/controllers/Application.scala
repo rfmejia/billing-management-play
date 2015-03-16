@@ -40,7 +40,8 @@ class Application(override implicit val env: RuntimeEnvironment[User])
         .withLink("hoa:currentUser", routes.Users.showCurrentUser().absoluteURL(),
           Some("Information about the user currently logged in"))
         .withLink("hoa:reports", routes.Reports.show(None, None).absoluteURL())
-        .withLink("hoa:invite", "/admin/invite")
+        .withLink("hoa:invite", routes.Invitation.startInvite().absoluteURL())
+        .withLink("hoa:logservice", routes.Logs.log().absoluteURL())
       obj.asJsValue
     }
   }

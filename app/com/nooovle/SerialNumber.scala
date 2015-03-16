@@ -32,5 +32,4 @@ object SerialNumber extends ((Int, Int) => SerialNumber) {
       } yield doc
       query.firstOption
     }
-
 }

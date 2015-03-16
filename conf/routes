@@ -6,6 +6,9 @@
 GET      /api                          @controllers.Application.index
 GET      /api/docs                     @controllers.Application.documentation
 
+# Log
+POST     /api/logservice               @controllers.Logs.log
+
 # Tenants
 GET      /api/tenants                  @controllers.Tenants.list(offset: Int ?= 0, limit: Int ?= 10)
 GET      /api/tenants/:id              @controllers.Tenants.show(id: Int)

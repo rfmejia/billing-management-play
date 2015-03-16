@@ -201,7 +201,7 @@ The following sections are default routes supplied by [SecureSocial](http://secu
 
 ### Logging
 
-- [ ] Setup log receiver API
+- [x] Setup logservice API
 - [ ] Setup logstash in @deadpool
 
 ### Testing
