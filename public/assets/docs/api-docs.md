@@ -116,8 +116,7 @@ Documents are created for a specific tenant/month combination, hence these field
 
 | Method   | URL                       | Parameters    | Permissions | Description |
 |----------|---------------------------|---------------|-------------|-------------|
-| GET      | /api/reports              | offset, limit | `*`         | List all available reports
-| GET      | /api/reports/:year/:month | year, month   | `*`         | Show report for a given year and month
+| GET      | /api/reports              | year, month   | `*`         | Show report; if year or month is missing, a listing of available reports is shown instead
 
 <a id="routes/auth"></a>
 #### Authentication
@@ -188,6 +187,7 @@ The following sections are default routes supplied by [SecureSocial](http://secu
 - [x] Add user invitation accessible only by the admin role
 - [x] Allow access to user invitation when there is no user with an admin role
 - [x] Add mailbox filtering using on top-level boxes (pending, delivered)
+- [x] Add descriptive error messages in JSON when returning Forbidden responses
 
 ### Backend
 
@@ -196,6 +196,22 @@ The following sections are default routes supplied by [SecureSocial](http://secu
 - [x] Log document updates (as specific as possible)
 - [x] Audit cascade deletions in models
 - [x] Changed amountPaid from double to JsObject, as the basis of reports
+- [ ] Eliminate in-memory document filtering by moving relevant fields into database model
+- [x] Remove title from document model
+
+### Logging
+
+- [x] Setup logservice API
+- [ ] Setup logstash in @deadpool
+
+### Testing
+
+- [ ] Transfer data manipulation logic into services (leave controllers as HTTP-only tasks)
+- [ ] Write automated tests for API
+- [ ] Write test scripts for each 
+- [ ] Setup Jenkins in @deadpool
+- [ ] Generate test data
+- [ ] Add action to inject test data
 
 ### Authentication
 
@@ -221,8 +237,8 @@ The following sections are default routes supplied by [SecureSocial](http://secu
 - [ ] Restrict document mailbox movement to assigned user **with the appropriate workflow role**
 - [x] Restrict **document deletion** to **assigned user when in drafts mailbox**, or...
 - [x] ...to **admin role**
-- [ ] Unassign document after moving mailbox
-- [ ] Prevent assigning if someone is already assigned and user is not admin
+- [x] Unassign document after moving mailbox
+- [x] Prevent assigning if someone is already assigned
 
 ### Reports
 

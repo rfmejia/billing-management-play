@@ -12,7 +12,6 @@ import scala.util.Try
 case class Document(
   id: Int,
   serialId: Option[String],
-  title: String,
   docType: String, // Type of subdocument
   mailbox: String,
   creator: String,
@@ -29,7 +28,7 @@ case class Document(
   checkedAction: Option[Int] = None,
   approvedAction: Option[Int] = None)
 
-object Document extends ((Int, Option[String], String, String, String, String, DateTime, Int, Int, Int, JsObject, JsObject, JsObject, Option[String], Option[Int], Option[Int], Option[Int], Option[Int]) => Document) with ModelTemplate {
+object Document extends ((Int, Option[String], String, String, String, DateTime, Int, Int, Int, JsObject, JsObject, JsObject, Option[String], Option[Int], Option[Int], Option[Int], Option[Int]) => Document) with ModelTemplate {
 
   private val defaultAmountPaid: JsObject =
     JsObject(Seq(
@@ -49,10 +48,12 @@ object Document extends ((Int, Option[String], String, String, String, String, D
       (for (l <- actionLogs if l.what === id) yield l).sortBy(_.when).list
     }
 
-  def insert(creator: User, title: String, docType: String, forTenant: Int, forMonth: YearMonth, body: JsObject): Try[Document] = {
+  def insert(creator: User, docType: String, forTenant: Int, forMonth: YearMonth, body: JsObject): Try[Document] = {
     val creationTime = new DateTime()
-    val doc = Document(0, None, title, docType, Workflow.start.name, creator.userId,
-      creationTime, forTenant, forMonth.getYear, forMonth.getMonthOfYear, defaultAmountPaid, body, JsObject(Seq.empty), Some(creator.userId))
+    val doc = Document(0, None, docType, Mailbox.start.name, 
+      creator.userId, creationTime, forTenant, forMonth.getYear, 
+      forMonth.getMonthOfYear, defaultAmountPaid, body, 
+      JsObject(Seq.empty), Some(creator.userId))
 
     ConnectionFactory.connect withSession { implicit session =>
       // Return ID of newly inserted tenant
@@ -109,7 +110,6 @@ object Document extends ((Int, Option[String], String, String, String, String, D
   lazy val modelInfos = Seq(
     ModelInfo("DOCUMENTS", "id", "string", Uneditable, Uneditable, Some("ID")),
     ModelInfo("DOCUMENTS", "serialId", "string", Uneditable, Uneditable, Some("Serial ID")),
-    ModelInfo("DOCUMENTS", "title", "string", Required, Editable, Some("Title")),
     ModelInfo("DOCUMENTS", "docType", "string", Required, Uneditable, Some("Document type")),
     ModelInfo("DOCUMENTS", "mailbox", "string", Uneditable, Uneditable, Some("Mailbox")),
     ModelInfo("DOCUMENTS", "creator", "string", Uneditable, Uneditable, Some("Created by")),

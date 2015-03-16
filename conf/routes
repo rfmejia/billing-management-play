@@ -5,7 +5,9 @@
 # Entry point and documentation
 GET      /api                          @controllers.Application.index
 GET      /api/docs                     @controllers.Application.documentation
-GET      /api/mailboxes                @controllers.Application.listMailboxes
+
+# Log
+POST     /api/logservice               @controllers.Logs.log
 
 # Tenants
 GET      /api/tenants                  @controllers.Tenants.list(offset: Int ?= 0, limit: Int ?= 10)
@@ -21,9 +23,11 @@ GET      /api/users/:userId            @controllers.Users.show(userId: String)
 PUT      /api/users/:userId            @controllers.Users.edit(userId: String)
 DELETE   /api/users/:userId            @controllers.Users.delete(userId: String)
 
-# Documents
-POST     /api/documents/:id/:box       @controllers.Documents.moveMailbox(id: Int, box: String)
+# Workflow
+GET      /api/mailboxes                @controllers.Workflow.listMailboxes
+POST     /api/documents/:id/:box       @controllers.Workflow.moveMailbox(id: Int, box: String)
 
+# Documents
 GET      /api/documents                @controllers.Documents.list(offset: Int ?= 0, limit: Int ?= 10, mailbox: String ?= "", forTenant: Int ?= -1, creator: String ?= "", assigned: Option[String] ?= None, year: Option[Int] ?= None, month: Option[Int] ?= None, isPaid: Option[Boolean] ?= None, others: Option[Boolean] ?= None, isAssigned: Option[Boolean] ?= None)
 GET      /api/documents/:id            @controllers.Documents.show(id: Int)
 POST     /api/documents                @controllers.Documents.create

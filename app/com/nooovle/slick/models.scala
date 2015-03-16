@@ -25,6 +25,7 @@ object models {
   val mailTokens = TableQuery[MailTokensModel]
   val invitations = TableQuery[InvitationsModel]
   val actionLogs = TableQuery[ActionLogsModel]
+  val serialNumbers = TableQuery[SerialNumbersModel]
   val tables = List(modelTemplates, roles, settings, tenants, users, documents,
     userRoles, mailTokens, invitations, actionLogs)
 
@@ -134,7 +135,6 @@ class DocumentsModel(tag: Tag) extends Table[Document](tag, "DOCUMENTS") {
   import models._
   def id = column[Int]("ID", O.PrimaryKey, O.AutoInc)
   def serialId = column[Option[String]]("SERIAL_ID")
-  def title = column[String]("TITLE", O.NotNull)
   def docType = column[String]("DOC_TYPE", O.NotNull)
   def mailbox = column[String]("MAILBOX", O.NotNull)
   def creator = column[String]("CREATOR", O.NotNull)
@@ -152,7 +152,7 @@ class DocumentsModel(tag: Tag) extends Table[Document](tag, "DOCUMENTS") {
   def checkedAction = column[Option[Int]]("CHECKED_ACTION_ID")
   def approvedAction = column[Option[Int]]("APPROVED_ACTION_ID")
 
-  def * = (id, serialId, title, docType, mailbox, creator, created, forTenant, year, month, amountPaid, body, comments, assigned, lastAction, preparedAction, checkedAction, approvedAction) <> (Document.tupled, Document.unapply)
+  def * = (id, serialId, docType, mailbox, creator, created, forTenant, year, month, amountPaid, body, comments, assigned, lastAction, preparedAction, checkedAction, approvedAction) <> (Document.tupled, Document.unapply)
 }
 
 class MailTokensModel(tag: Tag) extends Table[MailToken](tag, "MAIL_TOKENS") {
@@ -188,4 +188,13 @@ class ActionLogsModel(tag: Tag) extends Table[ActionLog](tag, "ACTION_LOGS") {
   def _what = foreignKey("DOCUMENT_FK", what, models.documents)(_.id, onDelete = ForeignKeyAction.Cascade)
 
   def * = (id, who, what, when, why) <> (ActionLog.tupled, ActionLog.unapply)
+}
+
+class SerialNumbersModel(tag: Tag) extends Table[SerialNumber](tag, ("SERIAL_NUMBERS")) {
+  def id = column[Int]("ID", O.PrimaryKey, O.AutoInc)
+  def docId = column[Int]("DOC_ID")
+
+  def document = foreignKey("DOCUMENT_FK", docId, models.documents)(_.id, onDelete = ForeignKeyAction.Cascade)
+
+  def * = (id, docId) <> (SerialNumber.tupled, SerialNumber.unapply)
 }

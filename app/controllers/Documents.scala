@@ -5,6 +5,7 @@ import com.nooovle.slick.models.{ modelTemplates, documents }
 import com.nooovle.slick.ConnectionFactory
 import org.joda.time.{ DateTime, YearMonth }
 import org.locker47.json.play._
+import play.api.i18n.Messages
 import play.api.libs.json._
 import play.api._
 import play.api.mvc.{ Action, Controller, RequestHeader }
@@ -27,56 +28,6 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
     }
   }
 
-  def moveMailbox(id: Int, mailbox: String) = SecuredAction { implicit request =>
-    Document.findById(id) map {
-      oldDoc =>
-        // TODO: Only the assigned user can move this mailbox
-        // And that assigned user has the correct privileges, or if user is admin
-        (Workflow.find(oldDoc.mailbox), Workflow.find(mailbox)) match {
-          case (Some(oldBox), Some(newBox)) =>
-            Document.update(oldDoc.copy(mailbox = newBox.name, assigned = None)) match {
-              case Success(newDoc) =>
-                val msg = s"Moved document from '${oldBox.title}' to '${newBox.title}'"
-                ActionLog.log(request.user.userId, newDoc.id, msg) map { log =>
-                  // Check if the target box is the next box in the workflow
-                  // To properly log for movements
-                  if (Option(newBox) == Workflow.next(oldBox.name)) {
-                    oldBox match {
-                      case Workflow.drafts =>
-                        Document.logPreparedAction(log)
-                      case Workflow.forChecking =>
-                        Document.logCheckedAction(log)
-                      case Workflow.forApproval =>
-                        Document.logApprovedAction(log)
-                      case _ => Document.logLastAction(log)
-                    }
-                  } else { // Clear existing logs, if any
-                    val (clearPrepared, clearChecked, clearApproved) = newBox match {
-                      case Workflow.drafts => (true, true, true)
-                      case Workflow.forChecking => (false, true, true)
-                      case Workflow.forApproval => (false, false, true)
-                      case _ => (false, false, false)
-                    }
-
-                    Document.update(
-                      newDoc.copy(
-                        preparedAction = if (clearPrepared) None else newDoc.preparedAction,
-                        checkedAction = if (clearChecked) None else newDoc.checkedAction,
-                        approvedAction = if (clearApproved) None else newDoc.approvedAction)) match {
-                        case Success(_) => Document.logLastAction(log)
-                        case Failure(err) => InternalServerError(err.getMessage)
-                      }
-                  }
-                }
-                NoContent
-              case Failure(err) => InternalServerError(err.getMessage)
-            }
-          case (None, _) => NotFound("Current mailbox cannot be found")
-          case (_, None) => NotFound("Target mailbox cannot be found")
-        }
-    } getOrElse NotFound("Document cannot be found")
-  }
-
   def list(offset: Int = 0, limit: Int = 10, mailbox: String, forTenant: Int, creator: String, assigned: Option[String], year: Option[Int], month: Option[Int], isPaid: Option[Boolean], others: Option[Boolean], isAssigned: Option[Boolean]) = SecuredAction { implicit request =>
 
     val ds = ConnectionFactory.connect withSession { implicit session =>
@@ -87,7 +38,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       // TODO: Check if adding the limit here and filters in other levels may affect
       // the final result (items.length < limit)
       val query = documents
-        .filter(d => (d.mailbox inSetBind Workflow.getSubboxes(mailbox)) || mailbox.isEmpty)
+        .filter(d => (d.mailbox inSetBind Mailbox.getSubboxes(mailbox)) || mailbox.isEmpty)
         .filter(d => d.forTenant === forTenant || forTenant < 1)
         .filter(d => d.creator === creator || creator.isEmpty)
         .filter(d => d.assigned === assigned || assigned.isEmpty)
@@ -128,7 +79,6 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
           .withLink("profile", "hoa:document")
           .withField("id", d.id)
           .withField("serialId", d.serialId)
-          .withField("title", d.title)
           .withField("docType", d.docType)
           .withField("mailbox", d.mailbox)
           .withField("forTenant", tenantToJsObject(d.forTenant))
@@ -174,21 +124,20 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
 
   def create() = SecuredAction(parse.json) { implicit request =>
     val json = request.body
-    ((json \ "title").asOpt[String],
-      (json \ "docType").asOpt[String],
+    ((json \ "docType").asOpt[String],
       (json \ "forTenant").asOpt[Int],
       (json \ "year").asOpt[Int],
       (json \ "month").asOpt[Int],
       (json \ "body").asOpt[JsObject]) match {
-        case (Some(title), Some(docType), Some(forTenant), Some(year), Some(month), Some(body)) => {
+        case (Some(docType), Some(forTenant), Some(year), Some(month), Some(body)) => {
           val yearMonth = new YearMonth(year, month)
-          Document.insert(request.user, title, docType, forTenant, yearMonth, body) match {
+          Document.insert(request.user, docType, forTenant, yearMonth, body) match {
             case Success(doc) =>
               val link = routes.Documents.show(doc.id).absoluteURL()
               val body = documentToHalJsObject(doc)
               Created(body.asJsValue).withHeaders("Location" -> link)
             case Failure(err) =>
-              Logger.error(s"Error in creating document '${title}'", err)
+              Logger.error(s"Error in creating document", err)
               InternalServerError(err.getMessage)
           }
         }
@@ -201,19 +150,20 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
     Document.findById(id) map {
       existingDoc =>
         // Get user responsible for this request and only allow if this is the assigned user
-        if (!existingDoc.assigned.exists(_ == request.user.userId)) Forbidden
+        if (!existingDoc.assigned.exists(_ == request.user.userId)) {
+          Forbidden(Messages("hoa.documents.forbidden.NotAssigned")
+            + s" (Assigned to '${existingDoc.assigned}')")
+        }
         else {
           val json = request.body
-          ((json \ "title").asOpt[String],
-            (json \ "body").asOpt[JsObject],
+          ((json \ "body").asOpt[JsObject],
             (json \ "comments").asOpt[JsObject],
             (json \ "amountPaid").asOpt[JsObject]) match {
-              case (None, None, None, None) =>
+              case (None, None, None) =>
                 BadRequest("No editable fields matched. Please check your request.")
-              case (titleOpt, bodyOpt, commentsOpt, amountPaidOpt) =>
+              case (bodyOpt, commentsOpt, amountPaidOpt) =>
                 val newDoc =
                   existingDoc.copy(
-                    title = titleOpt getOrElse existingDoc.title,
                     body = bodyOpt getOrElse existingDoc.body,
                     comments = commentsOpt getOrElse existingDoc.comments,
                     amountPaid = amountPaidOpt getOrElse existingDoc.amountPaid)
@@ -221,7 +171,6 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
                 Document.update(newDoc) match {
                   case Success(updateDoc) =>
                     val changes = Seq(
-                      titleOpt.map(v => s"Title: '${existingDoc.title}' -> '${v}'"),
                       amountPaidOpt.map(v => s"Amount paid: '${existingDoc.amountPaid}' -> '${v}'"),
                       bodyOpt.map(v => "Body updated"),
                       commentsOpt.map(v => "Comments updated"))
@@ -247,7 +196,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       doc =>
         // Permissions: currently assigned user if in drafts, or administrator
         val hasAccess = {
-          doc.assigned.contains(request.user.userId) && doc.mailbox == Workflow.drafts.name ||
+          doc.assigned.contains(request.user.userId) && doc.mailbox == Mailbox.drafts.name ||
             User.findRoles(request.user.userId).contains(Roles.Admin.id)
         }
 
@@ -258,17 +207,24 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
           }
           if (deleted == 0) NotFound
           else Ok
-        } else Forbidden
+        } else Forbidden(Messages("hoa.documents.forbidden.DeleteNotAllowed")
+            + s" (Assigned to '${doc.assigned}' in mailbox '${doc.mailbox}'")
     } getOrElse NotFound
   }
 
   def assignToMe(id: Int) = SecuredAction { implicit request =>
     Document.findById(id) match {
       case Some(d) =>
-        val newDoc = d.copy(assigned = Some(request.user.userId))
-        Document.update(newDoc) match {
-          case Success(id) => NoContent
-          case Failure(err) => InternalServerError(err.getMessage)
+        // Forbid if someone is assigned
+        d.assigned match {
+          case None =>
+            val newDoc = d.copy(assigned = Some(request.user.userId))
+            Document.update(newDoc) match {
+              case Success(id) => NoContent
+              case Failure(err) => InternalServerError(err.getMessage)
+            }
+          case Some(user) => Forbidden(Messages("hoa.documents.forbidden.NotAssigned") 
+            + s" (Assigned to '${user}')")
         }
       case None => NotFound
     }
@@ -289,7 +245,8 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
             case Success(id) => NoContent
             case Failure(err) => InternalServerError(err.getMessage)
           }
-        } else Forbidden
+        } else Forbidden(Messages("hoa.documents.forbidden.NotAssigned")
+            + s" (Assigned to '${d.assigned}')")
       case None => NotFound
     }
   }
@@ -313,7 +270,6 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       .withLink("hoa:logs", routes.ActionLogs.show(d.id).absoluteURL())
       .withField("id", d.id)
       .withField("serialId", d.serialId)
-      .withField("title", d.title)
       .withField("docType", d.docType)
       .withField("mailbox", d.mailbox)
       .withField("created", d.created)
@@ -324,16 +280,16 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       .withField("year", d.year)
       .withField("month", d.month)
       .withField("amountPaid", d.amountPaid)
-      .withField("hoa:nextBox", Workflow.next(d.mailbox).map(_.asJsObject))
-      .withField("hoa:prevBox", Workflow.prev(d.mailbox).map(_.asJsObject))
+      .withField("hoa:nextBox", Mailbox.next(d.mailbox).map(_.asJsObject))
+      .withField("hoa:prevBox", Mailbox.prev(d.mailbox).map(_.asJsObject))
       .withField("body", d.body)
       .withField("comments", d.comments)
 
-    val obj1 = Workflow.next(d.mailbox) map { box =>
-      obj.withLink("hoa:nextBox", routes.Documents.moveMailbox(d.id, box.name).absoluteURL())
+    val obj1 = Mailbox.next(d.mailbox) map { box =>
+      obj.withLink("hoa:nextBox", routes.Workflow.moveMailbox(d.id, box.name).absoluteURL())
     } getOrElse obj
-    val obj2 = Workflow.prev(d.mailbox) map { box =>
-      obj1.withLink("hoa:prevBox", routes.Documents.moveMailbox(d.id, box.name).absoluteURL())
+    val obj2 = Mailbox.prev(d.mailbox) map { box =>
+      obj1.withLink("hoa:prevBox", routes.Workflow.moveMailbox(d.id, box.name).absoluteURL())
     } getOrElse obj1
 
     val obj3: HalJsObject = Tenant.findById(d.forTenant) map { t =>
