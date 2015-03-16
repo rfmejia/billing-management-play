@@ -5,6 +5,7 @@ import com.nooovle.slick.models.{ modelTemplates, documents }
 import com.nooovle.slick.ConnectionFactory
 import org.joda.time.{ DateTime, YearMonth }
 import org.locker47.json.play._
+import play.api.i18n.Messages
 import play.api.libs.json._
 import play.api._
 import play.api.mvc.{ Action, Controller, RequestHeader }
@@ -151,7 +152,10 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
     Document.findById(id) map {
       existingDoc =>
         // Get user responsible for this request and only allow if this is the assigned user
-        if (!existingDoc.assigned.exists(_ == request.user.userId)) Forbidden
+        if (!existingDoc.assigned.exists(_ == request.user.userId)) {
+          Forbidden(Messages("hoa.documents.forbidden.NotAssigned")
+            + s" (Assigned to '${existingDoc.assigned}')")
+        }
         else {
           val json = request.body
           ((json \ "title").asOpt[String],
@@ -208,7 +212,8 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
           }
           if (deleted == 0) NotFound
           else Ok
-        } else Forbidden
+        } else Forbidden(Messages("hoa.documents.forbidden.DeleteNotAllowed")
+            + s" (Assigned to '${doc.assigned}' in mailbox '${doc.mailbox}'")
     } getOrElse NotFound
   }
 
@@ -218,13 +223,14 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
         // Forbid if someone is assigned
         d.assigned match {
           case None =>
-        val newDoc = d.copy(assigned = Some(request.user.userId))
-        Document.update(newDoc) match {
-          case Success(id) => NoContent
-          case Failure(err) => InternalServerError(err.getMessage)
+            val newDoc = d.copy(assigned = Some(request.user.userId))
+            Document.update(newDoc) match {
+              case Success(id) => NoContent
+              case Failure(err) => InternalServerError(err.getMessage)
+            }
+          case Some(user) => Forbidden(Messages("hoa.documents.forbidden.NotAssigned") 
+            + s" (Assigned to '${user}')")
         }
-        case Some(_) => Forbidden("This document is currently assigned to someone")
-      }
       case None => NotFound
     }
   }
@@ -244,7 +250,8 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
             case Success(id) => NoContent
             case Failure(err) => InternalServerError(err.getMessage)
           }
-        } else Forbidden
+        } else Forbidden(Messages("hoa.documents.forbidden.NotAssigned")
+            + s" (Assigned to '${d.assigned}')")
       case None => NotFound
     }
   }
