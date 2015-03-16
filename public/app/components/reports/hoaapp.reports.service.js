@@ -6,7 +6,7 @@ angular
     .factory("reports.service", reportsSrvc);
 
 reportsSrvc.$inject = ["$resource", "$q", "service.hoalinks"];
-function reportsSrvc($resource, $q, hoalinks){
+function reportsSrvc($resource, $q, hoalinks, queryKeys){
     var service = {
         getReport : getReport
     };
@@ -14,8 +14,8 @@ function reportsSrvc($resource, $q, hoalinks){
     return service;
 
     function getReport(queryParams) {
-        var url = hoalinks.getReportsLink;
-        url = "http://localhost:9000/api/reports/2015/2";
+        var url = hoalinks.getApiLink();
+        url += "reports";
 
         var resource = $resource(url, {}, {
             get : {method: "GET", isArray: false}

@@ -6,8 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Bootstrap 101 Template</title>
 
-    <!-- Bootstrap -->
-    <!-- Optional theme -->
+    <!-- Bootstrap --><!-- Optional theme -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"/>
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/0.8.2/angular-material.min.css">
     <link rel="stylesheet" href="assets/css/bootstrap-paper-mod.css"/>
@@ -31,17 +30,16 @@
     <link rel="stylesheet" href="app/components/providers/hoaapp.providers.css"/>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// --><!--[if lt IE 9]>
     <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
 </head>
 <body ng-app="hoa-app" layout="row" ng-controller="controller.root">
 <div layout='column' layout-fill ui-view="rootView">
 
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stacktrace.js/0.6.4/stacktrace.min.js"></script>
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 
@@ -123,6 +121,7 @@
 <script src="assets/filter/hoa/hoa-filters.js"></script>
 <script src="assets/filter/nooovle/nvl-moment-filter.js"></script>
 <script src="assets/filter/nooovle/nvl-capitalize.js"></script>
+<script src="assets/filter/nooovle/nvl-tokenize-camelcase.js"></script>
 
 <!-- Reports -->
 <script src="app/components/reports/hoaapp.reports.module.js"></script>
@@ -151,7 +150,10 @@
 <script src="app/components/providers/hoaapp.dialog.provider.js"></script>
 <script src="app/components/providers/hoaapp.toast.provider.js"></script>
 
-
+<!-- Utils -->
+<script src="assets/utils/nvl-utils.js"></script>
+<script src="assets/utils/nvl-date-utils.js"></script>
+<script src="assets/utils/errorlogging/nvl-error-logging.js"></script>
 
 <nooovle-error-messages></nooovle-error-messages>
 </body>

@@ -37,7 +37,7 @@ function hoaDialogProvider($mdDialog) {
         );
     }
 
-    function getCommentDialog(box) {
+    function getCommentDialog(message, box) {
         return $mdDialog
             .show(
             {
@@ -45,7 +45,8 @@ function hoaDialogProvider($mdDialog) {
                 controller   : dialogCommentCtrl,
                 controllerAs : "dialog",
                 locals       : {
-                    box : box
+                    message : message,
+                    box     : box
                 }
             }
         );
@@ -70,9 +71,10 @@ function dialogCtrl($mdDialog, message, title) {
     }
 }
 
-function dialogCommentCtrl($mdDialog, box) {
+function dialogCommentCtrl($mdDialog, message, box) {
     var vm = this;
     vm.box = box;
+    vm.message = message;
     vm.cancel = cancel;
     vm.send = send;
 

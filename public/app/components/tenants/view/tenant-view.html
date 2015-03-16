@@ -27,7 +27,8 @@
                     layout="row" ng-repeat="document in viewCtrl.documents"
                     theme="list"
                     item="document"
-                    on-click="draftsCtrl.onDocumentItemClicked(item)"></hoa-embedded-items>
+                    on-click="viewCtrl.onDocumentItemClicked(item)"
+                    on-update-clicked="viewCtrl.onUpdateItemClicked(item)"></hoa-embedded-items>
         </md-list>
     </md-whiteframe>
 </md-content>

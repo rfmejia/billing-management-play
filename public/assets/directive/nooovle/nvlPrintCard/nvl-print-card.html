@@ -1,35 +1,52 @@
-<md-card id="printable" class="nvl-print-card">
-    <md-card-content ng-class="{'added-padding': isPrintable}">
-        <div class="header" ng-if="isPrintable" layout="row" layout-align="start center">
+<md-card class="nvl-print-card">
+    <md-card-content id="printable" ng-class="{'added-padding': printCtrl.isPrintable}">
+        <div class="header" ng-if="printCtrl.isPrintable" layout="row" layout-align="start center">
             <div flex="50" class="tenant-info">
-                <h4>Statement of Account for {{document.billDate | momentString:"MMMM-YYYY"}}</h4>
+                <h4>Statement of Account for {{printCtrl.document.billDate | momentString:"MMMM-YYYY"}}</h4>
 
-                <div class="info-container"><span>{{document.tenant.tradeName}}</span></div>
-                <div class="info-container"><span>{{document.tenant.contactPerson}}</span></div>
-                <div class="info-container"><span>{{document.tenant.address}}</span></div>
-                <div class="info-container"><span>{{document.tenant.contactNumber}}</span></div>
+                <div class="info-container"><span>{{printCtrl.document.tenant.tradeName}}</span></div>
+                <div class="info-container"><span>{{printCtrl.document.tenant.contactPerson}}</span></div>
+                <div class="info-container"><span>{{printCtrl.document.tenant.address}}</span></div>
+                <div class="info-container"><span>{{printCtrl.document.tenant.contactNumber}}</span></div>
             </div>
             <div flex="50" layout="column" layout-align="center end">
-                <h4>Hobbies of Asia</h4>
+                <h4 flex>Hobbies of Asia</h4>
+                <h6>{{printCtrl.currentDate}}</h6>
+                <h6>{{printCtrl.document.serialId}}</h6>
             </div>
             <br/>
         </div>
         <h5 class="main-section-title">PREVIOUS CHARGES</h5>
 
-        <div ng-repeat="detail in document.body.previous.sections">
+        <div ng-repeat="detail in printCtrl.document.body.previous.sections">
             <div layout="row" class="static-bill-entries">
                 <div flex="70">
-                    <div layout="row" class="static-bill-entry" ng-repeat="field in detail.fields">
-                        <div flex="40" class="static-bill-entry-title" primary-text><span>{{field.title}}</span></div>
-                        <div flex class="static-bill-entry-guide"></div>
-                        <div ng-if="field.datatype != 'currency'" class="static-bill-entry-value">
-                            <span>{{field.value}}</span></div>
-                        <div ng-if="field.datatype == 'currency'" class="static-bill-entry-value">
-                            <span>{{field.value | currency: "PHP "}}</span></div>
+                    <div class="static-bill-entry" ng-repeat="field in detail.fields">
+                        <section ng-if="field.datatype == 'currency'" layout="row">
+                            <div flex="40" class="static-bill-entry-title" primary-text><span>{{field.title}}</span>
+                            </div>
+                            <div flex class="static-bill-entry-guide"></div>
+                            <div class="static-bill-entry-value"><span>{{field.value | currency : "PHP "}}</span>
+                            </div>
+                        </section>
+                        <section ng-if="field.datatype == 'dateperiod'" layout="row">
+                            <div flex="40" class="static-bill-entry-title" primary-text><span>Date period</span></div>
+                            <div flex class="static-bill-entry-guide"></div>
+                            <div class="static-bill-entry-value"><span>{{field.dates.from.value}} to  {{field.dates.to.value}}</span>
+                            </div>
+                        </section>
+                        <section ng-if="field.datatype != 'dateperiod' && field.datatype != 'currency'" layout="row">
+                            <div flex="40" class="static-bill-entry-title" primary-text><span>{{field.title}}</span>
+                            </div>
+                            <div flex class="static-bill-entry-guide"></div>
+                            <div class="static-bill-entry-value">
+                                <span>{{field.value}}</span></div>
+                        </section>
                     </div>
                 </div>
                 <div flex="30" layout="column" layout-align="end end">
-                    <div ng-if="detail.sectionTotal.datatype == 'currency'">{{detail.sectionTotal.value | currency: "PHP "}}
+                    <div ng-if="detail.sectionTotal.datatype == 'currency'">{{detail.sectionTotal.value | currency: "PHP
+                                                                            "}}
                     </div>
                     <div ng-if="detail.sectionTotal.datatype != 'currency'">{{detail.sectionTotal.value}}</div>
                     <div class="subtotal-title">{{detail.sectionTotal.title}}</div>
@@ -39,18 +56,32 @@
         </div>
         <h5 class="main-section-title">THIS MONTH'S CHARGES</h5>
 
-        <div ng-repeat="detail in document.body.thisMonth.sections">
+        <div ng-repeat="detail in printCtrl.document.body.thisMonth.sections">
             <h4 class="subsection-title">{{detail.title}}</h4>
 
             <div layout="row" class="static-bill-entries">
                 <div flex="70">
-                    <div layout="row" class="static-bill-entry" ng-repeat="field in detail.fields">
-                        <div flex="40" class="static-bill-entry-title" primary-text><span>{{field.title}}</span></div>
-                        <div flex class="static-bill-entry-guide"></div>
-                        <div ng-if="field.datatype == 'currency'" class="static-bill-entry-value"><span>{{field.value | currency : "PHP "}}</span>
-                        </div>
-                        <div ng-if="field.datatype != 'currency'" class="static-bill-entry-value">
-                            <span>{{field.value}}</span></div>
+                    <div class="static-bill-entry" ng-repeat="field in detail.fields">
+                        <section ng-if="field.datatype == 'currency'" layout="row">
+                            <div flex="40" class="static-bill-entry-title" primary-text><span>{{field.title}}</span>
+                            </div>
+                            <div flex class="static-bill-entry-guide"></div>
+                            <div class="static-bill-entry-value"><span>{{field.value | currency : "PHP "}}</span>
+                            </div>
+                        </section>
+                        <section ng-if="field.datatype == 'dateperiod'" layout="row">
+                            <div flex="40" class="static-bill-entry-title" primary-text><span>Date period</span></div>
+                            <div flex class="static-bill-entry-guide"></div>
+                            <div class="static-bill-entry-value"><span ng-if="field.dates.from.value != ''">{{field.dates.from.value}} to  {{field.dates.to.value}}</span>
+                            </div>
+                        </section>
+                        <section ng-if="field.datatype != 'dateperiod' && field.datatype != 'currency'" layout="row">
+                            <div flex="40" class="static-bill-entry-title" primary-text><span>{{field.title}}</span>
+                            </div>
+                            <div flex class="static-bill-entry-guide"></div>
+                            <div class="static-bill-entry-value">
+                                <span>{{field.value}}</span></div>
+                        </section>
                     </div>
                 </div>
                 <div flex="30" layout="column" layout-align="end end">
@@ -71,19 +102,19 @@
                     <div layout="row" class="static-bill-entry">
                         <div flex="40" class="static-bill-entry-title" primary-text><span>Previous charges</span></div>
                         <div flex class="static-bill-entry-guide"></div>
-                        <div class="static-bill-entry-value"><span>{{document.body.previous.summary.value | currency: "PHP "}}</span>
+                        <div class="static-bill-entry-value"><span>{{printCtrl.document.body.previous.summary.value | currency: "PHP "}}</span>
                         </div>
                     </div>
                     <div layout="row" class="static-bill-entry">
                         <div flex="40" class="static-bill-entry-title" primary-text><span>This month's charges</span>
                         </div>
                         <div flex class="static-bill-entry-guide"></div>
-                        <div class="static-bill-entry-value"><span>{{document.body.thisMonth.summary.value | currency: "PHP "}}</span>
+                        <div class="static-bill-entry-value"><span>{{printCtrl.document.body.thisMonth.summary.value | currency: "PHP "}}</span>
                         </div>
                     </div>
                 </div>
                 <div flex="30" layout="column" layout-align="end end">
-                    <div><span>{{document.body.summary.value | currency: "PHP "}}</span></div>
+                    <div><span>{{printCtrl.document.body.summary.value | currency: "PHP "}}</span></div>
                     <div><span class="overall-total-title">Total amount due</span></div>
                 </div>
             </div>
@@ -91,15 +122,15 @@
         <br/>
 
         <div>
-            <h5 class="main-section-title">REMARKS</h5>
-            {{document.body.summary.remarks}}
+            REMARKS:  {{printCtrl.document.body.summary.remarks}}
+
         </div>
         <br/>
 
         <div class="action-block" layout="row" layout-align="space-between center">
-            <div><span>Prepared by {{document.actions.prepared.who.fullName}}</span></div>
-            <div><span>Checked by {{document.actions.checked.who.fullName}}</span></div>
-            <div><span>Approved by {{document.actions.approved.who.fullName}}</span></div>
+            <div><span>Prepared by {{printCtrl.document.actions.prepared.who.fullName}}</span></div>
+            <div><span>Checked by {{printCtrl.document.actions.checked.who.fullName}}</span></div>
+            <div><span>Approved by {{printCtrl.document.actions.approved.who.fullName}}</span></div>
         </div>
     </md-card-content>
 </md-card>

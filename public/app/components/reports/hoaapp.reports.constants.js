@@ -6,6 +6,10 @@ angular
     .constant("REPORTS_ROUTES", {
                   report       : "workspace.reports",
                   reportUpdate : "workspace.reports.view"
+              })
+    .constant("REPORTS_QUERY_KEY", {
+                 month : "month",
+                 year  : "year"
               });
 
 

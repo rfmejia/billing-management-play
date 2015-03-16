@@ -8,7 +8,7 @@ angular
 config.$inject = ["$stateProvider", "REPORTS_ROUTES"];
 function config($stateProvider, reportsRoutes) {
     var reports = {
-        url     : "reports",
+        url     : "reports?year&month",
         resolve : {
             documentsHelper      : getDocumentsHelper,
             documentsService     : getDocumentsService,
@@ -56,18 +56,20 @@ function getDocumentsService(docsService) {
     return docsService;
 }
 
-unparsedDocumentsList.$inject = ["documentsHelper", "documentsService", "MAILBOX_PARAMS", "$stateParams"];
-function unparsedDocumentsList(docsHelper, docsService, mailboxParams, $stateParams) {
+unparsedDocumentsList.$inject = ["documentsHelper", "documentsService", "MAILBOX_PARAMS", "$stateParams", "nvl-dateutils"];
+function unparsedDocumentsList(docsHelper, docsService, mailboxParams, $stateParams, dateUtils) {
     var queryParams;
     if (angular.equals({}, $stateParams)) {
         queryParams = docsHelper.getQueryParameters();
-        queryParams.mailbox = mailboxParams.delivered;
         queryParams.others = null;
         queryParams.isAssigned = null;
+        queryParams.year = dateUtils.getLocalYear(moment().format());
+        queryParams.month = dateUtils.getLocalMonth(moment().format());
     }
     else {
         queryParams = $stateParams;
     }
+    queryParams.mailbox = mailboxParams.delivered;
     return docsService.getDocumentList(queryParams);
 }
 
@@ -76,9 +78,13 @@ function parseApiResponse(docsHelper, apiResponse) {
     return docsHelper.formatDocumentList(apiResponse);
 }
 
-getReport.$inject = ["reports.service"];
-function getReport(reportsService) {
-    return reportsService.getReport();
+getReport.$inject = ["reports.service", "$stateParams", "reports.helper"];
+function getReport(reportsService, $stateParams, reportsHelper) {
+    var queryParams = $stateParams;
+    if(angular.equals({}, queryParams)) {
+        queryParams = reportsHelper.getQueryParams();
+    }
+    return reportsService.getReport(queryParams);
 }
 
 parseReport.$inject = ["unparsedReport", "reports.helper"];

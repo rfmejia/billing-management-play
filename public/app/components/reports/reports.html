@@ -11,34 +11,44 @@
     <section layout="column">
         <md-card>
             <md-card-content>
-                <h5 class="card-title">Summary for {{ctrl.report.date | momentString:
-                                       "MMMM-YYYY"}}<span class="dropdown">
+                <h5 class="card-title">Summary for {{ctrl.report.date.title}}<span class="dropdown">
                     <a class="dropdown-toggle md-button no-uppercase"
                        id="reportMonth"
                        role="button"
                        data-toggle="dropdown"
-                       data-target="#"><i class="fa fa-calendar"></i></a>
+                       data-target="#">
+                        <i class="fa fa-calendar"></i>
+                    </a>
                     <ul class="dropdown-menu" role="menu">
                         <datetimepicker
                                 data-ng-model="ctrl.reportMonth"
                                 data-datetimepicker-config="{ dropdownSelector : '#reportMonth', startView : 'month', minView : 'month'}"
                                 data-on-set-time="ctrl.onReportMonthSelected(newDate, oldDate)"/>
                     </ul>
-                </span></h5>
+                </span>
+                </h5>
                 <v-accordion class="vAccordion--default" multiple>
-                    <v-pane ng-repeat="section in ctrl.report.breakdown" expanded="$first">
+                    <v-pane ng-repeat="section in ctrl.report.sections" expanded="$first">
                         <v-pane-header><h5>{{section.title | capitalize}}</h5></v-pane-header>
                         <v-pane-content>
                             <div class="entry-block">
-                                <section layout="row" ng-repeat="(entry, value) in section.details">
-                                    <div flex="20" class="entry-title"><span>{{entry | capitalize}}</span></div>
+                                <section layout="row" ng-repeat="(entry, value) in section.entries">
+                                    <div flex="20" class="entry-title">
+                                        <span>{{entry | capitalize}}</span>
+                                    </div>
                                     <div flex class="entry-value-guide"></div>
-                                    <div><span>{{value | currency: "PHP "}}</span></div>
+                                    <div>
+                                        <span>{{value | currency: "PHP "}}</span>
+                                    </div>
                                 </section>
                                 <section class="entry-total" layout="row">
-                                    <div flex="20" class="entry-title"><span>Total</span></div>
+                                    <div flex="20" class="entry-title">
+                                        <span>Total</span>
+                                    </div>
                                     <div flex class="entry-value-guide"></div>
-                                    <div><span>{{section.total | currency: "PHP "}}</span></div>
+                                    <div>
+                                        <span>{{section.total | currency: "PHP "}}</span>
+                                    </div>
                                 </section>
                             </div>
                         </v-pane-content>
@@ -47,35 +57,36 @@
             </md-card-content>
         </md-card>
     </section>
-   <section layout="column">
-       <md-whiteframe class="md-whiteframe-z1 cards-margin">
-           <md-toolbar md-theme="reports" class="white-out">
-               <div class="md-toolbar-tools" layout="row" layout-align="start center">
-                   <h5 flex ng-style="{color: '#9C27B0'}">Invoices</h5>
-                   <md-button md-theme="reports" data-toggle="dropdown" remove-focus
-                              class="button-white options no-uppercase md-default md-primary"
-                              ng-click="ctrl.onFilterClicked(ctrl.allFilter.params)">
-                       <span><i class="fa fa-files-o iconed-text"></i>{{ctrl.allFilter.title}}</span>
-                   </md-button>
-                   <md-button md-theme="reports" data-toggle="dropdown" remove-focus
-                              class="button-white options no-uppercase md-default md-primary"
-                              ng-click="ctrl.onFilterClicked(ctrl.paidFilter.params)">
-                       <span><i class="fa fa-check iconed-text"></i>{{ctrl.paidFilter.title}}</span>
-                   </md-button>
-                   <md-button md-theme="reports" data-toggle="dropdown" remove-focus
-                              class="button-white options no-uppercase md-default md-primary"
-                              ng-click="ctrl.onFilterClicked(ctrl.unpaidFilter.params)">
-                       <span><i class="fa fa-close iconed-text"></i>{{ctrl.unpaidFilter.title}}</span>
-                   </md-button>
-               </div>
-           </md-toolbar>
-           <md-list>
-               <hoa-embedded-items
-                       layout="row" ng-repeat="document in ctrl.documents"
-                       theme="list"
-                       item="document"
-                       on-click="ctrl.onDocumentItemClicked(item)"></hoa-embedded-items>
-           </md-list>
-       </md-whiteframe>
-   </section>
+    <section layout="column">
+        <md-whiteframe class="md-whiteframe-z1 cards-margin">
+            <md-toolbar md-theme="reports" class="white-out">
+                <div class="md-toolbar-tools" layout="row" layout-align="start center">
+                    <h5 flex ng-style="{color: '#9C27B0'}">Invoices</h5>
+                    <md-button md-theme="reports" data-toggle="dropdown" remove-focus
+                               class="button-white options no-uppercase md-default md-primary"
+                               ng-click="ctrl.onFilterClicked(ctrl.allFilter.params)">
+                        <span><i class="fa fa-files-o iconed-text"></i>{{ctrl.allFilter.title}}</span>
+                    </md-button>
+                    <md-button md-theme="reports" data-toggle="dropdown" remove-focus
+                               class="button-white options no-uppercase md-default md-primary"
+                               ng-click="ctrl.onFilterClicked(ctrl.paidFilter.params)">
+                        <span><i class="fa fa-check iconed-text"></i>{{ctrl.paidFilter.title}}</span>
+                    </md-button>
+                    <md-button md-theme="reports" data-toggle="dropdown" remove-focus
+                               class="button-white options no-uppercase md-default md-primary"
+                               ng-click="ctrl.onFilterClicked(ctrl.unpaidFilter.params)">
+                        <span><i class="fa fa-close iconed-text"></i>{{ctrl.unpaidFilter.title}}</span>
+                    </md-button>
+                </div>
+            </md-toolbar>
+            <md-list>
+                <hoa-embedded-items
+                        layout="row" ng-repeat="document in ctrl.documents"
+                        theme="list"
+                        item="document"
+                        on-click="ctrl.onDocumentItemClicked(item)"
+                        on-update-clicked="ctrl.onUpdateItemClicked(item)"></hoa-embedded-items>
+            </md-list>
+        </md-whiteframe>
+    </section>
 </md-content>

@@ -8,10 +8,11 @@ angular
                     'documents.helper',
                     'mailbox',
                     'userDetails',
+                   "nvl-dateutils",
                     sidebarController
                 ]);
 
-function sidebarController($state, documentsHelper, mailbox, userDetails) {
+function sidebarController($state, documentsHelper, mailbox, userDetails, dateUtils) {
     var vm = this;
 
     vm.mailboxItems = {
@@ -25,7 +26,12 @@ function sidebarController($state, documentsHelper, mailbox, userDetails) {
     function onSidebarItemClicked(folder) {
         var query = documentsHelper.getQueryParameters();
         query.mailbox = folder.queryParam;
-        if(folder.link != 'forSending') {
+       if(folder.link == 'delivered') {
+            query = {};
+            query.year = dateUtils.getLocalYearNow();
+            query.month = dateUtils.getLocalMonthNow();
+        }
+        else if(folder.link != 'forSending') {
             query.isAssigned = true;
             query.assigned = userDetails.userId;
         }

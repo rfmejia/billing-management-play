@@ -65,8 +65,7 @@ md-toolbar.nav-sidebar {
 
 .main-secton a,
 .main-secton a:hover,
-.main-secton a:focus,
-.list-item {
+.main-secton a:focus {
     color: rgba(33, 33, 33, .87);
 }
 

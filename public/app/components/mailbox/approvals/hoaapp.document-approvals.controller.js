@@ -83,8 +83,10 @@ function approvalsCtrl(documentsHelper, documentsResponse, userResponse, tenants
     function onUnlinkClicked() {
         if (vm.links.hasOwnProperty("hoa:unassign")) {
             var url = vm.links["hoa:unassign"].href;
-            var resource = $resource(url);
-            resource.delete().$promise.then(returnToList);
+            dialogProvider.getConfirmDialog(unassignDocument, null, "This will no longer be assigned to you", "Are you sure?")
+        }
+        function unassignDocument() {
+            documentsService.unassignDocument(url).then(returnToList);
         }
     }
 
@@ -93,7 +95,7 @@ function approvalsCtrl(documentsHelper, documentsResponse, userResponse, tenants
     }
 
     function onRejectClicked() {
-        dialogProvider.getCommentDialog(vm.prevAction.title).then(okayClicked);
+        dialogProvider.getCommentDialog("Move document to ", vm.prevAction.title).then(okayClicked);
 
         //Save the document first, then submit
         function okayClicked(comment) {
@@ -108,7 +110,7 @@ function approvalsCtrl(documentsHelper, documentsResponse, userResponse, tenants
         }
 
         var success = function(response) {
-            toastsProvider.showSimpleToast('Your document was sent for checking.');
+            toastsProvider.showSimpleToast('Your document was sent to the previous phase.');
             returnToList();
         };
 
@@ -116,7 +118,7 @@ function approvalsCtrl(documentsHelper, documentsResponse, userResponse, tenants
     }
 
     function onSubmitClicked() {
-        dialogProvider.getCommentDialog(vm.nextAction.title).then(okayClicked);
+        dialogProvider.getCommentDialog("Move document to ", vm.nextAction.title).then(okayClicked);
 
         //Save the document first, then submit
         function okayClicked(comment) {
@@ -131,7 +133,7 @@ function approvalsCtrl(documentsHelper, documentsResponse, userResponse, tenants
         }
 
         var success = function(response) {
-            toastsProvider.showSimpleToast('Your document was sent for checking.');
+            toastsProvider.showSimpleToast('Your document was sent to the next phase.');
             returnToList();
         };
 
@@ -147,8 +149,8 @@ function approvalsCtrl(documentsHelper, documentsResponse, userResponse, tenants
     }
 
     function preparePostData() {
-        vm.document.comments = commentsHelper.parseComments(vm.currentComment, vm.comments);
-        vm.document.assigned = vm.currentUser;
+        documentsResponse.viewModel.comments = commentsHelper.parseComments(vm.currentComment, vm.comments);
+        documentsResponse.viewModel.assigned = vm.currentUser;
     }
 
     //endregion

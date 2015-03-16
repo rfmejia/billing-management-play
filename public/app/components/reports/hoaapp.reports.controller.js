@@ -5,8 +5,8 @@ angular
     .module("module.reports")
     .controller("reportsCtrl", controller);
 
-controller.$inject = ["documentsHelper", "documentsService", "documentsList", "reportResponse", "$state", "$q", "moment", "REPORTS_ROUTES"];
-function controller(docsHelper, docsSrvc, documents, reportResponse, $state, $q, moment, reportsRoutes) {
+controller.$inject = ["documentsHelper", "documentsService", "documentsList", "reportResponse", "$state", "$q", "moment", "REPORTS_ROUTES", "nvl-dateutils"];
+function controller(docsHelper, docsSrvc, documents, reportResponse, $state, $q, moment, reportsRoutes, dateUtils) {
     var vm = this;
     vm.pageTitle = $state.current.data.title;
     vm.documents = documents.viewModel.list;
@@ -18,14 +18,36 @@ function controller(docsHelper, docsSrvc, documents, reportResponse, $state, $q,
     vm.onFilterClicked = onFilterClicked;
     vm.onReportMonthSelected = onReportMonthSelected;
     vm.onDocumentItemClicked = onDocumentItemClicked;
+    vm.onUpdateItemClicked = onUpdateItemClicked;
 
     activate();
 
     //region FUNCTION_CALL
     function activate() {
-        vm.allFilter = {title : "All", params : {mailbox : "delivered"}};
-        vm.paidFilter = {title : "Paid", params : {mailbox: "delivered", isPaid: true}};
-        vm.unpaidFilter = {title : "Unpaid", params : {mailbox: "delivered", isPaid: false}};
+        vm.allFilter = {
+            title  : "All",
+            params : {
+                mailbox : "delivered",
+                year    : vm.report.date.year,
+                month   : vm.report.date.month
+            }
+        };
+        vm.paidFilter = {
+            title : "Paid", params : {
+                mailbox : "delivered",
+                isPaid  : true,
+                year    : vm.report.date.year,
+                month   : vm.report.date.month
+            }
+        };
+        vm.unpaidFilter = {
+            title : "Unpaid", params : {
+                mailbox : "delivered",
+                isPaid : false,
+                year    : vm.report.date.year,
+                month   : vm.report.date.month
+            }
+        };
     }
 
     function onFilterClicked(params) {
@@ -33,8 +55,10 @@ function controller(docsHelper, docsSrvc, documents, reportResponse, $state, $q,
     }
 
     function onReportMonthSelected(newDate, oldDate) {
-        var params = {mailbox : "delivered", forMonth: newDate}
-        refresDocuments(params);
+        var year = dateUtils.getLocalYear(newDate);
+        var month = dateUtils.getLocalMonth(newDate);
+        var params = {mailbox : "delivered", year : year, month : month}
+        $state.go($state.current, params, {reload : true});
     }
 
     function refresDocuments(params) {
@@ -47,8 +71,36 @@ function controller(docsHelper, docsSrvc, documents, reportResponse, $state, $q,
     }
 
     function onDocumentItemClicked(item) {
-        $state.go(reportsRoutes.reportUpdate, {id: item.id});
+        if(item.assigned == null) {
+            docsSrvc.assignDocument(item._links["hoa:assign"].href)
+                .then(success, error);
+        }
+
+        else success();
+
+        function success() {
+            $state.go(docsHelper.resolveViewer(item), {id : item.id});
+        }
+
+        function error() {}
+
     }
+
+    function onUpdateItemClicked(item) {
+        if(item.assigned == null) {
+            docsSrvc.assignDocument(item._links["hoa:assign"].href)
+                .then(success, error);
+        }
+
+        else success();
+
+        function success() {
+            $state.go(reportsRoutes.reportUpdate, {id : item.id});
+        }
+
+        function error() {}
+    }
+
     //endregion
 
 }

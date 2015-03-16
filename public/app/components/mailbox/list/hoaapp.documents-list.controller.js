@@ -105,29 +105,13 @@ function documentsCtrl(dialogProvider, $state, $stateParams, $resource, document
     }
 
     function onDocumentItemClicked(item) {
-        if (vm.isForSending) {
-            printableView(item.id);
-        }
-        else {
-            workflowView(item);
-        }
-    }
-
-    function printableView(docId) {
-        console.log(docId);
-        $state.go("workspace.print-view", {id : docId}, {reload : true});
-    }
-
-    function workflowView(item) {
-        var state = "";
+        var state = documentsHelper.resolveViewer(item);
         var title = "Opening unassigned document";
         var message = "This document will be locked to you";
 
-        if (vm.queryParameters.mailbox == "drafts") {
-            state = "workspace.edit-view";
-        }
-        else {
-            state = "workspace.fixed-view";
+        if (vm.isForSending) {
+            $state.go(state, {id : item.id}, {reload : true});
+            return;
         }
 
         //Check if clicked document is assigned

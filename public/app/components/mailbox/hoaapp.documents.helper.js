@@ -18,7 +18,9 @@ function documentHelper(mailboxParam) {
         formatServerData     : formatServerData,
         formatDocumentList   : formatListResponse,
         getQueryParameters   : getQueryParameters,
-        formatParameters     : formatParameters
+        formatParameters     : formatParameters,
+        formatPaidPostData   : formatPaidPostData,
+        resolveViewer        : resolveViewer
     };
     return helper;
 
@@ -41,12 +43,12 @@ function documentHelper(mailboxParam) {
         return {
             "body"       : serverResponse.body,
             "comments"   : serverResponse.comments,
-            "billDate"   : serverResponse.forMonth,
             "assigned"   : serverResponse.assigned,
             "nextAction" : {
                 "nextBox" : searchForBox(serverResponse, "hoa:nextBox"),
                 "prevBox" : searchForBox(serverResponse, "hoa:prevBox")
             },
+            forMonth     : serverResponse.forMonth,
             "actions"    : {
                 last     : serverResponse.lastAction,
                 prepared : serverResponse.preparedAction,
@@ -54,12 +56,15 @@ function documentHelper(mailboxParam) {
                 approved : serverResponse.approvedAction
             },
 
-            "mailbox"       : serverResponse.mailbox,
-            "amountPaid"    : serverResponse.amountPaid,
-            "documentId"    : serverResponse.id,
-            "documentTitle" : serverResponse.documentTitle,
-            "tenant"        : serverResponse._embedded.tenant,
-            "links"         : serverResponse._links
+            "mailbox"    : serverResponse.mailbox,
+            "amountPaid" : serverResponse.amountPaid,
+            "amounts"    : serverResponse.amounts,
+            "documentId" : serverResponse.id,
+            "tenant"     : serverResponse._embedded.tenant,
+            "links"      : serverResponse._links,
+            "year"       : serverResponse.year,
+            "month"      : serverResponse.month,
+            "serialId"   : serverResponse.serialId
         };
     }
 
@@ -108,10 +113,11 @@ function documentHelper(mailboxParam) {
             forTenant  : null,
             creator    : null,
             assigned   : null,
-            forMonth   : null,
             isPaid     : null,
             others     : false,
-            isAssigned : false
+            isAssigned : false,
+            year       : null,
+            month      : null
         };
     }
 
@@ -123,6 +129,30 @@ function documentHelper(mailboxParam) {
             }
         }
         return queryParameters;
+    }
+
+    function formatPaidPostData(amounts, amountPaid, comments) {
+        angular.forEach(amounts.sections, function(section) {
+            if (amountPaid.hasOwnProperty(section.name)) {
+                amountPaid[section.name] = section.amounts.paid;
+            }
+        });
+        return {
+            amountPaid : amountPaid,
+            comments   : comments
+        }
+    }
+
+    function resolveViewer(document) {
+        if (document.mailbox == 'drafts') {
+            return "workspace.edit-view";
+        }
+        else if (document.mailbox == 'forChecking' || document.mailbox == 'forApproval') {
+            return "workspace.fixed-view";
+        }
+        else {
+            return "workspace.print-view";
+        }
     }
 
     //endregion

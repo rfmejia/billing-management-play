@@ -19,7 +19,7 @@ function rootController($cookies, hoalinks, tokenHandler, $rootScope) {
             .then(success, error);
 
         $rootScope.$on("$stateChangeError", function(event, toState, toParams, fromState, fromParams, error) {
-            console.log(error);
+            console.log(error.stack);
         });
     }
 

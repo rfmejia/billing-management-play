@@ -1,28 +1,58 @@
-<md-item flex layout="row">
-    <md-button flex
+<md-item flex
+         class="document-items"
+         layout="row">
+    <md-button ng-if="item.document.mailbox == 'paid'"
                class="no-uppercase md-tile-content button-white"
                layout="row"
                ng-click="item.onItemClick()">
-        <div flex="15">
-            <h3 class="pull-left">{{item.document.forMonth | momentString: "MMMM-YYYY"}}</h3>
+        <div flex="10">
+            <h3>{{item.document.mailbox | tokenizedCamel}}</h3>
+        </div>
+        <div flex="20">
+            <h3>{{item.document.forMonth | momentString: "MMMM-YYYY"}}</h3>
         </div>
         <div flex>
-            <h4 class="pull-right">{{item.document.forTenant.tradeName}}</h4>
+            <h3 class="list-item-owner">{{item.document.forTenant.tradeName}}</h3>
         </div>
-        <!--<div flex layout="column" layout-align="start end">-->
-            <!--<p>-->
-                <!--Paid: {{item.document.amountPaid}}-->
-            <!--</p>-->
-        <!--</div>-->
-        <!--<div flex layout="column" layout-align="start end">-->
-            <!--<p>-->
-                <!--Unpaid: {{item.document.unpaid}}-->
-            <!--</p>-->
-        <!--</div>-->
-        <!--<div flex layout="column" layout-align="start end">-->
-            <!--<p>-->
-                <!--Total: {{item.document.total}} {{$parent.$index}}-->
-            <!--</p>-->
-        <!--</div>-->
+    </md-button>
+    <md-button ng-if="item.document.mailbox == 'unpaid'"
+               layout="row"
+               flex
+               layout-align="space-between start"
+               class="no-uppercase md-tile-content button-white"
+               ng-click="item.onItemClick()">
+
+        <div flex="10">
+            <h3 class="mailbox">{{item.document.mailbox | tokenizedCamel}}</h3>
+        </div>
+        <div flex="20">
+            <h3>{{item.document.forMonth | momentString: "MMMM-YYYY"}}</h3>
+        </div>
+        <div flex="50">
+            <h3 class="list-item-owner">{{item.document.forTenant.tradeName}}</h3>
+        </div>
+
+        <div flex="20">
+            <a href class="md-button no-uppercase" ng-click="item.onItemUpdateClicked($event)" remove-focus>
+                <i class="fa fa-pencil-square-o iconed-text"></i>
+                Update
+            </a>
+        </div>
+
+    </md-button>
+    <md-button ng-if="item.document.mailbox != 'paid' && item.document.mailbox != 'unpaid'"
+               flex
+               class="no-uppercase md-tile-content button-white"
+               layout="row"
+               ng-click="item.onItemClick()">
+        <div flex="20">
+            <h3>{{item.document.mailbox | tokenizedCamel}}</h3>
+        </div>
+        <div flex="20">
+            <h3>{{item.document.forMonth | momentString: "MMMM-YYYY"}}</h3>
+        </div>
+        <div flex>
+            <h3 class="list-item-owner">{{item.document.forTenant.tradeName}}</h3>
+        </div>
     </md-button>
 </md-item>

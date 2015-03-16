@@ -6,13 +6,15 @@ angular
                     'tenant',
                     'documents',
                     "documentsService",
+                    "documentsHelper",
                     'service.hoadialog',
                     "service.hoatoasts",
                     "tenantsService",
+                    "REPORTS_ROUTES",
                     tenantViewCtrl
                 ]);
 
-function tenantViewCtrl($state, $stateParams, tenant, documents, documentsService, hoaDialog, hoaToast, tenantsSrvc) {
+function tenantViewCtrl($state, $stateParams, tenant, documents, documentsService, docsHelper, hoaDialog, hoaToast, tenantsSrvc, reportsRoutes) {
     var vm = this;
     vm.tenant = tenant.viewModel;
     vm.documents = documents._embedded.item;
@@ -23,6 +25,8 @@ function tenantViewCtrl($state, $stateParams, tenant, documents, documentsServic
     vm.onEditClicked = onEditClicked;
     vm.onFilterClicked = onFilterClicked;
     vm.onDeleteClicked = onDeleteClicked;
+    vm.onDocumentItemClicked = onDocumentItemClicked;
+    vm.onUpdateItemClicked = onUpdateItemClicked;
 
     activate();
 
@@ -31,23 +35,49 @@ function tenantViewCtrl($state, $stateParams, tenant, documents, documentsServic
         vm.filters = [
             {
                 title  : "All",
-                params : {forTenant : $stateParams.id, others : null, isAssigned : null}
+                params : {
+                    forTenant  : $stateParams.id,
+                    others     : null,
+                    isAssigned : null
+                }
             },
             {
                 title  : "Pending",
-                params : {forTenant : $stateParams.id, mailbox : "pending", others : null, isAssigned : null}
+                params : {
+                    forTenant  : $stateParams.id,
+                    mailbox    : "pending",
+                    others     : null,
+                    isAssigned : null
+                }
             },
             {
                 title  : "Delivered",
-                params : {forTenant : $stateParams.id, mailbox : "delivered", others : null, isAssigned : null}
+                params : {
+                    forTenant  : $stateParams.id,
+                    mailbox    : "delivered",
+                    others     : null,
+                    isAssigned : null
+                }
             },
             {
                 title  : "Paid",
-                params : {forTenant : $stateParams.id, mailbox : "paid", others : null, isAssigned : null}
+                params : {
+                    forTenant  : $stateParams.id,
+                    mailbox    : "delivered",
+                    isPaid     : true,
+                    others     : null,
+                    isAssigned : null
+                }
             },
             {
                 title  : "Unpaid",
-                params : {forTenant : $stateParams.id, mailbox : "unpaid", others : null, isAssigned : null}
+                params : {
+                    forTenant  : $stateParams.id,
+                    mailbox    : "delivered",
+                    isPaid     : false,
+                    others     : null,
+                    isAssigned : null
+                }
             }
         ]
     }
@@ -86,6 +116,27 @@ function tenantViewCtrl($state, $stateParams, tenant, documents, documentsServic
         function success(response) {
             vm.documents = response._embedded.item;
         }
+    }
+
+    function onDocumentItemClicked(item) {
+        $state.go(docsHelper.resolveViewer(item), {id : item.id}, {reload : true});
+    }
+
+    function onUpdateItemClicked(item) {
+        if (item.assigned == null) {
+            documentsService.assignDocument(item._links["hoa:assign"].href)
+                .then(success, error);
+        }
+
+        else {
+            success();
+        }
+
+        function success() {
+            $state.go(reportsRoutes.reportUpdate, {id : item.id});
+        }
+
+        function error() {}
     }
 
     //endregion
