@@ -60,6 +60,7 @@ function documentSrv($q, $resource, hoalinks) {
     }
 
     function assignDocument(url) {
+        var deferred = $q.defer();
         var res = $resource(url, {}, {
             put : {
                 method  : "PUT",
@@ -67,13 +68,29 @@ function documentSrv($q, $resource, hoalinks) {
                 headers : {"Content-Type" : "application/json"}
             }
         });
+        var success = function(response) {
+            deferred.resolve(response);
+        };
 
-        return res.put().$promise
+        var error = function(error) {
+            deferred.reject(error.message);
+        };
+        res.put().$promise.then(success, error);
+        return deferred.promise;
     }
 
     function unassignDocument(url) {
+        var deferred = $q.defer();
         var res = $resource(url);
-        return res.delete().$promise;
+        var success = function(response) {
+            deferred.resolve(response);
+        };
+
+        var error = function(error) {
+            deferred.reject(error.message);
+        };
+        res.delete().$promise.then(success, error);
+        return deferred.promise;
     }
 
     function moveToBox(url) {

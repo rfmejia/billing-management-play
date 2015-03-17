@@ -9,10 +9,11 @@ angular
                    "documentsResponse",
                    "$state",
                    "$stateParams",
+                   "reports.helper",
                    printCtrl
                 ]);
 
-function printCtrl(docsHelper, docsSrvc, docsResponse, $state, $stateParams) {
+function printCtrl(docsHelper, docsSrvc, docsResponse, $state, $stateParams, reportsHelper) {
     var vm = this;
     vm.document = docsResponse.viewModel;
     console.log(docsResponse);
@@ -32,7 +33,7 @@ function printCtrl(docsHelper, docsSrvc, docsResponse, $state, $stateParams) {
     }
 
     function moveToReports() {
-        $state.go("workspace.reports");
+        $state.go("workspace.reports", reportsHelper.getQueryParams());
     }
     //endregion
 }

@@ -7,27 +7,110 @@
     border-bottom: 1px solid rgba(225, 225, 225, .87);
 }
 
-.reports .summary-block {
-    margin-top: 24px;
-    margin-bottom: 24px;
-}
-
-.reports .entry-block * {
-    line-height: 1;
-    margin-top: 8px;
-    margin-bottom: 8px;
-}
-
-.reports .info-button {
-    min-width: 2em;
-    padding: 0;
-}
-
-.reports a#reportMonth:hover {
-    color :#9C27B0;
-}
-
 .reports a#reportMonth i {
     font-size: 14px;
     line-height: 14px;
+}
+
+.reports .entry-total * {
+    font-weight: 600;
+    color :#9C27B0;
+}
+
+span.currency {
+    padding-right: 10px;
+}
+
+div.currency {
+    padding-right: 10px;
+}
+
+/*accordion*/
+.reports .vAccordion--default v-accordion {
+    margin-top: 20px;
+    padding-left: 20px;
+}
+
+.reports .vAccordion--default v-pane {
+    -webkit-transition: -webkit-transform 0.5s;
+    transition: transform 0.5s;
+}
+
+.reports .vAccordion--default v-pane.is-expanded > v-pane-header {
+    border-bottom-color: #9C27B0;
+}
+
+.reports .vAccordion--default v-pane.is-expanded > v-pane-header::after {
+    -webkit-transform: rotate(90deg);
+    -ms-transform: rotate(90deg);
+    transform: rotate(90deg);
+    opacity: 0;
+}
+
+.reports .vAccordion--default v-pane.is-expanded > v-pane-header::before {
+    -webkit-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    transform: rotate(0deg);
+}
+
+.reports .vAccordion--default v-pane.is-expanded > v-pane-content > div {
+    opacity: 1;
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+}
+
+.reports .vAccordion--default v-pane.is-expanded-add > v-pane-content, .reports .vAccordion--default v-pane.is-expanded-remove > v-pane-content {
+    -webkit-transition: max-height 0.5s;
+    transition: max-height 0.5s;
+}
+
+.reports .vAccordion--default v-pane-header {
+    padding: 5px 0;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #D8D8D8;
+    -webkit-transition: color 0.25s, border-color 0.5s;
+    transition: color 0.25s, border-color 0.5s;
+}
+
+.reports .vAccordion--default v-pane-header::after,
+.reports .vAccordion--default v-pane-header::before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 50%;
+    right: 0;
+    width: 10px;
+    height: 1px;
+    background-color: #9C27B0;
+    -webkit-transform-origin: 50% 50%;
+    -ms-transform-origin: 50% 50%;
+    transform-origin: 50% 50%;
+    -webkit-transition: all 0.25s;
+    transition: all 0.25s;
+}
+
+.reports .vAccordion--default v-pane-header::before {
+    -webkit-transform: rotate(-90deg);
+    -ms-transform: rotate(-90deg);
+    transform: rotate(-90deg);
+}
+
+.reports .vAccordion--default v-pane-header:hover,
+.reports .vAccordion--default v-pane-header:focus {
+    color: #9C27B0;
+}
+
+.reports .vAccordion--default v-pane-content > div {
+    padding-bottom: 20px;
+    will-change: transform, opacity;
+    opacity: 0;
+    -webkit-transform: translate3d(0, 30px, 0);
+    transform: translate3d(0, 30px, 0);
+    -webkit-transition: -webkit-transform 0.5s, opacity 0.5s;
+    transition: transform 0.5s, opacity 0.5s;
+}
+
+.reports a:hover,
+.reports a:focus{
+    color: #9C27B0;
 }

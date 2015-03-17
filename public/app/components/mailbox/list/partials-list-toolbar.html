@@ -1,23 +1,23 @@
 <div class="md-toolbar-tools" layout="row" layout-align="start center">
-    <button hide-gt-sm class="menuBtn menuBtn-hamburger">
+    <button hide-gt-md class="menuBtn menuBtn-hamburger" toggle-side-nav>
         <span class="visually-hidden">Menu</span>
     </button>
     <h3 flex class="toolbar-title">{{draftsCtrl.pageTitle}}</h3>
     <section ng-if="!draftsCtrl.isForSending">
-        <span class="filter-header options"><i class="fa fa-filter iconed-text"></i>FILTER</span>
-        <md-button class="filter-button options"
+        <span class="filter-header options"><i class="fa fa-filter iconed-text"></i>Filter</span>
+        <md-button class="filter-button options no-uppercase"
                    ng-click="draftsCtrl.onFilterTabClicked('mine')"
                    ng-class="{true: 'active', false: ''}[draftsCtrl.tabState.mine]">
             <div layout="row" layout-align="center center">
                 <i class="fa fa-user iconed-text"></i> <span>Mine</span></div>
         </md-button>
 
-        <md-button class="filter-button options"
+        <md-button class="filter-button options no-uppercase"
                    ng-click="draftsCtrl.onFilterTabClicked('open')"
                    ng-class="{true: 'active', false:''}[draftsCtrl.tabState.open]">
             <span><i class="fa fa-chain-broken iconed-text"></i>Open</span></md-button>
 
-        <md-button class="filter-button options"
+        <md-button class="filter-button options no-uppercase"
                    ng-click="draftsCtrl.onFilterTabClicked('others')"
                    ng-class="{true: 'active', false:''}[draftsCtrl.tabState.others]">
             <span><i class="fa fa-group iconed-text"></i>Others</span></md-button>

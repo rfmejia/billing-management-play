@@ -11,7 +11,8 @@ angular
                 "ngMaterial",
                 "ngAnimate",
             /** Cross-app modules **/
-
+                "nvl-utils",
+                "nvl-error-logging.module",
             /** 3rd-party modules **/
                 "ui.bootstrap",
                 "ui.router",

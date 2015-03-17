@@ -13,9 +13,10 @@ function hoaDocuments() {
         replace          : true,
         transclude       : false,
         scope            : {
-            theme    : '@',
-            onClick  : '&',
-            document : '='
+            theme           : '@',
+            onClick         : '&',
+            onUpdateClicked : '&',
+            document        : '='
         },
         templateUrl      : "assets/directive/hoa/hoa-collections/hoa-embedded-items/hoa-document/hoa-document-item.html",
         controller       : "hoaDocumentItemCtrl",
@@ -33,7 +34,13 @@ angular.module("module.directives")
 function hoaDocumentItemCtrl() {
     var vm = this;
     vm.onItemClick = onItemClick;
+    vm.onItemUpdateClicked = onItemUpdateClicked;
     function onItemClick() {
         vm.onClick({item : vm.document});
+    }
+
+    function onItemUpdateClicked($event) {
+        $event.stopPropagation();
+        vm.onUpdateClicked({item : vm.document});
     }
 }

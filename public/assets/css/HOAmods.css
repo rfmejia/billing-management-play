@@ -450,7 +450,7 @@ md-button.toolbar-tools {
     margin-bottom: 16px;
 }
 
-md-toolbar.md-tenants-theme .md-button.button-white,
+md-toolbar .md-button.button-white,
 button.button-white{
     color: rgba(114, 114, 114, .87);
 }

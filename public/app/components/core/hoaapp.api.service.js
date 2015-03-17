@@ -7,7 +7,6 @@ angular
                  hoaAppLinksService
              ]);
 
-
 function hoaAppLinksService($resource, $q, $window) {
     var topUrl = $window.location.origin + "/api/";
     var usersLink = null;
@@ -31,7 +30,8 @@ function hoaAppLinksService($resource, $q, $window) {
         getDocumentsLink   : getDocumentsLink,
         getTemplatesLink   : getTemplatesLink,
         getMailboxesLink   : getMailboxesLink,
-        getLogoutLink      : getLogoutLink
+        getLogoutLink      : getLogoutLink,
+        getApiLink         : getApiLink
     };
 
     return service;
@@ -68,6 +68,10 @@ function hoaAppLinksService($resource, $q, $window) {
 
     function getLogoutLink() {
         return logoutLink;
+    }
+
+    function getApiLink() {
+        return topUrl;
     }
 
     function getLinks() {

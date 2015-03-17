@@ -1,19 +1,27 @@
-<md-toolbar ng-if="viewCtrl.profile === 'collection'" md-theme="tenants" ng-include="'app/components/tenants/list/partials-tenants-list-toolbar.html'">
+<md-toolbar ng-if="viewCtrl.profile === 'collection'"
+            md-theme="tenants"
+            ng-include="'app/components/tenants/list/partials-tenants-list-toolbar.html'">
 </md-toolbar>
 
-<md-content layout="column" flex class="md-padding">
-    <md-whiteframe class="md-whiteframe-z1">
-        <md-content md-theme="tenants">
+<md-content flex class="md-padding" >
+    <md-whiteframe layout="column" md-theme="tenants" class="md-whiteframe-z1 cards-margin">
+        <md-content>
             <div ng-if="viewCtrl.profile === 'collection'">
-                <div class="tenant-search">
-                    <input type="text" class="form-control tenant-input" placeholder="Filter tenants" ng-model="query">
-                </div>
+                <md-input-container class="tenants-search">
+                    <label>
+                        <i class="fa fa-search iconed-text"></i>
+                        Search tenant</label> <input type="text" ng-model="query"/>
+                </md-input-container>
                 <md-list>
-                    <hoa-embedded-items layout="row" ng-repeat="tenant in viewCtrl.tenants | filter: query" item="tenant" on-click="viewCtrl.onTenantClicked(tenant)">
+                    <hoa-embedded-items layout="row"
+                                        ng-repeat="tenant in viewCtrl.tenants | filter: query"
+                                        item="tenant"
+                                        on-click="viewCtrl.onTenantClicked(tenant)">
                     </hoa-embedded-items>
                 </md-list>
             </div>
         </md-content>
+
     </md-whiteframe>
 </md-content>
 

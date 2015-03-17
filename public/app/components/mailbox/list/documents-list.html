@@ -1,7 +1,7 @@
 <md-toolbar md-theme="list" ng-include="'app/components/mailbox/list/partials-list-toolbar.html'">
 
 </md-toolbar>
-<md-content layout="column" flex class="md-padding md-default-theme">
+<md-content layout="column" flex class="md-padding md-default-theme docs-list">
     <md-whiteframe class="documents-list md-whiteframe-z1">
         <md-toolbar class="white-out documents-list-toolbar" layout="row" layout-align="start center">
             <h5 class="documents-list-title">{{draftsCtrl.tabTitle}}</h5>
@@ -13,20 +13,18 @@
                     </hoa-embedded-items>
                 </md-list>
             </div>
+            <section ng-if="draftsCtrl.total > draftsCtrl.pageSize">
+                <md-divider></md-divider>
+                <div layout="row"
+                     layout-align="center center"
+                     paging
+                     page="draftsCtrl.currentPage"
+                     page-size="draftsCtrl.pageSize"
+                     total="draftsCtrl.total"
+                     paging-action="draftsCtrl.onChangePageClicked(page)">
+                </div>
+            </section>
         </md-content>
+        <br/>
     </md-whiteframe>
-
-    <div class="text-center">
-        <ul class="pagination pagination-sm">
-            <li ng-class="{true: '', false:'disabled'}[draftsCtrl.isDecrementPagePossible()]"
-                ng-disabled="{true: '', false:'disabled'}[draftsCtrl.isDecrementPagePossible()]"
-                ng-click="draftCtrl.onChangeSliceClicked(-5)"><a href>«</a></li>
-            <li ng-class="{true: 'active', false:'default'}[draftsCtrl.currentPage == page]"
-                ng-repeat="page in draftsCtrl.pagesSliced"
-                ng-click="draftsCtrl.onChangePageClicked(page)"><a href>{{page}}</a></li>
-            <li ng-class="{true: '', false:'disabled'}[draftsCtrl.isIncrementPagePossible()]"
-                ng-disabled="{true: '', false:'disabled'}[draftsCtrl.isIncrementPagePossible()]"
-                ng-click="draftsCtrl.onChangeSliceClicked(5)"><a class="disabledAnchor" href>»</a></li>
-        </ul>
-    </div>
 </md-content>

@@ -1,18 +1,22 @@
-.tenant-search {
-    margin-bottom: 16px;
-}
-
-input[type=text].tenant-input  {
-    padding: 0 6px;
-    height: 40px;
-    line-height: 40px;
+md-input-container.tenants-search label,
+md-input-container.tenants-search input{
+    padding-left: 16px;
+    padding-right: 16px;
 }
 
 .bottom-margin {
     margin-bottom: 32px;
 }
 
+md-input-container > md-icon {
+    position:absolute;
+    top: 5px;
+    left: 2px;
+}
+
 .tenant-docs .dropdown-menu {
     top:80%;
     left: 84%;
 }
+
+.tenant-sear

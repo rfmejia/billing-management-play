@@ -1,7 +1,7 @@
 <md-dialog>
     <md-toolbar>
         <div class="md-toolbar-tools">
-            <h6>MOVING DOCUMENT TO <span class="text-accented">{{dialog.box | uppercase}}</span></h6>
+            <h6>{{dialog.message | uppercase}} <span class="text-accented">{{dialog.box | uppercase}}</span></h6>
         </div>
     </md-toolbar>
     <md-content>
@@ -22,12 +22,12 @@
     </md-content>
     <div class="md-actions" layout="row">
         <div flex>
-            <md-button class="pull-left" ng-click="dialog.cancel()">
+            <md-button class="pull-left no-uppercase" ng-click="dialog.cancel()">
                 Cancel
             </md-button>
         </div>
         <md-button ng-disabled="comment.text.$invalid"
-                   class="md-primary"
+                   class="md-primary no-uppercase"
                    ng-click="dialog.send(dialog.comment)"
                    remove-focus>
             Send

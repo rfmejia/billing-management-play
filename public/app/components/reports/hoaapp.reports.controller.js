@@ -5,55 +5,82 @@ angular
     .module("module.reports")
     .controller("reportsCtrl", controller);
 
-controller.$inject = ["documentsHelper", "documentsService", "documentsList", "$state", "$q"];
-function controller(docsHelper, docsSrvc, documents, $state, $q) {
+controller.$inject = ["documentsHelper", "documentsService", "documentsList", "reportResponse", "$state", "$q", "moment", "REPORTS_ROUTES", "nvl-dateutils", "$stateParams"];
+function controller(docsHelper, docsSrvc, documents, reportResponse, $state, $q, moment, reportsRoutes, dateUtils, $stateParams) {
     var vm = this;
     vm.pageTitle = $state.current.data.title;
-    //vm.documents = documents._embedded.item;
+    vm.documents = documents._embedded.item;
     vm.isPaid = null;
-    vm.isPaidOpen = false;
-    vm.isUnpaidOpen = false;
-    vm.isTotalOpen = true;
     vm.selectedFilter = null;
-    vm.toggleTotal = toggleTotal;
-    vm.togglePaid = togglePaid;
-    vm.toggleUnpaid = toggleUnpaid;
-    vm.reportMonth = new Date();
+    vm.report = reportResponse;
+    vm.pageSize = $stateParams.limit;
+    vm.count = 10;
+    vm.total = documents.count;
+    vm.currentPage = 1;
+    vm.currentParams = {};
 
     //function mapping
     vm.onFilterClicked = onFilterClicked;
     vm.onReportMonthSelected = onReportMonthSelected;
     vm.onDocumentItemClicked = onDocumentItemClicked;
+    vm.onUpdateItemClicked = onUpdateItemClicked;
+    vm.onChangePageClicked = onChangePageClicked;
 
     activate();
 
     //region FUNCTION_CALL
     function activate() {
-        vm.allFilter = {title : "All", params : {mailbox : "delivered"}};
-        vm.paidFilter = {title : "Paid", params : {mailbox: "delivered", isPaid: true}};
-        vm.unpaidFilter = {title : "Unpaid", params : {mailbox: "delivered", isPaid: false}};
+        vm.allFilter = {
+            title  : "All",
+            isActive : true,
+            params : {
+                mailbox : "delivered",
+                year    : vm.report.date.year,
+                month   : vm.report.date.month,
+                offset  : 0,
+                limit   : vm.pageSize
+            }
+        };
+        vm.paidFilter = {
+            title : "Paid",
+            isActive : true,
+            params : {
+                mailbox : "delivered",
+                isPaid  : true,
+                year    : vm.report.date.year,
+                month   : vm.report.date.month,
+                offset  : 0,
+                limit   : vm.pageSize
+            }
+        };
+        vm.unpaidFilter = {
+            title : "Unpaid",
+            isActive : true,
+            params : {
+                mailbox : "delivered",
+                isPaid : false,
+                year    : vm.report.date.year,
+                month   : vm.report.date.month,
+                offset  : 0,
+                limit   : vm.pageSize
+            }
+        };
+        vm.currentParams = vm.allFilter.params;
     }
 
-    function onFilterClicked(params) {
-        refresDocuments(params);
-    }
-
-    function toggleTotal() {
-        vm.isTotalOpen = !vm.isTotalOpen;
-    }
-    function togglePaid() {
-        vm.isPaidOpen = !vm.isPaidOpen;
-    }
-    function toggleUnpaid() {
-        vm.isUnpaidOpen = !vm.isUnpaidOpen;
+    function onFilterClicked(filter) {
+        vm.currentParams = filter.params;
+        refreshDocuments(vm.currentParams);
     }
 
     function onReportMonthSelected(newDate, oldDate) {
-        var params = {mailbox : "delivered", forMonth: newDate}
-        refresDocuments(params);
+        var year = dateUtils.getLocalYear(newDate);
+        var month = dateUtils.getLocalMonth(newDate);
+        var params = {mailbox : "delivered", year : year, month : month}
+        $state.go($state.current, params, {reload : true});
     }
 
-    function refresDocuments(params) {
+    function refreshDocuments(params) {
         vm.documents = [];
         docsSrvc.getDocumentList(params)
             .then(success);
@@ -63,8 +90,46 @@ function controller(docsHelper, docsSrvc, documents, $state, $q) {
     }
 
     function onDocumentItemClicked(item) {
+        if(item.assigned == null) {
+            docsSrvc.assignDocument(item._links["hoa:assign"].href)
+                .then(success, error);
+        }
+
+        else success();
+
+        function success() {
+            $state.go(docsHelper.resolveViewer(item), {id : item.id});
+        }
+
+        function error() {}
 
     }
+
+    function onUpdateItemClicked(item) {
+        if(item.assigned == null) {
+            docsSrvc.assignDocument(item._links["hoa:assign"].href)
+                .then(success, error);
+        }
+
+        else success();
+
+        function success() {
+            $state.go(reportsRoutes.reportUpdate, {id : item.id});
+        }
+
+        function error() {}
+    }
+
+    function onChangePageClicked(page) {
+        page -= 1;
+        var offset = (page == null) ? 0 : vm.pageSize * page;
+        if(vm.currentParams.hasOwnProperty("offset")){
+            vm.currentParams.offset = offset;
+        }
+        vm.currentPage = page + 1;
+        refreshDocuments(vm.currentParams);
+    }
+
     //endregion
 
 }

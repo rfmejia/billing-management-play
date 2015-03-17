@@ -21,6 +21,8 @@ function documentsCtrl(dialogProvider, $state, $stateParams, $resource, document
     vm.currentPage = 1;
     vm.queryParameters = {};
     vm.tabState = {};
+    vm.total = documentsResponse.count;
+    vm.pageSize = requestedParameters.limit;
 
     vm.requestNewPage = requestNewPage;
     vm.isIncrementPagePossible = isIncrementPagePossible;
@@ -32,6 +34,7 @@ function documentsCtrl(dialogProvider, $state, $stateParams, $resource, document
     vm.pageTitle = $state.current.data.title;
     vm.tabTitle = null;
     vm.isForSending = false;
+
 
     var maxPages = 0;
     var minSlice = 0;
@@ -92,7 +95,7 @@ function documentsCtrl(dialogProvider, $state, $stateParams, $resource, document
     }
 
     function requestNewPage(page) {
-        vm.queryParameters.offset = (page == null) ? 0 : (page * limit);
+        vm.queryParameters.offset = (page == null) ? 0 : (page * vm.pageSize);
         $state.go($state.current, documentsHelper.formatParameters(vm.queryParameters), {reload : true});
     }
 
@@ -105,29 +108,13 @@ function documentsCtrl(dialogProvider, $state, $stateParams, $resource, document
     }
 
     function onDocumentItemClicked(item) {
-        if (vm.isForSending) {
-            printableView(item.id);
-        }
-        else {
-            workflowView(item);
-        }
-    }
-
-    function printableView(docId) {
-        console.log(docId);
-        $state.go("workspace.print-view", {id : docId}, {reload : true});
-    }
-
-    function workflowView(item) {
-        var state = "";
+        var state = documentsHelper.resolveViewer(item);
         var title = "Opening unassigned document";
         var message = "This document will be locked to you";
 
-        if (vm.queryParameters.mailbox == "drafts") {
-            state = "workspace.edit-view";
-        }
-        else {
-            state = "workspace.fixed-view";
+        if (vm.isForSending) {
+            $state.go(state, {id : item.id}, {reload : true});
+            return;
         }
 
         //Check if clicked document is assigned
@@ -157,9 +144,9 @@ function documentsCtrl(dialogProvider, $state, $stateParams, $resource, document
         }
     }
 
-    function onChangePageClicked(selectedPage) {
-        requestNewPage(selectedPage - 1);
-        vm.currentPage = selectedPage;
+    function onChangePageClicked(page) {
+        requestNewPage(page - 1);
+        vm.currentPage = page;
     }
 
     function onFilterTabClicked(filter) {

@@ -18,7 +18,7 @@ function tenantCtrl($state, apiResponse) {
     vm.tenants = apiResponse._embedded.item;
 
     function onTenantClicked(tenant) {
-        $state.go("workspace.tenant-view", {"id" : tenant.id});
+        $state.go("workspace.tenant-view", {"id" : tenant.id, limit: 10, offset: 0});
     }
 
     function onCreateTenantClicked() {

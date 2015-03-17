@@ -13,6 +13,8 @@ function config($stateProvider, $urlRouterProvider, $httpProvider, usSpinnerConf
         $httpProvider.interceptors.push('httpInterceptor');
         $urlRouterProvider.otherwise("/");
 
+
+
         prepareThemes();
         prepareSpinner();
         prepareRoutes();
@@ -78,7 +80,7 @@ function config($stateProvider, $urlRouterProvider, $httpProvider, usSpinnerConf
             url     : "/",
             resolve : {
                 linksService     : "service.hoalinks",
-                mailboxService   : "service.hoamailbox",
+                mailboxService   : "mailbox.service",
                 documentsService : "documents.service",
                 documentsHelper  : "documents.helper",
                 userService      : 'service.hoacurrentuser',

@@ -1,6 +1,7 @@
 @media print {
     body {
         line-height: 1;
+        -webkit-print-color-adjust:exact;
     }
 
     .nvl-print-card .header {
@@ -10,7 +11,7 @@
     }
 
     .nvl-print-card .tenant-info span{
-        font-size: 12px;
+        font-size: 10px;
     }
 
     .nvl-print-card .tenant-info h6 {
@@ -54,8 +55,7 @@
     }
 
     .nvl-print-card .action-block span {
-        font-size: 10px;
-        font-weight: 200;
+        font-size: 6px;
     }
 }
 
@@ -112,7 +112,7 @@
 
 
     .nvl-print-card .action-block span {
-        font-size: 10px;
+        font-size: 12px;
         font-weight: 200;
     }
 }

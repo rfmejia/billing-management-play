@@ -11,9 +11,10 @@ function hoaEmbeddedItems() {
         replace          : true,
         transclude       : false,
         scope            : {
-            theme   : '@',
-            item    : '=',
-            onClick : '&'
+            theme           : '@',
+            item            : '=',
+            onClick         : '&',
+            onUpdateClicked : '&'
         },
         templateUrl      : 'assets/directive/hoa/hoa-collections/hoa-embedded-items/hoa-embedded-items.html',
         controller       : 'hoaEmbeddedItemsCtrl',
@@ -31,8 +32,15 @@ angular
 function hoaEmbeddedItemsCtrl() {
     var vm = this;
     vm.onItemClick = onItemClick;
+    vm.onItemUpdateClicked = onItemUpdateClicked;
     vm.profile = vm.item._links.profile.href;
+
     function onItemClick(item) {
         vm.onClick({item : item})
+    }
+
+    function onItemUpdateClicked(item) {
+        console.log(item);
+        vm.onUpdateClicked({item : item})
     }
 }

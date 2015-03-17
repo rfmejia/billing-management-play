@@ -1,76 +1,42 @@
-var mailbox = angular.module("module.mailbox");
-
 angular
     .module("module.mailbox")
-    .factory("service.hoamailbox", [
-                 "$resource",
-                 "$q",
-                 "service.hoalinks",
-                 mailboxService
-             ]);
+    .factory("mailbox.service", mailboxSrvc);
 
-function mailboxService($resource, $q, hoalinks) {
+mailboxSrvc.$inject = ["$resource", "$q", "service.hoalinks"];
+function mailboxSrvc($resource, $q, hoalinks) {
     var service  ={
-        getMailboxName : getMailboxName,
         getLocal       : getLocal,
         getMailboxes   : getMailboxes
     };
 
     var resource = null;
 
+    activate();
+
     return service;
 
-    function getMailboxName() {
-
+    function activate() {
+        resource = $resource("app/components/mailbox/mailbox.json", {}, {
+            get : {method : "GET", isArray: false}
+        });
     }
 
     function getMailboxes() {
-        return makeRequest();
+        return getLocal();
     }
 
     function getLocal() {
         var deferred = $q.defer();
-        resource = $resource("app/components/mailbox/mailbox.json", {}, {
-            get : {method : "GET", isArray: false}
-        });
 
         function success(response) {
             deferred.resolve(response);
         }
 
-        function query() {
-            resource.get().$promise
-                .then(success);
-        }
-        query();
-        return deferred.promise;
-    }
-
-    function createResource(url) {
-        resource = $resource(url);
-    }
-
-    function makeRequest(){
-        var deferred = $q.defer();
-
-        function success(response) {
-            return deferred.resolve(response);
+        function error(error) {
+            deferred.reject(error.message);
         }
 
-        function query() {
-            resource.get().$promise
-                .then(success);
-        }
-
-        if(resource != null) query();
-        else {
-            function init(response) {
-                var topUrl = hoalinks.getMailboxesLink();
-                createResource(topUrl);
-                query();
-            }
-            hoalinks.getLinks().then(init);
-        }
+        resource.get().$promise.then(success, error);
         return deferred.promise;
     }
 }

@@ -18,14 +18,14 @@ angular
                     "$anchorScroll",
                     "$location",
                     'service.hoatoasts',
+                   "nvl-dateutils",
                     draftsCtrl
                 ]);
 
-function draftsCtrl(documentsHelper, documentsResponse, userResponse, tenantsResponse, documentsService, commentsHelper, dialogProvider, moment, $state, $stateParams, $resource, $anchorScroll, $location, toastsProvider) {
+function draftsCtrl(documentsHelper, documentsResponse, userResponse, tenantsResponse, documentsService, commentsHelper, dialogProvider, moment, $state, $stateParams, $resource, $anchorScroll, $location, toastsProvider, dateUtils) {
     var vm = this;
     /** Previous months template **/
     vm.previous = documentsResponse.viewModel.body.previous;
-
     /** This months template **/
     vm.thisMonth = documentsResponse.viewModel.body.thisMonth;
     /** Summary template **/
@@ -37,7 +37,6 @@ function draftsCtrl(documentsHelper, documentsResponse, userResponse, tenantsRes
     /** Next box **/
     vm.nextAction = documentsResponse.viewModel.nextAction.nextBox;
     /** Document title for display **/
-    vm.documentTitle = documentsResponse.viewModel.documentTitle;
     /** Format used for all dates **/
     vm.format = "MMMM-YYYY";
     /** Display for month **/
@@ -54,10 +53,11 @@ function draftsCtrl(documentsHelper, documentsResponse, userResponse, tenantsRes
     vm.links = documentsResponse.viewModel.links;
     /** Disables the editing of this document if it's not locked to the user **/
     vm.tradeNameColor = {color : "#009688"};
+    /** Mailbox **/
+    vm.mailbox = documentsResponse.viewModel.mailbox;
 
 
     //Function mapping
-    vm.onDateRangeSet = onDateRangeSet;
     vm.onUnlinkClicked = onUnlinkClicked;
     vm.validateDateRange = validateDateRange;
     vm.onSubmitClicked = onSubmitClicked;
@@ -85,22 +85,14 @@ function draftsCtrl(documentsHelper, documentsResponse, userResponse, tenantsRes
 
     //region FUNCTIONS
     /**
-     * Sets the string date for other input fields
-     * @param newDate
-     * @param oldDate
-     * @param field
-     */
-    function onDateRangeSet(newDate, oldDate, field, inputField) {
-        inputField.$setValidity("date", true);
-        field.value = moment(newDate).format(vm.format);
-    }
-
-    /**
      * Laucnhes a dialog for confirmation. If yes, make a network call to unlink user.
      */
     function onUnlinkClicked() {
-        if(vm.links.hasOwnProperty("hoa:unassign")) {
+        if (vm.links.hasOwnProperty("hoa:unassign")) {
             var url = vm.links["hoa:unassign"].href;
+            dialogProvider.getConfirmDialog(unassignDocument, null, "This will no longer be assigned to you", "Are you sure?")
+        }
+        function unassignDocument() {
             documentsService.unassignDocument(url).then(returnToList);
         }
     }
@@ -115,15 +107,14 @@ function draftsCtrl(documentsHelper, documentsResponse, userResponse, tenantsRes
      * @param inputField
      */
     function validateDateRange(field) {
-        var newDate = moment(field.value);
-        field.value = newDate.format(vm.format);
+        field.value = dateUtils.getLocalStringDisplay(field.value, vm.format)
     }
 
     /**
      * Submits the current document to the next box
      */
     function onSubmitClicked() {
-        dialogProvider.getCommentDialog(vm.nextAction.title).then(okayClicked);
+        dialogProvider.getCommentDialog("Move document to ",  vm.nextAction.title).then(okayClicked);
 
         //Save the document first, then submit
         function okayClicked(comment) {

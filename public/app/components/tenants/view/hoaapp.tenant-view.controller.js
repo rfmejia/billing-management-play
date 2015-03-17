@@ -6,23 +6,34 @@ angular
                     'tenant',
                     'documents',
                     "documentsService",
+                    "documentsHelper",
                     'service.hoadialog',
                     "service.hoatoasts",
                     "tenantsService",
+                    "REPORTS_ROUTES",
                     tenantViewCtrl
                 ]);
 
-function tenantViewCtrl($state, $stateParams, tenant, documents, documentsService, hoaDialog, hoaToast, tenantsSrvc) {
+function tenantViewCtrl($state, $stateParams, tenant, documents, documentsService, docsHelper, hoaDialog, hoaToast, tenantsSrvc, reportsRoutes) {
     var vm = this;
     vm.tenant = tenant.viewModel;
     vm.documents = documents._embedded.item;
     vm.isInfoOpen = true;
     vm.tradeNameColor = {color : "#689F38"};
     vm.pageTitle = $state.current.data.title;
+    vm.currentFilter = {};
+    vm.currentPage = 1;
+    vm.pageSize = documents.limit;
+    //TODO: CHANGE TO TOTAL
+    vm.total = documents.limit;
 
     vm.onEditClicked = onEditClicked;
     vm.onFilterClicked = onFilterClicked;
     vm.onDeleteClicked = onDeleteClicked;
+    vm.onDocumentItemClicked = onDocumentItemClicked;
+    vm.onUpdateItemClicked = onUpdateItemClicked;
+    vm.onChangePageClicked = onChangePageClicked;
+
 
     activate();
 
@@ -31,25 +42,52 @@ function tenantViewCtrl($state, $stateParams, tenant, documents, documentsServic
         vm.filters = [
             {
                 title  : "All",
-                params : {forTenant : $stateParams.id, others : null, isAssigned : null}
+                params : {
+                    forTenant  : $stateParams.id,
+                    others     : null,
+                    isAssigned : null
+                }
             },
             {
                 title  : "Pending",
-                params : {forTenant : $stateParams.id, mailbox : "pending", others : null, isAssigned : null}
+                params : {
+                    forTenant  : $stateParams.id,
+                    mailbox    : "pending",
+                    others     : null,
+                    isAssigned : null
+                }
             },
             {
                 title  : "Delivered",
-                params : {forTenant : $stateParams.id, mailbox : "delivered", others : null, isAssigned : null}
+                params : {
+                    forTenant  : $stateParams.id,
+                    mailbox    : "delivered",
+                    others     : null,
+                    isAssigned : null
+                }
             },
             {
                 title  : "Paid",
-                params : {forTenant : $stateParams.id, mailbox : "paid", others : null, isAssigned : null}
+                params : {
+                    forTenant  : $stateParams.id,
+                    mailbox    : "delivered",
+                    isPaid     : true,
+                    others     : null,
+                    isAssigned : null
+                }
             },
             {
                 title  : "Unpaid",
-                params : {forTenant : $stateParams.id, mailbox : "unpaid", others : null, isAssigned : null}
+                params : {
+                    forTenant  : $stateParams.id,
+                    mailbox    : "delivered",
+                    isPaid     : false,
+                    others     : null,
+                    isAssigned : null
+                }
             }
-        ]
+        ];
+        vm.currentFilter = vm.filters[0];
     }
 
     function onEditClicked() {
@@ -78,14 +116,51 @@ function tenantViewCtrl($state, $stateParams, tenant, documents, documentsServic
         hoaDialog.getConfirmDialog(okayFn, cancelFn, message, title);
     }
 
+    function onDocumentItemClicked(item) {
+        $state.go(docsHelper.resolveViewer(item), {id : item.id}, {reload : true});
+    }
+
+    function onUpdateItemClicked(item) {
+        if (item.assigned == null) {
+            documentsService.assignDocument(item._links["hoa:assign"].href)
+                .then(success, error);
+        }
+
+        else {
+            success();
+        }
+
+        function success() {
+            $state.go(reportsRoutes.reportUpdate, {id : item.id});
+        }
+
+        function error() {}
+    }
+
+
     function onFilterClicked(filter) {
+        vm.currentFilter = filter;
         vm.documents = [];
         documentsService.getDocumentList(filter.params)
             .then(success);
+    }
 
-        function success(response) {
-            vm.documents = response._embedded.item;
+    function onChangePageClicked(page) {
+        page -= 1;
+        var offset = (page == null) ? 0 : (page * vm.pageSize);
+        var changedParams = vm.currentFilter.params;
+        if(changedParams.hasOwnProperty("offset")) {
+            changedParams.offset = offset;
         }
+        vm.documents = [];
+        vm.currentPage = page + 1;
+        documentsService.getDocumentList(changedParams).then(success);
+
+    }
+
+
+    function success(response) {
+        vm.documents = response._embedded.item;
     }
 
     //endregion

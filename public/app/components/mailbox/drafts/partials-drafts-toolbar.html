@@ -1,10 +1,10 @@
 <div class="md-toolbar-tools" layout="row" layout-align="start center">
-    <button hide-gt-sm class="menuBtn menuBtn-hamburger">
+    <button hide-gt-md class="menuBtn menuBtn-hamburger" toggle-side-nav>
         <span class="visually-hidden">Menu</span>
     </button>
-    <h3 flex class="toolbar-title">Hobbies of Asia</h3>
+    <h3 flex class="toolbar-title">{{drafts.mailbox | tokenizedCamel}}</h3>
     <div >
-        <md-button class="toolbar-text" md-theme="toolbars" ng-show="!drafts.isDisabled" remove-focus ng-click="drafts.onUnlinkClicked()"><span><i class="fa fa-link iconed-text"></i>Unlock</span></md-button>
+        <md-button class="toolbar-text no-uppercase" md-theme="toolbars" ng-show="!drafts.isDisabled" remove-focus ng-click="drafts.onUnlinkClicked()"><span><i class="fa fa-link iconed-text"></i>Unlock</span></md-button>
         <span class="toolbar-text" ng-show="drafts.isDisabled"><i class="iconed-text fa fa-lock"></i>Locked to {{drafts.assigned.userName}}</span>
     </div>
 </div>

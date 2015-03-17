@@ -3,23 +3,24 @@
  */
 angular
     .module("module.mailbox")
-    .factory("documents.helper", [
-                 documentHelper
-             ]);
+    .factory("documents.helper", documentHelper);
 
 /**
  * Parse server response for views
  * Parse views data for server
  * @returns {{}}
  */
-function documentHelper() {
+documentHelper.$inject = ["MAILBOX_PARAMS"];
+function documentHelper(mailboxParam) {
     var helper = {
         formatCreateResponse : formatCreateResponse,
         formatEditResponse   : formatEditResponse,
         formatServerData     : formatServerData,
         formatDocumentList   : formatListResponse,
         getQueryParameters   : getQueryParameters,
-        formatParameters     : formatParameters
+        formatParameters     : formatParameters,
+        formatPaidPostData   : formatPaidPostData,
+        resolveViewer        : resolveViewer
     };
     return helper;
 
@@ -42,12 +43,12 @@ function documentHelper() {
         return {
             "body"       : serverResponse.body,
             "comments"   : serverResponse.comments,
-            "billDate"   : serverResponse.forMonth,
             "assigned"   : serverResponse.assigned,
             "nextAction" : {
                 "nextBox" : searchForBox(serverResponse, "hoa:nextBox"),
                 "prevBox" : searchForBox(serverResponse, "hoa:prevBox")
             },
+            forMonth     : serverResponse.forMonth,
             "actions"    : {
                 last     : serverResponse.lastAction,
                 prepared : serverResponse.preparedAction,
@@ -55,12 +56,15 @@ function documentHelper() {
                 approved : serverResponse.approvedAction
             },
 
-            "mailbox"       : serverResponse.mailbox,
-            "amountPaid"    : serverResponse.amountPaid,
-            "documentId"    : serverResponse.id,
-            "documentTitle" : serverResponse.documentTitle,
-            "tenant"        : serverResponse._embedded.tenant,
-            "links"         : serverResponse._links
+            "mailbox"    : serverResponse.mailbox,
+            "amountPaid" : serverResponse.amountPaid,
+            "amounts"    : serverResponse.amounts,
+            "documentId" : serverResponse.id,
+            "tenant"     : serverResponse._embedded.tenant,
+            "links"      : serverResponse._links,
+            "year"       : serverResponse.year,
+            "month"      : serverResponse.month,
+            "serialId"   : serverResponse.serialId
         };
     }
 
@@ -103,16 +107,17 @@ function documentHelper() {
 
     function getQueryParameters() {
         return {
-            mailbox    : "drafts", //defaults to drafts
+            mailbox    : mailboxParam.drafts, //defaults to drafts
             limit      : 10,
             offset     : 0,
             forTenant  : null,
             creator    : null,
             assigned   : null,
-            forMonth   : null,
             isPaid     : null,
             others     : false,
-            isAssigned : false
+            isAssigned : false,
+            year       : null,
+            month      : null
         };
     }
 
@@ -124,6 +129,30 @@ function documentHelper() {
             }
         }
         return queryParameters;
+    }
+
+    function formatPaidPostData(amounts, amountPaid, comments) {
+        angular.forEach(amounts.sections, function(section) {
+            if (amountPaid.hasOwnProperty(section.name)) {
+                amountPaid[section.name] = section.amounts.paid;
+            }
+        });
+        return {
+            amountPaid : amountPaid,
+            comments   : comments
+        }
+    }
+
+    function resolveViewer(document) {
+        if (document.mailbox == 'drafts') {
+            return "workspace.edit-view";
+        }
+        else if (document.mailbox == 'forChecking' || document.mailbox == 'forApproval') {
+            return "workspace.fixed-view";
+        }
+        else {
+            return "workspace.print-view";
+        }
     }
 
     //endregion

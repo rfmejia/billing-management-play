@@ -2,6 +2,7 @@
     <hoa-documents
             ng-if="hoaItemsCtrl.profile == 'hoa:document'"
             on-click="hoaItemsCtrl.onItemClick(item)"
+            on-update-clicked="hoaItemsCtrl.onItemUpdateClicked(item)"
             document="hoaItemsCtrl.item"
             theme="{{hoaItemsCtrl.theme}}">
     </hoa-documents>

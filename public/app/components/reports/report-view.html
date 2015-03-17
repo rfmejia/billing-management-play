@@ -1,0 +1,72 @@
+<md-toolbar md-theme="reports">
+    <div class="md-toolbar-tools" layout="row" layout-align="start center">
+        <button hide-gt-md class="menuBtn menuBtn-hamburger" toggle-side-nav>
+            <span class="visually-hidden">Menu</span>
+        </button>
+        <h3 flex class="toolbar-title">{{updateCtrl.documentTitle}}</h3>
+    </div>
+</md-toolbar>
+
+<md-content layout="column" flex class="md-padding content">
+    <div flex>
+        <form name="updateForm">
+            <md-card class="reports">
+                <md-card-content>
+                    <div flex ng-repeat="section in updateCtrl.payments.sections">
+                        <h3>{{section.name | capitalize}}</h3>
+                        <div layout-md="column" layout-gt-md="row" flex>
+                            <md-input-container class="md-accent" flex>
+                                <label>Total</label>
+                                <input type="text" disabled ng-model="section.amounts.total" fcsa-number>
+                            </md-input-container>
+                            <md-input-container class="md-accent" flex>
+                                <label>Unpaid</label>
+                                <input type="text" disabled ng-model="section.amounts.unpaid" fcsa-number>
+                            </md-input-container>
+                            <md-input-container class="md-accent" flex ng-form="pseudoForm">
+                                <label>Paid</label>
+                                <input type="number" min="0" max="{{section.amounts.total}}" name="paid" ng-model="section.amounts.paid">
+                                <div ng-messages="pseudoForm.paid.$error">
+                                    <div ng-message="min">No negative values please</div>
+                                    <div ng-message="max">Payment exceeds charged amount</div>
+                                </div>
+                            </md-input-container>
+                        </div>
+                    </div>
+                </md-card-content>
+            </md-card>
+            <md-card>
+                <md-card-content>
+                    <div class="md-actions" layout="row" layout-align="start center">
+                        <md-button md-theme="bills-dark" remove-focus
+                                   ng-click="updateCtrl.onCancelClicked()">
+                            <span><i class="fa fa-times iconed-text"></i>Cancel</span>
+                        </md-button>
+
+                        <div flex>
+                            <md-button md-theme="bills-dark"
+                                       remove-focus
+                                       type="submit"
+                                       class="md-primary pull-right"
+                                       ng-click="updateCtrl.onUpdateClicked()"
+                                       ng-disabled="updateForm.$invalid">
+                                <span>Save<i class="fa fa-floppy-o iconed-text"></i></span>
+                            </md-button>
+                            <md-button md-theme="bills-dark"
+                                       remove-focus
+                                       type="submit"
+                                       class="md-primary pull-right"
+                                       ng-click="updateCtrl.onCalculateClicked()"
+                                       ng-disabled="updateForm.$invalid">
+                                <span>Calculate<i class="fa fa-calculator iconed-text"></i></span>
+                            </md-button>
+                        </div>
+                    </div>
+                    <!--<p class="md-warn" ng-show="billingForm.$invalid">Can't submit document with invalid fields</p>-->
+                    <hr/>
+                    <hoa-comments id="comments" comments="updateCtrl.comments"></hoa-comments>
+                </md-card-content>
+            </md-card>
+        </form>
+    </div>
+</md-content>

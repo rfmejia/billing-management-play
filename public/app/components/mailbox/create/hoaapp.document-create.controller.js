@@ -10,11 +10,11 @@ angular
                     'template',
                     'tenantsList',
                     'service.hoatoasts',
+                   "nvl-dateutils",
                     createCtrl
                 ]);
 
-function createCtrl(documentsHelper, documentsService, $state, template, tenantsList, hoaToast) {
-
+function createCtrl(documentsHelper, documentsService, $state, template, tenantsList, hoaToast, dateUtils) {
     var vm = this;
     /** list of tenants **/
     vm.tenantsList = tenantsList._embedded.item;
@@ -87,13 +87,13 @@ function createCtrl(documentsHelper, documentsService, $state, template, tenants
      */
     function title() {
         return (vm.isDocumentReady())
-            ? vm.selectedTenant.tradeName + " - " + moment(vm.billingDate).format(vm.format)
+            ? vm.selectedTenant.tradeName + " - " + dateUtils.getLocalStringDisplay(vm.billingDate, vm.format)
             : '';
     }
 
     function prepareDraftPost() {
-        template.viewModel.title = vm.title();
-        template.viewModel.forMonth = vm.billingDate;
+        template.viewModel.year = dateUtils.getLocalYear(vm.billingDate);
+        template.viewModel.month = dateUtils.getLocalMonth(vm.billingDate);
         template.viewModel.forTenant = vm.selectedTenant.id;
     }
 

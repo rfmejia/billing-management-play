@@ -3,59 +3,65 @@
  */
 angular
     .module("module.layout")
-    .controller('workspaceController',[
-        '$modal',
-        'userDetails',
-        'userService',
-        '$state',
-        '$location',
-        'documents.helper',
-        workspaceController
-    ]);
+    .controller('workspaceController', [
+                    '$modal',
+                    'userDetails',
+                    'userService',
+                    '$state',
+                    '$location',
+                    "$mdSidenav",
+                    'documents.helper',
+                    workspaceController
+                ]);
 
 angular
     .module("module.layout")
     .controller('logoutModalCtrl', [
-        '$scope',
-        '$modalInstance',
-        'modal',
-        'negativeBtn',
-        'positiveBtn',
-        modalController
-    ]);
+                    '$scope',
+                    '$modalInstance',
+                    'modal',
+                    'negativeBtn',
+                    'positiveBtn',
+                    modalController
+                ]);
 
-function workspaceController($modal ,userDetails, userService, $state, $location, documentsHelper) {
+function workspaceController($modal, userDetails, userService, $state, $location, $mdSidenav, documentsHelper) {
     var vm = this;
 
     /** On click of logout option launch a dialog **/
     vm.onLogOutClicked = onLogoutClicked;
     vm.userDetails = userDetails;
+    vm.onSidenavClicked = onSidenavClicked;
 
     activate();
 
     //region FUNCTION_CALL
     function activate() {
-        if($location.path() == '/') $state.go("workspace.pending.drafts", documentsHelper.getQueryParameters(), {reload : true});
+        if ($location.path() == '/') $state.go("workspace.pending.drafts", documentsHelper.getQueryParameters(), {reload : true});
     }
 
     function onLogoutClicked() {
         openModal();
     }
 
+    function onSidenavClicked() {
+        $mdSidenav('sideNav').toggle();
+    }
+
     function openModal() {
         var modal = {
-            'title'     : 'Logging out',
-            'message'   : 'Are you sure you want to logout?'
+            'title'   : 'Logging out',
+            'message' : 'Are you sure you want to logout?'
         };
 
         var negativeButton = {
-            'type'      : 'btn-default',
-            'message'   : 'Cancel'
+            'type'    : 'btn-default',
+            'message' : 'Cancel'
         };
 
         var positiveButton = {
-            'type'      : 'btn-danger',
-            'message'   : 'Logout'
+            'type'    : 'btn-danger',
+            'message' : 'Logout'
         };
 
         var modalInstance = $modal.open(
@@ -64,7 +70,7 @@ function workspaceController($modal ,userDetails, userService, $state, $location
                 controller  : 'logoutModalCtrl',
                 backdrop    : 'static',
                 resolve     : {
-                    modal   : function() {
+                    modal       : function() {
                         return modal;
                     },
                     negativeBtn : function() {
