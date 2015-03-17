@@ -22,7 +22,8 @@
             <md-card>
                 <md-card-content>
                     <div class="md-actions" layout="row" layout-align="start center">
-                        <md-button md-theme="bills-dark" remove-focus
+                        <md-button class="no-uppercase"
+                                md-theme="bills-dark" remove-focus
                                    ng-click="approvals.onRejectClicked()">
                             <span><i class="fa fa-arrow-left iconed-text"></i>{{approvals.prevAction.title}}</span>
                         </md-button>
@@ -31,7 +32,7 @@
                             <md-button md-theme="bills-dark"
                                        remove-focus
                                        type="submit"
-                                       class="md-primary pull-right"
+                                       class="pull-right no-uppercase"
                                        ng-click="approvals.onSubmitClicked()"
                                        ng-disabled="billingForm.$invalid">
                                 <span>{{approvals.nextAction.title}}<i class="fa fa-arrow-right iconed-text"></i></span>

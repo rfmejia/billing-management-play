@@ -124,6 +124,10 @@ function approvalsCtrl(documentsHelper, documentsResponse, userResponse, tenants
             var postData = documentsHelper.formatServerData(documentsResponse);
             documentsService.editDocument(documentId, postData).then(submit, error);
         }
+
+        function submit() {
+            documentsService.moveToBox(vm.nextAction.url).then(success, error);
+        }
     }
 
     function success (response) {

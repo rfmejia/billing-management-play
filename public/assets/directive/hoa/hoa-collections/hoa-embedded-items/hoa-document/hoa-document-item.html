@@ -22,13 +22,13 @@
                class="no-uppercase md-tile-content button-white"
                ng-click="item.onItemClick()">
 
-        <div flex="10">
+        <div flex="20">
             <h3 class="mailbox">{{item.document.mailbox | tokenizedCamel}}</h3>
         </div>
         <div flex="20">
             <h3>{{item.document.forMonth | momentString: "MMMM-YYYY"}}</h3>
         </div>
-        <div flex="50">
+        <div flex="40">
             <h3 class="list-item-owner">{{item.document.forTenant.tradeName}}</h3>
         </div>
 

@@ -8,12 +8,11 @@ angular
 config.$inject = ["$stateProvider", "REPORTS_ROUTES"];
 function config($stateProvider, reportsRoutes) {
     var reports = {
-        url     : "reports?year&month",
+        url     : "reports?year&month&limit&offset",
         resolve : {
             documentsHelper      : getDocumentsHelper,
             documentsService     : getDocumentsService,
-            unparsedDocumentList : unparsedDocumentsList,
-            documentsList        : parseApiResponse,
+            documentsList        : unparsedDocumentsList,
             unparsedReport       : getReport,
             reportResponse       : parseReport
         },
@@ -71,11 +70,6 @@ function unparsedDocumentsList(docsHelper, docsService, mailboxParams, $statePar
     }
     queryParams.mailbox = mailboxParams.delivered;
     return docsService.getDocumentList(queryParams);
-}
-
-parseApiResponse.$inject = ["documentsHelper", "unparsedDocumentList"];
-function parseApiResponse(docsHelper, apiResponse) {
-    return docsHelper.formatDocumentList(apiResponse);
 }
 
 getReport.$inject = ["reports.service", "$stateParams", "reports.helper"];

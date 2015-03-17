@@ -30,6 +30,8 @@ function sidebarController($state, documentsHelper, mailbox, userDetails, dateUt
             query = {};
             query.year = dateUtils.getLocalYearNow();
             query.month = dateUtils.getLocalMonthNow();
+            query.offset = 0;
+            query.limit = 10;
         }
         else if (folder.link != 'forSending') {
             query.isAssigned = true;

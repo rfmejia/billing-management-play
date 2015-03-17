@@ -5,20 +5,26 @@ angular
     .module("module.reports")
     .controller("reportsCtrl", controller);
 
-controller.$inject = ["documentsHelper", "documentsService", "documentsList", "reportResponse", "$state", "$q", "moment", "REPORTS_ROUTES", "nvl-dateutils"];
-function controller(docsHelper, docsSrvc, documents, reportResponse, $state, $q, moment, reportsRoutes, dateUtils) {
+controller.$inject = ["documentsHelper", "documentsService", "documentsList", "reportResponse", "$state", "$q", "moment", "REPORTS_ROUTES", "nvl-dateutils", "$stateParams"];
+function controller(docsHelper, docsSrvc, documents, reportResponse, $state, $q, moment, reportsRoutes, dateUtils, $stateParams) {
     var vm = this;
     vm.pageTitle = $state.current.data.title;
-    vm.documents = documents.viewModel.list;
+    vm.documents = documents._embedded.item;
     vm.isPaid = null;
     vm.selectedFilter = null;
     vm.report = reportResponse;
+    vm.pageSize = $stateParams.limit;
+    vm.count = 10;
+    vm.total = documents.count;
+    vm.currentPage = 1;
+    vm.currentParams = {};
 
     //function mapping
     vm.onFilterClicked = onFilterClicked;
     vm.onReportMonthSelected = onReportMonthSelected;
     vm.onDocumentItemClicked = onDocumentItemClicked;
     vm.onUpdateItemClicked = onUpdateItemClicked;
+    vm.onChangePageClicked = onChangePageClicked;
 
     activate();
 
@@ -29,7 +35,9 @@ function controller(docsHelper, docsSrvc, documents, reportResponse, $state, $q,
             params : {
                 mailbox : "delivered",
                 year    : vm.report.date.year,
-                month   : vm.report.date.month
+                month   : vm.report.date.month,
+                offset  : 0,
+                limit   : vm.pageSize
             }
         };
         vm.paidFilter = {
@@ -37,7 +45,9 @@ function controller(docsHelper, docsSrvc, documents, reportResponse, $state, $q,
                 mailbox : "delivered",
                 isPaid  : true,
                 year    : vm.report.date.year,
-                month   : vm.report.date.month
+                month   : vm.report.date.month,
+                offset  : 0,
+                limit   : vm.pageSize
             }
         };
         vm.unpaidFilter = {
@@ -45,13 +55,17 @@ function controller(docsHelper, docsSrvc, documents, reportResponse, $state, $q,
                 mailbox : "delivered",
                 isPaid : false,
                 year    : vm.report.date.year,
-                month   : vm.report.date.month
+                month   : vm.report.date.month,
+                offset  : 0,
+                limit   : vm.pageSize
             }
         };
+        vm.currentParams = vm.allFilter.params;
     }
 
     function onFilterClicked(params) {
-        refresDocuments(params);
+        vm.currentParams = params;
+        refreshDocuments(params);
     }
 
     function onReportMonthSelected(newDate, oldDate) {
@@ -61,7 +75,7 @@ function controller(docsHelper, docsSrvc, documents, reportResponse, $state, $q,
         $state.go($state.current, params, {reload : true});
     }
 
-    function refresDocuments(params) {
+    function refreshDocuments(params) {
         vm.documents = [];
         docsSrvc.getDocumentList(params)
             .then(success);
@@ -99,6 +113,16 @@ function controller(docsHelper, docsSrvc, documents, reportResponse, $state, $q,
         }
 
         function error() {}
+    }
+
+    function onChangePageClicked(page) {
+        page -= 1;
+        var offset = (page == null) ? 0 : vm.pageSize * page;
+        if(vm.currentParams.hasOwnProperty("offset")){
+            vm.currentParams.offset = offset;
+        }
+        vm.currentPage = page + 1;
+        refreshDocuments(vm.currentParams);
     }
 
     //endregion

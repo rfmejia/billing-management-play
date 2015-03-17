@@ -87,6 +87,13 @@
                         on-click="ctrl.onDocumentItemClicked(item)"
                         on-update-clicked="ctrl.onUpdateItemClicked(item)"></hoa-embedded-items>
             </md-list>
+            <div layout="row"
+                 layout-align="center center"
+                 paging
+                 page="ctrl.currentPage"
+                 paging-action="ctrl.onChangePageClicked(page)"
+                 page-size="ctrl.pageSize"
+                 total="ctrl.total"></div>
         </md-whiteframe>
     </section>
 </md-content>

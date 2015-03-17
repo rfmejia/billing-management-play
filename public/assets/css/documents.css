@@ -112,9 +112,3 @@ body p.bill-date {
 .tenant-items .list-item-owner{
     font-weight: 700;
 }
-
-/* List item tenants not to hug the left side */
-.tenant-items {
-    padding-left: 12px;
-    padding-right: 12px;
-}

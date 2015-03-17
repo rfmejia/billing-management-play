@@ -22,12 +22,12 @@
     </md-content>
     <div class="md-actions" layout="row">
         <div flex>
-            <md-button class="pull-left" ng-click="dialog.cancel()">
+            <md-button class="pull-left no-uppercase" ng-click="dialog.cancel()">
                 Cancel
             </md-button>
         </div>
         <md-button ng-disabled="comment.text.$invalid"
-                   class="md-primary"
+                   class="md-primary no-uppercase"
                    ng-click="dialog.send(dialog.comment)"
                    remove-focus>
             Send

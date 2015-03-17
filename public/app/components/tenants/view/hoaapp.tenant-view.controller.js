@@ -21,12 +21,22 @@ function tenantViewCtrl($state, $stateParams, tenant, documents, documentsServic
     vm.isInfoOpen = true;
     vm.tradeNameColor = {color : "#689F38"};
     vm.pageTitle = $state.current.data.title;
+    vm.currentFilter = {};
+    vm.currentPage = 1;
+    vm.pageSize = documents.limit;
+    //TODO: CHANGE TO TOTAL
+    vm.total = documents.limit;
+
+    console.log(vm.pageSize);
+    console.log(vm.currentPage);
 
     vm.onEditClicked = onEditClicked;
     vm.onFilterClicked = onFilterClicked;
     vm.onDeleteClicked = onDeleteClicked;
     vm.onDocumentItemClicked = onDocumentItemClicked;
     vm.onUpdateItemClicked = onUpdateItemClicked;
+    vm.onChangePageClicked = onChangePageClicked;
+
 
     activate();
 
@@ -79,7 +89,8 @@ function tenantViewCtrl($state, $stateParams, tenant, documents, documentsServic
                     isAssigned : null
                 }
             }
-        ]
+        ];
+        vm.currentFilter = vm.filters[0];
     }
 
     function onEditClicked() {
@@ -108,16 +119,6 @@ function tenantViewCtrl($state, $stateParams, tenant, documents, documentsServic
         hoaDialog.getConfirmDialog(okayFn, cancelFn, message, title);
     }
 
-    function onFilterClicked(filter) {
-        vm.documents = [];
-        documentsService.getDocumentList(filter.params)
-            .then(success);
-
-        function success(response) {
-            vm.documents = response._embedded.item;
-        }
-    }
-
     function onDocumentItemClicked(item) {
         $state.go(docsHelper.resolveViewer(item), {id : item.id}, {reload : true});
     }
@@ -137,6 +138,32 @@ function tenantViewCtrl($state, $stateParams, tenant, documents, documentsServic
         }
 
         function error() {}
+    }
+
+
+    function onFilterClicked(filter) {
+        vm.currentFilter = filter;
+        vm.documents = [];
+        documentsService.getDocumentList(filter.params)
+            .then(success);
+    }
+
+    function onChangePageClicked(page) {
+        page -= 1;
+        var offset = (page == null) ? 0 : (page * vm.pageSize);
+        var changedParams = vm.currentFilter.params;
+        if(changedParams.hasOwnProperty("offset")) {
+            changedParams.offset = offset;
+        }
+        vm.documents = [];
+        vm.currentPage = page + 1;
+        documentsService.getDocumentList(changedParams).then(success);
+
+    }
+
+
+    function success(response) {
+        vm.documents = response._embedded.item;
     }
 
     //endregion

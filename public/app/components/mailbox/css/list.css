@@ -27,14 +27,39 @@ button.filter-button span:focus {
     color: #2196F3;
 }
 
-.pagination>.active>a,
-.pagination>.active>span,
-.pagination>.active>a:hover,
-.pagination>.active>span:hover,
-.pagination>.active>a:focus,
-.pagination>.active>span:focus {
+.docs-list .pagination>.active>a,
+.docs-list .pagination>.active>span,
+.docs-list .pagination>.active>a:hover,
+.docs-list .pagination>.active>span:hover,
+.docs-list .pagination>.active>a:focus,
+.docs-list .pagination>.active>span:focus {
     z-index: 2;
     color: #2196F3;
+    border-color: #2196F3;
     background-color: #FFFFFF;
-    cursor: default;
+    cursor: pointer;
+}
+
+.tenant-view .pagination>.active>span,
+.tenant-view .pagination>.active>a:hover,
+.tenant-view .pagination>.active>span:hover,
+.tenant-view .pagination>.active>a:focus,
+.tenant-view .pagination>.active>span:focus {
+    z-index: 2;
+    color: #689F38;
+    border-color: #689F38;
+    background-color: #FFFFFF;
+    cursor: pointer;
+}
+
+.reports .pagination>.active>span,
+.reports .pagination>.active>a:hover,
+.reports .pagination>.active>span:hover,
+.reports .pagination>.active>a:focus,
+.reports .pagination>.active>span:focus {
+    z-index: 2;
+    color: #7B1FA2;
+    border-color: #7B1FA2;
+    background-color: #FFFFFF;
+    cursor: pointer;
 }

@@ -3,9 +3,9 @@
             ng-include="'app/components/tenants/list/partials-tenants-list-toolbar.html'">
 </md-toolbar>
 
-<md-content layout="column" flex class="md-padding">
-    <md-card>
-        <md-card-content md-theme="tenants">
+<md-content flex class="md-padding" >
+    <md-whiteframe layout="column" md-theme="tenants" class="md-whiteframe-z1 cards-margin">
+        <md-content>
             <div ng-if="viewCtrl.profile === 'collection'">
                 <md-input-container>
                     <label>
@@ -20,7 +20,8 @@
                     </hoa-embedded-items>
                 </md-list>
             </div>
-        </md-card-content>
-    </md-card>
+        </md-content>
+
+    </md-whiteframe>
 </md-content>
 

@@ -21,6 +21,8 @@ function documentsCtrl(dialogProvider, $state, $stateParams, $resource, document
     vm.currentPage = 1;
     vm.queryParameters = {};
     vm.tabState = {};
+    vm.total = documentsResponse.count;
+    vm.pageSize = requestedParameters.limit;
 
     vm.requestNewPage = requestNewPage;
     vm.isIncrementPagePossible = isIncrementPagePossible;
@@ -32,6 +34,7 @@ function documentsCtrl(dialogProvider, $state, $stateParams, $resource, document
     vm.pageTitle = $state.current.data.title;
     vm.tabTitle = null;
     vm.isForSending = false;
+
 
     var maxPages = 0;
     var minSlice = 0;
@@ -92,7 +95,7 @@ function documentsCtrl(dialogProvider, $state, $stateParams, $resource, document
     }
 
     function requestNewPage(page) {
-        vm.queryParameters.offset = (page == null) ? 0 : (page * limit);
+        vm.queryParameters.offset = (page == null) ? 0 : (page * vm.pageSize);
         $state.go($state.current, documentsHelper.formatParameters(vm.queryParameters), {reload : true});
     }
 
@@ -141,9 +144,9 @@ function documentsCtrl(dialogProvider, $state, $stateParams, $resource, document
         }
     }
 
-    function onChangePageClicked(selectedPage) {
-        requestNewPage(selectedPage - 1);
-        vm.currentPage = selectedPage;
+    function onChangePageClicked(page) {
+        requestNewPage(page - 1);
+        vm.currentPage = page;
     }
 
     function onFilterTabClicked(filter) {

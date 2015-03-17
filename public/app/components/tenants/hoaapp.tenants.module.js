@@ -51,7 +51,7 @@ function tenantsConfig($stateProvider) {
     };
 
     var tenantView = {
-        url     : "tenant-view/:id",
+        url     : "tenant-view/:id?limit&offset",
         resolve : {
             tenantsService   : "service.hoatenants",
             documentsService : "documents.service",
@@ -63,13 +63,14 @@ function tenantsConfig($stateProvider) {
                 if (queryParams.hasOwnProperty("mailbox")) queryParams.mailbox = null;
                 if (queryParams.hasOwnProperty("isAssigned")) queryParams.isAssigned = null;
                 if (queryParams.hasOwnProperty("forTenant")) queryParams.forTenant = $stateParams.id;
+                if (queryParams.hasOwnProperty("limit")) queryParams.limit = $stateParams.limit;
+                if (queryParams.hasOwnProperty("offset")) queryParams.offset = $stateParams.offset;
                 return queryParams;
             },
             apiResponse      : function(documentsService, tenantsService, $stateParams, $q, requestedParams) {
                 var deferred = $q.defer();
                 var documentsPromise = documentsService.getDocumentList(requestedParams);
                 var tenantsPromise = tenantsService.getTenant($stateParams.id);
-
                 function success(response) {
                     deferred.resolve(response);
                 }

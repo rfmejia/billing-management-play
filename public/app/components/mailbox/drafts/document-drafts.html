@@ -174,15 +174,17 @@
                 <md-card>
                     <md-card-content>
                         <div class="md-actions" layout="row" layout-align="start center">
-                            <md-button type="button" class="md-warn"
+                            <md-button type="button" class="md-warn no-uppercase"
                                        ng-click="drafts.onDeleteClicked()">
                                 <span><i class="fa fa-trash-o iconed-text"></i>Delete</span>
                             </md-button>
-                            <md-button md-theme="bills-dark" remove-focus
+                            <md-button class="no-uppercase"
+                                       md-theme="bills-dark" remove-focus
                                        ng-click="drafts.onCancelClicked(billingForm)">
                                 <span><i class="fa fa-times iconed-text"></i> Cancel</span>
                             </md-button>
-                            <md-button md-theme="bills-dark"
+                            <md-button class="no-uppercase"
+                                       md-theme="bills-dark"
                                        remove-focus
                                        type="button"
                                        ng-click="drafts.onSaveClicked(billingForm)">
@@ -192,7 +194,7 @@
                                 <md-button md-theme="bills-dark"
                                            remove-focus
                                            type="submit"
-                                           class="md-primary pull-right"
+                                           class="md-primary pull-right no-uppercase"
                                            ng-click="drafts.onSubmitClicked()"
                                            ng-disabled="billingForm.$invalid">
                                     <span>{{drafts.nextAction.title}}<i class="fa fa-arrow-right iconed-text"></i></span>

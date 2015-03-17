@@ -14,11 +14,8 @@
     <div>
         <md-card flex class="cards-margin bottom-margin">
             <md-card-content>
-                <form name="myForm">
-                    <div class="stacked-inputs" ng-repeat="data in createCtrl.tenantTemplate" ng-form="tenant">
-                        <label class="control-label">{{data.title}}</label>
-                        <nooovle-inputs parent-form="tenant" field="data"></nooovle-inputs>
-                    </div>
+                <form name="myForm" novalidate>
+                    <nvl-input field="data" ng-repeat="data in createCtrl.tenantTemplate"></nvl-input>
                 </form>
             </md-card-content>
         </md-card>
