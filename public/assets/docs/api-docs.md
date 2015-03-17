@@ -202,6 +202,7 @@ The following sections are default routes supplied by [SecureSocial](http://secu
 ### Logging
 
 - [x] Setup logservice API
+- [x] Separate logging folder into YYYY/MM/DD
 - [ ] Setup logstash in @deadpool
 
 ### Testing
