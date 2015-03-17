@@ -2,7 +2,7 @@
  * Created by juancarlos.yu on 3/17/15.
  */
 angular
-    .module("module.core")
+    .module("nvl-directives")
     .directive("paging", paging);
 
 function paging() {

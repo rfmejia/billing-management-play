@@ -1,5 +1,7 @@
-.tenant-search {
-    margin-bottom: 16px;
+md-input-container.tenants-search label,
+md-input-container.tenants-search input{
+    padding-left: 16px;
+    padding-right: 16px;
 }
 
 .bottom-margin {
@@ -16,3 +18,5 @@ md-input-container > md-icon {
     top:80%;
     left: 84%;
 }
+
+.tenant-sear

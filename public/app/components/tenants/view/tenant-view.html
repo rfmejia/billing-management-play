@@ -36,12 +36,14 @@
                     on-click="viewCtrl.onDocumentItemClicked(item)"
                     on-update-clicked="viewCtrl.onUpdateItemClicked(item)"></hoa-embedded-items>
         </md-list>
-        <div layout="row"
-             layout-align="center center"
-             paging
-             paging-action="viewCtrl.onChangePageClicked(page)"
-             page="viewCtrl.currentPage"
-             page-size="viewCtrl.pageSize"
-             total="viewCtrl.total"></div>
+        <section ng-if="viewCtrl.total > viewCtrl.pageSize">
+            <div layout="row"
+                 layout-align="center center"
+                 paging
+                 paging-action="viewCtrl.onChangePageClicked(page)"
+                 page="viewCtrl.currentPage"
+                 page-size="viewCtrl.pageSize"
+                 total="viewCtrl.total"></div>
+        </section>
     </md-whiteframe>
 </md-content>

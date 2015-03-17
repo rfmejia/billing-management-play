@@ -1,6 +1,6 @@
 <md-toolbar md-theme="reports">
     <div class="md-toolbar-tools" layout="row" layout-align="start center">
-        <button hide-gt-sm class="menuBtn menuBtn-hamburger">
+        <button hide-gt-md class="menuBtn menuBtn-hamburger" toggle-side-nav>
             <span class="visually-hidden">Menu</span>
         </button>
         <h3 flex class="toolbar-title">{{ctrl.pageTitle}}</h3>
@@ -63,18 +63,18 @@
                 <div class="md-toolbar-tools" layout="row" layout-align="start center">
                     <h5 flex ng-style="{color: '#9C27B0'}">Invoices</h5>
                     <md-button md-theme="reports" data-toggle="dropdown" remove-focus
-                               class="button-white options no-uppercase md-default md-primary"
-                               ng-click="ctrl.onFilterClicked(ctrl.allFilter.params)">
+                               class="button-white options no-uppercase"
+                               ng-click="ctrl.onFilterClicked(ctrl.allFilter)">
                         <span><i class="fa fa-files-o iconed-text"></i>{{ctrl.allFilter.title}}</span>
                     </md-button>
                     <md-button md-theme="reports" data-toggle="dropdown" remove-focus
-                               class="button-white options no-uppercase md-default md-primary"
-                               ng-click="ctrl.onFilterClicked(ctrl.paidFilter.params)">
+                               class="button-white options no-uppercase"
+                               ng-click="ctrl.onFilterClicked(ctrl.paidFilter)">
                         <span><i class="fa fa-check iconed-text"></i>{{ctrl.paidFilter.title}}</span>
                     </md-button>
                     <md-button md-theme="reports" data-toggle="dropdown" remove-focus
-                               class="button-white options no-uppercase md-default md-primary"
-                               ng-click="ctrl.onFilterClicked(ctrl.unpaidFilter.params)">
+                               class="button-white options no-uppercase"
+                               ng-click="ctrl.onFilterClicked(ctrl.unpaidFilter)">
                         <span><i class="fa fa-close iconed-text"></i>{{ctrl.unpaidFilter.title}}</span>
                     </md-button>
                 </div>
@@ -87,13 +87,16 @@
                         on-click="ctrl.onDocumentItemClicked(item)"
                         on-update-clicked="ctrl.onUpdateItemClicked(item)"></hoa-embedded-items>
             </md-list>
-            <div layout="row"
-                 layout-align="center center"
-                 paging
-                 page="ctrl.currentPage"
-                 paging-action="ctrl.onChangePageClicked(page)"
-                 page-size="ctrl.pageSize"
-                 total="ctrl.total"></div>
+            <section ng-if="ctrl.total > ctrl.pageSize">
+                <div layout="row"
+                     layout-align="center center"
+                     paging
+                     page="ctrl.currentPage"
+                     paging-action="ctrl.onChangePageClicked(page)"
+                     page-size="ctrl.pageSize"
+                     total="ctrl.total"></div>
+            </section>
+            <br/>
         </md-whiteframe>
     </section>
 </md-content>

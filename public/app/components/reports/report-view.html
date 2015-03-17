@@ -1,6 +1,6 @@
 <md-toolbar md-theme="reports">
     <div class="md-toolbar-tools" layout="row" layout-align="start center">
-        <button hide-gt-sm class="menuBtn menuBtn-hamburger">
+        <button hide-gt-md class="menuBtn menuBtn-hamburger" toggle-side-nav>
             <span class="visually-hidden">Menu</span>
         </button>
         <h3 flex class="toolbar-title">{{updateCtrl.documentTitle}}</h3>
@@ -13,7 +13,7 @@
             <md-card class="reports">
                 <md-card-content>
                     <div flex ng-repeat="section in updateCtrl.payments.sections">
-                        <h5>{{section.name | capitalize}}</h5>
+                        <h3>{{section.name | capitalize}}</h3>
                         <div layout-md="column" layout-gt-md="row" flex>
                             <md-input-container class="md-accent" flex>
                                 <label>Total</label>

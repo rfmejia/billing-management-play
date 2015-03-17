@@ -32,6 +32,7 @@ function controller(docsHelper, docsSrvc, documents, reportResponse, $state, $q,
     function activate() {
         vm.allFilter = {
             title  : "All",
+            isActive : true,
             params : {
                 mailbox : "delivered",
                 year    : vm.report.date.year,
@@ -41,7 +42,9 @@ function controller(docsHelper, docsSrvc, documents, reportResponse, $state, $q,
             }
         };
         vm.paidFilter = {
-            title : "Paid", params : {
+            title : "Paid",
+            isActive : true,
+            params : {
                 mailbox : "delivered",
                 isPaid  : true,
                 year    : vm.report.date.year,
@@ -51,7 +54,9 @@ function controller(docsHelper, docsSrvc, documents, reportResponse, $state, $q,
             }
         };
         vm.unpaidFilter = {
-            title : "Unpaid", params : {
+            title : "Unpaid",
+            isActive : true,
+            params : {
                 mailbox : "delivered",
                 isPaid : false,
                 year    : vm.report.date.year,
@@ -63,9 +68,9 @@ function controller(docsHelper, docsSrvc, documents, reportResponse, $state, $q,
         vm.currentParams = vm.allFilter.params;
     }
 
-    function onFilterClicked(params) {
-        vm.currentParams = params;
-        refreshDocuments(params);
+    function onFilterClicked(filter) {
+        vm.currentParams = filter.params;
+        refreshDocuments(vm.currentParams);
     }
 
     function onReportMonthSelected(newDate, oldDate) {

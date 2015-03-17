@@ -13,14 +13,17 @@
                     </hoa-embedded-items>
                 </md-list>
             </div>
-            <div layout="row"
-                 layout-align="center center"
-                    paging
-                 page="draftsCtrl.currentPage"
-                 page-size="draftsCtrl.pageSize"
-                 total="draftsCtrl.total"
-                    paging-action="draftsCtrl.onChangePageClicked(page)">
-            </div>
+            <section ng-if="draftsCtrl.total > draftsCtrl.pageSize">
+                <md-divider></md-divider>
+                <div layout="row"
+                     layout-align="center center"
+                     paging
+                     page="draftsCtrl.currentPage"
+                     page-size="draftsCtrl.pageSize"
+                     total="draftsCtrl.total"
+                     paging-action="draftsCtrl.onChangePageClicked(page)">
+                </div>
+            </section>
         </md-content>
         <br/>
     </md-whiteframe>

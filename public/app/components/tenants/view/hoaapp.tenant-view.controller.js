@@ -27,9 +27,6 @@ function tenantViewCtrl($state, $stateParams, tenant, documents, documentsServic
     //TODO: CHANGE TO TOTAL
     vm.total = documents.limit;
 
-    console.log(vm.pageSize);
-    console.log(vm.currentPage);
-
     vm.onEditClicked = onEditClicked;
     vm.onFilterClicked = onFilterClicked;
     vm.onDeleteClicked = onDeleteClicked;

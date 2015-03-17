@@ -1,7 +1,7 @@
 <div class="nav-sidebar">
     <md-toolbar class="white-out">
         <div layout="row" layout-align="center center" class="md-toolbar-tools userName">
-            <div flex class="navbar-collapse collapse" role="navigation">
+            <div flex>
                 <md-button remove-focus
                            id="userName"
                            href
@@ -12,7 +12,6 @@
                     <span><i class="iconed-text fa fa-cog"></i>{{sidebar.fullName}}</span>
                 </md-button>
                 <ul class="dropdown-menu" role="menu">
-                    <li class="divider"></li>
                     <li><a href ng-click="sidebar.onLogOutClicked()">Logout</a></li>
                 </ul>
             </div>
