@@ -21,9 +21,11 @@ approvalsCtrl.$inject = [
     '$stateParams',
     '$resource',
     "$location",
-    "$anchorScroll"];
+    "$anchorScroll",
+    "nvl-dateutils"
+];
 
-function approvalsCtrl(documentsHelper, documentsResponse, userResponse, tenantsResponse, documentsService, commentsHelper, dialogProvider, toastsProvider, $state, $stateParams, $resource, $location, $anchorScroll) {
+function approvalsCtrl(documentsHelper, documentsResponse, userResponse, tenantsResponse, documentsService, commentsHelper, dialogProvider, toastsProvider, $state, $stateParams, $resource, $location, $anchorScroll, dateUtils) {
     var vm = this;
     vm.document = documentsResponse.viewModel;
     /** Current comment made in this phase of the workflow **/
@@ -39,7 +41,7 @@ function approvalsCtrl(documentsHelper, documentsResponse, userResponse, tenants
     /** Format used for all dates **/
     vm.format = "MMMM-YYYY";
     /** Display for month **/
-    vm.billDate = documentsResponse.viewModel.billDate;
+    vm.billDate;
     /** Tenant view model **/
     vm.tenant = tenantsResponse.viewModel;
     /** Tenant server model **/
@@ -75,6 +77,8 @@ function approvalsCtrl(documentsHelper, documentsResponse, userResponse, tenants
             toastsProvider.showPersistentToast("1 new comment", "view").then(goToComments)
         }
         vm.isDisabled = (vm.assigned.userId != vm.currentUser);
+        var date = dateUtils.getMomentFromString(documentsResponse.viewModel.month, documentsResponse.viewModel.year)
+        vm.billDate = dateUtils.momentToStringDisplay(date, "MMMM-YYYY");
     }
 
     /**
@@ -108,13 +112,6 @@ function approvalsCtrl(documentsHelper, documentsResponse, userResponse, tenants
         function submit() {
             documentsService.moveToBox(vm.prevAction.url).then(success, error);
         }
-
-        var success = function(response) {
-            toastsProvider.showSimpleToast('Your document was sent to the previous phase.');
-            returnToList();
-        };
-
-        var error = function(error) {};
     }
 
     function onSubmitClicked() {
@@ -127,19 +124,14 @@ function approvalsCtrl(documentsHelper, documentsResponse, userResponse, tenants
             var postData = documentsHelper.formatServerData(documentsResponse);
             documentsService.editDocument(documentId, postData).then(submit, error);
         }
-
-        function submit() {
-            documentsService.moveToBox(vm.nextAction.url).then(success, error);
-        }
-
-        var success = function(response) {
-            toastsProvider.showSimpleToast('Your document was sent to the next phase.');
-            returnToList();
-        };
-
-        var error = function(error) {};
-
     }
+
+    function success (response) {
+        toastsProvider.showSimpleToast('Your document was sent to the next phase.');
+        returnToList();
+    }
+
+    function error(error) {}
 
     function goToComments() {
         var oldHash = $location.hash();

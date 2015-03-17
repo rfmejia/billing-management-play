@@ -7,7 +7,6 @@ angular
                  hoaAppLinksService
              ]);
 
-
 function hoaAppLinksService($resource, $q, $window) {
     var topUrl = $window.location.origin + "/api/";
     var usersLink = null;

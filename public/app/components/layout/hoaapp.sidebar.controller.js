@@ -8,7 +8,7 @@ angular
                     'documents.helper',
                     'mailbox',
                     'userDetails',
-                   "nvl-dateutils",
+                    "nvl-dateutils",
                     sidebarController
                 ]);
 
@@ -26,12 +26,12 @@ function sidebarController($state, documentsHelper, mailbox, userDetails, dateUt
     function onSidebarItemClicked(folder) {
         var query = documentsHelper.getQueryParameters();
         query.mailbox = folder.queryParam;
-       if(folder.link == 'delivered') {
+        if (folder.link == 'delivered') {
             query = {};
             query.year = dateUtils.getLocalYearNow();
             query.month = dateUtils.getLocalMonthNow();
         }
-        else if(folder.link != 'forSending') {
+        else if (folder.link != 'forSending') {
             query.isAssigned = true;
             query.assigned = userDetails.userId;
         }

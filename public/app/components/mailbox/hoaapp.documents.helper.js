@@ -64,7 +64,7 @@ function documentHelper(mailboxParam) {
             "links"      : serverResponse._links,
             "year"       : serverResponse.year,
             "month"      : serverResponse.month,
-            "serialId"   : serverResponse.serialId
+            "serialId"   : serverReponse.serialId
         };
     }
 
