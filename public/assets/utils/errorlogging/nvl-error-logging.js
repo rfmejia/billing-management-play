@@ -36,7 +36,7 @@ function nvlLoggingService($log, $window, errorPrinter, errorPostService) {
                                           url         : $window.location.href,
                                           message     : errorMessage,
                                           type        : "exception",
-                                          stackTraace : stackTrace,
+                                          stackTrace : stackTrace,
                                           cause       : (cause || "")
                                       });
             $log.debug(data);

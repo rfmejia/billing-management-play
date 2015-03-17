@@ -92,7 +92,6 @@ function createCtrl(documentsHelper, documentsService, $state, template, tenants
     }
 
     function prepareDraftPost() {
-        template.viewModel.title = vm.title();
         template.viewModel.year = dateUtils.getLocalYear(vm.billingDate);
         template.viewModel.month = dateUtils.getLocalMonth(vm.billingDate);
         template.viewModel.forTenant = vm.selectedTenant.id;

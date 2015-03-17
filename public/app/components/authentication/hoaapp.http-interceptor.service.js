@@ -20,7 +20,7 @@ function httpInterceptor($q, $window, $location, nvlAppLoggingSrvc) {
             type : "request error",
             response : response
         };
-        nvlAppLoggingSrvc.error(JSON.stringify(error));
+        nvlAppLoggingSrvc.error(error);
         return response || $q.when(response);
     }
 
@@ -30,7 +30,7 @@ function httpInterceptor($q, $window, $location, nvlAppLoggingSrvc) {
 
     function responseError(response) {
         var error = determineError(response);
-        if (error)nvlAppLoggingSrvc.error(JSON.stringify(error));
+        if (error)nvlAppLoggingSrvc.error(error);
 
         return $q.reject(response);
     }
