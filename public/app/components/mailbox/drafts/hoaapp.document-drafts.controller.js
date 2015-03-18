@@ -18,7 +18,7 @@ angular
                     "$anchorScroll",
                     "$location",
                     'service.hoatoasts',
-                   "nvl-dateutils",
+                    "nvl-dateutils",
                     draftsCtrl
                 ]);
 
@@ -56,7 +56,6 @@ function draftsCtrl(documentsHelper, documentsResponse, userResponse, tenantsRes
     /** Mailbox **/
     vm.mailbox = documentsResponse.viewModel.mailbox;
 
-
     //Function mapping
     vm.onUnlinkClicked = onUnlinkClicked;
     vm.validateDateRange = validateDateRange;
@@ -75,13 +74,12 @@ function draftsCtrl(documentsHelper, documentsResponse, userResponse, tenantsRes
             vm.comments = commentsHelper.parseComments(null, null);
         }
 
-        if(vm.comments.hasRecent) {
+        if (vm.comments.hasRecent) {
             toastsProvider.showPersistentToast("1 new comment", "view").then(goToComments)
         }
 
         vm.isDisabled = (vm.assigned.userId != vm.currentUser);
     }
-
 
     //region FUNCTIONS
     /**
@@ -114,7 +112,7 @@ function draftsCtrl(documentsHelper, documentsResponse, userResponse, tenantsRes
      * Submits the current document to the next box
      */
     function onSubmitClicked() {
-        dialogProvider.getCommentDialog("Move document to ",  vm.nextAction.title).then(okayClicked);
+        dialogProvider.getCommentDialog("Move document to ", vm.nextAction.title).then(okayClicked);
 
         //Save the document first, then submit
         function okayClicked(comment) {
@@ -207,17 +205,17 @@ function draftsCtrl(documentsHelper, documentsResponse, userResponse, tenantsRes
     function computeSubtotal() {
         var total = 0;
         angular.forEach(vm.previous.sections, function(subsection) {
-            if(subsection.hasOwnProperty("sectionTotal")) total += subsection.sectionTotal.value;
+            if (subsection.hasOwnProperty("sectionTotal")) total += subsection.sectionTotal.value;
         });
         vm.previous.summary.value = total;
 
         total = 0;
         angular.forEach(vm.thisMonth.sections, function(subsection) {
-            if(subsection.hasOwnProperty("sectionTotal")) total += subsection.sectionTotal.value;
+            if (subsection.hasOwnProperty("sectionTotal")) total += subsection.sectionTotal.value;
         });
         vm.thisMonth.summary.value = total;
 
-        if(isFinite(vm.previous.summary.value) && isFinite(vm.thisMonth.summary.value)) {
+        if (isFinite(vm.previous.summary.value) && isFinite(vm.thisMonth.summary.value)) {
             vm.summary.value = vm.previous.summary.value + vm.thisMonth.summary.value;
         }
     }

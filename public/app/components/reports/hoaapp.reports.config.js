@@ -10,11 +10,11 @@ function config($stateProvider, reportsRoutes) {
     var reports = {
         url     : "reports?year&month&limit&offset",
         resolve : {
-            documentsHelper      : getDocumentsHelper,
-            documentsService     : getDocumentsService,
-            documentsList        : unparsedDocumentsList,
-            unparsedReport       : getReport,
-            reportResponse       : parseReport
+            documentsHelper  : getDocumentsHelper,
+            documentsService : getDocumentsService,
+            documentsList    : unparsedDocumentsList,
+            unparsedReport   : getReport,
+            reportResponse   : parseReport
         },
         views   : {
             "contentArea@workspace" : {
@@ -29,7 +29,8 @@ function config($stateProvider, reportsRoutes) {
         url     : "view/:id",
         resolve : {
             unparsedDocument : getDocument,
-            document         : parseDocument
+            document         : parseDocument,
+            currentUser      : getCurrentUser
         },
         views   : {
             "contentArea@workspace" : {
@@ -75,7 +76,7 @@ function unparsedDocumentsList(docsHelper, docsService, mailboxParams, $statePar
 getReport.$inject = ["reports.service", "$stateParams", "reports.helper"];
 function getReport(reportsService, $stateParams, reportsHelper) {
     var queryParams = $stateParams;
-    if(angular.equals({}, queryParams)) {
+    if (angular.equals({}, queryParams)) {
         queryParams = reportsHelper.getQueryParams();
     }
     return reportsService.getReport(queryParams);
@@ -96,6 +97,11 @@ function getDocument(docsSrvc, $stateParams) {
 parseDocument.$inject = ["documentsHelper", "unparsedDocument"];
 function parseDocument(docsHelper, response) {
     return docsHelper.formatEditResponse(response);
+}
+
+getCurrentUser.$inject = ['service.hoacurrentuser'];
+function getCurrentUser(currentUser) {
+    return currentUser.getUserDetails();
 }
 //endregion
 

@@ -7,23 +7,30 @@ angular
                    "documentsHelper",
                    "documentsService",
                    "documentsResponse",
+                   "userResponse",
                    "$state",
                    "$stateParams",
                    "reports.helper",
                    printCtrl
                 ]);
 
-function printCtrl(docsHelper, docsSrvc, docsResponse, $state, $stateParams, reportsHelper) {
+function printCtrl(docsHelper, docsSrvc, docsResponse, userResponse,  $state, $stateParams, reportsHelper) {
     var vm = this;
     vm.document = docsResponse.viewModel;
-    console.log(docsResponse);
+    vm.isDisabled = true;
 
     vm.onSentClicked = onSentClicked;
 
     activate();
 
     function activate() {
+        if(vm.document.assigned == null) {
+            vm.isDisabled = true;
+        } else {
+            vm.isDisabled = (userResponse.userId != vm.document.assigned.userId)
+        }
 
+        vm.isDisabled = vm.isDisabled || (vm.document.mailbox != 'forSending');
     }
 
     //region FUNCTION_CALL
@@ -35,5 +42,6 @@ function printCtrl(docsHelper, docsSrvc, docsResponse, $state, $stateParams, rep
     function moveToReports() {
         $state.go("workspace.reports", reportsHelper.getQueryParams());
     }
+
     //endregion
 }
