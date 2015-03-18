@@ -24,107 +24,110 @@
 
                 <div class="content">
                     <form name="billingForm" class="form-horizontal" novalidate form-watcher>
-                        <div class="form-group">
-                            <!-- Previous month's bill-->
-                            <section class="previousMonth">
-                                <p class="subtitle">Previous Month</p>
-                                <md-card class="entry" ng-repeat="sections in drafts.previous.sections">
-                                    <md-card-content md-theme="bills-dark" layout="column" flex>
-                                        <div class="whiteframe-title">
-                                            <p class="entry-title">Previous charges</p>
-                                        </div>
-                                        <nvl-input ng-repeat="field in sections.fields"
-                                                   field="field"
-                                                   is-disabled="drafts.isDisabled"></nvl-input>
-                                        <nvl-input field="sections.sectionTotal"
-                                                   is-disabled="drafts.isDisabled"
-                                                   change-function="drafts.computeSubtotal()"></nvl-input>
-                                    </md-card-content>
-                                </md-card>
-                            </section>
-
-                            <!-- This month's billing -->
-                            <section class="thisMonth">
-                                <p class="subtitle">This Month</p>
-                                <md-card class="entry" ng-repeat="sections in drafts.thisMonth.sections">
-                                    <md-card-content md-theme="bills-dark" layout="column" flex>
-                                        <div class="whiteframe-title">
-                                            <p class="entry-title">{{sections.title}}</p>
-                                        </div>
-                                        <section ng-repeat="field in sections.fields">
-                                            <nvl-input ng-if="field.datatype != 'dateperiod'"
+                        <fieldset ng-disabled="drafts.isDisabled">
+                            <div class="form-group">
+                                <!-- Previous month's bill-->
+                                <section class="previousMonth">
+                                    <p class="subtitle">Previous Month</p>
+                                    <md-card class="entry" ng-repeat="sections in drafts.previous.sections">
+                                        <md-card-content md-theme="bills-dark" layout="column" flex>
+                                            <div class="whiteframe-title">
+                                                <p class="entry-title">Previous charges</p>
+                                            </div>
+                                            <nvl-input ng-repeat="field in sections.fields"
                                                        field="field"
                                                        is-disabled="drafts.isDisabled"></nvl-input>
-                                            <section ng-if="field.datatype == 'dateperiod'"
-                                                     layout="row"
-                                                     layout-align="space-between center">
-                                                <div class="dropdown">
-                                                    <md-button md-theme="bills-dark"
-                                                               class="dropdown-toggle md-button md-fab"
-                                                               id="{{field.dates.from.id}}"
-                                                               role="button"
-                                                               data-target="#"
-                                                               data-toggle="dropdown">
-                                                        <i class="fa fa-calendar"></i>
-                                                    </md-button>
-                                                    <ul class="dropdown-menu" role="menu">
-                                                        <datetimepicker data-ng-model="field.dates.from.value"
-                                                                        data-datetimepicker-config="{ dropdownSelector : '#{{field.dates.from.id}}', startView : 'month', minView : 'month'}"
-                                                                        data-on-set-time="drafts.validateDateRange(field.dates.from)"></datetimepicker>
-                                                    </ul>
-                                                </div>
-                                                <div flex>
-                                                    <p class="bill-date">{{field.dates.from.title}}
-                                                                         {{field.dates.from.value}}</p>
-                                                </div>
-                                                <div class="dropdown">
-                                                    <md-button
-                                                            md-theme="bills-dark"
-                                                            class="dropdown-toggle md-button md-fab"
-                                                            id="{{field.dates.to.id}}"
-                                                            role="button"
-                                                            data-target="#"
-                                                            data-toggle="dropdown">
-                                                        <i class="fa fa-calendar"></i>
-                                                    </md-button>
-                                                    <ul class="dropdown-menu" role="menu">
-                                                        <datetimepicker data-ng-model="field.dates.to.value"
-                                                                        data-datetimepicker-config="{ dropdownSelector : '#{{field.dates.to.id}}', startView : 'month', minView : 'month'}"
-                                                                        data-on-set-time="drafts.validateDateRange(field.dates.to)"></datetimepicker>
-                                                    </ul>
-                                                </div>
-                                                <div flex>
-                                                    <p class="bill-date">{{field.dates.to.title}}
-                                                                         {{field.dates.to.value}}</p>
-                                                </div>
-                                            </section>
-                                        </section>
-                                        <nvl-input field="sections.sectionTotal"
-                                                   is-disabled="drafts.isDisabled"
-                                                   change-function="drafts.computeSubtotal()"></nvl-input>
-                                    </md-card-content>
-                                </md-card>
-                            </section>
+                                            <nvl-input field="sections.sectionTotal"
+                                                       is-disabled="drafts.isDisabled"
+                                                       change-function="drafts.computeSubtotal()"></nvl-input>
+                                        </md-card-content>
+                                    </md-card>
+                                </section>
 
-                            <section>
-                                <p class="subtitle">Remarks</p>
-                                <md-card class="entry">
-                                    <md-card-content md-theme="bills-dark">
-                                        <md-input-container flex>
-                                            <label>Invoice remarks</label> <textarea
-                                                name="remarks" ng-model="drafts.summary.remarks"
-                                                columns="1"
-                                                md-maxlength="140"></textarea>
-                                        </md-input-container>
-                                        <div ng-messages="comment.text.$error">
-                                            <div ng-message="md-maxlength">The comment has to be less than 140
-                                                                           characters long.
+                                <!-- This month's billing -->
+                                <section class="thisMonth">
+                                    <p class="subtitle">This Month</p>
+                                    <md-card class="entry" ng-repeat="sections in drafts.thisMonth.sections">
+                                        <md-card-content md-theme="bills-dark" layout="column" flex>
+                                            <div class="whiteframe-title">
+                                                <p class="entry-title">{{sections.title}}</p>
                                             </div>
-                                        </div>
-                                    </md-card-content>
-                                </md-card>
-                            </section>
-                        </div>
+                                            <section ng-repeat="field in sections.fields">
+                                                <nvl-input ng-if="field.datatype != 'dateperiod'"
+                                                           field="field"
+                                                           is-disabled="drafts.isDisabled"></nvl-input>
+                                                <section ng-if="field.datatype == 'dateperiod'"
+                                                         layout="row"
+                                                         layout-align="space-between center">
+                                                    <div class="dropdown">
+                                                        <md-button md-theme="bills-dark"
+                                                                   class="dropdown-toggle md-button md-fab"
+                                                                   id="{{field.dates.from.id}}"
+                                                                   role="button"
+                                                                   data-target="#"
+                                                                   data-toggle="dropdown">
+                                                            <i class="fa fa-calendar"></i>
+                                                        </md-button>
+                                                        <ul class="dropdown-menu" role="menu">
+                                                            <datetimepicker data-ng-model="field.dates.from.value"
+                                                                            data-datetimepicker-config="{ dropdownSelector : '#{{field.dates.from.id}}', startView : 'month', minView : 'month'}"
+                                                                            data-on-set-time="drafts.validateDateRange(field.dates.from)"></datetimepicker>
+                                                        </ul>
+                                                    </div>
+                                                    <div flex>
+                                                        <p class="bill-date">{{field.dates.from.title}}
+                                                                             {{field.dates.from.value}}</p>
+                                                    </div>
+                                                    <div class="dropdown">
+                                                        <md-button
+                                                                md-theme="bills-dark"
+                                                                class="dropdown-toggle md-button md-fab"
+                                                                id="{{field.dates.to.id}}"
+                                                                role="button"
+                                                                data-target="#"
+                                                                data-toggle="dropdown">
+                                                            <i class="fa fa-calendar"></i>
+                                                        </md-button>
+                                                        <ul class="dropdown-menu" role="menu">
+                                                            <datetimepicker data-ng-model="field.dates.to.value"
+                                                                            data-datetimepicker-config="{ dropdownSelector : '#{{field.dates.to.id}}', startView : 'month', minView : 'month'}"
+                                                                            data-on-set-time="drafts.validateDateRange(field.dates.to)"></datetimepicker>
+                                                        </ul>
+                                                    </div>
+                                                    <div flex>
+                                                        <p class="bill-date">{{field.dates.to.title}}
+                                                                             {{field.dates.to.value}}</p>
+                                                    </div>
+                                                </section>
+                                            </section>
+                                            <nvl-input field="sections.sectionTotal"
+                                                       is-disabled="drafts.isDisabled"
+                                                       change-function="drafts.computeSubtotal()"></nvl-input>
+                                        </md-card-content>
+                                    </md-card>
+                                </section>
+
+                                <section>
+                                    <p class="subtitle">Remarks</p>
+                                    <md-card class="entry">
+                                        <md-card-content md-theme="bills-dark">
+                                            <md-input-container flex>
+                                                <label>Invoice remarks</label> <textarea
+                                                    name="remarks" ng-model="drafts.summary.remarks"
+                                                    columns="1"
+                                                    md-maxlength="140"></textarea>
+                                            </md-input-container>
+                                            <div ng-messages="comment.text.$error">
+                                                <div ng-message="md-maxlength">The comment has to be less than 140
+                                                                               characters long.
+                                                </div>
+                                            </div>
+                                        </md-card-content>
+                                    </md-card>
+                                </section>
+                            </div>
+                        </fieldset>
+
                     </form>
                 </div>
             </div>

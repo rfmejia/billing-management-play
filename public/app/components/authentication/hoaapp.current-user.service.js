@@ -80,7 +80,7 @@ function hoaCurrentUserService ($location, $resource, $q, hoalinks, $window) {
         var logoutPath = hoalinks.getLogoutLink();
         if(logoutPath) {
             var logoutUrl = $window.location.origin + logoutPath;
-            $window.location = logzoutUrl;
+            $window.location = logoutUrl;
         }
     }
     //endregion
