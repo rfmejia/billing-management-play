@@ -12,7 +12,9 @@ object Roles {
   val Approver = Role("approver")
   val Admin = Role("admin")
 
-  val All = Set(Encoder.id, Checker.id, Approver.id, Admin.id)
+  val All: Set[Role] = Set(Encoder, Checker, Approver, Admin)
 
-  def isRegistered(id: String): Boolean = All.contains(id)
+  def fromStringSet(rs: Set[String]): Set[Role] = rs.map(Role(_))
+
+  def find(id: String): Option[Role] = All.find(_ == Role(id))
 }

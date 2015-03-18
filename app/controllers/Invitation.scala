@@ -1,8 +1,8 @@
 package controllers
 
+import com.nooovle._
 import com.nooovle.slick.ConnectionFactory
 import com.nooovle.slick.models.userRoles
-import com.nooovle.{ Roles, User }
 import org.joda.time.DateTime
 import play.api._
 import play.api.data.Form
@@ -37,7 +37,7 @@ class Invitation(override implicit val env: RuntimeEnvironment[User]) extends Ba
   }
 
   private def SecureInvitePage = CSRFAddToken {
-    SecuredAction(WithRoles(Roles.Admin.id)) { implicit request =>
+    SecuredAction(WithRoles(Roles.Admin)) { implicit request =>
 
       if (SecureSocial.enableRefererAsOriginalUrl) {
         SecureSocial.withRefererAsOriginalUrl(Ok(customViewTemplate.getStartInvitePage(invitationForm)))
@@ -113,12 +113,12 @@ trait BaseInvitation[U] extends securesocial.controllers.BaseRegistration[U] wit
   private def saveRoles(userId: String, token: MailToken): Future[String] =
     token match {
       case inv: InvitationMailToken =>
-        def f(b: Boolean, s: String): Set[String] = if (b) Set(s) else Set.empty
-        val roles: Set[String] =
-          f(inv.isEncoder, Roles.Encoder.id) ++
-            f(inv.isChecker, Roles.Checker.id) ++
-            f(inv.isApprover, Roles.Approver.id) ++
-            f(inv.isAdmin, Roles.Admin.id)
+        def f(b: Boolean, r: Role): Set[Role] = if (b) Set(r) else Set.empty
+        val roles: Set[Role] =
+          f(inv.isEncoder, Roles.Encoder) ++
+            f(inv.isChecker, Roles.Checker) ++
+            f(inv.isApprover, Roles.Approver) ++
+            f(inv.isAdmin, Roles.Admin)
         Future.fromTry(User.updateRoles(userId, roles))
       case _ => Future.successful("Not an invitation, nothing saved")
     }

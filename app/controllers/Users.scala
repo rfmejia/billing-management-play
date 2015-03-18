@@ -37,7 +37,7 @@ class Users(override implicit val env: RuntimeEnvironment[User])
             .withField("roles", rs)
 
           val withEditRoleLink =
-            if (User.findRoles(request.user.userId).contains(Roles.Admin.id))
+            if (User.findRoles(request.user.userId).contains(Roles.Admin))
               obj.withLink("hoa:editRoles", routes.Users.editRoles(u.userId).absoluteURL())
             else obj
 
@@ -95,12 +95,12 @@ class Users(override implicit val env: RuntimeEnvironment[User])
       }
   }
 
-  def editRoles(userId: String) = SecuredAction(WithRoles(Roles.Admin.id))(parse.json) {
+  def editRoles(userId: String) = SecuredAction(WithRoles(Roles.Admin))(parse.json) {
     implicit request =>
       val json = request.body
       (json \ "roles").asOpt[Seq[String]] match {
         case Some(rs) =>
-          User.updateRoles(userId, rs.toSet) match {
+          User.updateRoles(userId, Roles.fromStringSet(rs.toSet)) match {
             case Success(userId) => NoContent
             case Failure(err) => err match {
               case e: IndexOutOfBoundsException => NotFound
@@ -111,7 +111,7 @@ class Users(override implicit val env: RuntimeEnvironment[User])
       }
   }
 
-  def delete(userId: String) = SecuredAction(WithRoles(Roles.Admin.id)) { implicit request =>
+  def delete(userId: String) = SecuredAction(WithRoles(Roles.Admin)) { implicit request =>
     val deleted = ConnectionFactory.connect withSession { implicit session =>
       val query = for (u <- users if u.userId === userId) yield u
       query.delete

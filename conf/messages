@@ -3,6 +3,7 @@
 hoa.errors.NotCustomViewTemplates=The view template of the runtime environment is not the valid custom view template
 
 hoa.documents.forbidden.NotAssigned=You are not the assigned user for this document
+hoa.documents.forbidden.IncorrectRole=You don't have the correct role permissions to perform this request
 hoa.documents.forbidden.DeleteNotAllowed=You are not the assigned user for this document, and the document is not in the 'Drafts' mailbox
 
 hoa.invite.title=Invite user

@@ -57,13 +57,13 @@ object User extends ((String, String, Option[String], Option[String], Option[Str
       user.firstOption map (u => (u, rs.list.toSet))
     }
 
-  def findRoles(userId: String): Set[String] =
+  def findRoles(userId: String): Set[Role] =
     ConnectionFactory.connect withSession { implicit session =>
       val query = for {
         ur <- userRoles if ur.userId === userId
         rs <- roles if rs.name === ur.roleName
       } yield rs
-      query.list.toSet
+      query.list.map(Roles.find).flatten.toSet
     }
 
   // TODO: Simplify when removing role editing in the original PUT request
@@ -81,8 +81,8 @@ object User extends ((String, String, Option[String], Option[String], Option[Str
     }
   }
 
-  def updateRoles(userId: String, rs: Set[String]): Try[String] = Try {
-    if(!(rs subsetOf Roles.All)) throw new IllegalStateException(
+  def updateRoles(userId: String, rs: Set[Role]): Try[String] = Try {
+    if (!(rs subsetOf Roles.All)) throw new IllegalStateException(
       "Some roles are not valid: " + (rs -- Roles.All))
 
     ConnectionFactory.connect withTransaction { implicit session =>
@@ -93,10 +93,10 @@ object User extends ((String, String, Option[String], Option[String], Option[Str
         // Delete existing roles
         userRoles.filter(ur => ur.userId === userId).delete
 
-        rs foreach (role => roles.insertOrUpdate(role))
+        rs foreach (role => roles.insertOrUpdate(role.id))
         // The following does not use insertOrUpdate because userId is an
         // auto-incrementing foreign key (bug exists)
-        rs foreach (role => userRoles += ((userId, role)))
+        rs foreach (role => userRoles += ((userId, role.id)))
         userId
       }
     }
