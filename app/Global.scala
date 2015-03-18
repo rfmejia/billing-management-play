@@ -17,7 +17,7 @@ import scala.slick.driver.H2Driver.simple._
 import scala.util.{ Try, Success, Failure }
 import securesocial.core.providers._
 import securesocial.core.RuntimeEnvironment
-import services.CustomUserService
+import services.{ CustomRoutesService, CustomUserService }
 import views.CustomViewTemplates
 
 object Global extends WithFilters(CorsFilter, new GzipFilter()) with GlobalSettings {
@@ -91,6 +91,7 @@ object Global extends WithFilters(CorsFilter, new GzipFilter()) with GlobalSetti
   object MyRuntimeEnvironment extends RuntimeEnvironment.Default[User] {
     override implicit val executionContext = play.api.libs.concurrent.Execution.defaultContext
     override lazy val userService: CustomUserService = new CustomUserService
+    override lazy val routes = new CustomRoutesService
     override lazy val providers = ListMap(
       include(new UsernamePasswordProvider[User](userService, avatarService, viewTemplates, passwordHashers)))
     override lazy val viewTemplates = new CustomViewTemplates(this)

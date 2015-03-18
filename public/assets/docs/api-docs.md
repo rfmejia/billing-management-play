@@ -191,7 +191,7 @@ The following sections are default routes supplied by [SecureSocial](http://secu
 
 ### Backend
 
-- [ ] Generate serial number upon approval
+- [-] Generate serial number upon approval
 - [ ] Limited deletion **after issuing serial number** (must not be permanently deleted)
 - [x] Log document updates (as specific as possible)
 - [x] Audit cascade deletions in models
