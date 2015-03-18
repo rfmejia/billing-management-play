@@ -39,8 +39,9 @@ class Workflow(override implicit val env: RuntimeEnvironment[User])
     val roles = User.findRoles(user.userId)
 
     if (roles.contains(Roles.Admin)) Right(Roles.Admin.id)
-    else if (!doc.assigned.contains(user.userId))
+    else if (!doc.assigned.contains(user.userId)) {
       Left(Messages("hoa.documents.forbidden.NotAssigned"))
+    }
     else {
       Mailbox.find(doc.mailbox)
         .flatMap(box => matchRole(box, roles))
