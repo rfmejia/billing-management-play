@@ -1,24 +1,13 @@
-<div class="nav-sidebar">
+<div class="nav-sidebar" flex>
     <md-toolbar class="white-out">
         <div layout="row" layout-align="center center" class="md-toolbar-tools userName">
             <div flex>
-                <md-button remove-focus
-                           id="userName"
-                           href
-                           class="dropdown-toggle"
-                           data-toggle="dropdown"
-                           role="button"
-                           aria-expanded="false">
-                    <span><i class="iconed-text fa fa-cog"></i>{{sidebar.fullName}}</span>
-                </md-button>
-                <ul class="dropdown-menu" role="menu">
-                    <li><a href ng-click="sidebar.onLogOutClicked()">Logout</a></li>
-                </ul>
+                <h4 id="userName"><i class="fa fa-user iconed-text"></i>{{sidebar.fullName}}</h4>
             </div>
         </div>
     </md-toolbar>
 
-    <div>
+    <div flex>
         <div layout="row" layout-align="center center">
             <md-button flex
                        id="startWorkflow"
@@ -29,7 +18,7 @@
             </md-button>
         </div>
 
-        <section>
+        <section flex>
             <ul>
                 <li class="main-secton" ng-repeat="children in sidebar.mailboxItems.mailbox.subFolders">
                     <section ng-if="children.type == 'hoa:mailbox-heading'">
@@ -49,5 +38,8 @@
         </section>
     </div>
 </div>
+<md-button class="md-warn" ng-click="sidebar.onLogOutClicked()">
+    Logout
+</md-button>
 
 

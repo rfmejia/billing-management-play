@@ -34,7 +34,6 @@ function hoaDialogProvider($mdDialog) {
                 .title(title)
                 .content(message)
                 .ok(okayBtn)
-                .cancel("Cancel")
         );
     }
 
