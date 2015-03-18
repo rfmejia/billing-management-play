@@ -58,7 +58,7 @@ class Workflow(override implicit val env: RuntimeEnvironment[User])
             // TODO: Move this logic in a separate Workflow object for testability
             (Mailbox.find(oldDoc.mailbox), Mailbox.find(mailbox)) match {
               case (Some(oldBox), Some(newBox)) =>
-                Document.update(oldDoc.copy(mailbox = newBox.name, assigned = None)) match {
+                Document.changeMailbox(oldDoc, oldBox, newBox) match {
                   case Success(newDoc) =>
                     val msg = s"Moved document from '${oldBox.title}' to '${newBox.title}'"
                     ActionLog.log(request.user.userId, newDoc.id, msg) map { log =>

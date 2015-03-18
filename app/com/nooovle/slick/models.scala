@@ -27,7 +27,7 @@ object models {
   val actionLogs = TableQuery[ActionLogsModel]
   val serialNumbers = TableQuery[SerialNumbersModel]
   val tables = List(modelTemplates, roles, settings, tenants, users, documents,
-    userRoles, mailTokens, invitations, actionLogs)
+    userRoles, mailTokens, invitations, actionLogs, serialNumbers)
 
   /**
    *  Builds tables one by one if they do not exist.

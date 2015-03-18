@@ -87,6 +87,7 @@ object Document extends ((Int, Option[Int], String, String, String, DateTime, In
         withNewBox =>
           (oldBox, newBox) match {
             case (forApproval, forSending) => // Generate serial number
+              // TODO: Check if serial number already exists
               SerialNumber.create(doc.id) map {
                 sn =>
                   Document.update(withNewBox.copy(serialId = Some(sn.id))) match {
