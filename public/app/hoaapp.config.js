@@ -34,8 +34,7 @@ function config($stateProvider, $urlRouterProvider, $httpProvider, usSpinnerConf
                                 'hue-2'   : '600',
                                 'hue-3'   : 'A100'
                             })
-            .accentPalette('pink')
-            .backg;
+            .accentPalette('pink');
 
         $mdThemingProvider.theme('bills-dark', 'default')
             .primaryPalette('teal')

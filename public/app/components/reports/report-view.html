@@ -12,9 +12,9 @@
                        ng-show="!drafts.isDisabled"
                        remove-focus
                        ng-click="updateCtrl.onUnlinkClicked()">
-                <span><i class="fa fa-link iconed-text"></i>Unlock</span>
+                <span><i class="fa fa-chain-broken iconed-text"></i>Unlock</span>
             </md-button>
-            <div ng-if="drafts.isDisabled()">
+            <div ng-if="updateCtrl.isDisabled">
                 <span class="toolbar-text"><i class="iconed-text fa fa-lock"></i>Assigned to {{updateCtrl.assigned.fullName}}</span>
             </div>
         </div>
@@ -59,6 +59,7 @@
                         </div>
                     </md-card-content>
                 </md-card>
+            </fieldset>
                 <md-card>
                     <md-card-content>
                         <div class="md-actions" layout="row" layout-align="start center">
@@ -70,7 +71,7 @@
 
                             <div flex>
                                 <md-button
-                                        ng-if="updateCtrl.isDisabled"
+                                        ng-if="!updateCtrl.isDisabled"
                                         md-theme="bills-dark"
                                         remove-focus
                                         type="submit"
@@ -80,7 +81,7 @@
                                     <span>Save<i class="fa fa-floppy-o iconed-text"></i></span>
                                 </md-button>
                                 <md-button
-                                        ng-if="updateCtrl.isDisabled"
+                                        ng-if="!updateCtrl.isDisabled"
                                         md-theme="bills-dark"
                                         remove-focus
                                         type="submit"
@@ -96,7 +97,7 @@
                         <hoa-comments id="comments" comments="updateCtrl.comments"></hoa-comments>
                     </md-card-content>
                 </md-card>
-            </fieldset>
+
         </form>
     </div>
 </md-content>

@@ -6,7 +6,7 @@ angular
     .controller("reportUpdateCtrl", reportUpdateCtrl);
 
 reportUpdateCtrl.$inject = ["documentsService", "document", "REPORTS_ROUTES", "service.hoatoasts", 'service.hoadialog', "$location", "$anchorScroll", 'helper.comments', "documentsHelper", "$state", "nvl-dateutils", "currentUser"];
-function reportUpdateCtrl(docsSrvc, document, reportsRoutes, toastProvider, dialogProvider, $location, $anchorScroll, commentsHelper, documentsHelper, $state, dateUtils,  currentUser) {
+function reportUpdateCtrl(docsSrvc, document, reportsRoutes, toastProvider, dialogProvider, $location, $anchorScroll, commentsHelper, documentsHelper, $state, dateUtils, currentUser) {
     var vm = this;
     vm.payments = document.viewModel.amounts;
     vm.links = document.viewModel.links;
@@ -16,7 +16,7 @@ function reportUpdateCtrl(docsSrvc, document, reportsRoutes, toastProvider, dial
     vm.assigned = document.viewModel.assigned;
     vm.currentUser = currentUser;
     vm.isDisabled = false;
-    var unassignLink = document.viewModel.links["hoa:unassign"].href;
+    var unassignLink = null;
     var amountPaid = document.viewModel.amountPaid;
     var documentId = document.viewModel.documentId;
 
@@ -29,6 +29,9 @@ function reportUpdateCtrl(docsSrvc, document, reportsRoutes, toastProvider, dial
     activate();
 
     function activate() {
+        if (document.viewModel.links.hasOwnProperty("hoa:unassign")) {
+            unassignLink = document.viewModel.links["hoa:unassign"].href;
+        }
         if (document.viewModel.comments.hasOwnProperty('all')) {
             vm.comments = document.viewModel.comments;
         }
@@ -42,9 +45,10 @@ function reportUpdateCtrl(docsSrvc, document, reportsRoutes, toastProvider, dial
         var date = dateUtils.getMomentFromString(document.viewModel.month, document.viewModel.year);
         vm.documentTitle = document.viewModel.tenant.tradeName + " ";
         vm.documentTitle += dateUtils.momentToStringDisplay(date, "MMMM YYYY");
-        if(vm.assigned == null) {
+        if (vm.assigned == null) {
             vm.isDisabled = true;
-        } else {
+        }
+        else {
             vm.isDisabled = (vm.currentUser.userId != vm.assigned.userId)
         }
     }
@@ -62,19 +66,30 @@ function reportUpdateCtrl(docsSrvc, document, reportsRoutes, toastProvider, dial
         function okayClicked(comment) {
             var parsedComments = commentsHelper.parseComments(comment, vm.comments);
             var postData = documentsHelper.formatPaidPostData(vm.payments, amountPaid, parsedComments);
-            docsSrvc.editDocument(documentId, postData).then(unassignDocument, error);
+            docsSrvc.editDocument(documentId, postData).then(showToast, error).then(function() {
+                docsSrvc.unassignDocument(unassignLink);
+                returnToReports();
+            });
         }
 
-        var unassignDocument = function() {
-            docsSrvc.unassignDocument(unassignLink).then(success, error);
-        };
+    }
 
-        var success = function(response) {
-            returnToReports();
-            toastProvider.showSimpleToast('Your document was updated');
-        };
+    function onCancelClicked() {
+        if (vm.assigned != null && vm.assigned.userId == vm.currentUser.userId) {
+            docsSrvc.unassignDocument(unassignLink).then(returnToReports)
+        }
+        else returnToReports();
+    }
 
-        var error = function(error) {};
+    function onUnlinkClicked() {
+        if (vm.links.hasOwnProperty("hoa:unassign")) {
+            var url = vm.links["hoa:unassign"].href;
+            dialogProvider.getConfirmDialog(unassignDocument, null, "This will no longer be assigned to you", "Are you sure?")
+        }
+    }
+
+    function unassignDocument() {
+        docsSrvc.unassignDocument(unassignLink).then(returnToReports);
     }
 
     function onCalculateClicked() {
@@ -83,21 +98,17 @@ function reportUpdateCtrl(docsSrvc, document, reportsRoutes, toastProvider, dial
         });
     }
 
-    function onCancelClicked() {
-        returnToReports();
+    function showToast() {
+        toastProvider.showSimpleToast('Your document was updated');
     }
+
+    function error(error) {
+        console.log(error);
+    }
+
 
     function returnToReports() {
-        $state.go(reportsRoutes.report);
+        $state.go(reportsRoutes.report, {}, {reload : true});
     }
 
-    function onUnlinkClicked() {
-        if (vm.links.hasOwnProperty("hoa:unassign")) {
-            var url = vm.links["hoa:unassign"].href;
-            dialogProvider.getConfirmDialog(unassignDocument, null, "This will no longer be assigned to you", "Are you sure?")
-        }
-        function unassignDocument() {
-            docsSrvc.unassignDocument(url).then(returnToReports);
-        }
-    }
 }
