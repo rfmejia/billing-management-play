@@ -85,9 +85,8 @@ object Document extends ((Int, Option[Int], String, String, String, DateTime, In
     ConnectionFactory.connect withSession { implicit session =>
       Document.update(doc.copy(mailbox = newBox.name, assigned = None)) flatMap {
         withNewBox =>
-          (oldBox, newBox) match {
-            case (forApproval, forSending) => // Generate serial number
-              // TODO: Check if serial number already exists
+          (oldBox, newBox, doc.serialId) match {
+            case (forApproval, forSending, None) =>
               SerialNumber.create(doc.id) map {
                 sn =>
                   Document.update(withNewBox.copy(serialId = Some(sn.id))) match {
