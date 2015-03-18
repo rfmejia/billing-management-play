@@ -63,7 +63,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
     def othersFilter(assigned: Option[String]) = {
       (assigned, others) match {
         case (Some(user), Some(true)) =>
-          user == request.user
+          user != request.user
         case (_, _) => true
       }
     }
