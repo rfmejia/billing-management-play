@@ -112,11 +112,6 @@ function documentsCtrl(dialogProvider, $state, $stateParams, $resource, document
         var title = "Opening unassigned document";
         var message = "This document will be locked to you";
 
-        if (vm.isForSending) {
-            $state.go(state, {id : item.id}, {reload : true});
-            return;
-        }
-
         //Check if clicked document is assigned
         if (item.assigned) {
             goToViewer();

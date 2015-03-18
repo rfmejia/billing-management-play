@@ -4,7 +4,9 @@
     </button>
     <h3 flex class="toolbar-title">{{drafts.mailbox | tokenizedCamel}}</h3>
     <div >
-        <md-button class="toolbar-text no-uppercase" md-theme="toolbars" ng-show="!drafts.isDisabled" remove-focus ng-click="drafts.onUnlinkClicked()"><span><i class="fa fa-link iconed-text"></i>Unlock</span></md-button>
-        <span class="toolbar-text" ng-show="drafts.isDisabled"><i class="iconed-text fa fa-lock"></i>Locked to {{drafts.assigned.userName}}</span>
+        <md-button ng-if="!drafts.isDisabled" class="toolbar-text no-uppercase" md-theme="toolbars" ng-show="!drafts.isDisabled" remove-focus ng-click="drafts.onUnlinkClicked()"><span><i class="fa fa-link iconed-text"></i>Unlock</span></md-button>
+        <div ng-if="drafts.isDisabled">
+            <span class="toolbar-text"><i class="iconed-text fa fa-lock"></i>Assigned to {{drafts.assigned.fullName}}</span>
+        </div>
     </div>
 </div>

@@ -7,17 +7,20 @@
         <section>
             <div>
                 <md-button
-                            ng-if="printCtrl.document.mailbox == 'forSending'"
+                        ng-if="!printCtrl.isDisabled"
                         class="toolbar-text no-uppercase"
-                           md-theme="toolbars"
-                           remove-focus
-                           ng-click="printCtrl.onSentClicked()"><span><i class="fa fa-paper-plane iconed-text"></i>Mark as sent</span>
+                        md-theme="toolbars"
+                        remove-focus
+                        ng-click="printCtrl.onSentClicked()">
+                    <span><i class="fa fa-paper-plane iconed-text"></i>Mark as sent</span>
                 </md-button>
                 <md-button class="toolbar-text no-uppercase"
                            nvl-print
                            printable-id="printable"
                            md-theme="toolbars"
-                           remove-focus><span><i class="fa fa-print iconed-text"></i>Print</span></md-button>
+                           remove-focus>
+                    <span><i class="fa fa-print iconed-text"></i>Print</span>
+                </md-button>
             </div>
         </section>
     </div>

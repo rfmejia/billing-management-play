@@ -100,11 +100,10 @@ function mailboxModuleConfig($stateProvider) {
         }
     };
 
-
-    var draftsList = {url : "/drafts", data: {title : "Drafts"}};
-    var forCheckingList = {url : "/forChecking", data: {title : "For checking"}};
-    var forApprovalList = {url : "/forApproval", data: {title : "For approval"}};
-    var forSendingList = { url :  "/forSending", data : {title : 'Ready for sending'}};
+    var draftsList = {url : "/drafts", data : {title : "Drafts"}};
+    var forCheckingList = {url : "/forChecking", data : {title : "For checking"}};
+    var forApprovalList = {url : "/forApproval", data : {title : "For approval"}};
+    var forSendingList = {url : "/forSending", data : {title : 'Ready for sending'}};
     //endregion
 
     //region WORKSPACE.DOC
@@ -139,10 +138,10 @@ function mailboxModuleConfig($stateProvider) {
             userResponse      : function(apiResponse) {
                 return apiResponse[1];
             },
-            tenantsRequest   : function(tenantsService, documentsResponse) {
+            tenantsRequest    : function(tenantsService, documentsResponse) {
                 return tenantsService.getTenant(documentsResponse.viewModel.tenant.id);
             },
-            tenantsResponse : function(tenantsRequest, tenantHelper) {
+            tenantsResponse   : function(tenantsRequest, tenantHelper) {
                 return tenantHelper.formatResponse(tenantsRequest);
             }
         }
@@ -161,7 +160,7 @@ function mailboxModuleConfig($stateProvider) {
             userService       : "service.hoacurrentuser",
             tenantsService    : "service.hoatenants",
             documentsHelper   : 'documents.helper',
-            tenantHelper     : "helper.tenant",
+            tenantHelper      : "helper.tenant",
             apiResponse       : function(documentsService, userService, $stateParams, $q) {
                 var deferred = $q.defer();
                 var documentsPromise = documentsService.getDocument($stateParams.id);
@@ -180,10 +179,10 @@ function mailboxModuleConfig($stateProvider) {
             userResponse      : function(apiResponse) {
                 return apiResponse[1];
             },
-            tenantsRequest   : function(tenantsService, documentsResponse) {
+            tenantsRequest    : function(tenantsService, documentsResponse) {
                 return tenantsService.getTenant(documentsResponse.viewModel.tenant.id);
             },
-            tenantsResponse : function(tenantsRequest, tenantHelper) {
+            tenantsResponse   : function(tenantsRequest, tenantHelper) {
                 return tenantHelper.formatResponse(tenantsRequest);
             }
 
@@ -200,12 +199,24 @@ function mailboxModuleConfig($stateProvider) {
         },
         resolve : {
             documentsService  : "documents.service",
+            userService       : "service.hoacurrentuser",
             documentsHelper   : "documents.helper",
-            apiResponse       : function(documentsService, $stateParams) {
-                return documentsService.getDocument($stateParams.id);
+            apiResponse       : function(documentsService, userService, $stateParams, $q) {
+                var deferred = $q.defer();
+                var documentsPromise = documentsService.getDocument($stateParams.id);
+                var userPromise = userService.getUserDetails();
+                var success = function(response) {
+                    deferred.resolve(response);
+                };
+
+                $q.all([documentsPromise, userPromise]).then(success);
+                return deferred.promise;
             },
             documentsResponse : function(apiResponse, documentsHelper) {
-                return documentsHelper.formatEditResponse(apiResponse);
+                return documentsHelper.formatEditResponse(apiResponse[0]);
+            },
+            userResponse      : function(apiResponse) {
+                return apiResponse[1];
             }
         }
     };
