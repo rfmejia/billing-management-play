@@ -65,6 +65,7 @@ POST     /admin/invite                 @controllers.Invitation.handleStartInvite
 
 GET      /signup/:token                @securesocial.controllers.Registration.signUp(token)
 POST     /signup/:token                @controllers.Invitation.handleSignUp(token)
+
 GET      /password                     @securesocial.controllers.PasswordChange.page
 POST     /password                     @securesocial.controllers.PasswordChange.handlePasswordChange
 
@@ -75,8 +76,8 @@ GET      /reset/:mailToken             @securesocial.controllers.PasswordReset.r
 POST     /reset/:mailToken             @securesocial.controllers.PasswordReset.handleResetPassword(mailToken)
 
 # Providers entry points
-GET      /authenticate/:provider       @securesocial.controllers.ProviderController.authenticate(provider)
-POST     /authenticate/:provider       @securesocial.controllers.ProviderController.authenticateByPost(provider)
+GET      /authenticate/:provider       @securesocial.controllers.ProviderController.authenticate(provider, redirectTo: Option[String])
+POST     /authenticate/:provider       @securesocial.controllers.ProviderController.authenticateByPost(provider, redirectTo: Option[String])
 
 # Authentication API
 POST     /api/authenticate/:provider   @securesocial.controllers.LoginApi.authenticate(provider, builder = "token")
@@ -84,4 +85,7 @@ POST     /api/authenticate/:provider   @securesocial.controllers.LoginApi.authen
 # ---- Web application routes ----
 GET      /                             controllers.Assets.at(path="/public", file="index.html")
 # Note: Catch-all route must be the last in the definition
+GET      /assets/*file                 controllers.Assets.at(path="/public/assets", file)
+GET      /assets/*file                 securesocial.controllers.Assets.at(path="/public/securesocial", file)
 GET      /*file                        controllers.Assets.at(path="/public", file)
+

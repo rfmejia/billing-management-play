@@ -4,7 +4,7 @@ import com.netaporter.uri.dsl._
 import com.nooovle.ModelInfo._
 import com.nooovle.slick.ConnectionFactory
 import com.nooovle.slick.models.modelTemplates
-import com.nooovle.{ ModelInfo, User }
+import com.nooovle.{ ModelInfo, Role, User }
 import org.locker47.json.play._
 import play.api.libs.json.{ JsObject, Json }
 import play.api.mvc.{ Request, RequestHeader, Result }
@@ -51,7 +51,7 @@ trait ApiController[T] extends securesocial.core.SecureSocial[T] {
   // case class CreatorOnly() extends Authorization[User]
   // case class AssignedOnly() extends Authorization[User]
 
-  case class WithRoles(requiredRoles: Set[String]) extends Authorization[User] {
+  case class WithRoles(requiredRoles: Set[Role]) extends Authorization[User] {
     def isAuthorized(user: User, request: RequestHeader) = {
       val userRoles = User.findRoles(user.userId)
       val matches = userRoles & requiredRoles
@@ -62,7 +62,7 @@ trait ApiController[T] extends securesocial.core.SecureSocial[T] {
     }
   }
 
-  object WithRoles extends (Set[String] => WithRoles) {
-    def apply(role: String): WithRoles = WithRoles.apply(Set(role))
+  object WithRoles extends (Set[Role] => WithRoles) {
+    def apply(role: Role): WithRoles = WithRoles.apply(Set(role))
   }
 }

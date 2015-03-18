@@ -6,12 +6,13 @@ import com.nooovle.slick.models.{ actionLogs, documents }
 import com.nooovle.slick.DocumentsModel
 import org.joda.time.{ DateTime, YearMonth }
 import play.api.libs.json.{ JsNumber, JsObject }
+import play.api.Logger
 import scala.slick.driver.H2Driver.simple._
-import scala.util.Try
+import scala.util.{ Try, Success, Failure }
 
 case class Document(
   id: Int,
-  serialId: Option[String],
+  serialId: Option[Int],
   docType: String, // Type of subdocument
   mailbox: String,
   creator: String,
@@ -28,7 +29,7 @@ case class Document(
   checkedAction: Option[Int] = None,
   approvedAction: Option[Int] = None)
 
-object Document extends ((Int, Option[String], String, String, String, DateTime, Int, Int, Int, JsObject, JsObject, JsObject, Option[String], Option[Int], Option[Int], Option[Int], Option[Int]) => Document) with ModelTemplate {
+object Document extends ((Int, Option[Int], String, String, String, DateTime, Int, Int, Int, JsObject, JsObject, JsObject, Option[String], Option[Int], Option[Int], Option[Int], Option[Int]) => Document) with ModelTemplate {
 
   private val defaultAmountPaid: JsObject =
     JsObject(Seq(
@@ -50,9 +51,9 @@ object Document extends ((Int, Option[String], String, String, String, DateTime,
 
   def insert(creator: User, docType: String, forTenant: Int, forMonth: YearMonth, body: JsObject): Try[Document] = {
     val creationTime = new DateTime()
-    val doc = Document(0, None, docType, Mailbox.start.name, 
-      creator.userId, creationTime, forTenant, forMonth.getYear, 
-      forMonth.getMonthOfYear, defaultAmountPaid, body, 
+    val doc = Document(0, None, docType, Mailbox.start.name,
+      creator.userId, creationTime, forTenant, forMonth.getYear,
+      forMonth.getMonthOfYear, defaultAmountPaid, body,
       JsObject(Seq.empty), Some(creator.userId))
 
     ConnectionFactory.connect withSession { implicit session =>
@@ -74,6 +75,29 @@ object Document extends ((Int, Option[String], String, String, String, DateTime,
       else {
         query.update(doc)
         query.first
+      }
+    }
+  }
+
+  // TODO: Add implicit database session instead
+  // TODO: Use typesafe serial number and role in Document model, just add implicit converter
+  def changeMailbox(doc: Document, oldBox: Mailbox, newBox: Mailbox): Try[Document] = {
+    ConnectionFactory.connect withSession { implicit session =>
+      Document.update(doc.copy(mailbox = newBox.name, assigned = None)) flatMap {
+        withNewBox =>
+          (oldBox, newBox) match {
+            case (forApproval, forSending) => // Generate serial number
+              SerialNumber.create(doc.id) map {
+                sn =>
+                  Document.update(withNewBox.copy(serialId = Some(sn.id))) match {
+                    case Success(withSerialNumber) => withSerialNumber
+                    case Failure(msg) =>
+                      Logger.warn(s"Unable to generate serial ID for document ${doc.id}")
+                      withNewBox
+                  }
+              }
+            case _ => Success(withNewBox)
+          }
       }
     }
   }

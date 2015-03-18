@@ -191,7 +191,7 @@ The following sections are default routes supplied by [SecureSocial](http://secu
 
 ### Backend
 
-- [ ] Generate serial number upon approval
+- [-] Generate serial number upon approval
 - [ ] Limited deletion **after issuing serial number** (must not be permanently deleted)
 - [x] Log document updates (as specific as possible)
 - [x] Audit cascade deletions in models
@@ -202,6 +202,7 @@ The following sections are default routes supplied by [SecureSocial](http://secu
 ### Logging
 
 - [x] Setup logservice API
+- [x] Separate logging folder into YYYY/MM/DD
 - [ ] Setup logstash in @deadpool
 
 ### Testing
@@ -234,7 +235,7 @@ The following sections are default routes supplied by [SecureSocial](http://secu
 - [x] Restrict document editing to assigned user
 - [x] Restrict **document unlocking** to **assigned user**, or...
 - [x] ...to **admin role** (locking is unrestricted)
-- [ ] Restrict document mailbox movement to assigned user **with the appropriate workflow role**
+- [x] Restrict document mailbox movement to assigned user **with the appropriate workflow role**
 - [x] Restrict **document deletion** to **assigned user when in drafts mailbox**, or...
 - [x] ...to **admin role**
 - [x] Unassign document after moving mailbox

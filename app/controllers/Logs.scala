@@ -27,11 +27,15 @@ class Logs(override implicit val env: RuntimeEnvironment[User])
     Play.current.configuration.getString("logservice.path") map {
       logFolderName =>
         Try { 
-          val folderName = LocalDate.now.toString
-          Files.createDirectories(Paths.get(logFolderName, folderName))
+          val ld = LocalDate.now
+          val year = f"${ld.getYear}"
+          val month = f"${ld.getMonthOfYear}%02d"
+          val day = f"${ld.getDayOfMonth}%02d"
+
+          Files.createDirectories(Paths.get(logFolderName, year, month, day))
 
           val fileName = UUID.randomUUID().toString().replaceAll("-", "")
-          val file: Path = Paths.get(logFolderName, folderName, fileName) 
+          val file: Path = Paths.get(logFolderName, year, month, day, fileName) 
 
           Files.write(file, text.getBytes)
           val msg = s"(${DateTime.now.toString}) Logged to ${file.toString}"

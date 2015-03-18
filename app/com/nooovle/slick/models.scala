@@ -134,7 +134,7 @@ class UserRolesModel(tag: Tag) extends Table[(String, String)](tag, "USER_ROLES"
 class DocumentsModel(tag: Tag) extends Table[Document](tag, "DOCUMENTS") {
   import models._
   def id = column[Int]("ID", O.PrimaryKey, O.AutoInc)
-  def serialId = column[Option[String]]("SERIAL_ID")
+  def serialId = column[Option[Int]]("SERIAL_ID")
   def docType = column[String]("DOC_TYPE", O.NotNull)
   def mailbox = column[String]("MAILBOX", O.NotNull)
   def creator = column[String]("CREATOR", O.NotNull)

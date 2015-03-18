@@ -1,15 +1,15 @@
 package controllers
 
 import com.nooovle._
-import com.nooovle.slick.models.{ modelTemplates, documents }
 import com.nooovle.slick.ConnectionFactory
+import com.nooovle.slick.models.{ modelTemplates, documents }
 import org.joda.time.{ DateTime, YearMonth }
 import org.locker47.json.play._
+import play.api._
 import play.api.i18n.Messages
 import play.api.libs.json._
-import play.api._
-import play.api.mvc.{ Action, Controller, RequestHeader }
 import play.api.mvc.BodyParsers._
+import play.api.mvc.{ Action, Controller, RequestHeader }
 import scala.slick.driver.H2Driver.simple._
 import scala.util.{ Try, Success, Failure }
 import securesocial.core.RuntimeEnvironment
@@ -63,7 +63,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
     def othersFilter(assigned: Option[String]) = {
       (assigned, others) match {
         case (Some(user), Some(true)) =>
-          user == request.user
+          user != request.user
         case (_, _) => true
       }
     }
@@ -153,8 +153,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
         if (!existingDoc.assigned.exists(_ == request.user.userId)) {
           Forbidden(Messages("hoa.documents.forbidden.NotAssigned")
             + s" (Assigned to '${existingDoc.assigned}')")
-        }
-        else {
+        } else {
           val json = request.body
           ((json \ "body").asOpt[JsObject],
             (json \ "comments").asOpt[JsObject],
@@ -197,7 +196,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
         // Permissions: currently assigned user if in drafts, or administrator
         val hasAccess = {
           doc.assigned.contains(request.user.userId) && doc.mailbox == Mailbox.drafts.name ||
-            User.findRoles(request.user.userId).contains(Roles.Admin.id)
+            User.findRoles(request.user.userId).contains(Roles.Admin)
         }
 
         if (hasAccess) {
@@ -208,7 +207,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
           if (deleted == 0) NotFound
           else Ok
         } else Forbidden(Messages("hoa.documents.forbidden.DeleteNotAllowed")
-            + s" (Assigned to '${doc.assigned}' in mailbox '${doc.mailbox}'")
+          + s" (Assigned to '${doc.assigned}' in mailbox '${doc.mailbox}'")
     } getOrElse NotFound
   }
 
@@ -223,7 +222,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
               case Success(id) => NoContent
               case Failure(err) => InternalServerError(err.getMessage)
             }
-          case Some(user) => Forbidden(Messages("hoa.documents.forbidden.NotAssigned") 
+          case Some(user) => Forbidden(Messages("hoa.documents.forbidden.NotAssigned")
             + s" (Assigned to '${user}')")
         }
       case None => NotFound
@@ -236,7 +235,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
         // Permissions: currently assigned user, or administrator
         val hasAccess = {
           d.assigned.contains(request.user.userId) ||
-            User.findRoles(request.user.userId).contains(Roles.Admin.id)
+            User.findRoles(request.user.userId).contains(Roles.Admin)
         }
 
         if (hasAccess) {
@@ -246,7 +245,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
             case Failure(err) => InternalServerError(err.getMessage)
           }
         } else Forbidden(Messages("hoa.documents.forbidden.NotAssigned")
-            + s" (Assigned to '${d.assigned}')")
+          + s" (Assigned to '${d.assigned}')")
       case None => NotFound
     }
   }
