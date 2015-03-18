@@ -8,11 +8,12 @@ angular
                     'documents.helper',
                     'mailbox',
                     'userDetails',
+                   'service.hoacurrentuser',
                     "nvl-dateutils",
                     sidebarController
                 ]);
 
-function sidebarController($state, documentsHelper, mailbox, userDetails, dateUtils) {
+function sidebarController($state, documentsHelper, mailbox, userDetails, userService, dateUtils) {
     var vm = this;
 
     vm.mailboxItems = {
@@ -20,6 +21,7 @@ function sidebarController($state, documentsHelper, mailbox, userDetails, dateUt
     };
     vm.onSidebarItemClicked = onSidebarItemClicked;
     vm.onCreateDocumentClicked = onCreateDocumentClicked;
+    vm.onLogOutClicked = onLogoutClicked;
     vm.fullName = userDetails.fullName;
 
     //region FUNCTION_CALLS
@@ -47,6 +49,10 @@ function sidebarController($state, documentsHelper, mailbox, userDetails, dateUt
 
     function onCreateDocumentClicked() {
         $state.go('workspace.create');
+    }
+
+    function onLogoutClicked() {
+        userService.logoutUser();
     }
 
     //endregion
