@@ -80,7 +80,6 @@ object Document extends ((Int, Option[Int], String, String, String, DateTime, In
   }
 
   // TODO: Add implicit database session instead
-  // TODO: Use typesafe serial number and role in Document model, just add implicit converter
   def changeMailbox(doc: Document, oldBox: Mailbox, newBox: Mailbox): Try[Document] = {
     ConnectionFactory.connect withSession { implicit session =>
       Document.update(doc.copy(mailbox = newBox.name, assigned = None)) flatMap {
