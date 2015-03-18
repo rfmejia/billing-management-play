@@ -135,6 +135,12 @@ function mailboxModuleConfig($stateProvider) {
             documentsResponse : function(apiResponse, documentsHelper) {
                 return documentsHelper.formatEditResponse(apiResponse[0]);
             },
+            assignDocument    : function(documentsResponse, documentsService) {
+                if(documentsResponse.viewModel.assigned == null) {
+                    console.log(documentsResponse);
+                    return documentsService.assignDocument(documentsResponse.viewModel.links["hoa:assign"].href);
+                }
+            },
             userResponse      : function(apiResponse) {
                 return apiResponse[1];
             },
@@ -173,7 +179,6 @@ function mailboxModuleConfig($stateProvider) {
                 return deferred.promise;
             },
             documentsResponse : function(apiResponse, documentsHelper) {
-                console.log("test2");
                 return documentsHelper.formatEditResponse(apiResponse[0]);
             },
             userResponse      : function(apiResponse) {

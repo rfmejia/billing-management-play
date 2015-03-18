@@ -44,7 +44,6 @@ function documentsCtrl(dialogProvider, $state, $stateParams, $resource, document
 
     function activate() {
         vm.documents = documentsResponse._embedded.item;
-        splitPages();
         vm.queryParameters = documentsHelper.getQueryParameters();
         for (var key in requestedParameters) {
             if (vm.queryParameters.hasOwnProperty(key)) {
@@ -85,15 +84,6 @@ function documentsCtrl(dialogProvider, $state, $stateParams, $resource, document
         }
     }
 
-    function splitPages() {
-        maxPages = parseInt(documentsResponse.count / requestedParameters.limit);
-        var remainder = documentsResponse.total;
-        if (remainder > 0) maxPages++;
-        for (var j = 1; j <= maxPages; ++j) vm.pages.push(j);
-        maxSlice = (maxPages > 5) ? 5 : maxPages;
-        vm.pagesSliced = vm.pages.slice(minSlice, maxSlice);
-    }
-
     function requestNewPage(page) {
         vm.queryParameters.offset = (page == null) ? 0 : (page * vm.pageSize);
         $state.go($state.current, documentsHelper.formatParameters(vm.queryParameters), {reload : true});
@@ -109,33 +99,23 @@ function documentsCtrl(dialogProvider, $state, $stateParams, $resource, document
 
     function onDocumentItemClicked(item) {
         var state = documentsHelper.resolveViewer(item);
-        var title = "Opening unassigned document";
-        var message = "This document will be locked to you";
+        var title = "Information";
+        var message = "This document has been locked to another user. Proceed to viewing document?";
 
         //Check if clicked document is assigned
-        if (item.assigned) {
-            goToViewer();
+        if(item._links.hasOwnProperty("hoa:assign")) {
+            documentsService.assignDocument(item._links["hoa:assign"].href).then(goToViewer, error);
         }
         else {
-            dialogProvider.getConfirmDialog(assignDocument, null, message, title);
+            goToViewer()
         }
 
         function goToViewer(response) {
             $state.go(state, {"id" : item.id});
         }
 
-        function assignDocument() {
-            if (item._links.hasOwnProperty("hoa:assign")) {
-                var url = item._links["hoa:assign"].href;
-                documentsService.assignDocument(url).then(goToViewer, error);
-            }
-            else {
-                error({title : "Error", message : "Please refresh the page"})
-            }
-        }
-
         function error(dialogContent) {
-            dialogProvider.getInformDialog(null, dialogContent.title, dialogContent.message);
+            dialogProvider.getConfirmDialog(goToViewer, null, title, message);
         }
     }
 

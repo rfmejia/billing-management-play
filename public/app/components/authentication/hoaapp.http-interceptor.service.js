@@ -31,8 +31,7 @@ function httpInterceptor($q, $window, $location, nvlAppLoggingSrvc) {
     function responseError(response) {
         var error = determineError(response);
         if (error)nvlAppLoggingSrvc.error(error);
-
-        return $q.reject(response);
+        return $q.reject(error);
     }
 
     function determineError(response) {

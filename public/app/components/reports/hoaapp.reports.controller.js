@@ -5,8 +5,8 @@ angular
     .module("module.reports")
     .controller("reportsCtrl", controller);
 
-controller.$inject = ["documentsHelper", "documentsService", "documentsList", "reportResponse", "$state", "$q", "moment", "REPORTS_ROUTES", "nvl-dateutils", "$stateParams"];
-function controller(docsHelper, docsSrvc, documents, reportResponse, $state, $q, moment, reportsRoutes, dateUtils, $stateParams) {
+controller.$inject = ["documentsHelper", "documentsService", "documentsList", "reportResponse", "$state", "REPORTS_ROUTES", "nvl-dateutils", "$stateParams", 'service.hoadialog'];
+function controller(docsHelper, docsSrvc, documents, reportResponse, $state, reportsRoutes, dateUtils, $stateParams, dialogProvider) {
     var vm = this;
     vm.pageTitle = $state.current.data.title;
     vm.documents = documents._embedded.item;
@@ -31,9 +31,9 @@ function controller(docsHelper, docsSrvc, documents, reportResponse, $state, $q,
     //region FUNCTION_CALL
     function activate() {
         vm.allFilter = {
-            title  : "All",
+            title    : "All",
             isActive : true,
-            params : {
+            params   : {
                 mailbox : "delivered",
                 year    : vm.report.date.year,
                 month   : vm.report.date.month,
@@ -42,9 +42,9 @@ function controller(docsHelper, docsSrvc, documents, reportResponse, $state, $q,
             }
         };
         vm.paidFilter = {
-            title : "Paid",
+            title    : "Paid",
             isActive : true,
-            params : {
+            params   : {
                 mailbox : "delivered",
                 isPaid  : true,
                 year    : vm.report.date.year,
@@ -54,11 +54,11 @@ function controller(docsHelper, docsSrvc, documents, reportResponse, $state, $q,
             }
         };
         vm.unpaidFilter = {
-            title : "Unpaid",
+            title    : "Unpaid",
             isActive : true,
-            params : {
+            params   : {
                 mailbox : "delivered",
-                isPaid : false,
+                isPaid  : false,
                 year    : vm.report.date.year,
                 month   : vm.report.date.month,
                 offset  : 0,
@@ -90,40 +90,40 @@ function controller(docsHelper, docsSrvc, documents, reportResponse, $state, $q,
     }
 
     function onDocumentItemClicked(item) {
-        if(item.assigned == null) {
-            docsSrvc.assignDocument(item._links["hoa:assign"].href)
-                .then(success, error);
+        if(item._links.hasOwnProperty("hoa:assign")) {
+            docsSrvc.assignDocument(item._links["hoa:assign"].href).then(viewDocument, error);
         }
 
-        else success();
-
-        function success() {
+        function viewDocument() {
             $state.go(docsHelper.resolveViewer(item), {id : item.id});
         }
 
-        function error() {}
+        function error(error) {
+            dialogProvider.getConfirmDialog(viewDocument, null, "This document has been locked to another user. Proceed to viewing document?", "Information");
+        }
 
     }
 
     function onUpdateItemClicked(item) {
-        if(item.assigned == null) {
-            docsSrvc.assignDocument(item._links["hoa:assign"].href)
-                .then(success, error);
+        if(item._links.hasOwnProperty("hoa:assign")) {
+            docsSrvc.assignDocument(item._links["hoa:assign"].href).then(viewDocument, error);
         }
-
-        else success();
-
-        function success() {
+        else {
+            error();
+        }
+        function viewDocument() {
             $state.go(reportsRoutes.reportUpdate, {id : item.id});
         }
 
-        function error() {}
+        function error(reason) {
+            dialogProvider.getConfirmDialog(viewDocument, null, "This document has been locked to another user. Proceed to viewing document?", "Information");
+        }
     }
 
     function onChangePageClicked(page) {
         page -= 1;
         var offset = (page == null) ? 0 : vm.pageSize * page;
-        if(vm.currentParams.hasOwnProperty("offset")){
+        if (vm.currentParams.hasOwnProperty("offset")) {
             vm.currentParams.offset = offset;
         }
         vm.currentPage = page + 1;

@@ -28,12 +28,13 @@ function hoaDialogProvider($mdDialog) {
             .then(okayFn, cancelFn);
     }
 
-    function getInformDialog(okayFn, title, message) {
+    function getInformDialog(okayFn, title, message, okayBtn) {
         $mdDialog.show(
             $mdDialog.alert()
                 .title(title)
                 .content(message)
-                .ok("Okay")
+                .ok(okayBtn)
+                .cancel("Cancel")
         );
     }
 
