@@ -101,14 +101,16 @@ function documentsCtrl(dialogProvider, $state, $stateParams, $resource, document
         var state = documentsHelper.resolveViewer(item);
         var title = "Sorry";
         var message = "This document is being edited by another user.";
-
         //Check if clicked document is assigned
-        if(item._links.hasOwnProperty("hoa:assign")) {
+        if(item.assigned == null) {
+            console.log("NULL");
             documentsService.assignDocument(item._links["hoa:assign"].href).then(goToViewer, error);
         }
         else if (userDetails.userId == item.assigned.userId){
-            console.log(item.assigned.userId);
             goToViewer();
+        }
+        else if(item._links.hasOwnProperty("hoa:assign")) {
+            documentsService.assignDocument(item._links["hoa:assign"].href).then(goToViewer, error);
         }
         else {
             error();
@@ -129,14 +131,18 @@ function documentsCtrl(dialogProvider, $state, $stateParams, $resource, document
     }
 
     function onFilterTabClicked(filter) {
-        vm.queryParameters.isAssigned = (filter != "open");
-        vm.queryParameters.others = (filter == "others");
-        if (filter == "mine") {
-            vm.queryParameters.assigned = userDetails.userId;
-            vm.queryParameters.isAssigned = true;
+        vm.queryParameters.assigned = null;
+        if(filter == "open") {
+            vm.queryParameters.isAssigned = false;
+            vm.queryParameters.others = null;
         }
-        else {
-            vm.queryParameters.assigned = null;
+        else if(filter == "others") {
+            vm.queryParameters.others = true;
+            vm.queryParameters.isAssigned = null;
+        }
+        else if(filter == "mine") {
+            vm.queryParameters.others = false;
+            vm.queryParameters.isAssigned = null;
         }
         changeTabState();
         $state.go($state.current, vm.queryParameters, {reload : true});

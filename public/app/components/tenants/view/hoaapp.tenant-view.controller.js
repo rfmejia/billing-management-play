@@ -148,11 +148,14 @@ function tenantViewCtrl($state, $stateParams, tenant, documents, documentsServic
     function onUpdateItemClicked(item) {
         var title = "Sorry";
         var message = "This document is being edited by another user.";
-        if (item._links.hasOwnProperty("hoa:assign")) {
+        if(item.assigned == null) {
             documentsService.assignDocument(item._links["hoa:assign"].href).then(viewDocument, error);
         }
         else if (userDetails.userId == item.assigned.userId) {
             viewDocument();
+        }
+        else if (item._links.hasOwnProperty("hoa:assign")) {
+            documentsService.assignDocument(item._links["hoa:assign"].href).then(viewDocument, error);
         }
         else {
             error();

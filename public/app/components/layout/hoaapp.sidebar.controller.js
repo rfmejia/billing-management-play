@@ -41,7 +41,7 @@ function sidebarController($state, documentsHelper, mailbox, userDetails, userSe
         }
         else {
             query.isAssigned = null;
-            query.others = null;
+            query.others = false;
         }
         $state.go(folder.path, query, {reload : true});
     }

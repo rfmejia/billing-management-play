@@ -13,6 +13,7 @@ function config($stateProvider, reportsRoutes) {
             documentsHelper  : getDocumentsHelper,
             documentsService : getDocumentsService,
             documentsList    : unparsedDocumentsList,
+            userDetails      : getCurrentUser,
             unparsedReport   : getReport,
             reportResponse   : parseReport
         },

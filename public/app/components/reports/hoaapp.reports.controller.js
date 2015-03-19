@@ -5,7 +5,7 @@ angular
     .module("module.reports")
     .controller("reportsCtrl", controller);
 
-controller.$inject = ["documentsHelper", "documentsService", "documentsList", "reportResponse", "$state", "REPORTS_ROUTES", "nvl-dateutils", "$stateParams", 'service.hoadialog', 'service.hoacurrentuser'];
+controller.$inject = ["documentsHelper", "documentsService", "documentsList", "reportResponse", "$state", "REPORTS_ROUTES", "nvl-dateutils", "$stateParams", 'service.hoadialog', 'userDetails'];
 function controller(docsHelper, docsSrvc, documents, reportResponse, $state, reportsRoutes, dateUtils, $stateParams, dialogProvider, userDetails) {
     var vm = this;
     vm.pageTitle = $state.current.data.title;
@@ -96,11 +96,14 @@ function controller(docsHelper, docsSrvc, documents, reportResponse, $state, rep
     function onUpdateItemClicked(item) {
         var title = "Sorry";
         var message = "This document is being edited by another user.";
-        if(item._links.hasOwnProperty("hoa:assign")) {
+        if(item.assigned == null) {
             docsSrvc.assignDocument(item._links["hoa:assign"].href).then(viewDocument, error);
         }
-        else if(uesrDetails.userId == item.assigned.userId) {
+        else if(userDetails.userId == item.assigned.userId) {
             viewDocument();
+        }
+        else if(item._links.hasOwnProperty("hoa:assign")) {
+            docsSrvc.assignDocument(item._links["hoa:assign"].href).then(viewDocument, error);
         }
         else {
             error();
