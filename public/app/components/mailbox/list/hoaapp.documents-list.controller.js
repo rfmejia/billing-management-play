@@ -99,15 +99,19 @@ function documentsCtrl(dialogProvider, $state, $stateParams, $resource, document
 
     function onDocumentItemClicked(item) {
         var state = documentsHelper.resolveViewer(item);
-        var title = "Information";
-        var message = "This document has been locked to another user. Proceed to viewing document?";
+        var title = "Sorry";
+        var message = "This document is being edited by another user.";
 
         //Check if clicked document is assigned
         if(item._links.hasOwnProperty("hoa:assign")) {
             documentsService.assignDocument(item._links["hoa:assign"].href).then(goToViewer, error);
         }
+        else if (userDetails.userId == item.assigned.userId){
+            console.log(item.assigned.userId);
+            goToViewer();
+        }
         else {
-            goToViewer()
+            error();
         }
 
         function goToViewer(response) {
@@ -115,7 +119,7 @@ function documentsCtrl(dialogProvider, $state, $stateParams, $resource, document
         }
 
         function error(dialogContent) {
-            dialogProvider.getConfirmDialog(goToViewer, null, title, message);
+            dialogProvider.getInformDialog(null,  title, message, "Okay");
         }
     }
 

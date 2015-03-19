@@ -5,8 +5,8 @@ angular
     .module("module.reports")
     .controller("reportsCtrl", controller);
 
-controller.$inject = ["documentsHelper", "documentsService", "documentsList", "reportResponse", "$state", "REPORTS_ROUTES", "nvl-dateutils", "$stateParams", 'service.hoadialog'];
-function controller(docsHelper, docsSrvc, documents, reportResponse, $state, reportsRoutes, dateUtils, $stateParams, dialogProvider) {
+controller.$inject = ["documentsHelper", "documentsService", "documentsList", "reportResponse", "$state", "REPORTS_ROUTES", "nvl-dateutils", "$stateParams", 'service.hoadialog', 'service.hoacurrentuser'];
+function controller(docsHelper, docsSrvc, documents, reportResponse, $state, reportsRoutes, dateUtils, $stateParams, dialogProvider, userDetails) {
     var vm = this;
     vm.pageTitle = $state.current.data.title;
     vm.documents = documents._embedded.item;
@@ -76,7 +76,7 @@ function controller(docsHelper, docsSrvc, documents, reportResponse, $state, rep
     function onReportMonthSelected(newDate, oldDate) {
         var year = dateUtils.getLocalYear(newDate);
         var month = dateUtils.getLocalMonth(newDate);
-        var params = {mailbox : "delivered", year : year, month : month}
+        var params = {mailbox : "delivered", year : year, month : month};
         $state.go($state.current, params, {reload : true});
     }
 
@@ -90,33 +90,28 @@ function controller(docsHelper, docsSrvc, documents, reportResponse, $state, rep
     }
 
     function onDocumentItemClicked(item) {
-        if(item._links.hasOwnProperty("hoa:assign")) {
-            docsSrvc.assignDocument(item._links["hoa:assign"].href).then(viewDocument, error);
-        }
-
-        function viewDocument() {
-            $state.go(docsHelper.resolveViewer(item), {id : item.id});
-        }
-
-        function error(error) {
-            dialogProvider.getConfirmDialog(viewDocument, null, "This document has been locked to another user. Proceed to viewing document?", "Information");
-        }
-
+        $state.go(docsHelper.resolveViewer(item), {id : item.id});
     }
 
     function onUpdateItemClicked(item) {
+        var title = "Sorry";
+        var message = "This document is being edited by another user.";
         if(item._links.hasOwnProperty("hoa:assign")) {
             docsSrvc.assignDocument(item._links["hoa:assign"].href).then(viewDocument, error);
+        }
+        else if(uesrDetails.userId == item.assigned.userId) {
+            viewDocument();
         }
         else {
             error();
         }
+
         function viewDocument() {
             $state.go(reportsRoutes.reportUpdate, {id : item.id});
         }
 
         function error(reason) {
-            dialogProvider.getConfirmDialog(viewDocument, null, "This document has been locked to another user. Proceed to viewing document?", "Information");
+            dialogProvider.getInformDialog(null,  title, message, "Okay");
         }
     }
 

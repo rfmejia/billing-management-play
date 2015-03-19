@@ -21,7 +21,7 @@
     </div>
 </md-toolbar>
 
-<md-content layout="column" flex class="md-padding content">
+<md-content layout="column" flex class="md-padding content reports">
     <div flex>
         <form name="updateForm">
             <fieldset ng-disabled="updateCtrl.isDisabled">
@@ -64,6 +64,7 @@
                     <md-card-content>
                         <div class="md-actions" layout="row" layout-align="start center">
                             <md-button
+                                    class="no-uppercase"
                                     md-theme="bills-dark" remove-focus
                                     ng-click="updateCtrl.onCancelClicked()">
                                 <span><i class="fa fa-times iconed-text"></i>Cancel</span>
@@ -75,7 +76,7 @@
                                         md-theme="bills-dark"
                                         remove-focus
                                         type="submit"
-                                        class="md-primary pull-right"
+                                        class="md-primary pull-right no-uppercase"
                                         ng-click="updateCtrl.onUpdateClicked()"
                                         ng-disabled="updateForm.$invalid">
                                     <span>Save<i class="fa fa-floppy-o iconed-text"></i></span>
@@ -85,7 +86,7 @@
                                         md-theme="bills-dark"
                                         remove-focus
                                         type="submit"
-                                        class="md-primary pull-right"
+                                        class="md-primary pull-right no-uppercase"
                                         ng-click="updateCtrl.onCalculateClicked()"
                                         ng-disabled="updateForm.$invalid">
                                     <span>Calculate<i class="fa fa-calculator iconed-text"></i></span>

@@ -20,7 +20,7 @@ button.filter-button i:hover,
 button.filter-button span:hover,
 button.filter-button i:focus,
 button.filter-button span:focus {
-    color: rgba(255, 255, 255, .70);
+    color: #FFFFFF;
 }
 
 .documents-list-title {

@@ -11,7 +11,7 @@
     <section layout="column">
         <md-card>
             <md-card-content>
-                <h5 class="card-title">Summary for {{ctrl.report.date.title}}<span class="dropdown">
+                <h3 class="card-title">Summary for {{ctrl.report.date.title}}<span class="dropdown">
                     <a class="dropdown-toggle md-button no-uppercase"
                        id="reportMonth"
                        role="button"
@@ -26,7 +26,7 @@
                                 data-on-set-time="ctrl.onReportMonthSelected(newDate, oldDate)"/>
                     </ul>
                 </span>
-                </h5>
+                </h3>
                 <v-accordion class="vAccordion--default" multiple>
                     <v-pane ng-repeat="section in ctrl.report.sections" expanded="$first">
                         <v-pane-header><h5>{{section.title | capitalize}}</h5></v-pane-header>
@@ -96,7 +96,6 @@
                      page-size="ctrl.pageSize"
                      total="ctrl.total"></div>
             </section>
-            <br/>
         </md-whiteframe>
     </section>
 </md-content>

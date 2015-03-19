@@ -81,10 +81,8 @@ md-toolbar.white-out {
 }
 
 md-toolbar .toolbar-title {
-    font-size: 1.250em;
     font-weight: 400;
     color: #FFFFFF;
-    margin-left: 16px;
     margin-right: 16px;
 }
 

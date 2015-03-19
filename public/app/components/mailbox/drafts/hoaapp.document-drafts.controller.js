@@ -67,30 +67,6 @@ function draftsCtrl(documentsHelper, documentsResponse, userResponse, tenantsRes
     activate();
 
     function activate() {
-        if(documentsResponse.viewModel.mailbox != "drafts") {
-            var newMailbox = documentsResponse.viewModel.mailbox;
-            var query = documentsHelper.getQueryParameters();
-            query.mailbox = "drafts";
-            if (newMailbox == 'delivered') {
-                query = {};
-                query.year = dateUtils.getLocalYearNow();
-                query.month = dateUtils.getLocalMonthNow();
-                query.offset = 0;
-                query.limit = 10;
-            }
-            else if (newMailbox != 'forSending') {
-                query.isAssigned = true;
-                query.assigned = vm.currentUser.userId;
-            }
-            else {
-                query.isAssigned = null;
-                query.others = null;
-            }
-            toastsProvider.showSimpleToast("The document has been moved");
-            $state.go("workspace.pending.drafts", query, {reload : true});
-            return;
-        }
-
         if (documentsResponse.viewModel.comments.hasOwnProperty('all')) {
             vm.comments = documentsResponse.viewModel.comments;
         }

@@ -11,10 +11,12 @@ angular
                     "service.hoatoasts",
                     "tenantsService",
                     "REPORTS_ROUTES",
+                    'service.hoadialog',
+                    'service.hoacurrentuser',
                     tenantViewCtrl
                 ]);
 
-function tenantViewCtrl($state, $stateParams, tenant, documents, documentsService, docsHelper, hoaDialog, hoaToast, tenantsSrvc, reportsRoutes) {
+function tenantViewCtrl($state, $stateParams, tenant, documents, documentsService, docsHelper, hoaDialog, hoaToast, tenantsSrvc, reportsRoutes, dialogProvider, userDetails) {
     var vm = this;
     vm.tenant = tenant.viewModel;
     vm.documents = documents._embedded.item;
@@ -33,7 +35,6 @@ function tenantViewCtrl($state, $stateParams, tenant, documents, documentsServic
     vm.onDocumentItemClicked = onDocumentItemClicked;
     vm.onUpdateItemClicked = onUpdateItemClicked;
     vm.onChangePageClicked = onChangePageClicked;
-
 
     activate();
 
@@ -117,26 +118,54 @@ function tenantViewCtrl($state, $stateParams, tenant, documents, documentsServic
     }
 
     function onDocumentItemClicked(item) {
-        $state.go(docsHelper.resolveViewer(item), {id : item.id}, {reload : true});
+        var title = "Sorry";
+        var message = "This document is being edited by another user.";
+        if (item.mailbox == 'paid' || item.mailbox == 'unpaid') {
+            viewDocument();
+        }
+        else {
+            //Check if clicked document is assigned
+            if (item._links.hasOwnProperty("hoa:assign")) {
+                documentsService.assignDocument(item._links["hoa:assign"].href).then(viewDocument, error);
+            }
+            else if (userDetails.userId == item.assigned.userId) {
+                viewDocument();
+            }
+            else {
+                error();
+            }
+        }
+
+        function viewDocument() {
+            $state.go(docsHelper.resolveViewer(item), {id : item.id}, {reload : true});
+        }
+
+        function error(dialogContent) {
+            dialogProvider.getInformDialog(null, title, message, "Okay");
+        }
     }
 
     function onUpdateItemClicked(item) {
-        if (item.assigned == null) {
-            documentsService.assignDocument(item._links["hoa:assign"].href)
-                .then(success, error);
+        var title = "Sorry";
+        var message = "This document is being edited by another user.";
+        if (item._links.hasOwnProperty("hoa:assign")) {
+            documentsService.assignDocument(item._links["hoa:assign"].href).then(viewDocument, error);
         }
-
+        else if (userDetails.userId == item.assigned.userId) {
+            viewDocument();
+        }
         else {
-            success();
+            error();
         }
 
-        function success() {
+        function viewDocument() {
             $state.go(reportsRoutes.reportUpdate, {id : item.id});
         }
 
-        function error() {}
+        function error(reason) {
+            dialogProvider.getInformDialog(null, title, message, "Okay");
+        }
     }
-
 
     function onFilterClicked(filter) {
         vm.currentFilter = filter;
@@ -149,7 +178,7 @@ function tenantViewCtrl($state, $stateParams, tenant, documents, documentsServic
         page -= 1;
         var offset = (page == null) ? 0 : (page * vm.pageSize);
         var changedParams = vm.currentFilter.params;
-        if(changedParams.hasOwnProperty("offset")) {
+        if (changedParams.hasOwnProperty("offset")) {
             changedParams.offset = offset;
         }
         vm.documents = [];
@@ -157,7 +186,6 @@ function tenantViewCtrl($state, $stateParams, tenant, documents, documentsServic
         documentsService.getDocumentList(changedParams).then(success);
 
     }
-
 
     function success(response) {
         vm.documents = response._embedded.item;
