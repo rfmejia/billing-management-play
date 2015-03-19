@@ -33,7 +33,7 @@ class Workflow(override implicit val env: RuntimeEnvironment[User])
     case _ => Some(s"Mailbox ${box} does not need any special permissions")
   }
 
-  // TODO: Only the assigned user can move this mailbox
+  // Only the assigned user can move this mailbox
   // And that assigned user has the correct privileges, or if user is admin
   def hasMovePermission(user: User, doc: Document): Either[String, String] = {
     val roles = User.findRoles(user.userId)
@@ -41,8 +41,7 @@ class Workflow(override implicit val env: RuntimeEnvironment[User])
     if (roles.contains(Roles.Admin)) Right(Roles.Admin.id)
     else if (!doc.assigned.contains(user.userId)) {
       Left(Messages("hoa.documents.forbidden.NotAssigned"))
-    }
-    else {
+    } else {
       Mailbox.find(doc.mailbox)
         .flatMap(box => matchRole(box, roles))
         .toRight(Messages("hoa.documents.forbidden.IncorrectRole"))

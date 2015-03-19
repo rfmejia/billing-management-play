@@ -28,49 +28,53 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
     }
   }
 
-  def list(offset: Int = 0, limit: Int = 10, mailbox: String, forTenant: Int, creator: String, assigned: Option[String], year: Option[Int], month: Option[Int], isPaid: Option[Boolean], others: Option[Boolean], isAssigned: Option[Boolean]) = SecuredAction { implicit request =>
+  def list(offset: Int = 0, limit: Int = 10, mailbox: String, forTenant: Int, 
+    creator: String, assigned: Option[String], year: Option[Int], month: Option[Int], 
+    isPaid: Option[Boolean], others: Option[Boolean], 
+    isAssigned: Option[Boolean]) = SecuredAction { implicit request =>
 
-    val ds = ConnectionFactory.connect withSession { implicit session =>
+    // Assigned filters: 
+    // isAssigned == None => _
+    // isAssigned == Some(true) => isAssigned.isDefined
+    // isAssigned == Some(false) => isAssigned.isEmpty
+    
+    // assigned == None => _
+    // assigned == Some(user) => filter(user)
+
+    // others == None => _
+    // others == Some(true) => filterNot(me)
+    // others == Some(false) => filter(me)
+
+    val ds: List[Document] = ConnectionFactory.connect withSession { implicit session =>
       // Filtering level 1: Query-level filters
       // Filter values by comparing to their default values in the router
       // (workaround to Slick limitations)
-
-      // TODO: Check if adding the limit here and filters in other levels may affect
-      // the final result (items.length < limit)
       val query = documents
         .filter(d => (d.mailbox inSetBind Mailbox.getSubboxes(mailbox)) || mailbox.isEmpty)
         .filter(d => d.forTenant === forTenant || forTenant < 1)
         .filter(d => d.creator === creator || creator.isEmpty)
-        .filter(d => d.assigned === assigned || assigned.isEmpty)
         .filter(d => d.year === year || year.isEmpty)
         .filter(d => d.month === month || month.isEmpty)
-        .drop(offset).take(limit).sortBy(_.created.desc)
 
-      query.list
-    }
+      val withIsAssigned = isAssigned map {
+        flag => query.filter(d => d.assigned.isDefined === flag)
+      } getOrElse query
 
-    // Filtering level 2: Post-fetch, pre-mapping to JS value
-    // TODO: if parsing fails, return bad request
+      val withAssigned = assigned map {
+        user => withIsAssigned.filter(d => d.assigned === assigned)
+      } getOrElse withIsAssigned
 
-    def isAssignedFilter(assigned: Option[String]) = {
-      (assigned, isAssigned) match {
-        case (None, Some(true)) => false
-        case (Some(_), Some(false)) => false
-        case (_, _) => true
-      }
-    }
+      val withOthers = others map {
+        flag => 
+          val userSet: Set[String] = Set(request.user.userId)
+          if(flag) withAssigned.filterNot(d => d.assigned inSetBind userSet)
+          else withAssigned.filter(d => d.assigned inSetBind userSet)
+      } getOrElse withAssigned
 
-    def othersFilter(assigned: Option[String]) = {
-      (assigned, others) match {
-        case (Some(user), Some(true)) =>
-          user != request.user
-        case (_, _) => true
-      }
+      withOthers.drop(offset).take(limit).sortBy(_.created.desc).list
     }
 
     val objs = ds
-      .filter(d => isAssignedFilter(d.assigned))
-      .filter(d => othersFilter(d.assigned))
       .map { d =>
         implicit val doc = d
 
@@ -111,6 +115,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       .withField("count", withIsPaid.length)
       .withField("offset", offset)
       .withField("limit", limit)
+      .withField("total", ds.size)
 
     val withList = blank.withEmbedded(HalJsObject.empty.withField("item", withIsPaid))
 
