@@ -11,46 +11,68 @@ import play.api.mvc.{ Action, Controller }
 import scala.slick.driver.H2Driver.simple._
 import securesocial.core.RuntimeEnvironment
 
+import play.api.mvc.Result
+import scala.concurrent._
+import scala.concurrent.duration._
+import play.api.libs.ws._
+import play.api.libs.ws.ning._
+import play.api.Play.current
+
 class TestEnvironment(override implicit val env: RuntimeEnvironment[User])
   extends securesocial.core.SecureSocial[User] {
 
-  def setup() = Action { implicit request =>
+  private def bulkUpload(url: String, data: JsArray, token: String,
+    timeout: Int)(f: Seq[WSResponse] => Result): Future[Result] = {
+    Logger.info(s"Received testdata, uploading ${data.value.size} objects")
 
-    def insertTenantData(implicit session: Session) = {
-      (for (t <- tenants) yield t).delete
-      val data = Seq(
-        Tenant("Beast Burgers", "Unit 4D Breakpoint Tower, 458 Emerald Ave., Pasig", "Ronald Macaraig", "987-4321", "r-mac@email.com", "area", "size", "rentalPeriod", "basicRentalRate", "escalation"),
-        Tenant("Salcedo Tools & Supplies, Inc.", "6153 South Super Highway, Makati", "Jimmy Galapago", "987-4321", "jimmyg@email.com", "area", "size", "rentalPeriod", "basicRentalRate", "escalation"),
-        Tenant("Jumpin' Juicers", "5 Kennedy Drive, Pleasant View Subd., Tandang Sora, Quezon City", "Alex Gomez", "987-4321", "agomez@email.com", "area", "size", "rentalPeriod", "basicRentalRate", "escalation"),
-        Tenant("Accolade Trading Corp.", "14 Zaragoza St. San Lorenzo Village, Makati", "Issa Santos", "987-4321", "isantos@email.com", "area", "size", "rentalPeriod", "basicRentalRate", "escalation"))
-      data foreach (tenants.insertOrUpdate(_))
-    }
-
-    def insertDocumentData(implicit session: Session) = {
-      (for (d <- documents) yield d).delete
-      // Tenant.findByTradeName("Beast Burgers").map { tenant =>
-      //   Document.insert("Document 1", "invoice-1", tenant.id,
-      //     DateTime.parse("2015-01-01"), Json.obj())
-      // }
-      users.firstOption map { creator =>
-        Tenant.findByTradeName("Jumpin' Juicers").map { tenant =>
-          Document.insert(creator, "invoice-1", tenant.id,
-            YearMonth.parse("2015-02"), testDocument)
-        }
+    val results: Seq[Future[WSResponse]] = {
+      val requests = data.value map {
+        jsObj =>
+          WS.url(url)
+            .withRequestTimeout(timeout)
+            .withHeaders("X-Auth-Token" -> token)
+            .post(jsObj)
       }
-      // Tenant.findByTradeName("Beast Burgers").map { tenant =>
-      //   Document.insert("Document 3", "statement-of-account-1", tenant.id,
-      //     DateTime.parse("2015-01-01"), Json.obj())
-      // }
+
+      for (req <- requests) yield req
     }
 
-    ConnectionFactory.connect withSession { implicit session =>
-      insertTenantData
-      insertDocumentData
+    val combined: Future[Seq[WSResponse]] = Future.sequence(results)
+    combined.map(f)
+  }
 
-      import play.api.Play.current
-      val ds = play.api.db.DB.getDataSource()
-      Ok("Created test session in " + ds.toString)
+  def uploadTenants(timeout: Int) = SecuredAction.async(parse.json) { implicit request =>
+    val url = routes.Tenants.create().absoluteURL()
+    val data = request.body.as[JsArray]
+    val token = request.headers("X-Auth-Token")
+
+    bulkUpload(url, data, token, timeout) {
+      results =>
+        Ok {
+          results.map(_ match {
+            case r: NingWSResponse =>
+              Logger.debug(r.status + " " + r.statusText)
+          })
+          results.toString
+        }
+    }
+  }
+
+  def uploadDocuments(timeout: Int) = SecuredAction.async(parse.json(maxLength = 1024 * 5000)) { implicit request =>
+    val url = routes.Documents.create().absoluteURL()
+    val data = request.body.as[JsArray]
+    val token = request.headers("X-Auth-Token")
+
+    bulkUpload(url, data, token, timeout) {
+      results =>
+        Ok {
+          results.map(_ match {
+            case r: NingWSResponse =>
+              Logger.debug(r.status + " " + r.statusText)
+              Logger.debug(r.body)
+          })
+          results.toString
+        }
     }
   }
 

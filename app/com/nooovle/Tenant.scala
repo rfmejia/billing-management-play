@@ -4,6 +4,7 @@ import com.nooovle.ModelInfo._
 import com.nooovle.slick.ConnectionFactory
 import com.nooovle.slick.models.tenants
 import scala.slick.driver.H2Driver.simple._
+import scala.util.Try
 
 case class Tenant(id: Int, tradeName: String, address: String,
   contactPerson: String, contactNumber: String, email: String, area: String,
@@ -12,10 +13,20 @@ case class Tenant(id: Int, tradeName: String, address: String,
 object Tenant extends ((Int, String, String, String, String, String, String, String, String, String, String) => Tenant)
   with ModelTemplate {
 
-  def apply(tradeName: String, address: String, contactPerson: String,
+  def insert(tradeName: String, address: String, contactPerson: String,
     contactNumber: String, email: String, area: String, size: String,
-    rentalPeriod: String, basicRentalRate: String, escalation: String): Tenant =
-    Tenant(0, tradeName, address, contactPerson, contactNumber, email, area, size, rentalPeriod, basicRentalRate, escalation)
+    rentalPeriod: String, basicRentalRate: String,
+    escalation: String)(implicit session: Session): Try[Tenant] = Try {
+    val newTenant = Tenant(0, tradeName, address, contactPerson, contactNumber, email, area, size, rentalPeriod, basicRentalRate, escalation)
+    val id = (tenants returning tenants.map(_.id)) += newTenant
+    newTenant.copy(id = id)
+  }
+
+  def update(tenant: Tenant)(implicit session: Session): Try[Tenant] = Try {
+    val query = for (t <- tenants if t.id === tenant.id) yield t
+    query.update(tenant)
+    query.first
+  }
 
   def findById(id: Int): Option[Tenant] =
     ConnectionFactory.connect withSession { implicit session =>
