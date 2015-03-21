@@ -2,7 +2,7 @@
  * Created by juancarlos.yu on 3/7/15.
  */
 angular
-    .module("module.providers")
+    .module("app.providers")
     .factory("service.hoatoasts", hoaToastProvider);
 
 

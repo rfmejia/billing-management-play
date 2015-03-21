@@ -2,7 +2,7 @@
  * Created by juancarlos.yu on 3/3/15.
  */
 angular
-    .module("module.tenants")
+    .module("app.tenants")
     .factory("helper.tenant", [
                  tenantHelper
              ]);

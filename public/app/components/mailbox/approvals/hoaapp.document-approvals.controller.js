@@ -2,7 +2,7 @@
  * Created by juancarlos.yu on 3/1/15.
  */
 angular
-    .module('module.mailbox')
+    .module('app.mailbox')
     .controller('controller.approvals', approvalsCtrl);
 
 approvalsCtrl.$inject = [

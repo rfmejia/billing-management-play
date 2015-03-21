@@ -1,10 +1,10 @@
-var app = angular.module("module.mailbox", [
+var app = angular.module("app.mailbox", [
     "ui.bootstrap",
     "ui.router"
 ]);
 
 angular
-    .module('module.mailbox')
+    .module('app.mailbox')
     .config([
                 '$stateProvider',
                 mailboxModuleConfig

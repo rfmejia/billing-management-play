@@ -2,7 +2,7 @@
  * Created by juancarlos.yu on 2/14/15.
  */
 angular
-    .module('module.mailbox')
+    .module('app.mailbox')
     .controller('controller.create', [
                     'documentsHelper',
                     'documentsService',

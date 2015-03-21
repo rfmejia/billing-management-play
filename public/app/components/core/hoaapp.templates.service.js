@@ -1,4 +1,4 @@
-var templates = angular.module("module.core");
+var templates = angular.module("app.core");
 
 templates.service("service.hoatemplates", ["$resource", "$q", "service.hoalinks", 
 	function($resource, $q, hoalinks){

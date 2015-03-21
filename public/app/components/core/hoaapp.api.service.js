@@ -1,5 +1,5 @@
 angular
-    .module("module.core")
+    .module("app.core")
     .factory('service.hoalinks', [
                  '$resource',
                  '$q',

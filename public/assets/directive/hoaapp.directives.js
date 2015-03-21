@@ -2,7 +2,7 @@
  * Created by juancarlos.yu on 2/28/15.
  */
 angular
-    .module("module.directives", [
+    .module("app.directives", [
                "nvl-directives"
             ])
     .config(directiveConfig);

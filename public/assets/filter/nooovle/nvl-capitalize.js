@@ -2,7 +2,7 @@
  * Created by juancarlos.yu on 3/15/15.
  */
 angular
-    .module("module.nvl-filters")
+    .module("nvl.filters")
     .filter("capitalize", capitalize);
 
 function capitalize() {

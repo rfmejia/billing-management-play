@@ -2,7 +2,7 @@
  * Created by juancarlos.yu on 3/15/15.
  */
 angular
-    .module("module.reports")
+    .module("app.reports")
     .controller("reportUpdateCtrl", reportUpdateCtrl);
 
 reportUpdateCtrl.$inject = ["documentsService", "document", "REPORTS_ROUTES", "service.hoatoasts", 'service.hoadialog', "$location", "$anchorScroll", 'helper.comments', "documentsHelper", "$state", "nvl-dateutils", "currentUser"];

@@ -1,5 +1,5 @@
 angular
-    .module('module.mailbox')
+    .module('app.mailbox')
     .factory('documents.service', [
                  '$q',
                  '$resource',

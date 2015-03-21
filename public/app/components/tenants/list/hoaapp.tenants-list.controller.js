@@ -1,7 +1,7 @@
-var tenants = angular.module("module.tenants");
+var tenants = angular.module("app.tenants");
 
 angular
-    .module("module.tenants")
+    .module("app.tenants")
     .controller("controller.tenantslist", [
                     "$state",
                     "apiResponse",

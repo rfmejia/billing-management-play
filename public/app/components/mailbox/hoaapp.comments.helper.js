@@ -2,7 +2,7 @@
  * Created by juancarlos.yu on 2/25/15.
  */
 angular
-    .module("module.mailbox")
+    .module("app.mailbox")
     .factory("helper.comments", [
         "service.hoacurrentuser",
         "moment",

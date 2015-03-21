@@ -2,7 +2,7 @@
  * Created by juancarlos.yu on 2/28/15.
  */
 angular
-    .module("module.directives")
+    .module("app.directives")
     .directive("hoaDocuments", [
                    hoaDocuments
                ]);
@@ -25,7 +25,7 @@ function hoaDocuments() {
     }
 }
 
-angular.module("module.directives")
+angular.module("app.directives")
     .controller("hoaDocumentItemCtrl", [
                     "$log",
                     hoaDocumentItemCtrl

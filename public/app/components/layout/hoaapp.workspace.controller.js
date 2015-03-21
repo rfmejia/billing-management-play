@@ -2,7 +2,7 @@
  * Created by juancarlos.yu on 2/22/15.
  */
 angular
-    .module("module.layout")
+    .module("app.layout")
     .controller('workspaceController', [
                     '$modal',
                     'userDetails',
@@ -15,7 +15,7 @@ angular
                 ]);
 
 angular
-    .module("module.layout")
+    .module("app.layout")
     .controller('logoutModalCtrl', [
                     '$scope',
                     '$modalInstance',

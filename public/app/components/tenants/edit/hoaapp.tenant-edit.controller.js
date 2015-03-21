@@ -1,4 +1,4 @@
-var tenant = angular.module("module.tenants");
+var tenant = angular.module("app.tenants");
 
 tenant.controller("controller.tenantedit", ["$scope", "$state", "tenant", "tenantsService",
 	function($scope, $state, tenant, tenantsService){

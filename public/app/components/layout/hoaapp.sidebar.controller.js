@@ -2,7 +2,7 @@
  * Created by juancarlos.yu on 2/22/15.
  */
 angular
-    .module("module.layout")
+    .module("app.layout")
     .controller('sidebarController', [
                     '$state',
                     'documents.helper',

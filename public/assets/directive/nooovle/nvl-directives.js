@@ -7,5 +7,5 @@ angular.module("nvl-directives", [
     "ngMessages",
     "vAccordion",
 
-    "module.providers"
+    "app.providers"
 ]);

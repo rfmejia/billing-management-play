@@ -2,7 +2,7 @@
  * Created by juancarlos.yu on 3/15/15.
  */
 angular
-    .module("module.reports")
+    .module("app.reports")
     .factory("reports.service", reportsSrvc);
 
 reportsSrvc.$inject = ["$resource", "$q", "service.hoalinks"];

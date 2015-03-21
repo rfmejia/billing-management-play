@@ -2,7 +2,7 @@
  * Created by juancarlos.yu on 2/25/15.
  */
 angular
-    .module("module.nvl-filters")
+    .module("nvl.filters")
     .filter('momentString', [
         "moment",
         function() {

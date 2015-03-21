@@ -1,4 +1,4 @@
-var token = angular.module('module.authentication');
+var token = angular.module('app.authentication');
 
 token.factory("tokenHandler", 
 	function(){

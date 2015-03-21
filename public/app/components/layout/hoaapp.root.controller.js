@@ -1,5 +1,5 @@
 angular
-    .module("module.layout")
+    .module("app.layout")
     .controller('controller.root', [
                     '$cookies',
                     'service.hoalinks',

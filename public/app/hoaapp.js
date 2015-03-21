@@ -4,14 +4,14 @@
 angular
     .module('hoa-app', [
             /** Shared modules **/
-                "module.providers",
-                "module.core",
-                "module.directives",
-                "module.filters",
-                "module.authentication",
+                "app.providers",
+                "app.core",
+                "app.directives",
+                "app.filters",
+                "app.authentication",
             /** Feature areas **/
-                "module.tenants",
-                "module.mailbox",
-                "module.reports",
-                "module.layout"
+                "app.tenants",
+                "app.mailbox",
+                "app.reports",
+                "app.layout"
             ]);

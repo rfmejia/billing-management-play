@@ -1,12 +1,12 @@
 /**
  * Created by juancarlos.yu on 3/10/15.
  */
-angular.module("module.reports", [
+angular.module("app.reports", [
 /** Shared **/
-    "module.core",
-    "module.authentication",
-    "module.providers",
+    "app.core",
+    "app.authentication",
+    "app.providers",
 /** Features **/
-    "module.mailbox",
-    "module.tenants"
+    "app.mailbox",
+    "app.tenants"
 ]);

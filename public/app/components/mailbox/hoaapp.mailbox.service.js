@@ -1,5 +1,5 @@
 angular
-    .module("module.mailbox")
+    .module("app.mailbox")
     .factory("mailbox.service", mailboxSrvc);
 
 mailboxSrvc.$inject = ["$resource", "$q", "service.hoalinks"];

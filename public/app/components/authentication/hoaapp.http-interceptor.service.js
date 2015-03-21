@@ -1,6 +1,6 @@
-var interceptor = angular.module('module.authentication');
+var interceptor = angular.module('app.authentication');
 
-angular.module("module.authentication").factory("httpInterceptor", httpInterceptor);
+angular.module("app.authentication").factory("httpInterceptor", httpInterceptor);
 
 httpInterceptor.$inject = ["$q", "$window", "$location", "nvlAppErrorLoggingService"]
 function httpInterceptor($q, $window, $location, nvlAppLoggingSrvc) {

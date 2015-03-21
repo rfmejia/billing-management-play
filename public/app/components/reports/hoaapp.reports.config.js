@@ -2,7 +2,7 @@
  * Created by juancarlos.yu on 3/10/15.
  */
 angular
-    .module("module.reports")
+    .module("app.reports")
     .config(config);
 
 config.$inject = ["$stateProvider", "REPORTS_ROUTES"];

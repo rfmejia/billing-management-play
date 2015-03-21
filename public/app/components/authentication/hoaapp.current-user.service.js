@@ -2,7 +2,7 @@
  * Created by juancarlos.yu on 2/22/15.
  */
 angular
-    .module('module.authentication')
+    .module('app.authentication')
     .factory('service.hoacurrentuser',[
         '$location',
         '$resource',

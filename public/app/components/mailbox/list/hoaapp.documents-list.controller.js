@@ -1,5 +1,5 @@
 angular
-    .module("module.mailbox")
+    .module("app.mailbox")
     .controller("controller.documents", [
                     'service.hoadialog',
                     "$state",

@@ -1,7 +1,7 @@
-angular.module("module.tenants", []);
+angular.module("app.tenants", []);
 
 angular
-    .module("module.tenants")
+    .module("app.tenants")
     .config([
                 "$stateProvider",
                 tenantsConfig

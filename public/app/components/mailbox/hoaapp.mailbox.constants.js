@@ -2,7 +2,7 @@
  * Created by juancarlos.yu on 3/15/15.
  */
 angular
-    .module("module.mailbox")
+    .module("app.mailbox")
     .constant("MAILBOX_PARAMS", {
                   pending     : "pending",
                   drafts      : "drafts",

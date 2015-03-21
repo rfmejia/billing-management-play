@@ -2,7 +2,7 @@
  * Created by juancarlos.yu on 3/9/15.
  */
 angular
-    .module("module.directives")
+    .module("app.directives")
     .directive("nvlPrintCard", [
                    nvlPrintCard
                ])

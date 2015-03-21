@@ -1,5 +1,5 @@
 angular
-    .module("module.tenants")
+    .module("app.tenants")
     .controller("controller.tenantcreate", [
                     "tenantsService",
                     "tenantHelper",
