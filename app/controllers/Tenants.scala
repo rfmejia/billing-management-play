@@ -90,18 +90,16 @@ class Tenants(override implicit val env: RuntimeEnvironment[User])
       (json \ "basicRentalRate").asOpt[String],
       (json \ "escalation").asOpt[String]) match {
         case (Some(tradeName), Some(address), Some(contactPerson), Some(contactNumber), Some(email), Some(area), Some(size), Some(rentalPeriod), Some(basicRentalRate), Some(escalation)) =>
-          val newTenant = Tenant(tradeName, address, contactPerson, contactNumber, email, area, size, rentalPeriod, basicRentalRate, escalation)
           val result = ConnectionFactory.connect withSession { implicit session =>
-            Try {
-              // Returns ID of newly inserted tenant
-              (tenants returning tenants.map(_.id)) += newTenant
-            }
+            Tenant.insert(tradeName, address, contactPerson, contactNumber, email, area, size, rentalPeriod, basicRentalRate, escalation)
           }
           result match {
-            case Success(id) =>
-              val link = routes.Tenants.show(id).absoluteURL()
+            case Success(tenant) =>
+              val link = routes.Tenants.show(tenant.id).absoluteURL()
               Created.withHeaders("Location" -> link)
-            case Failure(err) => InternalServerError(err.getMessage)
+            case Failure(err) =>
+              err.printStackTrace()
+              InternalServerError(err.getMessage)
           }
         case _ => BadRequest("Some required values are missing. Please check your request.")
       }
@@ -110,7 +108,7 @@ class Tenants(override implicit val env: RuntimeEnvironment[User])
   def edit(id: Int) = SecuredAction(parse.json) { implicit request =>
     Tenant.findById(id) match {
       case None => NotFound
-      case Some(tenant) =>
+      case Some(existingTenant) =>
         val json = request.body
         ((json \ "tradeName").asOpt[String],
           (json \ "address").asOpt[String],
@@ -124,12 +122,19 @@ class Tenants(override implicit val env: RuntimeEnvironment[User])
           (json \ "escalation").asOpt[String]) match {
             case (Some(tradeName), Some(address), Some(contactPerson), Some(contactNumber), Some(email), Some(area), Some(size), Some(rentalPeriod), Some(basicRentalRate), Some(escalation)) =>
               val result = ConnectionFactory.connect withSession { implicit session =>
-                Try {
-                  val tenant = for (t <- tenants if t.id === id)
-                    yield (t.tradeName, t.address, t.contactPerson, t.contactNumber, t.email,
-                      t.area, t.size, t.rentalPeriod, t.basicRentalRate, t.escalation)
-                  tenant.update(tradeName, address, contactPerson, contactNumber, email, area, size, rentalPeriod, basicRentalRate, escalation)
-                }
+                val newTenant =
+                  existingTenant.copy(
+                    tradeName = tradeName,
+                    address = address,
+                    contactPerson = contactPerson,
+                    contactNumber = contactNumber,
+                    email = email,
+                    area = area,
+                    size = size,
+                    rentalPeriod = rentalPeriod,
+                    basicRentalRate = basicRentalRate,
+                    escalation = escalation)
+                Tenant.update(existingTenant)
               }
               result match {
                 case Success(id) => NoContent
