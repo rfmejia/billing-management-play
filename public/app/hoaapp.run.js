@@ -18,4 +18,3 @@ function appRun($window, $cookies, linksApi, tokenHandler) {
     linksApi.getLinks().then(success, error);
 }
 appRun.$inject = ["$window", "$cookies", "linksApi", "tokenHandler"];
-
