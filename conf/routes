@@ -44,7 +44,6 @@ GET      /api/templates                @controllers.Templates.list(offset: Int ?
 GET      /api/templates/:docType       @controllers.Templates.show(docType: String)
 
 # Test routes
-GET      /api/setupTestEnvironment     @controllers.TestEnvironment.setup
 GET      /api/testFail                 @controllers.TestEnvironment.fail
 POST     /api/test/tenants             @controllers.TestEnvironment.uploadTenants(timeout: Int ?= 10000)
 POST     /api/test/documents           @controllers.TestEnvironment.uploadDocuments(timeout: Int ?= 10000)
