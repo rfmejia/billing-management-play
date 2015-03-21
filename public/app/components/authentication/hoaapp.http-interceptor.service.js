@@ -1,9 +1,8 @@
-var interceptor = angular.module('app.authentication');
+angular
+    .module("app.authentication")
+    .factory("httpInterceptor", httpInterceptor);
 
-angular.module("app.authentication").factory("httpInterceptor", httpInterceptor);
-
-httpInterceptor.$inject = ["$q", "$window", "$location", "nvlAppErrorLoggingService"]
-function httpInterceptor($q, $window, $location, nvlAppLoggingSrvc) {
+function httpInterceptor($q, $window, nvlAppLoggingSrvc) {
     return {
         request       : request,
         requestError  : requestError,
@@ -17,7 +16,7 @@ function httpInterceptor($q, $window, $location, nvlAppLoggingSrvc) {
 
     function requestError(response) {
         var error = {
-            type : "request error",
+            type     : "request error",
             response : response
         };
         nvlAppLoggingSrvc.error(error);
@@ -72,3 +71,4 @@ function httpInterceptor($q, $window, $location, nvlAppLoggingSrvc) {
     }
 
 }
+httpInterceptor.$inject = ["$q", "$window", "nvlAppErrorLoggingService"];

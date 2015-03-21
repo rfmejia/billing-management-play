@@ -62,7 +62,7 @@ function mailboxModuleConfig($stateProvider) {
         resolve  : {
             documentsService    : "documents.service",
             documentsHelper     : "documents.helper",
-            userService         : "service.hoacurrentuser",
+            userService         : "userApi",
             requestedParameters : function($stateParams, documentsHelper) {
                 var queryParams = documentsHelper.getQueryParameters();
                 for (var key in $stateParams) {
@@ -117,7 +117,7 @@ function mailboxModuleConfig($stateProvider) {
         },
         resolve : {
             documentsService  : "documents.service",
-            userService       : "service.hoacurrentuser",
+            userService       : "userApi",
             tenantsService    : "service.hoatenants",
             documentsHelper   : 'documents.helper',
             tenantHelper      : "helper.tenant",
@@ -163,7 +163,7 @@ function mailboxModuleConfig($stateProvider) {
         },
         resolve : {
             documentsService  : "documents.service",
-            userService       : "service.hoacurrentuser",
+            userService       : "userApi",
             tenantsService    : "service.hoatenants",
             documentsHelper   : 'documents.helper',
             tenantHelper      : "helper.tenant",
@@ -204,7 +204,7 @@ function mailboxModuleConfig($stateProvider) {
         },
         resolve : {
             documentsService  : "documents.service",
-            userService       : "service.hoacurrentuser",
+            userService       : "userApi",
             documentsHelper   : "documents.helper",
             apiResponse       : function(documentsService, userService, $stateParams, $q) {
                 var deferred = $q.defer();

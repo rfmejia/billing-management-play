@@ -12,7 +12,7 @@ angular
                     "tenantsService",
                     "REPORTS_ROUTES",
                     'service.hoadialog',
-                    'service.hoacurrentuser',
+                    'userApi',
                     tenantViewCtrl
                 ]);
 

@@ -4,7 +4,7 @@
 angular
     .module("app.mailbox")
     .factory("helper.comments", [
-        "service.hoacurrentuser",
+        "userApi",
         "moment",
         commentParser
     ]);

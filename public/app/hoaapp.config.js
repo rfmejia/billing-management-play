@@ -82,7 +82,7 @@ function config($stateProvider, $urlRouterProvider, $httpProvider, usSpinnerConf
                 mailboxService   : "mailbox.service",
                 documentsService : "documents.service",
                 documentsHelper  : "documents.helper",
-                userService      : 'service.hoacurrentuser',
+                userService      : 'userApi',
                 response         : function(linksService, mailboxService, documentsService, documentsHelper, userService, $q) {
                     var deferred = $q.defer();
                     var query = documentsHelper.getQueryParameters();

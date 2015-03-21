@@ -3,18 +3,9 @@
  */
 angular
     .module('app.authentication')
-    .factory('service.hoacurrentuser',[
-        '$location',
-        '$resource',
-        '$q',
-        'service.hoalinks',
-        '$window',
-        hoaCurrentUserService
-    ]);
+    .factory('userApi', userApi);
 
-function hoaCurrentUserService ($location, $resource, $q, hoalinks, $window) {
-    var resource = null;
-
+function userApi($window, $resource, $q, linksApi) {
     var userDetails = null;
 
     var service = {
@@ -23,14 +14,9 @@ function hoaCurrentUserService ($location, $resource, $q, hoalinks, $window) {
     };
     return service;
 
-
     //region FUNCTION_CALLS
-    function createResource(url) {
-        resource = $resource(url);
-    }
-
     function getUserDetails() {
-        if(userDetails == null) {
+        if (userDetails == null) {
             return makeRequest();
         }
         else {
@@ -40,48 +26,31 @@ function hoaCurrentUserService ($location, $resource, $q, hoalinks, $window) {
 
     function makeRequest() {
         var deferred = $q.defer();
+        var resource = $resource(linksApi.getCurrentUserLink());
 
         function success(response) {
+            userDetails = response;
             return deferred.resolve(response);
         }
-
-        function saveDetails(response) {
-            userDetails = response;
-            return response;
-        }
-
 
         function error(error) {
             userDetails = null;
             return deferred.reject(error);
         }
 
-        function query() {
-            resource.get().$promise
-                .then(saveDetails, error)
-                .then(success);
-        }
-
-        if(resource != null) query();
-        else {
-            function init(response) {
-                var topUrl = hoalinks.getCurrentUserLink();
-                createResource(topUrl);
-                query();
-            }
-            hoalinks.getLinks()
-                .then(init);
-        }
+        resource.get().$promise
+            .then(success, error);
 
         return deferred.promise;
     }
 
     function logoutUser() {
-        var logoutPath = hoalinks.getLogoutLink();
-        if(logoutPath) {
-            var logoutUrl = $window.location.origin + logoutPath;
-            $window.location = logoutUrl;
+        var logoutPath = linksApi.getLogoutLink();
+        if (logoutPath) {
+            $window.location = $window.location.origin + logoutPath;
         }
     }
+
     //endregion
 }
+userApi.$inject = ["$window", "$resource", "$q", "service.hoalinks"];

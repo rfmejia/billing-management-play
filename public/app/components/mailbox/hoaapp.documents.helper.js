@@ -10,7 +10,7 @@ angular
  * Parse views data for server
  * @returns {{}}
  */
-documentHelper.$inject = ["MAILBOX_PARAMS", 'service.hoacurrentuser'];
+documentHelper.$inject = ["MAILBOX_PARAMS", 'userApi'];
 function documentHelper(mailboxParam, currentUser) {
     var helper = {
         formatCreateResponse : formatCreateResponse,

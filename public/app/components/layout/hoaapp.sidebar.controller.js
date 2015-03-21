@@ -8,7 +8,7 @@ angular
                     'documents.helper',
                     'mailbox',
                     'userDetails',
-                   'service.hoacurrentuser',
+                   'userApi',
                     "nvl-dateutils",
                     sidebarController
                 ]);

@@ -100,7 +100,7 @@ function parseDocument(docsHelper, response) {
     return docsHelper.formatEditResponse(response);
 }
 
-getCurrentUser.$inject = ['service.hoacurrentuser'];
+getCurrentUser.$inject = ['userApi'];
 function getCurrentUser(currentUser) {
     return currentUser.getUserDetails();
 }
