@@ -17,7 +17,7 @@ function mailboxModuleConfig($stateProvider) {
         resolve : {
             documentsService : "documents.service",
             tenantsService   : "service.hoatenants",
-            templatesService : "service.hoatemplates",
+            templatesService : "templateApi",
             documentsHelper  : 'documents.helper',
             listResponse     : function(tenantsService, templatesService, documentsService, $q) {
                 var deferred = $q.defer();
@@ -63,7 +63,13 @@ function mailboxModuleConfig($stateProvider) {
             documentsService    : "documents.service",
             documentsHelper     : "documents.helper",
             userService         : "userApi",
-            requestedParameters : function($stateParams, documentsHelper) {
+            waitForLinks        : function(apiLinks) {
+                console.log("HERE");
+                console.log(apiLinks);
+                return apiLinks;
+            },
+            requestedParameters : function($stateParams, documentsHelper, apiLinks) {
+                console.log("list");
                 var queryParams = documentsHelper.getQueryParameters();
                 for (var key in $stateParams) {
                     if ($stateParams[key] == "true") {

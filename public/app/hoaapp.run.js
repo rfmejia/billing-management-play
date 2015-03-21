@@ -3,23 +3,19 @@
  */
 angular
     .module("hoa-app")
-    .run(['$rootScope',
-             'usSpinnerService',
-             "$state",
-             "$stateParams",
-             "$location",
-             hoaAppRun
-         ]);
+    .run(appRun);
 
-function hoaAppRun($rootScope, usSpinnerService, usSpinnerConfigProvider, $state, $stateParams, $location) {
+function appRun($window, $cookies, linksApi, tokenHandler) {
+    var success = function(response) {
+        tokenHandler.set($cookies.id);
+    };
 
-    $rootScope.$on('$stateChangeStart',
-                   function(event, toState, toParams, fromState, fromParams) {
-                       usSpinnerService.spin('spinner');
-                   });
+    var error = function(error) {
+        //TODO: display error message
+    };
 
-    $rootScope.$on('$stateChangeSuccess',
-                   function(event, toState, toParams, fromState, fromParams) {
-                       usSpinnerService.stop('spinner');
-                   });
+    linksApi.setUrl($window.location.origin + "/api/");
+    linksApi.getLinks().then(success, error);
 }
+appRun.$inject = ["$window", "$cookies", "linksApi", "tokenHandler"];
+

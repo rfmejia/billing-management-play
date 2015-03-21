@@ -1,99 +1,102 @@
 angular
     .module("app.core")
-    .factory('service.hoalinks', [
-                 '$resource',
-                 '$q',
-                 "$window",
-                 hoaAppLinksService
-             ]);
+    .provider('linksApi', linksProvider);
 
-function hoaAppLinksService($resource, $q, $window) {
-    var topUrl = $window.location.origin + "/api/";
-    var usersLink = null;
-    var tenantsLink = null;
-    var currentUserLink = null;
-    var mailboxesLink = null;
-    var documentsLink = null;
-    var templatesLink = null;
-    var logoutLink = null;
+function linksProvider() {
+    this.$get = linksApi;
 
-    var resource = $resource(topUrl, {}, {
-        get : {method : "GET", isArray : false}
-    });
+    function linksApi($resource, $q) {
+        var service = {
+            getResource        : getResource,
+            getLinks           : getLinks,
+            getUsersLinks      : getUsersLinks,
+            getTenantsLinks    : getTenantsLinks,
+            getCurrentUserLink : getCurrentUserLink,
+            getDocumentsLink   : getDocumentsLink,
+            getTemplatesLink   : getTemplatesLink,
+            getMailboxesLink   : getMailboxesLink,
+            getLogoutLink      : getLogoutLink,
+            getApiLink         : getApiLink,
+            setUrl             : setUrl
+        };
 
-    var service = {
-        getResource        : getResource,
-        getLinks           : getLinks,
-        getUsersLinks      : getUsersLinks,
-        getTenantsLinks    : getTenantsLinks,
-        getCurrentUserLink : getCurrentUserLink,
-        getDocumentsLink   : getDocumentsLink,
-        getTemplatesLink   : getTemplatesLink,
-        getMailboxesLink   : getMailboxesLink,
-        getLogoutLink      : getLogoutLink,
-        getApiLink         : getApiLink
-    };
+        var topUrl = null;
+        var usersLink = null;
+        var tenantsLink = null;
+        var currentUserLink = null;
+        var mailboxesLink = null;
+        var documentsLink = null;
+        var templatesLink = null;
+        var logoutLink = null;
 
-    return service;
+        return service;
 
-    //Functions
+        //Functions
 
-    function getResource() {
-        return resource;
-    }
-
-    function getUsersLinks() {
-        return usersLink;
-    }
-
-    function getTenantsLinks() {
-        return tenantsLink;
-    }
-
-    function getCurrentUserLink() {
-        return currentUserLink;
-    }
-
-    function getDocumentsLink() {
-        return documentsLink;
-    }
-
-    function getTemplatesLink() {
-        return templatesLink;
-    }
-
-    function getMailboxesLink() {
-        return mailboxesLink;
-    }
-
-    function getLogoutLink() {
-        return logoutLink;
-    }
-
-    function getApiLink() {
-        return topUrl;
-    }
-
-    function getLinks() {
-        var deferred = $q.defer();
-
-        resource.get().$promise
-            .then(success, error);
-        function success(data) {
-            usersLink = data._links["hoa:users"].href;
-            tenantsLink = data._links["hoa:tenants"].href;
-            documentsLink = data._links["hoa:documents"].href;
-            templatesLink = data._links["hoa:templates"].href;
-            mailboxesLink = data._links["hoa:mailboxes"].href;
-            currentUserLink = data._links["hoa:currentUser"].href;
-            logoutLink = data._links["hoa:logout"].href;
-            deferred.resolve(data);
+        function getResource() {
+            return resource;
         }
 
-        function error(data) {
-            deferred.reject("Error");
+        function getUsersLinks() {
+            return usersLink;
         }
 
-        return deferred.promise;
+        function getTenantsLinks() {
+            return tenantsLink;
+        }
+
+        function getCurrentUserLink() {
+            return currentUserLink;
+        }
+
+        function getDocumentsLink() {
+            return documentsLink;
+        }
+
+        function getTemplatesLink() {
+            return templatesLink;
+        }
+
+        function getMailboxesLink() {
+            return mailboxesLink;
+        }
+
+        function getLogoutLink() {
+            return logoutLink;
+        }
+
+        function getApiLink() {
+            return topUrl;
+        }
+
+        function getLinks() {
+            var deferred = $q.defer();
+            var resource = $resource(topUrl, {}, {
+                get : {method : "GET", isArray : false}
+            });
+
+            function success(data) {
+                usersLink = data._links["hoa:users"].href;
+                tenantsLink = data._links["hoa:tenants"].href;
+                documentsLink = data._links["hoa:documents"].href;
+                templatesLink = data._links["hoa:templates"].href;
+                mailboxesLink = data._links["hoa:mailboxes"].href;
+                currentUserLink = data._links["hoa:currentUser"].href;
+                logoutLink = data._links["hoa:logout"].href;
+                deferred.resolve(data);
+            }
+
+            function error(data) {
+                deferred.reject("Error");
+            }
+
+            resource.get().$promise.then(success, error);
+            return deferred.promise;
+        }
+
+        function setUrl(url) {
+            if(url) topUrl = url;
+        }
     }
 }
+

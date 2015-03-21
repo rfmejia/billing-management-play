@@ -1,74 +1,50 @@
-var templates = angular.module("app.core");
+angular.module("app.core").factory("templateApi", templateApi);
 
-templates.service("service.hoatemplates", ["$resource", "$q", "service.hoalinks", 
-	function($resource, $q, hoalinks){
-		var resource		= null;
+function templateApi($resource, $q, linksApi) {
+    var service = {
+        queryApi : queryApi,
+        getLocal : getLocal
+    };
 
-		var createResource = function(url) {
-			resource = $resource(url, {}, {
-				get : {method : "GET", isArray: false}
-			});
-		};
+    return service;
 
-        //From the response, get the template link
-        var extractTemplateLink = function(response) {
-            return response._embedded.item[0]._links.self.href;
+    function queryApi() {
+        var deferred = $q.defer();
+
+        var resource = $resource(linksApi.getTemplatesLink(), {}, {
+            get : {method : "GET", isArray: false}
+        });
+
+        var success = function(response) {
+            deferred.resolve(response);
         };
 
-        //Using the response (url) make a request to get that url
-        var queryTemplateLink = function(response) {
-            var templateResource = $resource(response);
-            return templateResource.get().$promise;
+        var error = function(error) {
+            deferred.reject(error);
         };
 
-		var makeRequest = function() {
-			var deferred	= $q.defer();
-            var success = function(response) {
-                deferred.resolve(response);
-            };
-			var query		= function() {
-				resource.get().$promise
-				    .then(extractTemplateLink)
-                    .then(queryTemplateLink)
-                    .then(success);
+        resource.get().$promise.then(success, error);
 
-			};
-			if(resource != null) query();
-			else {
-				hoalinks.getLinks().then(
-					function(data){
-						var topUrl = hoalinks.getTemplatesLink();
-						createResource(topUrl);
-						query();
-					});
-			}
-			return deferred.promise;
-		};
+        return deferred.promise;
+    }
 
-		this.queryApi = function() {
-			return makeRequest();
-		};
+    function getLocal() {
+        var deferred = $q.defer();
+        var resource = $resource("app/components/core/invoice-1.json", {}, {
+            get : {method : "GET", isArray: false}
+        });
 
-        this.getLocal = function() {
-            var deferred = $q.defer();
-            resource = $resource("app/components/core/invoice-1.json", {}, {
-               get : {method : "GET", isArray: false}
-            });
+        var success = function(response) {
+            deferred.resolve(response);
+        };
 
-            var success = function(response) {
-                deferred.resolve(response);
-            };
+        var error = function(error) {
+            deferred.reject(error);
+        };
 
-            var error = function(error) {
-                deferred.reject(error);
-            };
+        resource.get().$promise.then(success, error);
 
-            var query = function() {
-                resource.get().$promise
-                    .then(success, error);
-            };
-
-            query();
-            return deferred.promise;
-        }
-	}]);
+        return deferred.promise;
+    }
+}
+templateApi.$inject = ["$resource", "$q", "linksApi"];

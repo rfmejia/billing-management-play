@@ -3,7 +3,7 @@ angular
     .factory('documents.service', [
                  '$q',
                  '$resource',
-                 'service.hoalinks',
+                 'linksApi',
                  documentSrv
              ]);
 
@@ -164,7 +164,7 @@ function documentSrv($q, $resource, hoalinks) {
                 createResource(topUrl);
                 request();
             };
-
+            console.log(type);
             hoalinks.getLinks().then(linksResponse);
         }
         else {

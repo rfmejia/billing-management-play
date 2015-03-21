@@ -26,7 +26,8 @@ function userApi($window, $resource, $q, linksApi) {
 
     function makeRequest() {
         var deferred = $q.defer();
-        var resource = $resource(linksApi.getCurrentUserLink());
+        var url = linksApi.getCurrentUserLink();
+        var resource = $resource(url);
 
         function success(response) {
             userDetails = response;
@@ -53,4 +54,4 @@ function userApi($window, $resource, $q, linksApi) {
 
     //endregion
 }
-userApi.$inject = ["$window", "$resource", "$q", "service.hoalinks"];
+userApi.$inject = ["$window", "$resource", "$q", "linksApi"];

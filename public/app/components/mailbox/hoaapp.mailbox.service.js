@@ -2,7 +2,7 @@ angular
     .module("app.mailbox")
     .factory("mailbox.service", mailboxSrvc);
 
-mailboxSrvc.$inject = ["$resource", "$q", "service.hoalinks"];
+mailboxSrvc.$inject = ["$resource", "$q", "linksApi"];
 function mailboxSrvc($resource, $q, hoalinks) {
     var service  ={
         getLocal       : getLocal,

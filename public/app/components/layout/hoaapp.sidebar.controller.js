@@ -3,15 +3,7 @@
  */
 angular
     .module("app.layout")
-    .controller('sidebarController', [
-                    '$state',
-                    'documents.helper',
-                    'mailbox',
-                    'userDetails',
-                   'userApi',
-                    "nvl-dateutils",
-                    sidebarController
-                ]);
+    .controller('sidebarController', sidebarController);
 
 function sidebarController($state, documentsHelper, mailbox, userDetails, userService, dateUtils) {
     var vm = this;
@@ -56,3 +48,4 @@ function sidebarController($state, documentsHelper, mailbox, userDetails, userSe
 
     //endregion
 }
+sidebarController.$inject = ['$state', 'documents.helper', 'mailboxes', 'userDetails', 'userApi', "nvl-dateutils"];

@@ -1,6 +1,6 @@
 var tenants = angular.module("app.tenants");
 
-tenants.service("service.hoatenants", ["$resource", "$q", "service.hoalinks", "helper.tenant",
+tenants.service("service.hoatenants", ["$resource", "$q", "linksApi", "helper.tenant",
     function($resource, $q, hoalinks, tenantHelper){
         var resource       = null;
         var requestType    = Object.freeze({"QUERY" : 0, "GET" : 1, "EDIT" : 2, "CREATE" : 3, "DELETE" : 4});
@@ -49,6 +49,8 @@ tenants.service("service.hoatenants", ["$resource", "$q", "service.hoalinks", "h
                             .then(success, error);
                 }
             };
+
+            console.log("tenats");
 
             if(resource == null) {
                 hoalinks.getLinks().then(

@@ -5,7 +5,7 @@ angular
     .module("app.reports")
     .factory("reports.service", reportsSrvc);
 
-reportsSrvc.$inject = ["$resource", "$q", "service.hoalinks"];
+reportsSrvc.$inject = ["$resource", "$q", "linksApi"];
 function reportsSrvc($resource, $q, hoalinks, queryKeys){
     var service = {
         getReport : getReport

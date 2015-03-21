@@ -49,4 +49,4 @@ function tokenHandler() {
         return wrappedResource;
     }
 }
-tokenHandler.$inject = [''];
+tokenHandler.$inject = [];

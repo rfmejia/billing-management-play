@@ -1,25 +1,12 @@
 angular
     .module("app.layout")
-    .controller('controller.root', [
-                    '$cookies',
-                    'service.hoalinks',
-                    'tokenHandler',
-                    "$rootScope",
-                    "$log",
-                    "nvlAppErrorLoggingService",
-                    rootController
-                ]);
+    .controller('rootController', rootController);
 
-function rootController($cookies, hoalinks, tokenHandler, $rootScope, $log, appErrorService) {
-    var vm = this;
-
+function rootController($rootScope, appErrorService) {
     activate();
 
     //region FUNCTION_CALL
     function activate() {
-        hoalinks.getResource().get().$promise
-            .then(success, error);
-
         $rootScope.$on("$stateChangeError", function(event, toState, toParams, fromState, fromParams, error) {
             var message = error.message;
             var stack = error.stack;
@@ -42,14 +29,9 @@ function rootController($cookies, hoalinks, tokenHandler, $rootScope, $log, appE
         });
     }
 
-    function success(data) {
-        tokenHandler.set($cookies.id);
-    }
-
-    function error() {};
-
     //endregion
 }
+rootController.$inject = ["$rootScope", "appErrorService"];
 
 
 
