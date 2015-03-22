@@ -3,7 +3,7 @@
  */
 angular
     .module("app.providers")
-    .factory("service.hoatoasts", hoaToastProvider);
+    .factory("hoaToastService", hoaToastProvider);
 
 
 hoaToastProvider.$inject = ["$mdToast"];

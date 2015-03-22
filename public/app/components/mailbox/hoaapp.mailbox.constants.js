@@ -3,7 +3,7 @@
  */
 angular
     .module("app.mailbox")
-    .constant("MAILBOX_PARAMS", {
+    .constant("mailboxQueryParams", {
                   pending     : "pending",
                   drafts      : "drafts",
                   forChecking : "forChecking",

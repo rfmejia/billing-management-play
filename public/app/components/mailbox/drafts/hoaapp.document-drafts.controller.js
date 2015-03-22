@@ -3,58 +3,41 @@
  */
 angular
     .module('app.mailbox')
-    .controller('controller.drafts', [
-                    'documentsHelper',
-                    'documentsResponse',
-                    'userResponse',
-                    'tenantsResponse',
-                    'documentsService',
-                    'helper.comments',
-                    'service.hoadialog',
-                    'moment',
-                    '$state',
-                    '$stateParams',
-                    '$resource',
-                    "$anchorScroll",
-                    "$location",
-                    'service.hoatoasts',
-                    "nvl-dateutils",
-                    draftsCtrl
-                ]);
+    .controller('draftsController', draftsCtrl);
 
-function draftsCtrl(documentsHelper, documentsResponse, userResponse, tenantsResponse, documentsService, commentsHelper, dialogProvider, moment, $state, $stateParams, $resource, $anchorScroll, $location, toastsProvider, dateUtils) {
+function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, commentsHelper, dialogProvider, toastsProvider,  dateUtils, docsResponse, userDetails, tenantsResponse ) {
     var vm = this;
     /** Previous months template **/
-    vm.previous = documentsResponse.viewModel.body.previous;
+    vm.previous = docsResponse.viewModel.body.previous;
     /** This months template **/
-    vm.thisMonth = documentsResponse.viewModel.body.thisMonth;
+    vm.thisMonth = docsResponse.viewModel.body.thisMonth;
     /** Summary template **/
-    vm.summary = documentsResponse.viewModel.body.summary;
+    vm.summary = docsResponse.viewModel.body.summary;
     /** Current comment made in this phase of the workflow **/
     vm.currentComment = "";
     /** Previous comments made in different phases of the workflow **/
     vm.comments;
     /** Next box **/
-    vm.nextAction = documentsResponse.viewModel.nextAction.nextBox;
+    vm.nextAction = docsResponse.viewModel.nextAction.nextBox;
     /** Document title for display **/
     /** Format used for all dates **/
     vm.format = "MMMM-YYYY";
     /** Display for month **/
-    vm.billDate = documentsResponse.viewModel.billDate;
+    vm.billDate = docsResponse.viewModel.billDate;
     /** Tenant model **/
     vm.tenant = tenantsResponse.viewModel;
     /** If null, this means that this document has not been pushed to the server yet **/
-    var documentId = documentsResponse.viewModel.documentId;
+    var documentId = docsResponse.viewModel.documentId;
     /** User assigned to this document **/
-    vm.assigned = documentsResponse.viewModel.assigned;
+    vm.assigned = docsResponse.viewModel.assigned;
     /** Current user **/
-    vm.currentUser = userResponse.userId;
+    vm.currentUser = userDetails.userId;
     /** Links **/
-    vm.links = documentsResponse.viewModel.links;
+    vm.links = docsResponse.viewModel.links;
     /** Disables the editing of this document if it's not locked to the user **/
     vm.tradeNameColor = {color : "#009688"};
     /** Mailbox **/
-    vm.mailbox = documentsResponse.viewModel.mailbox;
+    vm.mailbox = docsResponse.viewModel.mailbox;
 
     //Function mapping
     vm.onUnlinkClicked = onUnlinkClicked;
@@ -67,8 +50,8 @@ function draftsCtrl(documentsHelper, documentsResponse, userResponse, tenantsRes
     activate();
 
     function activate() {
-        if (documentsResponse.viewModel.comments.hasOwnProperty('all')) {
-            vm.comments = documentsResponse.viewModel.comments;
+        if (docsResponse.viewModel.comments.hasOwnProperty('all')) {
+            vm.comments = docsResponse.viewModel.comments;
         }
         else {
             vm.comments = commentsHelper.parseComments(null, null);
@@ -84,7 +67,7 @@ function draftsCtrl(documentsHelper, documentsResponse, userResponse, tenantsRes
         else {
             vm.isDisabled = (vm.assigned.userId != vm.currentUser);
         }
-        var date = dateUtils.getMomentFromString(documentsResponse.viewModel.month, documentsResponse.viewModel.year)
+        var date = dateUtils.getMomentFromString(docsResponse.viewModel.month, docsResponse.viewModel.year)
         vm.billDate = dateUtils.momentToStringDisplay(date, "MMMM-YYYY");
     }
 
@@ -98,7 +81,7 @@ function draftsCtrl(documentsHelper, documentsResponse, userResponse, tenantsRes
             dialogProvider.getConfirmDialog(unassignDocument, null, "This will no longer be assigned to you", "Are you sure?")
         }
         function unassignDocument() {
-            documentsService.unassignDocument(url).then(returnToList);
+            docsApi.unassignDocument(url).then(returnToList);
         }
     }
 
@@ -125,12 +108,12 @@ function draftsCtrl(documentsHelper, documentsResponse, userResponse, tenantsRes
         function okayClicked(comment) {
             vm.currentComment = comment;
             preparePostData();
-            var postData = documentsHelper.formatServerData(documentsResponse);
-            documentsService.editDocument(documentId, postData).then(submit, error);
+            var postData = documentsHelper.formatServerData(docsResponse);
+            docsApi.editDocument(documentId, postData).then(submit, error);
         }
 
         function submit() {
-            documentsService.moveToBox(vm.nextAction.url).then(success, error);
+            docsApi.moveToBox(vm.nextAction.url).then(success, error);
         }
 
         var success = function(response) {
@@ -146,8 +129,8 @@ function draftsCtrl(documentsHelper, documentsResponse, userResponse, tenantsRes
      */
     function onSaveClicked(billingForm) {
         preparePostData();
-        var postData = documentsHelper.formatServerData(documentsResponse);
-        documentsService.editDocument(documentId, postData)
+        var postData = documentsHelper.formatServerData(docsResponse);
+        docsApi.editDocument(documentId, postData)
             .then(function(response) {
                       if (billingForm.$invalid) {
                           toastsProvider.showSimpleToast('Saved but there are missing fields');
@@ -193,7 +176,7 @@ function draftsCtrl(documentsHelper, documentsResponse, userResponse, tenantsRes
         var message = "Delete document"
         var title = "This will delete the document permanently"
         var okFxn = function(response) {
-            documentsService.deleteDocument(documentId)
+            docsApi.deleteDocument(documentId)
                 .then(function(response) {
                           toastsProvider.showSimpleToast("Delete successful");
                           $state.go("workspace.pending.drafts", documentsHelper.getQueryParameters(), {reload : true});
@@ -235,13 +218,32 @@ function draftsCtrl(documentsHelper, documentsResponse, userResponse, tenantsRes
     }
 
     function preparePostData() {
-        documentsResponse.viewModel.body.previous = vm.previous;
-        documentsResponse.viewModel.body.thisMonth = vm.thisMonth;
-        documentsResponse.viewModel.body.summary = vm.summary;
-        documentsResponse.viewModel.comments = commentsHelper.parseComments(vm.currentComment, vm.comments);
-        documentsResponse.viewModel.assigned = vm.currentUser;
+        docsResponse.viewModel.body.previous = vm.previous;
+        docsResponse.viewModel.body.thisMonth = vm.thisMonth;
+        docsResponse.viewModel.body.summary = vm.summary;
+        docsResponse.viewModel.comments = commentsHelper.parseComments(vm.currentComment, vm.comments);
+        docsResponse.viewModel.assigned = vm.currentUser;
     }
 
     //endregion
 
 }
+
+draftsCtrl.$inject = [
+    "$state",
+    "$anchorScroll",
+    "$location",
+    //API
+    "documentsApi",
+    //SERVICES
+    "documentsHelper",
+    "commentsHelper",
+    "hoaDialogService",
+    "hoaToastService",
+    //UTILS
+    "nvl-dateutils",
+    //RESOLVE
+    "documentResponse",
+    "userDetails",
+    "tenantResponse"
+];

@@ -10,12 +10,12 @@ function config($stateProvider, reportsRoutes) {
     var reports = {
         url     : "reports?year&month&limit&offset",
         resolve : {
-            documentsHelper  : getDocumentsHelper,
-            documentsService : getDocumentsService,
-            documentsList    : unparsedDocumentsList,
-            userDetails      : getCurrentUser,
-            unparsedReport   : getReport,
-            reportResponse   : parseReport
+            documentsHelper : getDocumentsHelper,
+            documentsApi    : getDocumentsService,
+            documentsList   : unparsedDocumentsList,
+            userDetails     : getCurrentUser,
+            unparsedReport  : getReport,
+            reportResponse  : parseReport
         },
         views   : {
             "contentArea@workspace" : {
@@ -47,17 +47,17 @@ function config($stateProvider, reportsRoutes) {
 }
 
 //region LIST
-getDocumentsHelper.$inject = ["documents.helper"];
+getDocumentsHelper.$inject = ["documentsHelper"];
 function getDocumentsHelper(docsHelper) {
     return docsHelper;
 }
 
-getDocumentsService.$inject = ["documents.service"];
+getDocumentsService.$inject = ["documentsApi"];
 function getDocumentsService(docsService) {
     return docsService;
 }
 
-unparsedDocumentsList.$inject = ["documentsHelper", "documentsService", "MAILBOX_PARAMS", "$stateParams", "nvl-dateutils"];
+unparsedDocumentsList.$inject = ["documentsHelper", "documentsApi", "mailboxQueryParams", "$stateParams", "nvl-dateutils"];
 function unparsedDocumentsList(docsHelper, docsService, mailboxParams, $stateParams, dateUtils) {
     var queryParams;
     if (angular.equals({}, $stateParams)) {
@@ -90,7 +90,7 @@ function parseReport(apiResponse, reportsHelper) {
 //endregion
 
 //region VIEW
-getDocument.$inject = ["documentsService", "$stateParams"];
+getDocument.$inject = ["documentsApi", "$stateParams"];
 function getDocument(docsSrvc, $stateParams) {
     return docsSrvc.getDocument($stateParams.id);
 }

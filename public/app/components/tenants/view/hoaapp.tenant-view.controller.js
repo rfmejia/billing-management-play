@@ -5,18 +5,18 @@ angular
                     "$stateParams",
                     'tenant',
                     'documents',
-                    "documentsService",
+                    "documentsApi",
                     "documentsHelper",
-                    'service.hoadialog',
-                    "service.hoatoasts",
+                    'hoaDialogService',
+                    "hoaToastService",
                     "tenantsService",
                     "REPORTS_ROUTES",
-                    'service.hoadialog',
+                    'hoaDialogService',
                     'userApi',
                     tenantViewCtrl
                 ]);
 
-function tenantViewCtrl($state, $stateParams, tenant, documents, documentsService, docsHelper, hoaDialog, hoaToast, tenantsSrvc, reportsRoutes, dialogProvider, userDetails) {
+function tenantViewCtrl($state, $stateParams, tenant, documents, documentsApi, docsHelper, hoaDialog, hoaToast, tenantsSrvc, reportsRoutes, dialogProvider, userDetails) {
     var vm = this;
     vm.tenant = tenant.viewModel;
     vm.documents = documents._embedded.item;
@@ -126,7 +126,7 @@ function tenantViewCtrl($state, $stateParams, tenant, documents, documentsServic
         else {
             //Check if clicked document is assigned
             if (item._links.hasOwnProperty("hoa:assign")) {
-                documentsService.assignDocument(item._links["hoa:assign"].href).then(viewDocument, error);
+                documentsApi.assignDocument(item._links["hoa:assign"].href).then(viewDocument, error);
             }
             else if (userDetails.userId == item.assigned.userId) {
                 viewDocument();
@@ -149,13 +149,13 @@ function tenantViewCtrl($state, $stateParams, tenant, documents, documentsServic
         var title = "Sorry";
         var message = "This document is being edited by another user.";
         if(item.assigned == null) {
-            documentsService.assignDocument(item._links["hoa:assign"].href).then(viewDocument, error);
+            documentsApi.assignDocument(item._links["hoa:assign"].href).then(viewDocument, error);
         }
         else if (userDetails.userId == item.assigned.userId) {
             viewDocument();
         }
         else if (item._links.hasOwnProperty("hoa:assign")) {
-            documentsService.assignDocument(item._links["hoa:assign"].href).then(viewDocument, error);
+            documentsApi.assignDocument(item._links["hoa:assign"].href).then(viewDocument, error);
         }
         else {
             error();
@@ -173,7 +173,7 @@ function tenantViewCtrl($state, $stateParams, tenant, documents, documentsServic
     function onFilterClicked(filter) {
         vm.currentFilter = filter;
         vm.documents = [];
-        documentsService.getDocumentList(filter.params)
+        documentsApi.getDocumentList(filter.params)
             .then(success);
     }
 
@@ -186,7 +186,7 @@ function tenantViewCtrl($state, $stateParams, tenant, documents, documentsServic
         }
         vm.documents = [];
         vm.currentPage = page + 1;
-        documentsService.getDocumentList(changedParams).then(success);
+        documentsApi.getDocumentList(changedParams).then(success);
 
     }
 

@@ -1,6 +1,6 @@
 angular
     .module("app.mailbox")
-    .factory("mailbox.service", mailboxSrvc);
+    .factory("mailboxService", mailboxSrvc);
 
 mailboxSrvc.$inject = ["$resource", "$q", "linksApi"];
 function mailboxSrvc($resource, $q, hoalinks) {

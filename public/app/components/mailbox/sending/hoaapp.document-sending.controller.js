@@ -3,18 +3,9 @@
  */
 angular
     .module("app.mailbox")
-    .controller("controller.print", [
-                   "documentsHelper",
-                   "documentsService",
-                   "documentsResponse",
-                   "userResponse",
-                   "$state",
-                   "$stateParams",
-                   "reports.helper",
-                   printCtrl
-                ]);
+    .controller("printController", printCtrl);
 
-function printCtrl(docsHelper, docsSrvc, docsResponse, userResponse,  $state, $stateParams, reportsHelper) {
+function printCtrl($state, docsSrvc, reportsHelper, userDetail, docsResponse) {
     var vm = this;
     vm.document = docsResponse.viewModel;
     vm.isDisabled = true;
@@ -27,7 +18,7 @@ function printCtrl(docsHelper, docsSrvc, docsResponse, userResponse,  $state, $s
         if(vm.document.assigned == null) {
             vm.isDisabled = true;
         } else {
-            vm.isDisabled = (userResponse.userId != vm.document.assigned.userId)
+            vm.isDisabled = (userDetail.userId != vm.document.assigned.userId)
         }
 
         vm.isDisabled = vm.isDisabled || (vm.document.mailbox != 'forSending');
@@ -45,3 +36,15 @@ function printCtrl(docsHelper, docsSrvc, docsResponse, userResponse,  $state, $s
 
     //endregion
 }
+
+printCtrl.$inject = [
+    "$state",
+    //API
+    "documentsApi",
+    //SERVICES
+    "reports.helper",
+    //UTILS
+    //RESOLVE
+    "userDetails",
+    "documentResponse"
+];

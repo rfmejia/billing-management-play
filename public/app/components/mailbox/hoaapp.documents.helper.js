@@ -3,15 +3,13 @@
  */
 angular
     .module("app.mailbox")
-    .factory("documents.helper", documentHelper);
+    .factory("documentsHelper", documentHelper);
 
 /**
  * Parse server response for views
  * Parse views data for server
- * @returns {{}}
  */
-documentHelper.$inject = ["MAILBOX_PARAMS", 'userApi'];
-function documentHelper(mailboxParam, currentUser) {
+function documentHelper(mailboxParam) {
     var helper = {
         formatCreateResponse : formatCreateResponse,
         formatEditResponse   : formatEditResponse,
@@ -145,16 +143,16 @@ function documentHelper(mailboxParam, currentUser) {
 
     function resolveViewer(document) {
         if (document.mailbox == 'drafts') {
-            return "workspace.edit-view";
+            return "workspace.viewer.editable";
         }
         else if (document.mailbox == 'forChecking' || document.mailbox == 'forApproval') {
-            return "workspace.fixed-view";
+            return "workspace.viewer.readonly";
         }
         else {
-            return "workspace.print-view";
+            return "workspace.viewer.print";
         }
     }
 
     //endregion
-
 }
+documentHelper.$inject = ["mailboxQueryParams"];

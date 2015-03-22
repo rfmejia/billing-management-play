@@ -1,13 +1,8 @@
 angular
     .module('app.mailbox')
-    .factory('documents.service', [
-                 '$q',
-                 '$resource',
-                 'linksApi',
-                 documentSrv
-             ]);
+    .factory('documentsApi', documentApi);
 
-function documentSrv($q, $resource, hoalinks) {
+function documentApi($q, $resource, linksApi) {
     var service = {
         getDocument      : getDocument,
         getDocumentList  : getDocumentList,
@@ -18,45 +13,102 @@ function documentSrv($q, $resource, hoalinks) {
         unassignDocument : unassignDocument,
         moveToBox        : moveToBox
     };
-
-    var resource = null;
-    var requestType = Object.freeze({
-                                        "QUERY"  : 0,
-                                        "GET"    : 1,
-                                        "EDIT"   : 2,
-                                        "CREATE" : 3,
-                                        "DELETE" : 4
-                                    });
+    var url = linksApi.getDocumentsLink() + "/:id";
+    var resource = $resource(url, {}, {
+        get    : {method : "GET", isArray : false},
+        create : {method : "POST", isArray : false, headers : {"Content-Type" : "application/json"}},
+        edit   : {method : "PUT", isArray : false, headers : {"Content-Type" : "application/json"}},
+        delete : {method : "DELETE", isArray : false}
+    });
 
     return service;
 
     //Gets a specific document
     function getDocument(id) {
-        return makeRequest(id, null, null, requestType.GET);
+        var deferred = $q.defer();
+        var documentId = {id : id};
+
+        var success = function(response) {
+            deferred.resolve(response);
+        };
+
+        var error = function(error) {
+            //TODO: Error meessage
+            deferred.reject(error);
+        };
+
+        resource.get(documentId).$promise.then(success, error);
+
+        return deferred.promise
+
     }
 
-    /**
-     * Retrieves documents depending on query parameters
-     * @param queryBox
-     * @param offsetPage
-     * @returns {*}
-     */
+    //Gets document list
     function getDocumentList(query) {
-        return makeRequest(null, query, null, requestType.QUERY);
+        var deferred = $q.defer();
+
+        var success = function(response) {
+            deferred.resolve(response);
+        };
+
+        var error = function(error) {
+            //TODO: Error meessage
+            deferred.reject(error);
+        };
+
+        resource.get(query).$promise.then(success, error);
+
+        return deferred.promise;
     }
 
     //Edits a document
     function editDocument(id, documentData) {
-        return makeRequest(id, null, documentData, requestType.EDIT);
+        var deferred = $q.defer();
+        var documentId = {id: id};
+
+        var success = function(response) {
+            deferred.resolve(response);
+        };
+
+        var error = function(error) {
+            //TODO: Error meessage
+            deferred.reject(error);
+        };
+        resource.edit(documentId, documentData).$promise.then(success, error);
+        return deferred.promise
     }
 
     //Deletes a document referenced by the id
     function deleteDocument(id) {
-        return makeRequest(id, null, null, requestType.DELETE);
+        var deferred = $q.defer();
+        var documentId = {id: id};
+
+        var success = function(response) {
+            deferred.resolve(response);
+        };
+
+        var error = function(error) {
+            //TODO: Error meessage
+            deferred.reject(error);
+        };
+        resource.delete(documentId).$promise.then(success, error);
+        return deferred.promise;
     }
 
-    function createDocument(data) {
-        return makeRequest(null, null, data, requestType.CREATE);
+    function createDocument(documentData) {
+        var deferred = $q.defer();
+
+        var success = function(response) {
+            deferred.resolve(response);
+        };
+
+        var error = function(error) {
+            //TODO: Error meessage
+            deferred.reject(error);
+        };
+        resource.create(documentData).$promise.then(success, error);
+
+        return deferred.promise;
     }
 
     function assignDocument(url) {
@@ -107,70 +159,9 @@ function documentSrv($q, $resource, hoalinks) {
             deferred.reject();
         };
 
-        submitResource.move().$promise
-            .then(success, error);
-
-        return deferred.promise;
-    }
-
-    function createResource(url) {
-        resource = $resource(url, {}, {
-            get    : {method : "GET", isArray : false},
-            create : {method : "POST", isArray : false, headers : {"Content-Type" : "application/json"}},
-            edit   : {method : "PUT", isArray : false, headers : {"Content-Type" : "application/json"}},
-            delete : {method : "DELETE", isArray : false}
-        });
-    }
-
-    function makeRequest(documentId, documentQuery, documentData, type) {
-        var deferred = $q.defer();
-        var id = (documentId != null) ? {id : documentId} : documentId;
-        var success = function(response) {
-            deferred.resolve(response);
-            return response;
-        };
-
-        var error = function(response) {
-            deferred.reject();
-        };
-
-        var request = function() {
-            switch (type) {
-                case requestType.GET:
-                    resource.get(id).$promise
-                        .then(success, error);
-                    break;
-                case requestType.QUERY:
-                    resource.get(documentQuery).$promise
-                        .then(success, error);
-                    break;
-                case requestType.EDIT:
-                    resource.edit(id, documentData).$promise
-                        .then(success, error);
-                    break;
-                case requestType.CREATE:
-                    resource.create(documentData).$promise
-                        .then(success, error);
-                    break;
-                case requestType.DELETE:
-                    resource.delete(id).$promise
-                        .then(success, error);
-            }
-        };
-
-        if (resource == null) {
-            var linksResponse = function(response) {
-                var topUrl = hoalinks.getDocumentsLink() + "/:id";
-                createResource(topUrl);
-                request();
-            };
-            console.log(type);
-            hoalinks.getLinks().then(linksResponse);
-        }
-        else {
-            request();
-        }
+        submitResource.move().$promise.then(success, error);
 
         return deferred.promise;
     }
 }
+documentApi.$inject = ["$q", "$resource", "linksApi"];

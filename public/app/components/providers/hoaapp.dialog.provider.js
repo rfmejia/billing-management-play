@@ -3,7 +3,7 @@
  */
 angular
     .module('app.providers')
-    .factory('service.hoadialog', hoaDialogProvider);
+    .factory('hoaDialogService', hoaDialogProvider);
 
 hoaDialogProvider.$inject = ["$mdDialog"];
 function hoaDialogProvider($mdDialog) {

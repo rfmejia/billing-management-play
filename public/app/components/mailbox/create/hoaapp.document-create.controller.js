@@ -3,18 +3,9 @@
  */
 angular
     .module('app.mailbox')
-    .controller('controller.create', [
-                    'documentsHelper',
-                    'documentsService',
-                    '$state',
-                    'template',
-                    'tenantsList',
-                    'service.hoatoasts',
-                   "nvl-dateutils",
-                    createCtrl
-                ]);
+    .controller('createController', createController);
 
-function createCtrl(documentsHelper, documentsService, $state, template, tenantsList, hoaToast, dateUtils) {
+function createController($state, documentsApi, documentsHelper, hoaToast, dateUtils, template, tenantsList) {
     var vm = this;
     /** list of tenants **/
     vm.tenantsList = tenantsList._embedded.item;
@@ -61,7 +52,7 @@ function createCtrl(documentsHelper, documentsService, $state, template, tenants
      */
     function onCreateDocumentClicked() {
         var success = function(response) {
-            $state.go("workspace.edit-view", {id : response.id});
+            $state.go("workspace.viewer.editable", {id : response.id});
         };
 
         var error = function(response) {
@@ -69,7 +60,7 @@ function createCtrl(documentsHelper, documentsService, $state, template, tenants
         };
 
         prepareDraftPost();
-        documentsService.createDocument(documentsHelper.formatServerData(template))
+        documentsApi.createDocument(documentsHelper.formatServerData(template))
             .then(success, error);
     }
 
@@ -111,3 +102,17 @@ function createCtrl(documentsHelper, documentsService, $state, template, tenants
 
     //endregion
 }
+createController.$inject = [
+    "$state",
+    //API
+    "documentsApi",
+    //HELPERS
+    "documentsHelper",
+    //PROVIDERS
+    "hoaToastService",
+    //UTILS
+    "nvl-dateutils",
+    //RESOLVE
+    "docsTemplate",
+    "tenantsList"
+];

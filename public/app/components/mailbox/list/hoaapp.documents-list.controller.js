@@ -1,19 +1,8 @@
 angular
     .module("app.mailbox")
-    .controller("controller.documents", [
-                    'service.hoadialog',
-                    "$state",
-                    "$stateParams",
-                    "$resource",
-                    "documentsResponse",
-                    "userDetails",
-                    "documentsHelper",
-                    "documentsService",
-                    "requestedParameters",
-                    documentsCtrl
-                ]);
+    .controller("documentsListController", documentsListController);
 
-function documentsCtrl(dialogProvider, $state, $stateParams, $resource, documentsResponse, userDetails, documentsHelper, documentsService, requestedParameters) {
+function documentsListController($state, $stateParams, documentsApi, documentsHelper, dialogProvider, userDetails, docsResponse, requestedParams) {
     var vm = this;
     vm.documents = [];
     vm.pages = [];
@@ -21,8 +10,8 @@ function documentsCtrl(dialogProvider, $state, $stateParams, $resource, document
     vm.currentPage = 1;
     vm.queryParameters = {};
     vm.tabState = {};
-    vm.total = documentsResponse.count;
-    vm.pageSize = requestedParameters.limit;
+    vm.total = docsResponse.count;
+    vm.pageSize = requestedParams.limit;
 
     vm.requestNewPage = requestNewPage;
     vm.isIncrementPagePossible = isIncrementPagePossible;
@@ -35,7 +24,6 @@ function documentsCtrl(dialogProvider, $state, $stateParams, $resource, document
     vm.tabTitle = null;
     vm.isForSending = false;
 
-
     var maxPages = 0;
     var minSlice = 0;
     var maxSlice = 0;
@@ -43,11 +31,11 @@ function documentsCtrl(dialogProvider, $state, $stateParams, $resource, document
     activate();
 
     function activate() {
-        vm.documents = documentsResponse._embedded.item;
+        vm.documents = docsResponse._embedded.item;
         vm.queryParameters = documentsHelper.getQueryParameters();
-        for (var key in requestedParameters) {
+        for (var key in requestedParams) {
             if (vm.queryParameters.hasOwnProperty(key)) {
-                vm.queryParameters[key] = requestedParameters[key];
+                vm.queryParameters[key] = requestedParams[key];
             }
         }
         vm.isForSending = $stateParams.mailbox == 'forSending';
@@ -103,21 +91,20 @@ function documentsCtrl(dialogProvider, $state, $stateParams, $resource, document
         var message = "This document is being edited by another user.";
         //Check if clicked document is assigned
         if(item.assigned == null) {
-            console.log("NULL");
-            documentsService.assignDocument(item._links["hoa:assign"].href).then(goToViewer, error);
+            documentsApi.assignDocument(item._links["hoa:assign"].href).then(goToViewer, error);
         }
         else if (userDetails.userId == item.assigned.userId){
             goToViewer();
         }
         else if(item._links.hasOwnProperty("hoa:assign")) {
-            documentsService.assignDocument(item._links["hoa:assign"].href).then(goToViewer, error);
+            documentsApi.assignDocument(item._links["hoa:assign"].href).then(goToViewer, error);
         }
         else {
             error();
         }
 
         function goToViewer(response) {
-            $state.go(state, {"id" : item.id});
+            $state.go(state, {id : item.id}, {reload : true});
         }
 
         function error(dialogContent) {
@@ -157,3 +144,17 @@ function documentsCtrl(dialogProvider, $state, $stateParams, $resource, document
         vm.onChangePageClicked(vm.pagesSliced[0]);
     }
 }
+documentsListController.$inject = [
+    "$state",
+    "$stateParams",
+    //API
+    "documentsApi",
+    //SERVICES
+    "documentsHelper",
+    'hoaDialogService',
+    //UTILS
+    //RESOLVES
+    "userDetails",
+    "documentsResponse",
+    "requestedParams"
+];

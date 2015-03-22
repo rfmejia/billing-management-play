@@ -5,7 +5,7 @@ angular
     .module("app.reports")
     .controller("reportUpdateCtrl", reportUpdateCtrl);
 
-reportUpdateCtrl.$inject = ["documentsService", "document", "REPORTS_ROUTES", "service.hoatoasts", 'service.hoadialog', "$location", "$anchorScroll", 'helper.comments', "documentsHelper", "$state", "nvl-dateutils", "currentUser"];
+reportUpdateCtrl.$inject = ["documentsApi", "document", "REPORTS_ROUTES", "hoaToastService", 'hoaDialogService', "$location", "$anchorScroll", 'commentsHelper', "documentsHelper", "$state", "nvl-dateutils", "currentUser"];
 function reportUpdateCtrl(docsSrvc, document, reportsRoutes, toastProvider, dialogProvider, $location, $anchorScroll, commentsHelper, documentsHelper, $state, dateUtils, currentUser) {
     var vm = this;
     vm.payments = document.viewModel.amounts;

@@ -15,4 +15,4 @@ function workspaceController($state, $location, documentsHelper) {
     }
     //endregion
 }
-workspaceController.$inject = ["$state", "$location", "documents.helper"];
+workspaceController.$inject = ["$state", "$location", "documentsHelper"];

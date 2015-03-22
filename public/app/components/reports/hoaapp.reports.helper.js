@@ -25,7 +25,6 @@ function reportsHelper(dateUtils) {
             unpaid.entries[section.name] = section.amounts.unpaid;
         });
         var date = dateUtils.getMomentFromString(apiResponse.forMonth.month, apiResponse.forMonth.year);
-        console.log(date);
 
         parsed["sections"] = [total, unpaid, paid];
         parsed["date"] = {

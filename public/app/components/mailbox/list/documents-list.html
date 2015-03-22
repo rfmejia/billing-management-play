@@ -1,27 +1,27 @@
-<md-toolbar md-theme="list" ng-include="'app/components/mailbox/list/partials-list-toolbar.html'">
+<md-toolbar md-theme="list" ng-include="'app/components/mailbox/list/docs-list-toolbar.partials.html'">
 
 </md-toolbar>
 <md-content layout="column" flex class="md-padding md-default-theme docs-list">
     <md-whiteframe class="documents-list md-whiteframe-z1">
         <md-toolbar class="white-out documents-list-toolbar" layout="row" layout-align="start center">
-            <h5 class="documents-list-title">{{draftsCtrl.tabTitle}}</h5>
+            <h5 class="documents-list-title">{{docsList.tabTitle}}</h5>
         </md-toolbar>
         <md-content md-theme="list" >
             <div>
                 <md-list>
-                    <hoa-embedded-items layout="row" ng-repeat="document in draftsCtrl.documents" item="document" on-click="draftsCtrl.onDocumentItemClicked(item)">
+                    <hoa-embedded-items layout="row" ng-repeat="document in docsList.documents" item="document" on-click="docsList.onDocumentItemClicked(item)">
                     </hoa-embedded-items>
                 </md-list>
             </div>
-            <section ng-if="draftsCtrl.total > draftsCtrl.pageSize">
+            <section ng-if="docsList.total > docsList.pageSize">
                 <md-divider></md-divider>
                 <div layout="row"
                      layout-align="center center"
                      paging
-                     page="draftsCtrl.currentPage"
-                     page-size="draftsCtrl.pageSize"
-                     total="draftsCtrl.total"
-                     paging-action="draftsCtrl.onChangePageClicked(page)">
+                     page="docsList.currentPage"
+                     page-size="docsList.pageSize"
+                     total="docsList.total"
+                     paging-action="docsList.onChangePageClicked(page)">
                 </div>
             </section>
         </md-content>

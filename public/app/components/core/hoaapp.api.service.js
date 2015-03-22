@@ -17,7 +17,8 @@ function linksProvider() {
             getMailboxesLink   : getMailboxesLink,
             getLogoutLink      : getLogoutLink,
             getApiLink         : getApiLink,
-            setUrl             : setUrl
+            setUrl             : setUrl,
+            isUrlSet           : isUrlSet
         };
 
         var topUrl = null;
@@ -28,6 +29,7 @@ function linksProvider() {
         var documentsLink = null;
         var templatesLink = null;
         var logoutLink = null;
+        var isUrlSet = false;
 
         return service;
 
@@ -83,6 +85,7 @@ function linksProvider() {
                 mailboxesLink = data._links["hoa:mailboxes"].href;
                 currentUserLink = data._links["hoa:currentUser"].href;
                 logoutLink = data._links["hoa:logout"].href;
+                isUrlSet = true;
                 deferred.resolve(data);
             }
 
@@ -96,6 +99,10 @@ function linksProvider() {
 
         function setUrl(url) {
             if(url) topUrl = url;
+        }
+
+        function isUrlSet() {
+            return isUrlSet;
         }
     }
 }

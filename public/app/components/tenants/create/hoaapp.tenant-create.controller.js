@@ -4,7 +4,7 @@ angular
                     "tenantsService",
                     "tenantHelper",
                     "tenantModel",
-                    "service.hoatoasts",
+                    "hoaToastService",
                     "$state",
                     "$stateParams",
                     tenantCreateCtrl

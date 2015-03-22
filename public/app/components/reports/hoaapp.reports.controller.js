@@ -5,7 +5,7 @@ angular
     .module("app.reports")
     .controller("reportsCtrl", controller);
 
-controller.$inject = ["documentsHelper", "documentsService", "documentsList", "reportResponse", "$state", "REPORTS_ROUTES", "nvl-dateutils", "$stateParams", 'service.hoadialog', 'userDetails'];
+controller.$inject = ["documentsHelper", "documentsApi", "documentsList", "reportResponse", "$state", "REPORTS_ROUTES", "nvl-dateutils", "$stateParams", 'hoaDialogService', 'userDetails'];
 function controller(docsHelper, docsSrvc, documents, reportResponse, $state, reportsRoutes, dateUtils, $stateParams, dialogProvider, userDetails) {
     var vm = this;
     vm.pageTitle = $state.current.data.title;

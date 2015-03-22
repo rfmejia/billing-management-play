@@ -3,7 +3,7 @@
  */
 angular
     .module("app.tenants")
-    .factory("helper.tenant", [
+    .factory("tenantHelper", [
                  tenantHelper
              ]);
 

@@ -35,8 +35,13 @@
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
 </head>
 <body ng-app="hoa-app" layout="row" ng-controller="rootController">
-<div layout='column' layout-fill ui-view="rootView">
+<div ng-if="initialized" layout='column' layout-fill ui-view="rootView">
 
+</div>
+
+<div ng-if="!initialized" layout="column" flex layout-align="center center">
+    <md-progress-circular class="md-accent" md-mode="indeterminate"></md-progress-circular>
+    <h6>Hobbies of Asia</h6>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stacktrace.js/0.6.4/stacktrace.min.js"></script>
@@ -104,6 +109,7 @@
 
 <!-- compnents.mailbox -->
 <script src="app/components/mailbox/hoaapp.mailbox.module.js"></script>
+<script src="app/components/mailbox/hoaapp.mailbox.routes.js"></script>
 <script src="app/components/mailbox/list/hoaapp.documents-list.controller.js"></script>
 <script src="app/components/mailbox/create/hoaapp.document-create.controller.js"></script>
 <script src="app/components/mailbox/drafts/hoaapp.document-drafts.controller.js"></script>

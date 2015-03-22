@@ -3,29 +3,9 @@
  */
 angular
     .module('app.mailbox')
-    .controller('controller.approvals', approvalsCtrl);
+    .controller('approvalsController', approvalsCtrl);
 
-approvalsCtrl.$inject = [
-    //Resolve
-    'documentsHelper',
-    'documentsResponse',
-    'userResponse',
-    'tenantsResponse',
-    'documentsService',
-    'helper.comments',
-    //Providers
-    'service.hoadialog',
-    "service.hoatoasts",
-    //Shared
-    '$state',
-    '$stateParams',
-    '$resource',
-    "$location",
-    "$anchorScroll",
-    "nvl-dateutils"
-];
-
-function approvalsCtrl(documentsHelper, documentsResponse, userResponse, tenantsResponse, documentsService, commentsHelper, dialogProvider, toastsProvider, $state, $stateParams, $resource, $location, $anchorScroll, dateUtils) {
+function approvalsCtrl($state, $location, $anchorScroll, documentsApi, documentsHelper, commentsHelper, dialogProvider, toastsProvider, dateUtils, documentsResponse, userDetails, tenantsResponse) {
     var vm = this;
     vm.document = documentsResponse.viewModel;
     /** Current comment made in this phase of the workflow **/
@@ -51,7 +31,7 @@ function approvalsCtrl(documentsHelper, documentsResponse, userResponse, tenants
     /** User assigned to this document **/
     vm.assigned = documentsResponse.viewModel.assigned;
     /** Current user **/
-    vm.currentUser = userResponse.userId;
+    vm.currentUser = userDetails.userId;
     /** Document item links **/
     vm.links = documentsResponse.viewModel.links;
     /** Disables the editing of this document if it's not locked to the user **/
@@ -96,7 +76,7 @@ function approvalsCtrl(documentsHelper, documentsResponse, userResponse, tenants
             dialogProvider.getConfirmDialog(unassignDocument, null, "This will no longer be assigned to you", "Are you sure?")
         }
         function unassignDocument() {
-            documentsService.unassignDocument(url).then(returnToList);
+            documentsApi.unassignDocument(url).then(returnToList);
         }
     }
 
@@ -112,11 +92,11 @@ function approvalsCtrl(documentsHelper, documentsResponse, userResponse, tenants
             vm.currentComment = comment;
             preparePostData();
             var postData = documentsHelper.formatServerData(documentsResponse);
-            documentsService.editDocument(documentId, postData).then(submit, error);
+            documentsApi.editDocument(documentId, postData).then(submit, error);
         }
 
         function submit() {
-            documentsService.moveToBox(vm.prevAction.url).then(success, error);
+            documentsApi.moveToBox(vm.prevAction.url).then(success, error);
         }
     }
 
@@ -128,11 +108,11 @@ function approvalsCtrl(documentsHelper, documentsResponse, userResponse, tenants
             vm.currentComment = comment;
             preparePostData();
             var postData = documentsHelper.formatServerData(documentsResponse);
-            documentsService.editDocument(documentId, postData).then(submit, error);
+            documentsApi.editDocument(documentId, postData).then(submit, error);
         }
 
         function submit() {
-            documentsService.moveToBox(vm.nextAction.url).then(success, error);
+            documentsApi.moveToBox(vm.nextAction.url).then(success, error);
         }
     }
 
@@ -157,3 +137,23 @@ function approvalsCtrl(documentsHelper, documentsResponse, userResponse, tenants
 
     //endregion
 }
+
+approvalsCtrl.$inject = [
+    '$state',
+    "$location",
+    "$anchorScroll",
+    //APIS
+    'documentsApi',
+    //HELPERS
+    'documentsHelper',
+    'commentsHelper',
+    //PROVIDERS
+    'hoaDialogService',
+    "hoaToastService",
+    //UTILS
+    "nvl-dateutils",
+    //RESOLVES
+    'documentResponse',
+    'userDetails',
+    'tenantResponse'
+];

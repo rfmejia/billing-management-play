@@ -31,7 +31,7 @@ function rootController($rootScope, appErrorService) {
 
     //endregion
 }
-rootController.$inject = ["$rootScope", "appErrorService"];
+rootController.$inject = ["$rootScope", "nvlAppErrorLoggingService"];
 
 
 

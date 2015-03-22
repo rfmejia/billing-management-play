@@ -3,13 +3,9 @@
  */
 angular
     .module("app.mailbox")
-    .factory("helper.comments", [
-        "userApi",
-        "moment",
-        commentParser
-    ]);
+    .factory("commentsHelper", commentParser);
 
-function commentParser(hoacurrentuser, moment) {
+function commentParser(hoacurrentuser, dateUtils) {
     var dateFormat = "MMM-DD-YY HH:mm";
 
     var parser = {
@@ -32,7 +28,7 @@ function commentParser(hoacurrentuser, moment) {
             comments.hasRecent = true;
             recentComment.profile = "list-item-special";
             recentComment.userName = hoacurrentuser.getUserDetails().fullName;
-            recentComment.timestamp = moment().format();
+            recentComment.timestamp = dateUtils.stringTimeStamp();
             recentComment.comment = currentComment;
             previous.all.unshift(recentComment);
         }
@@ -43,3 +39,4 @@ function commentParser(hoacurrentuser, moment) {
         return comments;
     }
 }
+commentParser.$inject = ["userApi", "nvl-dateutils"];

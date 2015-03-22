@@ -40,7 +40,6 @@ function hoaEmbeddedItemsCtrl() {
     }
 
     function onItemUpdateClicked(item) {
-        console.log(item);
         vm.onUpdateClicked({item : item})
     }
 }

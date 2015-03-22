@@ -10,7 +10,7 @@ function routes($stateProvider) {
     var workspace = {
         url     : "/",
         resolve : {
-            apiLinks       : getApiLinks,
+            apiLinks      : getApiLinks,
             workspaceData : getWorkspaceData,
             mailboxes     : getMailboxes,
             userDetails   : getUserDetails
@@ -62,7 +62,7 @@ function getWorkspaceData($q, mailboxApi, userApi, apiLinks) {
 
     return deferred.promise;
 }
-getWorkspaceData.$inject = ["$q", "mailbox.service", "userApi", "apiLinks"];
+getWorkspaceData.$inject = ["$q", "mailboxService", "userApi", "apiLinks"];
 
 function getMailboxes(workspaceData) {
     return workspaceData[0];

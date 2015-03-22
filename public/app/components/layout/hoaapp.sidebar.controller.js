@@ -48,4 +48,4 @@ function sidebarController($state, documentsHelper, mailbox, userDetails, userSe
 
     //endregion
 }
-sidebarController.$inject = ['$state', 'documents.helper', 'mailboxes', 'userDetails', 'userApi', "nvl-dateutils"];
+sidebarController.$inject = ['$state', 'documentsHelper', 'mailboxes', 'userDetails', 'userApi', "nvl-dateutils"];

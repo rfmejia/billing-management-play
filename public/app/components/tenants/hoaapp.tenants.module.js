@@ -17,7 +17,7 @@ function tenantsConfig($stateProvider) {
             }
         },
         resolve : {
-            tenantsService : "service.hoatenants",
+            tenantsService : "tenantsApi",
             apiResponse    : function(tenantsService) {
                 return tenantsService.getList();
             }
@@ -36,8 +36,8 @@ function tenantsConfig($stateProvider) {
             }
         },
         resolve : {
-            tenantsService : "service.hoatenants",
-            tenantHelper   : "helper.tenant",
+            tenantsService : "tenantsApi",
+            tenantHelper   : "tenantHelper",
             apiResponse    : function(tenantsService) {
                 return tenantsService.getList();
             },
@@ -53,10 +53,10 @@ function tenantsConfig($stateProvider) {
     var tenantView = {
         url     : "tenant-view/:id?limit&offset",
         resolve : {
-            tenantsService   : "service.hoatenants",
-            documentsService : "documents.service",
-            documentsHelper  : "documents.helper",
-            tenantHelper     : "helper.tenant",
+            tenantsService   : "tenantsApi",
+            documentsApi : "documentsApi",
+            documentsHelper  : "documentsHelper",
+            tenantHelper     : "tenantHelper",
             requestedParams  : function(documentsHelper, $stateParams) {
                 var queryParams = documentsHelper.getQueryParameters();
                 if (queryParams.hasOwnProperty("others")) queryParams.others = null;
@@ -67,9 +67,9 @@ function tenantsConfig($stateProvider) {
                 if (queryParams.hasOwnProperty("offset")) queryParams.offset = $stateParams.offset;
                 return queryParams;
             },
-            apiResponse      : function(documentsService, tenantsService, $stateParams, $q, requestedParams) {
+            apiResponse      : function(documentsApi, tenantsService, $stateParams, $q, requestedParams) {
                 var deferred = $q.defer();
-                var documentsPromise = documentsService.getDocumentList(requestedParams);
+                var documentsPromise = documentsApi.getDocumentList(requestedParams);
                 var tenantsPromise = tenantsService.getTenant($stateParams.id);
                 function success(response) {
                     deferred.resolve(response);
@@ -107,8 +107,8 @@ function tenantsConfig($stateProvider) {
             }
         },
         resolve : {
-            tenantsService : "service.hoatenants",
-            tenantHelper   : "helper.tenant",
+            tenantsService : "tenantsApi",
+            tenantHelper   : "tenantHelper",
             apiResponse    : function(tenantsService, $stateParams) {
                 return tenantsService.getTenant($stateParams.id);
             },

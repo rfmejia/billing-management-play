@@ -5,7 +5,6 @@ angular
     .module("nvl-utils")
     .factory("nvl-dateutils", nvlDateUtils);
 
-
 nvlDateUtils.$inject = ["moment"];
 function nvlDateUtils(moment) {
     var service = {
@@ -16,7 +15,8 @@ function nvlDateUtils(moment) {
         getLocalDateNow       : getLocalDateNow,
         getLocalStringDisplay : getLocalStringDisplay,
         getMomentFromString   : getMomentFromString,
-        momentToStringDisplay : momentToStringDisplay
+        momentToStringDisplay : momentToStringDisplay,
+        stringTimeStamp       : stringTimeStamp
     };
 
     return service;
@@ -54,5 +54,9 @@ function nvlDateUtils(moment) {
     function getMomentFromString(month, year) {
         month -= 1;
         return moment({year : year, month : month});
+    }
+
+    function stringTimeStamp() {
+        return moment().format();
     }
 }
