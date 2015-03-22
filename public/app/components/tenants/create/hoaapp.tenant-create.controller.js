@@ -1,16 +1,8 @@
 angular
     .module("app.tenants")
-    .controller("controller.tenantcreate", [
-                    "tenantsService",
-                    "tenantHelper",
-                    "tenantModel",
-                    "hoaToastService",
-                    "$state",
-                    "$stateParams",
-                    tenantCreateCtrl
-                ]);
+    .controller("tenantCreateController", tenantCreateCtrl);
 
-function tenantCreateCtrl(tenantsService, tenantHelper, tenantModel, toastSrvc, $state, $stateParams) {
+function tenantCreateCtrl($state, $stateParams, tenantsSrvc, toastSrvc, tenantHelper, tenantModel) {
     var vm = this;
     vm.tenantTemplate = tenantModel.viewModel;
     vm.pageTitle = $state.current.data.title;
@@ -21,11 +13,11 @@ function tenantCreateCtrl(tenantsService, tenantHelper, tenantModel, toastSrvc, 
     function onCreateTenantClicked() {
         var postData = tenantHelper.formatPostData(tenantModel);
         if($stateParams.id == null) {
-            tenantsService.createTenant(postData)
+            tenantsSrvc.createTenant(postData)
                 .then(success, error);
         }
         else {
-            tenantsService.editTenant($stateParams.id, postData)
+            tenantsSrvc.editTenant($stateParams.id, postData)
                 .then(success, error);
         }
     }
@@ -41,3 +33,15 @@ function tenantCreateCtrl(tenantsService, tenantHelper, tenantModel, toastSrvc, 
 
     //endregion
 }
+tenantCreateCtrl.$inject = [
+    "$state",
+    "$stateParams",
+    //API
+    "tenantsApi",
+    //SERVICES
+    "hoaToastService",
+    "tenantHelper",
+    //UTILS
+    //RESOLVE
+    "createTenantModel"
+];

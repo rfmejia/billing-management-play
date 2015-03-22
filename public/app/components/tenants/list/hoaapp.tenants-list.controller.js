@@ -2,20 +2,16 @@ var tenants = angular.module("app.tenants");
 
 angular
     .module("app.tenants")
-    .controller("controller.tenantslist", [
-                    "$state",
-                    "apiResponse",
-                    tenantCtrl
-                ]);
+    .controller("tenantsListController", tenantCtrl);
 
-function tenantCtrl($state, apiResponse) {
+function tenantCtrl($state, tenantList) {
     var vm = this;
-    vm.apiResponse = apiResponse;
+    vm.tenantList = tenantList;
     vm.onTenantClicked = onTenantClicked;
     vm.onCreateTenantClicked = onCreateTenantClicked;
     vm.pageTitle = $state.current.data.title;
-    vm.profile = apiResponse._links.profile.href;
-    vm.tenants = apiResponse._embedded.item;
+    vm.profile = tenantList._links.profile.href;
+    vm.tenants = tenantList._embedded.item;
 
     function onTenantClicked(tenant) {
         $state.go("workspace.tenant-view", {"id" : tenant.id, limit: 10, offset: 0});
@@ -25,3 +21,4 @@ function tenantCtrl($state, apiResponse) {
         $state.go("workspace.tenant-create")
     }
 }
+tenantCtrl.$inject = ["$state", "tenantsList"];

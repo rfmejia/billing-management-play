@@ -1,33 +1,19 @@
 angular
     .module('app.tenants')
-    .controller('tenantViewCtrl', [
-                    '$state',
-                    "$stateParams",
-                    'tenant',
-                    'documents',
-                    "documentsApi",
-                    "documentsHelper",
-                    'hoaDialogService',
-                    "hoaToastService",
-                    "tenantsService",
-                    "REPORTS_ROUTES",
-                    'hoaDialogService',
-                    'userApi',
-                    tenantViewCtrl
-                ]);
+    .controller('tenantViewCtrl', tenantViewCtrl);
 
-function tenantViewCtrl($state, $stateParams, tenant, documents, documentsApi, docsHelper, hoaDialog, hoaToast, tenantsSrvc, reportsRoutes, dialogProvider, userDetails) {
+function tenantViewCtrl($state, $stateParams, documentsSrvc, tenantsSrvc, docsHelper, dialogProvider, toastProvider, reportsRoutes, tenantDocs,  tenant, userDetails) {
     var vm = this;
     vm.tenant = tenant.viewModel;
-    vm.documents = documents._embedded.item;
+    vm.documents = tenantDocs._embedded.item;
     vm.isInfoOpen = true;
     vm.tradeNameColor = {color : "#689F38"};
     vm.pageTitle = $state.current.data.title;
     vm.currentFilter = {};
     vm.currentPage = 1;
-    vm.pageSize = documents.limit;
+    vm.pageSize = tenantDocs.limit;
     //TODO: CHANGE TO TOTAL
-    vm.total = documents.limit;
+    vm.total = tenantDocs.limit;
 
     vm.onEditClicked = onEditClicked;
     vm.onFilterClicked = onFilterClicked;
@@ -101,11 +87,11 @@ function tenantViewCtrl($state, $stateParams, tenant, documents, documentsApi, d
 
         function success(response) {
             $state.go("workspace.tenants-list", {}, {reload : true});
-            hoaToast.showSimpleToast("Deleted successful")
+            toastProvider.showSimpleToast("Deleted successful")
         }
 
         function error() {
-            hoaToast.showSimpleToast("An error occurred while deleting");
+            toastProvider.showSimpleToast("An error occurred while deleting");
         }
 
         function okayFn() {
@@ -114,7 +100,7 @@ function tenantViewCtrl($state, $stateParams, tenant, documents, documentsApi, d
 
         function cancelFn() {}
 
-        hoaDialog.getConfirmDialog(okayFn, cancelFn, message, title);
+        dialogProvider.getConfirmDialog(okayFn, cancelFn, message, title);
     }
 
     function onDocumentItemClicked(item) {
@@ -126,7 +112,7 @@ function tenantViewCtrl($state, $stateParams, tenant, documents, documentsApi, d
         else {
             //Check if clicked document is assigned
             if (item._links.hasOwnProperty("hoa:assign")) {
-                documentsApi.assignDocument(item._links["hoa:assign"].href).then(viewDocument, error);
+                documentsSrvc.assignDocument(item._links["hoa:assign"].href).then(viewDocument, error);
             }
             else if (userDetails.userId == item.assigned.userId) {
                 viewDocument();
@@ -149,13 +135,13 @@ function tenantViewCtrl($state, $stateParams, tenant, documents, documentsApi, d
         var title = "Sorry";
         var message = "This document is being edited by another user.";
         if(item.assigned == null) {
-            documentsApi.assignDocument(item._links["hoa:assign"].href).then(viewDocument, error);
+            documentsSrvc.assignDocument(item._links["hoa:assign"].href).then(viewDocument, error);
         }
         else if (userDetails.userId == item.assigned.userId) {
             viewDocument();
         }
         else if (item._links.hasOwnProperty("hoa:assign")) {
-            documentsApi.assignDocument(item._links["hoa:assign"].href).then(viewDocument, error);
+            documentsSrvc.assignDocument(item._links["hoa:assign"].href).then(viewDocument, error);
         }
         else {
             error();
@@ -173,7 +159,7 @@ function tenantViewCtrl($state, $stateParams, tenant, documents, documentsApi, d
     function onFilterClicked(filter) {
         vm.currentFilter = filter;
         vm.documents = [];
-        documentsApi.getDocumentList(filter.params)
+        documentsSrvc.getDocumentList(filter.params)
             .then(success);
     }
 
@@ -186,7 +172,7 @@ function tenantViewCtrl($state, $stateParams, tenant, documents, documentsApi, d
         }
         vm.documents = [];
         vm.currentPage = page + 1;
-        documentsApi.getDocumentList(changedParams).then(success);
+        documentsSrvc.getDocumentList(changedParams).then(success);
 
     }
 
@@ -196,3 +182,21 @@ function tenantViewCtrl($state, $stateParams, tenant, documents, documentsApi, d
 
     //endregion
 }
+
+tenantViewCtrl.$inject = [
+    "$state",
+    "$stateParams",
+    //API
+    "documentsApi",
+    "tenantsApi",
+    //SERVICES
+    "documentsHelper",
+    "hoaDialogService",
+    "hoaToastService",
+    "REPORTS_ROUTES",
+    //UTILS
+    //RESOLVE
+    "tenantDocs",
+    "viewTenantModel",
+    "userDetails"
+];

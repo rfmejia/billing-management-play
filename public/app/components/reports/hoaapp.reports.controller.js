@@ -3,19 +3,20 @@
  */
 angular
     .module("app.reports")
-    .controller("reportsCtrl", controller);
+    .controller("reportsController", controller);
 
-controller.$inject = ["documentsHelper", "documentsApi", "documentsList", "reportResponse", "$state", "REPORTS_ROUTES", "nvl-dateutils", "$stateParams", 'hoaDialogService', 'userDetails'];
-function controller(docsHelper, docsSrvc, documents, reportResponse, $state, reportsRoutes, dateUtils, $stateParams, dialogProvider, userDetails) {
+
+function controller($state, $stateParams, docsSrvc, docsHelper, reportsRoutes, dialogProvider, dateUtils, documentsList, reportResponse, userDetails) {
     var vm = this;
+    console.log(documentsList);
     vm.pageTitle = $state.current.data.title;
-    vm.documents = documents._embedded.item;
+    vm.documents = documentsList._embedded.item;
     vm.isPaid = null;
     vm.selectedFilter = null;
     vm.report = reportResponse;
     vm.pageSize = $stateParams.limit;
     vm.count = 10;
-    vm.total = documents.count;
+    vm.total = documentsList.count;
     vm.currentPage = 1;
     vm.currentParams = {};
 
@@ -131,3 +132,19 @@ function controller(docsHelper, docsSrvc, documents, reportResponse, $state, rep
     //endregion
 
 }
+controller.$inject = [
+    "$state",
+    "$stateParams",
+    //API
+    "documentsApi",
+    //SERVICES
+    "documentsHelper",
+    "REPORTS_ROUTES",
+    'hoaDialogService',
+    //UTILS
+    "nvl-dateutils",
+    //RESOLVE
+    "documentsList",
+    "reportResponse",
+    'userDetails'
+];

@@ -3,10 +3,9 @@
  */
 angular
     .module("app.reports")
-    .controller("reportUpdateCtrl", reportUpdateCtrl);
+    .controller("reportUpdateController", reportUpdateController);
 
-reportUpdateCtrl.$inject = ["documentsApi", "document", "REPORTS_ROUTES", "hoaToastService", 'hoaDialogService', "$location", "$anchorScroll", 'commentsHelper', "documentsHelper", "$state", "nvl-dateutils", "currentUser"];
-function reportUpdateCtrl(docsSrvc, document, reportsRoutes, toastProvider, dialogProvider, $location, $anchorScroll, commentsHelper, documentsHelper, $state, dateUtils, currentUser) {
+function reportUpdateController($location, $anchorScroll, $state, docsSrvc, reportsRoutes, toastProvider, dialogProvider,  commentsHelper, documentsHelper,  dateUtils, document, userDetails) {
     var vm = this;
     vm.payments = document.viewModel.amounts;
     vm.links = document.viewModel.links;
@@ -14,7 +13,7 @@ function reportUpdateCtrl(docsSrvc, document, reportsRoutes, toastProvider, dial
     vm.currentComment = "";
     vm.documentTitle = "";
     vm.assigned = document.viewModel.assigned;
-    vm.currentUser = currentUser;
+    vm.currentUser = userDetails;
     vm.isDisabled = false;
     var unassignLink = null;
     var amountPaid = document.viewModel.amountPaid;
@@ -112,3 +111,20 @@ function reportUpdateCtrl(docsSrvc, document, reportsRoutes, toastProvider, dial
     }
 
 }
+reportUpdateController.$inject = [
+    "$location",
+    "$anchorScroll",
+    "$state",
+    //API
+    "documentsApi",
+    //SERVICES
+    "REPORTS_ROUTES",
+    "hoaToastService",
+    'hoaDialogService',
+    'commentsHelper',
+    "documentsHelper",
+    //UTIL
+    "nvl-dateutils",
+    //RESOLVE
+    "document",
+    "userDetails"];

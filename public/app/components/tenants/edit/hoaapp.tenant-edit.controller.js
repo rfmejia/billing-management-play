@@ -1,51 +1,42 @@
-var tenant = angular.module("app.tenants");
+angular
+    .module("app.tenants")
+    .controller("tenantEditController", tenantEditCtrl);
 
-tenant.controller("controller.tenantedit", ["$scope", "$state", "tenant", "tenantsService",
-	function($scope, $state, tenant, tenantsService){
-        $scope.tenant = angular.copy(tenant.details);
-        $scope.editedData = angular.copy(tenant.postTemplate);
-        $scope.tenant = {};
-        console.log($scope.tenant);
+function tenantEditCtrl($state, $stateParams, tenantsSrvc, toastSrvc, tenantHelper, tenantModel) {
+    var vm = this;
+    vm.tenantTemplate = tenantModel.viewModel;
+    vm.pageTitle = $state.current.data.title;
+    vm.onEditTenantClicked = onEditTenantClicked;
+    vm.des = "";
 
-        $scope.resetData = function() {
-            $scope.tenant = angular.copy(tenant.details);
-            $scope.editedData = angular.copy(tenant.postTemplate);
+    //region FUNCTION_CALL
+    function onEditTenantClicked() {
+        var postData = tenantHelper.formatPostData(tenantModel);
+        console.log(postData);
+        tenantsSrvc.editTenant($stateParams.id, postData)
+            .then(success, error);
+    }
 
-            angular.forEach($scope.tenant,
-                function(detail){
-                    $scope.editedData[detail.name] = detail.value;
-                }
-            );
-            //put tradename first
-            for(var i = 0; i < $scope.tenant.length; i++) {
-                if($scope.tenant[i].name == "tradeName") {
-                    var temp = $scope.tenant[i];
-                    $scope.tenant.splice(i, 1);
-                    $scope.tenant.splice(0, 0, temp);
-                }
-            }
-        };
+    function success(response) {
+        toastSrvc.showSimpleToast("Tenant entry saved");
+        $state.go("workspace.tenants-list", {}, {reload : true});
+    }
 
-        $scope.onCancelClicked = function() {
-            $state.go("workspace.management.tenants.tenant-view", {"id" : tenant.id});
-        };
+    function error(response) {
+        toastSrvc.showSimpleToast("Sorry, tenant wasn't saved");
+    }
 
-        $scope.onSubmitClicked = function() {
-            tenantsService.editTenant(tenant.id, $scope.editedData).then(
-                function() {
-                    $state.go("workspace.management.tenants.tenant-view", {"id" : tenant.id}, {reload : true});
-                }
-            );
-
-        };;
-
-        $scope.onDeleteClicked = function() {
-            tenantsService.deleteTenant(tenant.id).then(
-                function() {
-                    $state.go("workspace.management.tenants", {}, {reload : true});
-                }
-            )
-        };
-
-        $scope.resetData();
-	}]);
+    //endregion
+}
+tenantEditCtrl.$inject = [
+    "$state",
+    "$stateParams",
+    //API
+    "tenantsApi",
+    //SERVICES
+    "hoaToastService",
+    "tenantHelper",
+    //UTILS
+    //RESOLVE
+    "editTenantModel"
+];

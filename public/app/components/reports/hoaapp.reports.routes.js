@@ -5,22 +5,18 @@ angular
     .module("app.reports")
     .config(config);
 
-config.$inject = ["$stateProvider", "REPORTS_ROUTES"];
 function config($stateProvider, reportsRoutes) {
     var reports = {
         url     : "reports?year&month&limit&offset",
         resolve : {
-            documentsHelper : getDocumentsHelper,
-            documentsApi    : getDocumentsService,
             documentsList   : unparsedDocumentsList,
-            userDetails     : getCurrentUser,
             unparsedReport  : getReport,
             reportResponse  : parseReport
         },
         views   : {
             "contentArea@workspace" : {
                 templateUrl : "app/components/reports/reports.html",
-                controller  : "reportsCtrl as ctrl"
+                controller  : "reportsController as ctrl"
             }
         },
         data    : {title : "Reports"}
@@ -30,13 +26,12 @@ function config($stateProvider, reportsRoutes) {
         url     : "view/:id",
         resolve : {
             unparsedDocument : getDocument,
-            document         : parseDocument,
-            currentUser      : getCurrentUser
+            document         : parseDocument
         },
         views   : {
             "contentArea@workspace" : {
                 templateUrl : "app/components/reports/report-view.html",
-                controller  : "reportUpdateCtrl as updateCtrl"
+                controller  : "reportUpdateController as updateCtrl"
             }
         }
     };
@@ -45,20 +40,10 @@ function config($stateProvider, reportsRoutes) {
         .state(reportsRoutes.report, reports)
         .state(reportsRoutes.reportUpdate, reportUpdate);
 }
+config.$inject = ["$stateProvider", "REPORTS_ROUTES"];
 
 //region LIST
-getDocumentsHelper.$inject = ["documentsHelper"];
-function getDocumentsHelper(docsHelper) {
-    return docsHelper;
-}
-
-getDocumentsService.$inject = ["documentsApi"];
-function getDocumentsService(docsService) {
-    return docsService;
-}
-
-unparsedDocumentsList.$inject = ["documentsHelper", "documentsApi", "mailboxQueryParams", "$stateParams", "nvl-dateutils"];
-function unparsedDocumentsList(docsHelper, docsService, mailboxParams, $stateParams, dateUtils) {
+function unparsedDocumentsList($stateParams, docsHelper, docsSrvc, mailboxParams, dateUtils) {
     var queryParams;
     if (angular.equals({}, $stateParams)) {
         queryParams = docsHelper.getQueryParameters();
@@ -71,38 +56,36 @@ function unparsedDocumentsList(docsHelper, docsService, mailboxParams, $statePar
         queryParams = $stateParams;
     }
     queryParams.mailbox = mailboxParams.delivered;
-    return docsService.getDocumentList(queryParams);
+    console.log(queryParams);
+    return docsSrvc.getDocumentList(queryParams);
 }
+unparsedDocumentsList.$inject = ["$stateParams", "documentsHelper", "documentsApi", "mailboxQueryParams", "nvl-dateutils"];
 
-getReport.$inject = ["reports.service", "$stateParams", "reports.helper"];
-function getReport(reportsService, $stateParams, reportsHelper) {
+function getReport($stateParams, reportsService, reportsHelper) {
     var queryParams = $stateParams;
     if (angular.equals({}, queryParams)) {
         queryParams = reportsHelper.getQueryParams();
     }
     return reportsService.getReport(queryParams);
 }
+getReport.$inject = ["$stateParams", "reports.service", "reports.helper"];
 
-parseReport.$inject = ["unparsedReport", "reports.helper"];
 function parseReport(apiResponse, reportsHelper) {
     return reportsHelper.parseReports(apiResponse);
 }
+parseReport.$inject = ["unparsedReport", "reports.helper"];
 //endregion
 
 //region VIEW
-getDocument.$inject = ["documentsApi", "$stateParams"];
-function getDocument(docsSrvc, $stateParams) {
+function getDocument($stateParams, docsSrvc) {
     return docsSrvc.getDocument($stateParams.id);
 }
+getDocument.$inject = ["$stateParams", "documentsApi"];
 
-parseDocument.$inject = ["documentsHelper", "unparsedDocument"];
 function parseDocument(docsHelper, response) {
     return docsHelper.formatEditResponse(response);
 }
+parseDocument.$inject = ["documentsHelper", "unparsedDocument"];
 
-getCurrentUser.$inject = ['userApi'];
-function getCurrentUser(currentUser) {
-    return currentUser.getUserDetails();
-}
 //endregion
 
