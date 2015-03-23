@@ -1,11 +1,11 @@
 package controllers
 
 import com.nooovle._
-import com.nooovle.slick.models._
 import com.nooovle.slick.ConnectionFactory
+import com.nooovle.slick.models._
 import org.locker47.json.play._
-import play.api.libs.json._
 import play.api._
+import play.api.libs.json._
 import play.api.mvc.RequestHeader
 import scala.slick.driver.H2Driver.simple._
 import securesocial.core._
