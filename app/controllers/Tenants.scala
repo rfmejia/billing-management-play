@@ -134,7 +134,7 @@ class Tenants(override implicit val env: RuntimeEnvironment[User])
                     rentalPeriod = rentalPeriod,
                     basicRentalRate = basicRentalRate,
                     escalation = escalation)
-                Tenant.update(existingTenant)
+                Tenant.update(newTenant)
               }
               result match {
                 case Success(id) => NoContent
