@@ -21,8 +21,11 @@ class Reports(override implicit val env: RuntimeEnvironment[User])
       case (None, _) => listYears()
       case (Some(_year), None) => listMonths(_year)
       case (Some(_year), Some(_month)) =>
-        val docs = ConnectionFactory.connect withSession { implicit session =>
-          val query = for (doc <- documents if doc.year === _year && doc.month === _month) yield doc
+        val docs: List[Document] = ConnectionFactory.connect withSession { implicit session =>
+          val query = documents
+            .filter(d => d.year === _year)
+            .filter(d => d.month === _month)
+            .filter(d => d.mailbox inSetBind Mailbox.getSubboxes(Mailbox.delivered.name))
           query.list
         }
 
