@@ -26,13 +26,8 @@ function config($urlRouterProvider, $httpProvider, usSpinnerConfigProvider, $mdT
         $mdThemingProvider.definePalette('light', light);
         $mdThemingProvider
             .theme('default')
-            .primaryPalette('blue-grey', {
-                                'default' : '500',
-                                'hue-1'   : '100',
-                                'hue-2'   : '600',
-                                'hue-3'   : 'A100'
-                            })
-            .accentPalette('pink');
+            .primaryPalette('blue')
+            .accentPalette('light-green');
 
         $mdThemingProvider.theme('bills-dark', 'default')
             .primaryPalette('teal')
