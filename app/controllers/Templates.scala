@@ -11,8 +11,6 @@ import securesocial.core.RuntimeEnvironment
 class Templates(override implicit val env: RuntimeEnvironment[User])
   extends ApiController[User] {
 
-  val logger = Logger("controllers.Templates")
-
   val templates: Seq[JsObject] = Seq(Templates.invoice1)
 
   def show(docType: String) = SecuredAction { implicit request =>
@@ -101,7 +99,7 @@ object Templates {
           json match {
             case obj: JsObject => obj
             case _ =>
-              Logger.warn("File '${filename}' is not a valid JSON root object")
+              Logger.warn(s"File '${filename}' is not a valid JSON root object")
               Json.obj()
           }
         }
