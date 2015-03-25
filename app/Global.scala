@@ -39,7 +39,7 @@ object Global extends WithFilters(CorsFilter, new GzipFilter()) with GlobalSetti
   // TODO: Add an HTML 500 page in addition to the JSON response
   override def onError(request: RequestHeader, ex: Throwable) =
     Future.successful {
-      logger.warn("sError on request ${request.toString}", ex)
+      logger.warn(s"Error on request ${request.toString}", ex)
       InternalServerError {
         val obj = HalJsObject.create(request.uri)
           .withCurie("hoa", controllers.Application.defaultCurie(request))
