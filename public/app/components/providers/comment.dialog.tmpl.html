@@ -1,18 +1,13 @@
 <md-dialog>
-    <md-toolbar>
-        <div class="md-toolbar-tools">
-            <h6>{{dialog.message | uppercase}} <span class="text-accented">{{dialog.box | uppercase}}</span></h6>
-        </div>
-    </md-toolbar>
     <md-content>
         <form name="comment">
+            <h3>Any message?</h3>
             <md-input-container>
-                <label>Attach comment</label> <textarea name="text"
+                <label>Message</label> <textarea name="text"
                                                         ng-model="dialog.comment"
                                                         cols="60"
                                                         rows="2"
                                                         md-maxlength="140"></textarea>
-
             </md-input-container>
 
             <div ng-messages="comment.text.$error">
@@ -20,12 +15,10 @@
             </div>
         </form>
     </md-content>
-    <div class="md-actions" layout="row">
-        <div flex>
-            <md-button class="pull-left no-uppercase" ng-click="dialog.cancel()">
-                Cancel
-            </md-button>
-        </div>
+    <div class="md-actions">
+        <md-button class="no-uppercase" ng-click="dialog.cancel()">
+            Cancel
+        </md-button>
         <md-button ng-disabled="comment.text.$invalid"
                    class="md-primary no-uppercase"
                    ng-click="dialog.send(dialog.comment)"

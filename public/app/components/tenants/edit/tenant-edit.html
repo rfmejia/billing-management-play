@@ -1,12 +1,15 @@
-<md-toolbar  md-theme="tenants" >
+<md-toolbar>
     <div class="md-toolbar-tools" layout="row" layout-align="start center">
         <button hide-gt-md class="menuBtn menuBtn-hamburger" toggle-side-nav>
             <span class="visually-hidden">Menu</span>
         </button>
         <h3 flex class="toolbar-title">{{editTenantCtrl.pageTitle}}</h3>
 
-        <md-button class="filter-button options no-uppercase" ng-disabled="myForm.$invalid" ng-click="editTenantCtrl.onEditTenantClicked()">
-            <span><i class="fa fa-floppy-o iconed-text"></i>Save tenant</span></md-button>
+        <md-button class="inverse-button options no-uppercase"
+                   ng-disabled="myForm.$invalid"
+                   ng-click="editTenantCtrl.onEditTenantClicked()">
+            <span><i class="fa fa-floppy-o iconed-text"></i>Save tenant</span>
+        </md-button>
     </div>
 
 </md-toolbar>

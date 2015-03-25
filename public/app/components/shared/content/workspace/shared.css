@@ -1,45 +1,5 @@
-.nav-sidebar ul {
-    list-style: none;
-}
 
-.nav-sidebar ul,
-.nav-sidebar li {
-    margin: 0;
-    padding: 0;
-}
 
-.nav-sidebar a.md-button {
-    display: block;
-}
-
-.nav-sidebar .md-button {
-    border-radius: 0;
-    cursor: pointer;
-    font-weight: 400;
-    line-height: 40px;
-    margin: 0;
-    width: 100% !important;
-    max-height: 40px;
-    overflow: hidden;
-    padding: 0 16px;
-    text-align: left;
-    text-decoration: none;
-    white-space: normal;
-    text-transform: none;
-}
-
-.nav-sidebar-heading {
-    display: block;
-    font-size: inherit;
-    font-weight: 500;
-    line-height: 40px;
-    margin: 0 0 10px 0;
-    padding: 0 16px;
-    text-align: left;
-    width: 100%;
-    border-top: 1px solid rgba(182, 182, 182, .54);
-    color: rgba(114, 114, 114, .87)
-}
 
 md-toolbar.white-out {
     background: #FFFFFF;
@@ -50,24 +10,6 @@ md-toolbar.nav-sidebar {
     font-weight: 400;
 }
 
-#userName:not(i) {
-    color: rgba(114, 114, 114, .87);
-    font-weight: bold;
-    text-align: center;
-}
-
-.main-secton a.active,
-.main-secton a.active:hover,
-.main-secton a.active:focus {
-    color: #FF4081;
-    font-weight: 400;
-}
-
-.main-secton a,
-.main-secton a:hover,
-.main-secton a:focus {
-    color: rgba(33, 33, 33, .87);
-}
 
 #startWorkflow {
     text-align: center;

@@ -8,7 +8,6 @@ angular
 
 function controller($state, $stateParams, docsSrvc, docsHelper, reportsRoutes, dialogProvider, dateUtils, documentsList, reportResponse, userDetails) {
     var vm = this;
-    console.log(documentsList);
     vm.pageTitle = $state.current.data.title;
     vm.documents = documentsList._embedded.item;
     vm.isPaid = null;
@@ -19,6 +18,7 @@ function controller($state, $stateParams, docsSrvc, docsHelper, reportsRoutes, d
     vm.total = documentsList.count;
     vm.currentPage = 1;
     vm.currentParams = {};
+    var filters = [];
 
     //function mapping
     vm.onFilterClicked = onFilterClicked;
@@ -44,7 +44,7 @@ function controller($state, $stateParams, docsSrvc, docsHelper, reportsRoutes, d
         };
         vm.paidFilter = {
             title    : "Paid",
-            isActive : true,
+            isActive : false,
             params   : {
                 mailbox : "delivered",
                 isPaid  : true,
@@ -56,7 +56,7 @@ function controller($state, $stateParams, docsSrvc, docsHelper, reportsRoutes, d
         };
         vm.unpaidFilter = {
             title    : "Unpaid",
-            isActive : true,
+            isActive : false,
             params   : {
                 mailbox : "delivered",
                 isPaid  : false,
@@ -66,11 +66,16 @@ function controller($state, $stateParams, docsSrvc, docsHelper, reportsRoutes, d
                 limit   : vm.pageSize
             }
         };
+        filters = [vm.allFilter, vm.paidFilter, vm.unpaidFilter];
         vm.currentParams = vm.allFilter.params;
     }
 
     function onFilterClicked(filter) {
         vm.currentParams = filter.params;
+        angular.forEach(filters, function(value) {
+            value.isActive = (value.title === filter.title);
+        });
+
         refreshDocuments(vm.currentParams);
     }
 
@@ -87,6 +92,7 @@ function controller($state, $stateParams, docsSrvc, docsHelper, reportsRoutes, d
             .then(success);
         function success(response) {
             vm.documents = response._embedded.item;
+            vm.total = response.count;
         }
     }
 
@@ -104,6 +110,7 @@ function controller($state, $stateParams, docsSrvc, docsHelper, reportsRoutes, d
             viewDocument();
         }
         else if(item._links.hasOwnProperty("hoa:assign")) {
+
             docsSrvc.assignDocument(item._links["hoa:assign"].href).then(viewDocument, error);
         }
         else {
@@ -115,6 +122,7 @@ function controller($state, $stateParams, docsSrvc, docsHelper, reportsRoutes, d
         }
 
         function error(reason) {
+
             dialogProvider.getInformDialog(null,  title, message, "Okay");
         }
     }

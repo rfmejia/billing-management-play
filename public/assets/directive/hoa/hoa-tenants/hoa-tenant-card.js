@@ -11,11 +11,14 @@ function hoaTenantCard() {
         replace          : true,
         transclude       : false,
         scope            : {
-            tradeNameColor : '=',
-            tenant         : '=',
-            forBilling     : '=',
-            billDate       : '=',
-            format         : '='
+            tradeNameColor        : '=',
+            tenant                : '=',
+            forBilling            : '=',
+            billDate              : '=',
+            format                : '=',
+            isTenantControlsShown : '=',
+            onEditClicked         : '&',
+            onDeleteClicked       : '&'
         },
         templateUrl      : 'assets/directive/hoa/hoa-tenants/hoa-tenant-card.html',
         controller       : "tenantCardCtrl",

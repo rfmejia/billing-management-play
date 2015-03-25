@@ -83,7 +83,7 @@ md-toolbar.white-out {
 md-toolbar .toolbar-title {
     font-weight: 400;
     color: #FFFFFF;
-    margin-right: 16px;
+    margin-right: 32px;
 }
 
 button i {
@@ -126,10 +126,6 @@ button.list-filter.active span:hover,
 button.list-filter.active i:focus,
 button.list-filter.active span:focus {
     color: #00BCD4;
-}
-
-.documents-list-toolbar {
-    padding: 10px;
 }
 
 /*.documents-list-title {*/

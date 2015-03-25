@@ -66,8 +66,7 @@ function reportUpdateController($location, $anchorScroll, $state, docsSrvc, repo
             var parsedComments = commentsHelper.parseComments(comment, vm.comments);
             var postData = documentsHelper.formatPaidPostData(vm.payments, amountPaid, parsedComments);
             docsSrvc.editDocument(documentId, postData).then(showToast, error).then(function() {
-                docsSrvc.unassignDocument(unassignLink);
-                returnToReports();
+                docsSrvc.unassignDocument(unassignLink).then(returnToReports);
             });
         }
 

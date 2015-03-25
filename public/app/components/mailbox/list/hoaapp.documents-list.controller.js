@@ -48,19 +48,20 @@ function documentsListController($state, $stateParams, documentsApi, documentsHe
             "others" : false,
             "open"   : false
         };
-        if (vm.queryParameters.others) {
+        console.log(vm.queryParameters.others);
+        if (vm.queryParameters.others === true) {
             vm.tabState.mine = false;
             vm.tabState.others = true;
             vm.tabState.open = false;
             vm.tabTitle = "Assigned to others";
         }
-        else if (vm.queryParameters.isAssigned && vm.queryParameters.assigned) {
+        else if (vm.queryParameters.others === false) {
             vm.tabState.mine = true;
             vm.tabState.others = false;
             vm.tabState.open = false;
             vm.tabTitle = "Assigned to me";
         }
-        else if (!vm.queryParameters.isAssigned && vm.queryParameters.assigned == undefined) {
+        else if (vm.queryParameters.others == null) {
             vm.tabState.mine = false;
             vm.tabState.others = false;
             vm.tabState.open = true;

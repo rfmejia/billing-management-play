@@ -26,37 +26,13 @@ function config($urlRouterProvider, $httpProvider, usSpinnerConfigProvider, $mdT
         $mdThemingProvider.definePalette('light', light);
         $mdThemingProvider
             .theme('default')
-            .primaryPalette('blue')
-            .accentPalette('light-green');
+            .primaryPalette('cyan')
+            .accentPalette('purple');
 
         $mdThemingProvider.theme('bills-dark', 'default')
             .primaryPalette('teal')
             .accentPalette('pink');
 
-
-
-        $mdThemingProvider.theme('list', 'default')
-            .primaryPalette('blue')
-            .accentPalette('pink', {
-                               'default' : 'A100'
-                           });
-
-        $mdThemingProvider.theme('toolbars', 'default')
-            .primaryPalette('blue-grey');
-
-        $mdThemingProvider.theme('tenants', 'default')
-            .primaryPalette('light-green');
-
-        $mdThemingProvider.theme('docs-view', 'default')
-            .primaryPalette('red')
-            .accentPalette('pink');
-
-        $mdThemingProvider.theme('docs-view-inverse', 'default')
-            .primaryPalette('red')
-            .dark();
-
-        $mdThemingProvider.theme('reports', 'default')
-            .primaryPalette('purple');
     }
 
     function prepareSpinner() {

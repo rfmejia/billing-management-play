@@ -3,8 +3,7 @@
             ng-if="hoaItemsCtrl.profile == 'hoa:document'"
             on-click="hoaItemsCtrl.onItemClick(item)"
             on-update-clicked="hoaItemsCtrl.onItemUpdateClicked(item)"
-            document="hoaItemsCtrl.item"
-            theme="{{hoaItemsCtrl.theme}}">
+            document="hoaItemsCtrl.item">
     </hoa-documents>
 
     <hoa-tenant ng-if="hoaItemsCtrl.profile == 'hoa:tenant'"

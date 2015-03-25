@@ -1,49 +1,106 @@
-<md-toolbar md-theme="tenants" ng-include="'app/components/tenants/view/partials-tenant-view-toolbar.html'">
+<md-toolbar ng-include="'app/components/tenants/view/partials-tenant-view-toolbar.html'">
 </md-toolbar>
 
-<md-content flex class="md-padding tenant-view">
-    <hoa-tenant-card tenant="viewCtrl.tenant"
-                     for-billing="false"
-                     format="YYYY-MMMM"
-                     trade-name-color="viewCtrl.tradeNameColor">
+<md-content flex class="main">
 
-    </hoa-tenant-card>
+    <div layout="column" class="max-width">
+        <hoa-tenant-card tenant="viewCtrl.tenant"
+                         for-billing="false"
+                         format="YYYY-MMMM"
+                         is-tenant-controls-shown="true"
+                         on-edit-clicked="viewCtrl.onEditClicked()"
+                         on-delete-clicked="viewCtrl.onDeleteClicked()">
 
-    <md-whiteframe layout="column" class="md-whiteframe-z1 cards-margin">
-        <div>
-            <md-toolbar md-theme="tenants" class="tenant-docs white-out">
-                <div class="md-toolbar-tools" layout="row" layout-align="start center">
-                    <h5 flex ng-style="{color: '#689F38'}">Tenant documents</h5>
-                    <md-button data-toggle="dropdown"
-                               class="button-white options no-uppercase md-default">
-                        <span><i class="fa fa-filter iconed-text"></i>Filters</span>
-                    </md-button>
-                    <ul class="dropdown-menu" role="menu">
-                        <li ng-repeat="filter in viewCtrl.filters">
-                            <a class="md-button button-white no-uppercase" ng-click="viewCtrl.onFilterClicked(filter)">
-                                {{filter.title}}
-                            </a>
-                        </li>
-                    </ul>
+        </hoa-tenant-card>
+
+        <div hide-gt-md layout="column" flex>
+            <md-whiteframe layout="column" class="md-whiteframe-z1 unpadded">
+                <md-toolbar class="tenant-docs white-out">
+                    <div class="md-toolbar-tools content" layout="row" layout-align="start center">
+                        <h3 class="accented" flex>Tenant documents</h3>
+                        <section hide-gt-md layout="row" layout-align="end center">
+                            <md-button ng-repeat="filter in viewCtrl.filters"
+                                       class="inverse-button icon-button"
+                                       ng-class="{true: 'active', false:''}[filter.isActive]"
+                                       ng-click="viewCtrl.onFilterClicked(filter)"
+                                    remove-focus="">
+                                <i class="fa"
+                                   ng-class="filter.icon"
+                                        ></i>
+                                <md-tooltip md-delay="400">{{filter.title}}</md-tooltip>
+                            </md-button>
+                        </section>
+                    </div>
+                </md-toolbar>
+                <md-list ng-if="viewCtrl.total > 0">
+                    <hoa-embedded-items
+                            layout="row" ng-repeat="document in viewCtrl.documents"
+                            theme="list"
+                            item="document"
+                            on-click="viewCtrl.onDocumentItemClicked(item)"
+                            on-update-clicked="viewCtrl.onUpdateItemClicked(item)"></hoa-embedded-items>
+                </md-list>
+                <div ng-if="viewCtrl.total < 1" class="no-items" layout="column" layout-align="center center">
+                    <h2>0 invoice found</h2>
                 </div>
-            </md-toolbar>
+                <section ng-if="viewCtrl.total > viewCtrl.pageSize">
+                    <div layout="row"
+                         layout-align="center center"
+                         paging
+                         paging-action="viewCtrl.onChangePageClicked(page)"
+                         page="viewCtrl.currentPage"
+                         page-size="viewCtrl.pageSize"
+                         total="viewCtrl.total"></div>
+                </section>
+            </md-whiteframe>
         </div>
-        <md-list md-theme="tenants">
-            <hoa-embedded-items
-                    layout="row" ng-repeat="document in viewCtrl.documents"
-                    theme="list"
-                    item="document"
-                    on-click="viewCtrl.onDocumentItemClicked(item)"
-                    on-update-clicked="viewCtrl.onUpdateItemClicked(item)"></hoa-embedded-items>
-        </md-list>
-        <section ng-if="viewCtrl.total > viewCtrl.pageSize">
-            <div layout="row"
-                 layout-align="center center"
-                 paging
-                 paging-action="viewCtrl.onChangePageClicked(page)"
-                 page="viewCtrl.currentPage"
-                 page-size="viewCtrl.pageSize"
-                 total="viewCtrl.total"></div>
-        </section>
-    </md-whiteframe>
+
+        <div hide-md show-gt-md layout="row" flex>
+            <div layout="column" flex>
+                <md-whiteframe layout="column" class="md-whiteframe-z1 unpadded">
+                    <md-toolbar class="tenant-docs white-out">
+                        <div class="md-toolbar-tools content" layout="row" layout-align="start center">
+                            <h3 class="accented" flex>Tenant documents</h3>
+                        </div>
+                    </md-toolbar>
+                    <md-list ng-if="viewCtrl.total > 0">
+                        <hoa-embedded-items
+                                layout="row" ng-repeat="document in viewCtrl.documents"
+                                theme="list"
+                                item="document"
+                                on-click="viewCtrl.onDocumentItemClicked(item)"
+                                on-update-clicked="viewCtrl.onUpdateItemClicked(item)"></hoa-embedded-items>
+                    </md-list>
+                    <div ng-if="viewCtrl.total < 1" class="no-items" layout="column" layout-align="center center">
+                        <h2>0 invoice found</h2>
+                    </div>
+                    <section ng-if="viewCtrl.total > viewCtrl.pageSize">
+                        <div layout="row"
+                             layout-align="center center"
+                             paging
+                             paging-action="viewCtrl.onChangePageClicked(page)"
+                             page="viewCtrl.currentPage"
+                             page-size="viewCtrl.pageSize"
+                             total="viewCtrl.total"></div>
+                    </section>
+                </md-whiteframe>
+            </div>
+            <div flex="20" class="side-filters">
+                <md-whiteframe class="md-whiteframe-z1 unpadded" layout="column">
+                    <md-toolbar class="greyed">
+                        <div class="md-toolbar-tools" layout="row" layout-align="center center">
+                            <h3 class="title">Filter</h3>
+                        </div>
+                    </md-toolbar>
+                    <md-button class="options no-uppercase"
+                               remove-focus
+                               ng-repeat="filter in viewCtrl.filters"
+                               ng-class="{true: 'active', false:''}[filter.isActive]"
+                               ng-click="viewCtrl.onFilterClicked(filter)">
+                        {{filter.title}}
+                    </md-button>
+                </md-whiteframe>
+            </div>
+        </div>
+    </div>
 </md-content>

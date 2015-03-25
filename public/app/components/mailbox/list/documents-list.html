@@ -1,19 +1,52 @@
-<md-toolbar md-theme="list" ng-include="'app/components/mailbox/list/docs-list-toolbar.partials.html'">
+<md-toolbar ng-include="'app/components/mailbox/list/docs-list-toolbar.partials.html'">
 
 </md-toolbar>
-<md-content layout="column" flex class="md-padding md-default-theme docs-list">
-    <md-whiteframe class="documents-list md-whiteframe-z1">
-        <md-toolbar class="white-out documents-list-toolbar" layout="row" layout-align="start center">
-            <h5 class="documents-list-title">{{docsList.tabTitle}}</h5>
-        </md-toolbar>
-        <md-content md-theme="list" >
-            <div>
+<md-content flex class="main">
+    <div hide-gt-md layout="column" class="max-width">
+        <md-whiteframe class="documents-list md-whiteframe-z1 unpadded">
+            <md-toolbar class="white-out" layout="row" layout-align="start center">
+                <div class="md-toolbar-tools content">
+                    <h3 flex class="accented">{{docsList.tabTitle}}</h3>
+                    <section>
+                        <span class="filter-header options"><i class="fa fa-filter iconed-text"></i>Filter</span>
+                        <md-button class="inverse-button icon-button"
+                                   remove-focus
+                                   ng-click="docsList.onFilterTabClicked('mine')"
+                                   ng-class="{true: 'active', false: ''}[docsList.tabState.mine]">
+                                <i class="fa fa-user iconed-text"></i>
+                                <md-tooltip md-delay="400">Mine</md-tooltip>
+                        </md-button>
+
+                        <md-button class="inverse-button icon-button"
+                                   remove-focus
+                                   ng-click="docsList.onFilterTabClicked('open')"
+                                   ng-class="{true: 'active', false:''}[docsList.tabState.open]">
+                            <i class="fa fa-chain-broken iconed-text"></i>
+                            <md-tooltip md-delay="400">Open</md-tooltip>
+                        </md-button>
+
+                        <md-button class="inverse-button icon-button"
+                                   ng-click="docsList.onFilterTabClicked('others')"
+                                   ng-class="{true: 'active', false:''}[docsList.tabState.others]">
+                            <i class="fa fa-group iconed-text"></i>
+                            <md-tooltip md-delay="400">Others</md-tooltip>
+                        </md-button>
+                    </section>
+                </div>
+            </md-toolbar>
+            <div ng-if="docsList.total > 0">
                 <md-list>
-                    <hoa-embedded-items layout="row" ng-repeat="document in docsList.documents" item="document" on-click="docsList.onDocumentItemClicked(item)">
+                    <hoa-embedded-items layout="row"
+                                        ng-repeat="document in docsList.documents"
+                                        item="document"
+                                        on-click="docsList.onDocumentItemClicked(item)">
                     </hoa-embedded-items>
                 </md-list>
             </div>
-            <section ng-if="docsList.total > docsList.pageSize">
+            <div ng-if="docsList.total < 1" class="no-items" layout="column" layout-align="center center">
+                <h2>0 invoice found</h2>
+            </div>
+            <div ng-if="docsList.total > docsList.pageSize">
                 <md-divider></md-divider>
                 <div layout="row"
                      layout-align="center center"
@@ -23,7 +56,69 @@
                      total="docsList.total"
                      paging-action="docsList.onChangePageClicked(page)">
                 </div>
-            </section>
-        </md-content>
-    </md-whiteframe>
+            </div>
+        </md-whiteframe>
+    </div>
+
+    <div hide-md show-gt-md layout="row" class="max-width">
+        <div layout="column" flex="80">
+            <md-whiteframe class="documents-list md-whiteframe-z1 unpadded">
+                <md-toolbar class="white-out" layout="row" layout-align="start center">
+                    <div class="md-toolbar-tools content">
+                        <h3 flex class="accented">{{docsList.tabTitle}}</h3>
+                    </div>
+                </md-toolbar>
+                <div ng-if="docsList.total > 0">
+                    <md-list>
+                        <hoa-embedded-items layout="row"
+                                            ng-repeat="document in docsList.documents"
+                                            item="document"
+                                            on-click="docsList.onDocumentItemClicked(item)">
+                        </hoa-embedded-items>
+                    </md-list>
+                </div>
+                <div ng-if="docsList.total < 1" class="no-items" layout="column" layout-align="center center">
+                    <h2>0 invoice found</h2>
+                </div>
+                <div ng-if="docsList.total > docsList.pageSize">
+                    <md-divider></md-divider>
+                    <div layout="row"
+                         layout-align="center center"
+                         paging
+                         page="docsList.currentPage"
+                         page-size="docsList.pageSize"
+                         total="docsList.total"
+                         paging-action="docsList.onChangePageClicked(page)">
+                    </div>
+                </div>
+            </md-whiteframe>
+        </div>
+
+        <div flex="20" class="side-filters">
+            <md-whiteframe class="md-whiteframe-z1 unpadded" layout="column">
+                <md-toolbar class="greyed">
+                    <div class="md-toolbar-tools" layout="row" layout-align="center center">
+                        <h3 class="title">Filter</h3>
+                    </div>
+                </md-toolbar>
+                <md-button class="options no-uppercase"
+                           ng-click="docsList.onFilterTabClicked('mine')"
+                           ng-class="{true: 'active', false: ''}[docsList.tabState.mine]">
+                    <span>Mine</span>
+                </md-button>
+
+                <md-button class="options no-uppercase remove-focus"
+                           ng-click="docsList.onFilterTabClicked('open')"
+                           ng-class="{true: 'active', false:''}[docsList.tabState.open]">
+                    <span>Open</span>
+                </md-button>
+
+                <md-button class="options no-uppercase remove-focus"
+                           ng-click="docsList.onFilterTabClicked('others')"
+                           ng-class="{true: 'active', false:''}[docsList.tabState.others]">
+                    <span>Others</span>
+                </md-button>
+            </md-whiteframe>
+        </div>
+    </div>
 </md-content>

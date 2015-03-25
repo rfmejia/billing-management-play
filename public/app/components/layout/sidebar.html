@@ -1,8 +1,8 @@
 <div class="nav-sidebar" flex>
-    <md-toolbar class="white-out">
+    <md-toolbar class="md-hue-2">
         <div layout="row" layout-align="center center" class="md-toolbar-tools userName">
             <div flex>
-                <h4 id="userName"><i class="fa fa-user iconed-text"></i>{{sidebar.fullName}}</h4>
+                <h5 id="userName"><i class="fa fa-user iconed-text"></i>{{sidebar.fullName}}</h5>
             </div>
         </div>
     </md-toolbar>
@@ -10,11 +10,12 @@
     <div flex>
         <div layout="row" layout-align="center center">
             <md-button flex
+                       class="dark-button"
                        id="startWorkflow"
                        remove-focus
                        ng-click='sidebar.onCreateDocumentClicked()'
                        aria-label="Profile">
-                <span><i class="fa fa-pencil-square-o"></i>Start workflow</span>
+                <span><i class="fa fa-pencil-square-o"></i>Create invoice</span>
             </md-button>
         </div>
 
@@ -38,7 +39,7 @@
         </section>
     </div>
 </div>
-<md-button class="md-warn" ng-click="sidebar.onLogOutClicked()">
+<md-button class="dark-button no-uppercase" ng-click="sidebar.onLogOutClicked()">
     <span><i class="fa fa-sign-out iconed-text"></i>Logout</span>
 </md-button>
 

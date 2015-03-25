@@ -3,8 +3,15 @@
         <span class="visually-hidden">Menu</span>
     </button>
     <h3 flex class="toolbar-title">{{drafts.mailbox | tokenizedCamel}}</h3>
-    <div >
-        <md-button ng-if="!drafts.isDisabled" class="toolbar-text no-uppercase" md-theme="toolbars" ng-show="!drafts.isDisabled" remove-focus ng-click="drafts.onUnlinkClicked()"><span><i class="fa fa-chain-broken iconed-text"></i>Unlock</span></md-button>
+
+    <div>
+        <md-button ng-if="!drafts.isDisabled"
+                   class="toolbar-text no-uppercase"
+                   ng-show="!drafts.isDisabled"
+                   remove-focus
+                   ng-click="drafts.onUnlinkClicked()">
+            <span><i class="fa fa-chain-broken iconed-text"></i>Unlock</span>
+        </md-button>
         <div ng-if="drafts.isDisabled">
             <span class="toolbar-text"><i class="iconed-text fa fa-lock"></i>Assigned to {{drafts.assigned.fullName}}</span>
         </div>

@@ -133,11 +133,14 @@ createGetDocumentTemplate.$inject = ["documentsHelper", "createDocsData"];
 function listGetRequestedParams($stateParams, docsHelper) {
     var queryParams = docsHelper.getQueryParameters();
     for (var key in $stateParams) {
-        if ($stateParams[key] == "true") {
+        if ($stateParams[key] === "true") {
             queryParams[key] = true;
         }
-        else if ($stateParams[key] == "false") {
+        else if ($stateParams[key] === "false") {
             queryParams[key] = false;
+        }
+        else if ($stateParams[key] == undefined || $stateParams[key] == null) {
+            queryParams[key] = null;
         }
         else {
             queryParams[key] = $stateParams[key];
@@ -153,7 +156,6 @@ function listGetDocuments($q, docsSrvc, requestedParams) {
     var success = function(response) {
         deferred.resolve(response);
     };
-
     var error = function(error) {
         //TODO: show error
     };

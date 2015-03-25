@@ -3,48 +3,54 @@
         <button hide-gt-md class="menuBtn menuBtn-hamburger" toggle-side-nav>
             <span class="visually-hidden">Menu</span>
         </button>
-        <h3 flex class="toolbar-title">Start workflow</h3>
+        <h3 flex class="toolbar-title">Create invoice</h3>
     </div>
 </md-toolbar>
-<md-content layout="column" flex class="md-padding create-workflow">
-    <md-card class="form-view">
-        <md-card-content>
-            <div class="workflow-info" layout="row" layout-align="space-between center">
-                <div flex>
-                    <p class="vertical-align" ng-show="!documentCreate.isDocumentReady()">
-                        Please select a tenant and a billing period.
-                    </p>
+<md-content layout="column" flex class="main">
+    <div class="max-width">
+        <md-card class="form-view">
+            <md-card-content>
+                <div class="workflow-info" layout="row" layout-align="space-between center">
 
-                    <p class="vertical-align" ng-show="documentCreate.isDocumentReady()">
-                        Workflow for <span class="text-accented"> {{documentCreate.selectedTenant.tradeName}} </span> on
-                        <span class="text-accented"> {{documentCreate.billingDate | momentString:documentCreate.format}} </span>
-                    </p>
+                    <div flex>
+                        <p class="vertical-align" ng-show="!documentCreate.isDocumentReady()">
+                            Please select a tenant and a billing period.
+                        </p>
+
+                        <p class="vertical-align" ng-show="documentCreate.isDocumentReady()">
+                            Workflow for
+                            <span class="text-accented"> {{documentCreate.selectedTenant.tradeName}} </span>
+                            on
+                            <span class="text-accented"> {{documentCreate.billingDate | momentString:documentCreate.format}} </span>
+                        </p>
+                    </div>
+                    <div layout="row" layout-align="end center">
+                        <md-button remove-focus
+                                   class="no-uppercase button-white"
+                                   ng-click="documentCreate.onCreateDocumentClicked()"
+                                   ng-hide="!documentCreate.isDocumentReady()">
+                            <span><i class="fa fa-file-text iconed-text"></i>Start workflow</span>
+                        </md-button>
+                    </div>
+
                 </div>
-                <div layout="row" layout-align="end center">
-                    <md-button remove-focus
-                               class="no-uppercase button-white"
-                               ng-click="documentCreate.onCreateDocumentClicked()"
-                               ng-hide="!documentCreate.isDocumentReady()">
-                        <span><i class="fa fa-file-text iconed-text"></i>Start workflow</span>
-                    </md-button>
+                <div flex>
+                    <md-autocomplete
+                            flex
+                            md-selected-item="documentCreate.selectedTenant"
+                            md-search-text="documentCreate.searchText"
+                            md-items="tenant in documentCreate.getMatches(documentCreate.searchText)"
+                            md-item-text="tenant.tradeName"
+                            placeholder="Search for tenant">
+                        <span md-highlight-text="documentCreate.searchText">{{tenant.tradeName}}</span>
+                    </md-autocomplete>
+                    <h6 class="text-muted text-center">Select billing period</h6>
+                    <datetimepicker class="center-block"
+                                    data-ng-model="documentCreate.billingDate"
+                                    data-datetimepicker-config="{startView: 'month', minView:'month'}">
+                    </datetimepicker>
                 </div>
-            </div>
-            <div flex>
-                <md-autocomplete
-                        flex
-                        md-selected-item="documentCreate.selectedTenant"
-                        md-search-text="documentCreate.searchText"
-                        md-items="tenant in documentCreate.getMatches(documentCreate.searchText)"
-                        md-item-text="tenant.tradeName"
-                        placeholder="Search for tenant">
-                    <span md-highlight-text="documentCreate.searchText">{{tenant.tradeName}}</span>
-                </md-autocomplete>
-                <h6 class="text-muted text-center">Select billing period</h6>
-                <datetimepicker class="center-block"
-                                data-ng-model="documentCreate.billingDate"
-                                data-datetimepicker-config="{startView: 'month', minView:'month'}">
-                </datetimepicker>
-            </div>
-        </md-card-content>
-    </md-card>
+            </md-card-content>
+        </md-card>
+    </div>
 </md-content>

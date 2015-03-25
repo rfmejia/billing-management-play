@@ -1,4 +1,4 @@
-<md-toolbar md-theme="docs-view">
+<md-toolbar>
     <div class="md-toolbar-tools" layout="row" layout-align="start center">
         <button hide-gt-md class="menuBtn menuBtn-hamburger" toggle-side-nav>
             <span class="visually-hidden">Menu</span>
@@ -9,7 +9,6 @@
                 <md-button
                         ng-if="!printCtrl.isDisabled"
                         class="toolbar-text no-uppercase"
-                        md-theme="toolbars"
                         remove-focus
                         ng-click="printCtrl.onSentClicked()">
                     <span><i class="fa fa-paper-plane iconed-text"></i>Mark as sent</span>
@@ -17,7 +16,6 @@
                 <md-button class="toolbar-text no-uppercase"
                            nvl-print
                            printable-id="printable"
-                           md-theme="toolbars"
                            remove-focus>
                     <span><i class="fa fa-print iconed-text"></i>Print</span>
                 </md-button>
@@ -25,8 +23,8 @@
         </section>
     </div>
 </md-toolbar>
-<md-content layout="column" flex class="md-padding md-default-theme">
-    <div>
+<md-content flex class="main">
+    <div layout="column" class="max-width">
         <nvl-print-card is-printable="true" document="printCtrl.document"></nvl-print-card>
     </div>
 

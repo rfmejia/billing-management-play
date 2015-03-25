@@ -1,0 +1,374 @@
+/*
+TOOLBARS
+*/
+/*toolbar titles*/
+.hoa-app .md-toolbar-tools:not(.content) {
+    padding-left: 38px;
+    padding-right: 38px;
+}
+
+/*alternative toolbar title*/
+md-toolbar.white-out {
+    background: #FFFFFF;
+    color: #727272;
+}
+
+md-toolbar.greyed {
+    background-color: #727272;
+    color: #FFFFFF;
+}
+
+/*
+MDCONTENT MAIN
+*/
+md-content.main {
+    padding-top: 16px;
+    padding-bottom: 16px;
+    padding-left: 32px;
+    padding-right: 32px;
+}
+
+
+/*
+BUTTONS ON TOOLBARS
+*/
+.md-button.inverse-button.md-default-theme.active:not([disabled]),
+.md-button.inverse-button.md-default-theme.active:not([disabled]):focus,
+.md-button.inverse-button.md-default-theme.active:not([disabled]):hover{
+    color: #00BCD4;
+}
+
+.md-button.inverse-button.md-default-theme:not([disabled]):focus,
+.md-button.inverse-button.md-default-theme:not([disabled]):hover{
+    background-color: rgba(255, 255, 255, .87);
+    color: #00BCD4;
+}
+
+.md-button.inverse-button.md-default-theme:not([disabled]){
+    color: #727272;
+}
+
+
+md-toolbar.white-out .accented {
+    color: #00BCD4;
+}
+
+/*
+WHITEFRAME
+*/
+md-whiteframe md-content.md-default-theme {
+    background-color: #ffffff;
+}
+
+md-whiteframe:not(.unpadded) {
+    padding-left: 16px;
+    padding-right:16px;
+}
+
+md-whiteframe.unpadded md-list .md-button {
+    padding-left: 16px;
+    padding-right: 16px;
+}
+
+md-card {
+    margin-left: 0px;
+    margin-right: 0px;
+}
+
+/*
+AUTOCOMPLETE
+*/
+md-input-container.full-width {
+    padding-bottom: 16px;
+}
+
+
+/*accordion*/
+.vAccordion--default v-accordion {
+    margin-top: 20px;
+    padding-left: 20px;
+}
+
+.vAccordion--default v-pane {
+    -webkit-transition: -webkit-transform 0.5s;
+    transition: transform 0.5s;
+}
+
+.vAccordion--default v-pane.is-expanded > v-pane-header {
+    border-bottom-color: #00BCD4;
+}
+
+.vAccordion--default v-pane.is-expanded > v-pane-header::after {
+    -webkit-transform: rotate(90deg);
+    -ms-transform: rotate(90deg);
+    transform: rotate(90deg);
+    opacity: 0;
+}
+
+.vAccordion--default v-pane.is-expanded > v-pane-header::before {
+    -webkit-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    transform: rotate(0deg);
+}
+
+.vAccordion--default v-pane.is-expanded > v-pane-content > div {
+    opacity: 1;
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+}
+
+.vAccordion--default v-pane.is-expanded-add > v-pane-content, .reports .vAccordion--default v-pane.is-expanded-remove > v-pane-content {
+    -webkit-transition: max-height 0.5s;
+    transition: max-height 0.5s;
+}
+
+.vAccordion--default v-pane-header {
+    padding: 5px 0;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #D8D8D8;
+    -webkit-transition: color 0.25s, border-color 0.5s;
+    transition: color 0.25s, border-color 0.5s;
+}
+
+.vAccordion--default v-pane-header::after,
+.vAccordion--default v-pane-header::before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 50%;
+    right: 0;
+    width: 10px;
+    height: 1px;
+    background-color: #00BCD4;
+    -webkit-transform-origin: 50% 50%;
+    -ms-transform-origin: 50% 50%;
+    transform-origin: 50% 50%;
+    -webkit-transition: all 0.25s;
+    transition: all 0.25s;
+}
+
+.vAccordion--default v-pane-header::before {
+    -webkit-transform: rotate(-90deg);
+    -ms-transform: rotate(-90deg);
+    transform: rotate(-90deg);
+}
+
+.vAccordion--default v-pane-header:hover,
+.vAccordion--default v-pane-header:focus {
+    color: #00BCD4;
+}
+
+.vAccordion--default v-pane-content > div {
+    padding-bottom: 20px;
+    will-change: transform, opacity;
+    opacity: 0;
+    -webkit-transform: translate3d(0, 30px, 0);
+    transform: translate3d(0, 30px, 0);
+    -webkit-transition: -webkit-transform 0.5s, opacity 0.5s;
+    transition: transform 0.5s, opacity 0.5s;
+}
+
+/*
+GENERIC FONT TYPES
+*/
+
+.hoa-out-title,
+.hoa-out-subtitle {
+    padding-left: 16px;
+    padding-right: 16px;
+}
+
+
+/*
+REPORTS
+*/
+.reports .entry-total * {
+    font-weight: 600;
+    color: #00BCD4;
+}
+
+/*
+Invoice
+*/
+
+.invoice-view .subtitle {
+    margin: 8px;
+    color: #727272
+}
+
+.invoice-view md-card {
+    margin-bottom: 32px;
+}
+
+.invoice-view .entry-title {
+
+}
+
+/*
+HOA-CARD
+*/
+
+.tenant-card .tenant-tradename {
+    color: #00BCD4;
+}
+
+.max-width {
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/*
+SIDENAV
+*/
+#userName:not(i) {
+    text-align: center;
+    font-weight: normal;
+}
+
+.main-secton a.active,
+.main-secton a.active:hover,
+.main-secton a.active:focus {
+    color: #00BCD4;
+    font-weight: 700;
+}
+
+
+.main-secton a:hover,
+.main-secton a:focus {
+    font-weight: 700;
+}
+
+.main-secton a,
+.main-secton a:hover,
+.main-secton a:focus {
+    color: rgba(255, 255, 255, .87);
+}
+
+.main-secton a {
+    color: rgba(255, 255, 255, .87);
+}
+
+md-sidenav {
+    background: #616161;
+}
+
+.nav-sidebar-heading {
+    display: block;
+    font-size: inherit;
+    font-weight: 500;
+    line-height: 40px;
+    margin: 0 0 10px 0;
+    padding: 0 16px;
+    text-align: left;
+    width: 100%;
+    border-top: 1px solid rgba(182, 182, 182, .54);
+    color: rgba(255, 255, 255, .87)
+}
+
+md-sidenav .md-button.dark-button.md-default-theme:not([disabled]){
+    color: rgba(255, 255, 255, .87);
+}
+
+md-sidenav .md-button.dark-button.md-default-theme:not([disabled]):hover{
+    color: rgba(255, 255, 255, .87);
+    font-weight: 700;
+}
+
+.nav-sidebar ul {
+    list-style: none;
+}
+
+.nav-sidebar ul,
+.nav-sidebar li {
+    margin: 0;
+    padding: 0;
+}
+
+.nav-sidebar a.md-button {
+    display: block;
+}
+
+.nav-sidebar .md-button {
+    border-radius: 0;
+    cursor: pointer;
+    font-weight: 400;
+    line-height: 40px;
+    margin: 0;
+    width: 100% !important;
+    max-height: 40px;
+    overflow: hidden;
+    padding: 0 16px;
+    text-align: left;
+    text-decoration: none;
+    white-space: normal;
+    text-transform: none;
+}
+
+/*
+SIDE FILTERS FOR LISTS
+*/
+.side-filters {
+    margin-left: 8px;
+}
+
+.side-filters .title {
+    font-weight: normal;
+}
+
+.side-filters .md-button.md-default-theme.active:not([disabled]),
+.side-filters .md-button.md-default-theme.active:not([disabled]):focus,
+.side-filters .md-button.md-default-theme.active:not([disabled]):hover{
+    color: #00BCD4;
+    font-weight: 700;
+}
+
+.side-filters .md-button.md-default-theme:not([disabled]):focus,
+.side-filters .md-button.md-default-theme:not([disabled]):hover{
+    background-color: rgba(255, 255, 255, .87);
+    color: #00BCD4;
+    font-weight: 700;
+}
+
+.md-button.inverse-button.md-default-theme:not([disabled]){
+    color: #727272;
+}
+
+/*
+HELPERS
+*/
+div.full-width {
+    width: 100%
+}
+
+/*
+ICON BUTTONS
+*/
+.md-button.icon-button {
+    width: 44px;
+    height: 44px;
+    font-size: 16px;
+    min-width: 0;
+}
+
+md-dialog md-content.md-default-theme {
+    background-color: white;
+}
+
+md-dialog {
+    min-height: 115px;
+    min-width: 400px;
+}
+
+/*
+LISTS
+*/
+
+.no-items {
+    min-height: 150px;
+}
+
+.no-items {
+    color: #B6B6B6;
+}
+

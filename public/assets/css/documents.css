@@ -28,16 +28,6 @@ md-whiteframe md-content {
     margin-right: 0;
 }
 
-
-.form-view md-whiteframe {
-    margin-left: 10px;
-    margin-right: 10px;
-}
-
-md-whiteframe .whiteframe-padded {
-    padding: 20px;
-}
-
 md-whiteframe .whiteframe-title,
 .bill-title{
     padding-left: 20px;
@@ -70,11 +60,6 @@ md-whiteframe .whiteframe-footer input{
 
 md-whiteframe.billframe {
     margin-bottom: 80px;
-}
-
-.form-view{
-    margin-left: 20px;
-    margin-right: 20px;
 }
 
 .md-button:not(.md-fab) {

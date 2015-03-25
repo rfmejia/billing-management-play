@@ -5,27 +5,6 @@
     border-right: 1px solid #FFFFFF;
 }
 
-button.filter-button.active i,
-button.filter-button.active span,
-button.filter-button.active i:hover,
-button.filter-button.active span:hover,
-button.filter-button.active i:focus,
-button.filter-button.active span:focus {
-    color: #ffffff;
-}
-
-button.filter-button i,
-button.filter-button span,
-button.filter-button i:hover,
-button.filter-button span:hover,
-button.filter-button i:focus,
-button.filter-button span:focus {
-    color: #FFFFFF;
-}
-
-.documents-list-title {
-    color: #2196F3;
-}
 
 .docs-list .pagination>.active>a,
 .docs-list .pagination>.active>span,

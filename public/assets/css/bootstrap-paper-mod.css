@@ -1090,15 +1090,15 @@ a {
     color: #2196f3;
     text-decoration: none;
 }
-a:hover,
-a:focus {
-    color:#FF4081;
-}
-a:focus {
-    outline: thin dotted;
-    outline: 5px auto -webkit-focus-ring-color;
-    outline-offset: -2px;
-}
+/*a:hover,*/
+/*a:focus {*/
+    /*color:#FF4081;*/
+/*}*/
+/*a:focus {*/
+    /*outline: thin dotted;*/
+    /*outline: 5px auto -webkit-focus-ring-color;*/
+    /*outline-offset: -2px;*/
+/*}*/
 figure {
     margin: 0;
 }
@@ -1203,15 +1203,15 @@ hr {
     /*line-height: 1;*/
     /*color: #bbbbbb;*/
 /*}*/
-h1,
-.h1,
-h2,
-.h2,
-h3,
-.h3 {
-    margin-top: 23px;
-    margin-bottom: 11.5px;
-}
+/*h1,*/
+/*.h1,*/
+/*h2,*/
+/*.h2,*/
+/*h3,*/
+/*.h3 {*/
+    /*margin-top: 23px;*/
+    /*margin-bottom: 11.5px;*/
+/*}*/
 h1 small,
 .h1 small,
 h2 small,
@@ -1226,15 +1226,15 @@ h3 .small,
 .h3 .small {
     font-size: 65%;
 }
-h4,
-.h4,
-h5,
-.h5,
-h6,
-.h6 {
-    margin-top: 11.5px;
-    margin-bottom: 11.5px;
-}
+/*h4,*/
+/*.h4,*/
+/*h5,*/
+/*.h5,*/
+/*h6,*/
+/*.h6 {*/
+    /*margin-top: 11.5px;*/
+    /*margin-bottom: 11.5px;*/
+/*}*/
 h4 small,
 .h4 small,
 h5 small,
@@ -2937,10 +2937,10 @@ select[multiple].form-group-lg .form-control {
 .form-horizontal .checkbox {
     min-height: 30px;
 }
-.form-horizontal .form-group {
-    margin-left: -15px;
-    margin-right: -15px;
-}
+/*.form-horizontal .form-group {*/
+    /*margin-left: -15px;*/
+    /*margin-right: -15px;*/
+/*}*/
 @media (min-width: 768px) {
     .form-horizontal .control-label {
         text-align: right;

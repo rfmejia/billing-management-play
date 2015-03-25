@@ -2,7 +2,7 @@ angular
     .module('app.tenants')
     .controller('tenantViewCtrl', tenantViewCtrl);
 
-function tenantViewCtrl($state, $stateParams, documentsSrvc, tenantsSrvc, docsHelper, dialogProvider, toastProvider, reportsRoutes, tenantDocs,  tenant, userDetails) {
+function tenantViewCtrl($state, $stateParams, documentsSrvc, tenantsSrvc, docsHelper, dialogProvider, toastProvider, reportsRoutes, tenantDocs, tenant, userDetails) {
     var vm = this;
     vm.tenant = tenant.viewModel;
     vm.documents = tenantDocs._embedded.item;
@@ -13,7 +13,8 @@ function tenantViewCtrl($state, $stateParams, documentsSrvc, tenantsSrvc, docsHe
     vm.currentPage = 1;
     vm.pageSize = tenantDocs.limit;
     //TODO: CHANGE TO TOTAL
-    vm.total = tenantDocs.limit;
+    vm.total = tenantDocs.total;
+    console.log(vm.total);
 
     vm.onEditClicked = onEditClicked;
     vm.onFilterClicked = onFilterClicked;
@@ -28,16 +29,20 @@ function tenantViewCtrl($state, $stateParams, documentsSrvc, tenantsSrvc, docsHe
     function activate() {
         vm.filters = [
             {
-                title  : "All",
-                params : {
+                title    : "All",
+                isActive : true,
+                icon     : "fa-files-o",
+                params   : {
                     forTenant  : $stateParams.id,
                     others     : null,
                     isAssigned : null
                 }
             },
             {
-                title  : "Pending",
-                params : {
+                title    : "Pending",
+                isActive : false,
+                icon     : "fa-spinner",
+                params   : {
                     forTenant  : $stateParams.id,
                     mailbox    : "pending",
                     others     : null,
@@ -45,8 +50,10 @@ function tenantViewCtrl($state, $stateParams, documentsSrvc, tenantsSrvc, docsHe
                 }
             },
             {
-                title  : "Delivered",
-                params : {
+                title    : "Delivered",
+                isActive : false,
+                icon     : "fa-paper-plane-o",
+                params   : {
                     forTenant  : $stateParams.id,
                     mailbox    : "delivered",
                     others     : null,
@@ -54,8 +61,10 @@ function tenantViewCtrl($state, $stateParams, documentsSrvc, tenantsSrvc, docsHe
                 }
             },
             {
-                title  : "Paid",
-                params : {
+                title    : "Paid",
+                isActive : false,
+                icon     : "fa-check-circle-o",
+                params   : {
                     forTenant  : $stateParams.id,
                     mailbox    : "delivered",
                     isPaid     : true,
@@ -64,8 +73,10 @@ function tenantViewCtrl($state, $stateParams, documentsSrvc, tenantsSrvc, docsHe
                 }
             },
             {
-                title  : "Unpaid",
-                params : {
+                title    : "Unpaid",
+                isActive : false,
+                icon     : "fa-times",
+                params   : {
                     forTenant  : $stateParams.id,
                     mailbox    : "delivered",
                     isPaid     : false,
@@ -134,7 +145,7 @@ function tenantViewCtrl($state, $stateParams, documentsSrvc, tenantsSrvc, docsHe
     function onUpdateItemClicked(item) {
         var title = "Sorry";
         var message = "This document is being edited by another user.";
-        if(item.assigned == null) {
+        if (item.assigned == null) {
             documentsSrvc.assignDocument(item._links["hoa:assign"].href).then(viewDocument, error);
         }
         else if (userDetails.userId == item.assigned.userId) {
@@ -157,6 +168,10 @@ function tenantViewCtrl($state, $stateParams, documentsSrvc, tenantsSrvc, docsHe
     }
 
     function onFilterClicked(filter) {
+        filter.isActive = true;
+        angular.forEach(vm.filters, function(value){
+            if(filter.title !== value.title) value.isActive = false;
+        });
         vm.currentFilter = filter;
         vm.documents = [];
         documentsSrvc.getDocumentList(filter.params)
@@ -178,6 +193,7 @@ function tenantViewCtrl($state, $stateParams, documentsSrvc, tenantsSrvc, docsHe
 
     function success(response) {
         vm.documents = response._embedded.item;
+        vm.total = response.total;
     }
 
     //endregion

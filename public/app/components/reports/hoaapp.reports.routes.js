@@ -56,7 +56,6 @@ function unparsedDocumentsList($stateParams, docsHelper, docsSrvc, mailboxParams
         queryParams = $stateParams;
     }
     queryParams.mailbox = mailboxParams.delivered;
-    console.log(queryParams);
     return docsSrvc.getDocumentList(queryParams);
 }
 unparsedDocumentsList.$inject = ["$stateParams", "documentsHelper", "documentsApi", "mailboxQueryParams", "nvl-dateutils"];

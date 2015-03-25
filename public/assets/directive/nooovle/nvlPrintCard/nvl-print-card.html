@@ -1,6 +1,6 @@
 <md-card class="nvl-print-card">
     <md-card-content id="printable" ng-class="{'added-padding': printCtrl.isPrintable}">
-        <div class="header" ng-if="printCtrl.isPrintable" layout="row" layout-align="start center">
+        <div class="header" ng-if="printCtrl.isPrintable" layout="row" layout-align="start start">
             <div flex="50" class="tenant-info">
                 <h4>Statement of Account for {{printCtrl.document.billDate | momentString:"MMMM-YYYY"}}</h4>
 
@@ -9,10 +9,10 @@
                 <div class="info-container"><span>{{printCtrl.document.tenant.address}}</span></div>
                 <div class="info-container"><span>{{printCtrl.document.tenant.contactNumber}}</span></div>
             </div>
-            <div flex="50" layout="column" layout-align="center end">
-                <h4 flex>Hobbies of Asia</h4>
-                <h6>{{printCtrl.currentDate}}</h6>
-                <h6>{{printCtrl.document.serialId}}</h6>
+            <div flex="50" layout="column" layout-align="start end">
+                <h4>Hobbies of Asia</h4>
+                <span>{{printCtrl.currentDate}}</span>
+                {{printCtrl.document.serialId}}
             </div>
             <br/>
         </div>
