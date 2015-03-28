@@ -5,7 +5,7 @@ angular
     .module('app.authentication')
     .factory('userApi', userApi);
 
-function userApi($window, $resource, $q, linksApi) {
+function userApi($window, $resource, $q, linksApi, User) {
     var userDetails = null;
 
     var service = {
@@ -30,8 +30,8 @@ function userApi($window, $resource, $q, linksApi) {
         var resource = $resource(url);
 
         function success(response) {
-            userDetails = response;
-            return deferred.resolve(response);
+            userDetails = User.build(response);
+            return deferred.resolve(userDetails);
         }
 
         function error(error) {
@@ -54,4 +54,4 @@ function userApi($window, $resource, $q, linksApi) {
 
     //endregion
 }
-userApi.$inject = ["$window", "$resource", "$q", "linksApi"];
+userApi.$inject = ["$window", "$resource", "$q", "linksApi", "User"];

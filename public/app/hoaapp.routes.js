@@ -44,7 +44,7 @@ function getApiLinks(linksApi) {
 }
 getApiLinks.$inject = ["linksApi"];
 
-function getWorkspaceData($q, mailboxApi, userApi, apiLinks) {
+function getWorkspaceData($q, mailboxApi, userApi) {
     var deferred = $q.defer();
 
     var mailboxPromise = mailboxApi.getLocal();
@@ -62,7 +62,7 @@ function getWorkspaceData($q, mailboxApi, userApi, apiLinks) {
 
     return deferred.promise;
 }
-getWorkspaceData.$inject = ["$q", "mailboxService", "userApi", "apiLinks"];
+getWorkspaceData.$inject = ["$q", "mailboxService", "userApi"];
 
 function getMailboxes(workspaceData) {
     return workspaceData[0];

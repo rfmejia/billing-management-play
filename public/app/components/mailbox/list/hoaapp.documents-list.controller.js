@@ -48,7 +48,6 @@ function documentsListController($state, $stateParams, documentsApi, documentsHe
             "others" : false,
             "open"   : false
         };
-        console.log(vm.queryParameters.others);
         if (vm.queryParameters.others === true) {
             vm.tabState.mine = false;
             vm.tabState.others = true;
