@@ -2,7 +2,7 @@ angular
     .module('app.tenants')
     .controller('tenantViewCtrl', tenantViewCtrl);
 
-function tenantViewCtrl($state, $stateParams, documentsSrvc, tenantsSrvc, docsHelper, dialogProvider, toastProvider, reportsRoutes, tenantDocs, tenant, userDetails) {
+function tenantViewCtrl($state, $stateParams, documentsSrvc, tenantsSrvc, docsHelper, dialogProvider, toastProvider, reportsRoutes, tenantDocs, tenant, userDetails, queryHelper) {
     var vm = this;
     vm.tenant = tenant.viewModel;
     vm.documents = tenantDocs._embedded.item;
@@ -14,7 +14,6 @@ function tenantViewCtrl($state, $stateParams, documentsSrvc, tenantsSrvc, docsHe
     vm.pageSize = tenantDocs.limit;
     //TODO: CHANGE TO TOTAL
     vm.total = tenantDocs.total;
-    console.log(vm.total);
 
     vm.onEditClicked = onEditClicked;
     vm.onFilterClicked = onFilterClicked;
@@ -27,65 +26,16 @@ function tenantViewCtrl($state, $stateParams, documentsSrvc, tenantsSrvc, docsHe
 
     //region FUNCTION_CALL
     function activate() {
-        vm.filters = [
-            {
-                title    : "All",
-                isActive : true,
-                icon     : "fa-files-o",
-                params   : {
-                    forTenant  : $stateParams.id,
-                    others     : null,
-                    isAssigned : null
-                }
-            },
-            {
-                title    : "Pending",
-                isActive : false,
-                icon     : "fa-spinner",
-                params   : {
-                    forTenant  : $stateParams.id,
-                    mailbox    : "pending",
-                    others     : null,
-                    isAssigned : null
-                }
-            },
-            {
-                title    : "Delivered",
-                isActive : false,
-                icon     : "fa-paper-plane-o",
-                params   : {
-                    forTenant  : $stateParams.id,
-                    mailbox    : "delivered",
-                    others     : null,
-                    isAssigned : null
-                }
-            },
-            {
-                title    : "Paid",
-                isActive : false,
-                icon     : "fa-check-circle-o",
-                params   : {
-                    forTenant  : $stateParams.id,
-                    mailbox    : "delivered",
-                    isPaid     : true,
-                    others     : null,
-                    isAssigned : null
-                }
-            },
-            {
-                title    : "Unpaid",
-                isActive : false,
-                icon     : "fa-times",
-                params   : {
-                    forTenant  : $stateParams.id,
-                    mailbox    : "delivered",
-                    isPaid     : false,
-                    others     : null,
-                    isAssigned : null
-                }
-            }
-        ];
-        vm.currentFilter = vm.filters[0];
+        resolveFilter();
+    }
+
+    function resolveFilter() {
+        vm.filters = queryHelper.getTenantsDocsFilters();
+        vm.currentFilter = queryHelper.getTenantsDocsFilterById($stateParams.filterId);
+
+        angular.forEach(vm.filters, function(filter) {
+            filter.isActive = (filter.id === vm.currentFilter.id);
+        })
     }
 
     function onEditClicked() {
@@ -168,14 +118,8 @@ function tenantViewCtrl($state, $stateParams, documentsSrvc, tenantsSrvc, docsHe
     }
 
     function onFilterClicked(filter) {
-        filter.isActive = true;
-        angular.forEach(vm.filters, function(value){
-            if(filter.title !== value.title) value.isActive = false;
-        });
-        vm.currentFilter = filter;
-        vm.documents = [];
-        documentsSrvc.getDocumentList(filter.params)
-            .then(success);
+        var params = queryHelper.getTenantDocs(0, $stateParams.id, filter.id);
+        $state.go($state.current, params, {reload: true});
     }
 
     function onChangePageClicked(page) {
@@ -214,5 +158,6 @@ tenantViewCtrl.$inject = [
     //RESOLVE
     "tenantDocs",
     "viewTenantModel",
-    "userDetails"
+    "userDetails",
+    "queryParams"
 ];

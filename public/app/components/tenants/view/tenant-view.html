@@ -17,7 +17,7 @@
             <md-whiteframe layout="column" class="md-whiteframe-z1 unpadded">
                 <md-toolbar class="tenant-docs white-out">
                     <div class="md-toolbar-tools content" layout="row" layout-align="start center">
-                        <h3 class="accented" flex>Tenant documents</h3>
+                        <h3 class="accented" flex>{[viewCtrl.currentFilter.toolbarTitle</h3>
                         <section hide-gt-md layout="row" layout-align="end center">
                             <md-button ng-repeat="filter in viewCtrl.filters"
                                        class="inverse-button icon-button"
@@ -60,13 +60,12 @@
                 <md-whiteframe layout="column" class="md-whiteframe-z1 unpadded">
                     <md-toolbar class="tenant-docs white-out">
                         <div class="md-toolbar-tools content" layout="row" layout-align="start center">
-                            <h3 class="accented" flex>Tenant documents</h3>
+                            <h3 class="accented" flex>{{viewCtrl.currentFilter.toolbarTitle}}</h3>
                         </div>
                     </md-toolbar>
                     <md-list ng-if="viewCtrl.total > 0">
                         <hoa-embedded-items
                                 layout="row" ng-repeat="document in viewCtrl.documents"
-                                theme="list"
                                 item="document"
                                 on-click="viewCtrl.onDocumentItemClicked(item)"
                                 on-update-clicked="viewCtrl.onUpdateItemClicked(item)"></hoa-embedded-items>

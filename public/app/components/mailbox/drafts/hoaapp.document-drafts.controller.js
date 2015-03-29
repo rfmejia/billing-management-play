@@ -5,7 +5,7 @@ angular
     .module('app.mailbox')
     .controller('draftsController', draftsCtrl);
 
-function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, commentsHelper, dialogProvider, toastsProvider,  dateUtils, docsResponse, userDetails, tenantsResponse ) {
+function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, commentsHelper, dialogProvider, toastsProvider, dateUtils, docsResponse, userDetails, tenantsResponse, queryHelper) {
     var vm = this;
     /** Previous months template **/
     vm.previous = docsResponse.viewModel.body.previous;
@@ -86,7 +86,8 @@ function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, 
     }
 
     function returnToList() {
-        $state.go("workspace.pending.drafts", documentsHelper.getQueryParameters(), {reload : true});
+        var params = queryHelper.getDocsListParams("drafts", 0, "all");
+        $state.go("workspace.pending.drafts", params, {reload : true})
     }
 
     /**
@@ -117,8 +118,8 @@ function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, 
         }
 
         var success = function(response) {
-            toastsProvider.showSimpleToast('Your document was sent for checking.');
-            $state.go("workspace.pending.drafts", documentsHelper.getQueryParameters(), {reload : true})
+            var params = queryHelper.getDocsListParams("drafts", 0, "all");
+            $state.go("workspace.pending.drafts", params, {reload : true})
         };
 
         var error = function(error) {};
@@ -149,7 +150,8 @@ function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, 
      */
     function onCancelClicked(billingForm) {
         if (billingForm.$pristine) {
-            $state.go("workspace.pending.drafts", documentsHelper.getQueryParameters(), {reload : true});
+            var params = queryHelper.getDocsListParams("drafts", 0, "all");
+            $state.go("workspace.pending.drafts", params, {reload : true})
         }
         else {
             openCancelModal();
@@ -163,7 +165,8 @@ function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, 
         var message = "Are you sure you want to exit?";
         var title = "Changes have not been saved";
         var okFxn = function(response) {
-            $state.go("workspace.pending.drafts", documentsHelper.getQueryParameters(), {reload : true});
+            var params = queryHelper.getDocsListParams("drafts", 0, "all");
+            $state.go("workspace.pending.drafts", params, {reload : true})
         };
 
         dialogProvider.getConfirmDialog(okFxn, null, message, title);
@@ -179,7 +182,8 @@ function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, 
             docsApi.deleteDocument(documentId)
                 .then(function(response) {
                           toastsProvider.showSimpleToast("Delete successful");
-                          $state.go("workspace.pending.drafts", documentsHelper.getQueryParameters(), {reload : true});
+                          var params = queryHelper.getDocsListParams("drafts", 0, "all");
+                          $state.go("workspace.pending.drafts", params, {reload : true})
                       }, function(error) {
                           toastsProvider.showSimpleToast("We couldn't delete your document");
                       });
@@ -245,5 +249,6 @@ draftsCtrl.$inject = [
     //RESOLVE
     "documentResponse",
     "userDetails",
-    "tenantResponse"
+    "tenantResponse",
+    "queryParams"
 ];

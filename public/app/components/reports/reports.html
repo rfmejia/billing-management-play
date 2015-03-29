@@ -13,10 +13,10 @@
             <md-card-content>
                 <h3 class="card-title">Summary for {{ctrl.report.date.title}}<span class="dropdown">
                     <md-button class="dropdown-toggle no-uppercase icon-button md-primary"
-                       id="reportMonth"
-                       role="button"
-                       data-toggle="dropdown"
-                       data-target="#">
+                               id="reportMonth"
+                               role="button"
+                               data-toggle="dropdown"
+                               data-target="#">
                         <i class="fa fa-calendar"></i>
                     </md-button>
                     <ul class="dropdown-menu" role="menu">
@@ -60,31 +60,16 @@
         <md-whiteframe hide-gt-md class="md-whiteframe-z1 unpadded" layout="column">
             <md-toolbar class="white-out">
                 <div class="md-toolbar-tools content" layout="row" layout-align="start center">
-                    <h3 flex class="accented">Invoices</h3>
+                    <h3 flex class="accented">{{ctrl.currentFilter.toolbarTitle}}</h3>
                     <section hide-gt-md layout="row" layout-align="end center">
                         <md-button
+                                ng-repeat="filter in ctrl.filters"
                                 class="inverse-button icon-button"
-                                ng-class="{true: 'active', false:''}[ctrl.allFilter.isActive]"
-                                ng-click="ctrl.onFilterClicked(ctrl.allFilter)"
+                                ng-class="{true: 'active', false:''}[filter.isActive]"
+                                ng-click="ctrl.onFilterClicked(filter)"
                                 remove-focus>
-                                <i class="fa fa-files-o"></i>
-                            <md-tooltip md-delay="400">{{ctrl.allFilter.title}}</md-tooltip>
-                        </md-button>
-                        <md-button
-                                   class="inverse-button icon-button"
-                                   ng-class="{true: 'active', false:''}[ctrl.paidFilter.isActive]"
-                                   ng-click="ctrl.onFilterClicked(ctrl.paidFilter)"
-                                   remove-focus>
-                            <i class="fa fa-check-circle-o iconed-text"></i>
-                            <md-tooltip md-delay="400">{{ctrl.paidFilter.title}}</md-tooltip>
-                        </md-button>
-                        <md-button
-                                   class="inverse-button icon-button"
-                                   ng-class="{true: 'active', false:''}[ctrl.unpaidFilter.isActive]"
-                                   ng-click="ctrl.onFilterClicked(ctrl.unpaidFilter)"
-                                   remove-focus>
-                            <i class="fa fa-times iconed-text"></i>
-                            <md-tooltip md-delay="400">{{ctrl.unpaidFilter.title}}</md-tooltip>
+                            <i class="fa" ng-class="filter.icon"></i>
+                            <md-tooltip md-delay="400">{{filter.title}}</md-tooltip>
                         </md-button>
                     </section>
                 </div>
@@ -115,7 +100,7 @@
                 <md-whiteframe layout="column" class="md-whiteframe-z1 unpadded">
                     <md-toolbar class="white-out">
                         <div class="md-toolbar-tools content" layout="row" layout-align="start center">
-                            <h3 flex class="accented">Invoices</h3>
+                            <h3 flex class="accented">{{ctrl.currentFilter.toolbarTitle}}</h3>
                         </div>
                     </md-toolbar>
                     <md-list ng-if="ctrl.total > 0">
@@ -148,23 +133,13 @@
                             <h3 class="title">Filter</h3>
                         </div>
                     </md-toolbar>
-                    <md-button data-toggle="dropdown" remove-focus
-                               class="options no-uppercase"
-                               ng-class="{true: 'active', false:''}[ctrl.allFilter.isActive]"
-                               ng-click="ctrl.onFilterClicked(ctrl.allFilter)">
-                        <span>{{ctrl.allFilter.title}}</span>
-                    </md-button>
-                    <md-button data-toggle="dropdown" remove-focus
-                               class="inverse-button options no-uppercase"
-                               ng-class="{true: 'active', false:''}[ctrl.paidFilter.isActive]"
-                               ng-click="ctrl.onFilterClicked(ctrl.paidFilter)">
-                        <span>{{ctrl.paidFilter.title}}</span>
-                    </md-button>
-                    <md-button data-toggle="dropdown" remove-focus
-                               class="inverse-button options no-uppercase"
-                               ng-class="{true: 'active', false:''}[ctrl.unpaidFilter.isActive]"
-                               ng-click="ctrl.onFilterClicked(ctrl.unpaidFilter)">
-                        <span>{{ctrl.unpaidFilter.title}}</span>
+                    <md-button
+                            ng-repeat="filter in ctrl.filters"
+                            remove-focus
+                            class="options no-uppercase"
+                            ng-class="{true: 'active', false:''}[filter.isActive]"
+                            ng-click="ctrl.onFilterClicked(filter)">
+                        <span>{{filter.title}}</span>
                     </md-button>
                 </md-whiteframe>
             </div>

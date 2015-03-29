@@ -2,16 +2,16 @@ angular
     .module("app.mailbox")
     .controller("documentsListController", documentsListController);
 
-function documentsListController($state, $stateParams, documentsApi, documentsHelper, dialogProvider, userDetails, docsResponse, requestedParams) {
+function documentsListController($state, $stateParams, documentsApi, documentsHelper, dialogProvider, userDetails, docsResponse, queryHelper) {
     var vm = this;
     vm.documents = [];
     vm.pages = [];
     vm.pagesSliced = [];
     vm.currentPage = 1;
-    vm.queryParameters = {};
-    vm.tabState = {};
     vm.total = docsResponse.count;
-    vm.pageSize = requestedParams.limit;
+    vm.pageSize = $stateParams.limit;
+    vm.filters = [];
+    vm.currentFilter = null;
 
     vm.requestNewPage = requestNewPage;
     vm.isIncrementPagePossible = isIncrementPagePossible;
@@ -21,7 +21,6 @@ function documentsListController($state, $stateParams, documentsApi, documentsHe
     vm.onChangeSliceClicked = onChangeSliceClicked;
     vm.onFilterTabClicked = onFilterTabClicked;
     vm.pageTitle = $state.current.data.title;
-    vm.tabTitle = null;
     vm.isForSending = false;
 
     var maxPages = 0;
@@ -32,40 +31,17 @@ function documentsListController($state, $stateParams, documentsApi, documentsHe
 
     function activate() {
         vm.documents = docsResponse._embedded.item;
-        vm.queryParameters = documentsHelper.getQueryParameters();
-        for (var key in requestedParams) {
-            if (vm.queryParameters.hasOwnProperty(key)) {
-                vm.queryParameters[key] = requestedParams[key];
-            }
-        }
         vm.isForSending = $stateParams.mailbox == 'forSending';
-        changeTabState();
+        resolveFilter();
     }
 
-    function changeTabState() {
-        vm.tabState = {
-            "mine"   : true,
-            "others" : false,
-            "open"   : false
-        };
-        if (vm.queryParameters.others === true) {
-            vm.tabState.mine = false;
-            vm.tabState.others = true;
-            vm.tabState.open = false;
-            vm.tabTitle = "Assigned to others";
-        }
-        else if (vm.queryParameters.others === false) {
-            vm.tabState.mine = true;
-            vm.tabState.others = false;
-            vm.tabState.open = false;
-            vm.tabTitle = "Assigned to me";
-        }
-        else if (vm.queryParameters.others == null) {
-            vm.tabState.mine = false;
-            vm.tabState.others = false;
-            vm.tabState.open = true;
-            vm.tabTitle = "Open documents";
-        }
+    function resolveFilter() {
+        vm.filters = queryHelper.getDocsListFilters();
+        vm.currentFilter = queryHelper.getDocsListFilterById($stateParams.filterId);
+
+        angular.forEach(vm.filters, function(filter) {
+            filter.isActive = (filter.id === vm.currentFilter.id);
+        });
 
         if (vm.isForSending) {
             vm.tabTitle = "Approved documents"
@@ -73,8 +49,9 @@ function documentsListController($state, $stateParams, documentsApi, documentsHe
     }
 
     function requestNewPage(page) {
-        vm.queryParameters.offset = (page == null) ? 0 : (page * vm.pageSize);
-        $state.go($state.current, documentsHelper.formatParameters(vm.queryParameters), {reload : true});
+        var offset = (page == null) ? 0 : (page * vm.pageSize);
+        var queryParameters = queryHelper.getDocsListParams($stateParams.mailbox, offset, vm.currentFilter);
+        $state.go($state.current, queryParameters, {reload : true});
     }
 
     function isIncrementPagePossible() {
@@ -118,21 +95,8 @@ function documentsListController($state, $stateParams, documentsApi, documentsHe
     }
 
     function onFilterTabClicked(filter) {
-        vm.queryParameters.assigned = null;
-        if(filter == "open") {
-            vm.queryParameters.isAssigned = false;
-            vm.queryParameters.others = null;
-        }
-        else if(filter == "others") {
-            vm.queryParameters.others = true;
-            vm.queryParameters.isAssigned = null;
-        }
-        else if(filter == "mine") {
-            vm.queryParameters.others = false;
-            vm.queryParameters.isAssigned = null;
-        }
-        changeTabState();
-        $state.go($state.current, vm.queryParameters, {reload : true});
+        var params = queryHelper.getDocsListParams($stateParams.mailbox, 0, filter.id);
+        $state.go($state.current, params, {reload : true});
     }
 
     function onChangeSliceClicked(step) {
@@ -156,5 +120,5 @@ documentsListController.$inject = [
     //RESOLVES
     "userDetails",
     "documentsResponse",
-    "requestedParams"
+    "queryParams"
 ];

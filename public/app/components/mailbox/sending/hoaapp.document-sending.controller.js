@@ -5,7 +5,7 @@ angular
     .module("app.mailbox")
     .controller("printController", printCtrl);
 
-function printCtrl($state, docsSrvc, reportsHelper, userDetail, docsResponse) {
+function printCtrl($state, docsSrvc, dateUtils, userDetail, docsResponse, queryHelper) {
     var vm = this;
     vm.document = docsResponse.viewModel;
     vm.isDisabled = true;
@@ -31,7 +31,9 @@ function printCtrl($state, docsSrvc, reportsHelper, userDetail, docsResponse) {
     }
 
     function moveToReports() {
-        $state.go("workspace.reports", reportsHelper.getQueryParams());
+        var filter = queryHelper.getReportsFilters();
+        var params = queryHelper.getReportsParams(0, dateUtils.getLocalDateNow(), filter[0].id);
+        $state.go("workspace.reports", params, {reload : true});
     }
 
     //endregion
@@ -42,9 +44,10 @@ printCtrl.$inject = [
     //API
     "documentsApi",
     //SERVICES
-    "reports.helper",
     //UTILS
+    "nvl-dateutils",
     //RESOLVE
     "userDetails",
-    "documentResponse"
+    "documentResponse",
+    "queryParams"
 ];

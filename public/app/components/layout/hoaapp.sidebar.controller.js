@@ -5,7 +5,7 @@ angular
     .module("app.layout")
     .controller('sidebarController', sidebarController);
 
-function sidebarController($state, documentsHelper, mailbox, userDetails, userService, dateUtils) {
+function sidebarController($state, mailbox, userDetails, userService, dateUtils, queryHelper) {
     var vm = this;
 
     vm.mailboxItems = {
@@ -18,24 +18,20 @@ function sidebarController($state, documentsHelper, mailbox, userDetails, userSe
 
     //region FUNCTION_CALLS
     function onSidebarItemClicked(folder) {
-        var query = documentsHelper.getQueryParameters();
-        query.mailbox = folder.queryParam;
-        if (folder.link == 'delivered') {
-            query = {};
-            query.year = dateUtils.getLocalYearNow();
-            query.month = dateUtils.getLocalMonthNow();
-            query.offset = 0;
-            query.limit = 10;
+        var params = {};
+        if(folder.type === "mailbox") {
+            var filter = queryHelper.getDocsListFilters();
+            params = queryHelper.getDocsListParams(folder.queryParam, 0, filter[0].id);
         }
-        else if (folder.link != 'forSending') {
-            query.isAssigned = true;
-            query.assigned = userDetails.userId;
+        else if(folder.type === "reports") {
+            var filter = queryHelper.getReportsFilters();
+            params = queryHelper.getReportsParams(0, dateUtils.getLocalDateNow(), filter[0].id);
         }
-        else {
-            query.isAssigned = null;
-            query.others = false;
+        else if(folder.type === "tenants") {
+            params = null
         }
-        $state.go(folder.path, query, {reload : true});
+
+        $state.go(folder.path, params, {reload : true});
     }
 
     function onCreateDocumentClicked() {
@@ -48,4 +44,4 @@ function sidebarController($state, documentsHelper, mailbox, userDetails, userSe
 
     //endregion
 }
-sidebarController.$inject = ['$state', 'documentsHelper', 'mailboxes', 'userDetails', 'userApi', "nvl-dateutils"];
+sidebarController.$inject = ['$state', 'mailboxes', 'userDetails', 'userApi', "nvl-dateutils", "queryParams"];

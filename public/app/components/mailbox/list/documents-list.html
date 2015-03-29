@@ -6,30 +6,17 @@
         <md-whiteframe class="documents-list md-whiteframe-z1 unpadded">
             <md-toolbar class="white-out" layout="row" layout-align="start center">
                 <div class="md-toolbar-tools content">
-                    <h3 flex class="accented">{{docsList.tabTitle}}</h3>
+                    <h3 flex class="accented">{{docsList.currentFilter.toolbarTitle}}</h3>
                     <section>
                         <span class="filter-header options"><i class="fa fa-filter iconed-text"></i>Filter</span>
-                        <md-button class="inverse-button icon-button"
-                                   remove-focus
-                                   ng-click="docsList.onFilterTabClicked('mine')"
-                                   ng-class="{true: 'active', false: ''}[docsList.tabState.mine]">
-                                <i class="fa fa-user iconed-text"></i>
-                                <md-tooltip md-delay="400">Mine</md-tooltip>
-                        </md-button>
-
-                        <md-button class="inverse-button icon-button"
-                                   remove-focus
-                                   ng-click="docsList.onFilterTabClicked('open')"
-                                   ng-class="{true: 'active', false:''}[docsList.tabState.open]">
-                            <i class="fa fa-chain-broken iconed-text"></i>
-                            <md-tooltip md-delay="400">Open</md-tooltip>
-                        </md-button>
-
-                        <md-button class="inverse-button icon-button"
-                                   ng-click="docsList.onFilterTabClicked('others')"
-                                   ng-class="{true: 'active', false:''}[docsList.tabState.others]">
-                            <i class="fa fa-group iconed-text"></i>
-                            <md-tooltip md-delay="400">Others</md-tooltip>
+                        <md-button
+                                ng-repeat="filter in docsList.filters"
+                                class="inverse-button icon-button"
+                                remove-focus
+                                ng-click="docsList.onFilterTabClicked(filter)"
+                                ng-class="{true: 'active', false: ''}[filter.isActive]">
+                            <i class="fa" ng-class="filter.icon"></i>
+                            <md-tooltip md-delay="400">{{filter.title}}</md-tooltip>
                         </md-button>
                     </section>
                 </div>
@@ -65,7 +52,7 @@
             <md-whiteframe class="documents-list md-whiteframe-z1 unpadded">
                 <md-toolbar class="white-out" layout="row" layout-align="start center">
                     <div class="md-toolbar-tools content">
-                        <h3 flex class="accented">{{docsList.tabTitle}}</h3>
+                        <h3 flex class="accented">{{docsList.currentFilter.toolbarTitle}}</h3>
                     </div>
                 </md-toolbar>
                 <div ng-if="docsList.total > 0">
@@ -101,22 +88,12 @@
                         <h3 class="title">Filter</h3>
                     </div>
                 </md-toolbar>
-                <md-button class="options no-uppercase"
-                           ng-click="docsList.onFilterTabClicked('mine')"
-                           ng-class="{true: 'active', false: ''}[docsList.tabState.mine]">
-                    <span>Mine</span>
-                </md-button>
-
-                <md-button class="options no-uppercase remove-focus"
-                           ng-click="docsList.onFilterTabClicked('open')"
-                           ng-class="{true: 'active', false:''}[docsList.tabState.open]">
-                    <span>Open</span>
-                </md-button>
-
-                <md-button class="options no-uppercase remove-focus"
-                           ng-click="docsList.onFilterTabClicked('others')"
-                           ng-class="{true: 'active', false:''}[docsList.tabState.others]">
-                    <span>Others</span>
+                <md-button
+                        ng-repeat="filter in docsList.filters"
+                        class="options no-uppercase"
+                           ng-click="docsList.onFilterTabClicked(filter)"
+                           ng-class="{true: 'active', false: ''}[filter.isActive]">
+                    <span>{{filter.title}}</span>
                 </md-button>
             </md-whiteframe>
         </div>

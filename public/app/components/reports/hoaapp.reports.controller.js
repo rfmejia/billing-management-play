@@ -5,8 +5,7 @@ angular
     .module("app.reports")
     .controller("reportsController", controller);
 
-
-function controller($state, $stateParams, docsSrvc, docsHelper, reportsRoutes, dialogProvider, dateUtils, documentsList, reportResponse, userDetails) {
+function controller($state, $stateParams, docsSrvc, docsHelper, reportsRoutes, dialogProvider, dateUtils, documentsList, reportResponse, userDetails, queryHelper) {
     var vm = this;
     vm.pageTitle = $state.current.data.title;
     vm.documents = documentsList._embedded.item;
@@ -18,7 +17,7 @@ function controller($state, $stateParams, docsSrvc, docsHelper, reportsRoutes, d
     vm.total = documentsList.count;
     vm.currentPage = 1;
     vm.currentParams = {};
-    var filters = [];
+    vm.filters = [];
 
     //function mapping
     vm.onFilterClicked = onFilterClicked;
@@ -31,58 +30,23 @@ function controller($state, $stateParams, docsSrvc, docsHelper, reportsRoutes, d
 
     //region FUNCTION_CALL
     function activate() {
-        vm.allFilter = {
-            title    : "All",
-            isActive : true,
-            params   : {
-                mailbox : "delivered",
-                year    : vm.report.date.year,
-                month   : vm.report.date.month,
-                offset  : 0,
-                limit   : vm.pageSize
-            }
-        };
-        vm.paidFilter = {
-            title    : "Paid",
-            isActive : false,
-            params   : {
-                mailbox : "delivered",
-                isPaid  : true,
-                year    : vm.report.date.year,
-                month   : vm.report.date.month,
-                offset  : 0,
-                limit   : vm.pageSize
-            }
-        };
-        vm.unpaidFilter = {
-            title    : "Unpaid",
-            isActive : false,
-            params   : {
-                mailbox : "delivered",
-                isPaid  : false,
-                year    : vm.report.date.year,
-                month   : vm.report.date.month,
-                offset  : 0,
-                limit   : vm.pageSize
-            }
-        };
-        filters = [vm.allFilter, vm.paidFilter, vm.unpaidFilter];
-        vm.currentParams = vm.allFilter.params;
+        vm.filters = queryHelper.getReportsFilters();
+        vm.currentFilter = queryHelper.getReportsFiltersById($stateParams.filterId);
+
+        angular.forEach(vm.filters, function(filter) {
+            filter.isActive = (filter.id === vm.currentFilter.id);
+        })
     }
 
     function onFilterClicked(filter) {
-        vm.currentParams = filter.params;
-        angular.forEach(filters, function(value) {
-            value.isActive = (value.title === filter.title);
-        });
-
-        refreshDocuments(vm.currentParams);
+        var dateString = dateUtils.getMomentFromString($stateParams.month, $stateParams.year);
+        var params = queryHelper.getReportsParams(0, dateString, filter.id);
+        $state.go($state.current, params, {reload : true});
     }
 
     function onReportMonthSelected(newDate, oldDate) {
-        var year = dateUtils.getLocalYear(newDate);
-        var month = dateUtils.getLocalMonth(newDate);
-        var params = {mailbox : "delivered", year : year, month : month};
+        var dateString = dateUtils.dateToStringDisplay(newDate, null);
+        var params = queryHelper.getReportsParams(0, dateString, "all");
         $state.go($state.current, params, {reload : true});
     }
 
@@ -103,13 +67,13 @@ function controller($state, $stateParams, docsSrvc, docsHelper, reportsRoutes, d
     function onUpdateItemClicked(item) {
         var title = "Sorry";
         var message = "This document is being edited by another user.";
-        if(item.assigned == null) {
+        if (item.assigned == null) {
             docsSrvc.assignDocument(item._links["hoa:assign"].href).then(viewDocument, error);
         }
-        else if(userDetails.userId == item.assigned.userId) {
+        else if (userDetails.userId == item.assigned.userId) {
             viewDocument();
         }
-        else if(item._links.hasOwnProperty("hoa:assign")) {
+        else if (item._links.hasOwnProperty("hoa:assign")) {
 
             docsSrvc.assignDocument(item._links["hoa:assign"].href).then(viewDocument, error);
         }
@@ -123,7 +87,7 @@ function controller($state, $stateParams, docsSrvc, docsHelper, reportsRoutes, d
 
         function error(reason) {
 
-            dialogProvider.getInformDialog(null,  title, message, "Okay");
+            dialogProvider.getInformDialog(null, title, message, "Okay");
         }
     }
 
@@ -154,5 +118,6 @@ controller.$inject = [
     //RESOLVE
     "documentsList",
     "reportResponse",
-    'userDetails'
+    'userDetails',
+    "queryParams"
 ];

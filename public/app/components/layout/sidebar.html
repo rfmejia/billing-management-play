@@ -27,7 +27,6 @@
                         <ul>
                             <li ng-repeat="grandchildren in children.subFolders">
                                 <a hoa-activate path="{{grandchildren.link}}"
-                                   ng-if="grandchildren.type == 'hoa:mailbox-link'"
                                    class="md-button md-default-theme nav-sidebar-button"
                                    ng-click="sidebar.onSidebarItemClicked(grandchildren)">{{grandchildren.title}}
                                 </a>
