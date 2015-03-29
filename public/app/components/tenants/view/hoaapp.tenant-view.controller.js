@@ -2,90 +2,45 @@ angular
     .module('app.tenants')
     .controller('tenantViewCtrl', tenantViewCtrl);
 
-function tenantViewCtrl($state, $stateParams, documentsSrvc, tenantsSrvc, docsHelper, dialogProvider, toastProvider, reportsRoutes, tenantDocs, tenant, userDetails) {
+function tenantViewCtrl($state, $stateParams, tenantsSrvc, dialogProvider, toastProvider, tenantDocs, tenant, queryHelper) {
     var vm = this;
     vm.tenant = tenant.viewModel;
     vm.documents = tenantDocs._embedded.item;
     vm.isInfoOpen = true;
-    vm.tradeNameColor = {color : "#689F38"};
+
     vm.pageTitle = $state.current.data.title;
     vm.currentFilter = {};
+
+    //Pagination
     vm.currentPage = 1;
-    vm.pageSize = tenantDocs.limit;
-    //TODO: CHANGE TO TOTAL
-    vm.total = tenantDocs.total;
-    console.log(vm.total);
+    vm.pageSize;
+    vm.total;
 
     vm.onEditClicked = onEditClicked;
     vm.onFilterClicked = onFilterClicked;
     vm.onDeleteClicked = onDeleteClicked;
-    vm.onDocumentItemClicked = onDocumentItemClicked;
-    vm.onUpdateItemClicked = onUpdateItemClicked;
     vm.onChangePageClicked = onChangePageClicked;
 
     activate();
 
     //region FUNCTION_CALL
     function activate() {
-        vm.filters = [
-            {
-                title    : "All",
-                isActive : true,
-                icon     : "fa-files-o",
-                params   : {
-                    forTenant  : $stateParams.id,
-                    others     : null,
-                    isAssigned : null
-                }
-            },
-            {
-                title    : "Pending",
-                isActive : false,
-                icon     : "fa-spinner",
-                params   : {
-                    forTenant  : $stateParams.id,
-                    mailbox    : "pending",
-                    others     : null,
-                    isAssigned : null
-                }
-            },
-            {
-                title    : "Delivered",
-                isActive : false,
-                icon     : "fa-paper-plane-o",
-                params   : {
-                    forTenant  : $stateParams.id,
-                    mailbox    : "delivered",
-                    others     : null,
-                    isAssigned : null
-                }
-            },
-            {
-                title    : "Paid",
-                isActive : false,
-                icon     : "fa-check-circle-o",
-                params   : {
-                    forTenant  : $stateParams.id,
-                    mailbox    : "delivered",
-                    isPaid     : true,
-                    others     : null,
-                    isAssigned : null
-                }
-            },
-            {
-                title    : "Unpaid",
-                isActive : false,
-                icon     : "fa-times",
-                params   : {
-                    forTenant  : $stateParams.id,
-                    mailbox    : "delivered",
-                    isPaid     : false,
-                    others     : null,
-                    isAssigned : null
-                }
-            }
-        ];
-        vm.currentFilter = vm.filters[0];
+        //Pagination setup
+        vm.currentPage = $stateParams.offset % $stateParams.limit;
+        vm.total = 500; //TODO: Pagination activate once total is set
+        vm.pageSize = $stateParams.limit;
+
+        //Filter setup
+        resolveFilter();
+    }
+
+    function resolveFilter() {
+        vm.filters = queryHelper.getTenantsDocsFilters();
+        vm.currentFilter = queryHelper.getTenantsDocsFilterById($stateParams.filterId);
+
+        angular.forEach(vm.filters, function(filter) {
+            filter.isActive = (filter.id === vm.currentFilter.id);
+        })
     }
 
     function onEditClicked() {
@@ -114,81 +69,20 @@ function tenantViewCtrl($state, $stateParams, documentsSrvc, tenantsSrvc, docsHe
         dialogProvider.getConfirmDialog(okayFn, cancelFn, message, title);
     }
 
-    function onDocumentItemClicked(item) {
-        var title = "Sorry";
-        var message = "This document is being edited by another user.";
-        if (item.mailbox == 'paid' || item.mailbox == 'unpaid') {
-            viewDocument();
-        }
-        else {
-            //Check if clicked document is assigned
-            if (item._links.hasOwnProperty("hoa:assign")) {
-                documentsSrvc.assignDocument(item._links["hoa:assign"].href).then(viewDocument, error);
-            }
-            else if (userDetails.userId == item.assigned.userId) {
-                viewDocument();
-            }
-            else {
-                error();
-            }
-        }
-
-        function viewDocument() {
-            $state.go(docsHelper.resolveViewer(item), {id : item.id}, {reload : true});
-        }
-
-        function error(dialogContent) {
-            dialogProvider.getInformDialog(null, title, message, "Okay");
-        }
-    }
-
-    function onUpdateItemClicked(item) {
-        var title = "Sorry";
-        var message = "This document is being edited by another user.";
-        if (item.assigned == null) {
-            documentsSrvc.assignDocument(item._links["hoa:assign"].href).then(viewDocument, error);
-        }
-        else if (userDetails.userId == item.assigned.userId) {
-            viewDocument();
-        }
-        else if (item._links.hasOwnProperty("hoa:assign")) {
-            documentsSrvc.assignDocument(item._links["hoa:assign"].href).then(viewDocument, error);
-        }
-        else {
-            error();
-        }
-
-        function viewDocument() {
-            $state.go(reportsRoutes.reportUpdate, {id : item.id});
-        }
-
-        function error(reason) {
-            dialogProvider.getInformDialog(null, title, message, "Okay");
-        }
-    }
-
     function onFilterClicked(filter) {
-        filter.isActive = true;
-        angular.forEach(vm.filters, function(value){
-            if(filter.title !== value.title) value.isActive = false;
-        });
-        vm.currentFilter = filter;
-        vm.documents = [];
-        documentsSrvc.getDocumentList(filter.params)
-            .then(success);
+        var params = queryHelper.getTenantDocs(0, $stateParams.id, filter.id);
+        $state.go($state.current, params, {reload: true});
     }
 
     function onChangePageClicked(page) {
-        page -= 1;
-        var offset = (page == null) ? 0 : (page * vm.pageSize);
-        var changedParams = vm.currentFilter.params;
-        if (changedParams.hasOwnProperty("offset")) {
-            changedParams.offset = offset;
+        var offset = 0;
+        if(page !== null) {
+            var newPage = page - 1;
+            offset = newPage * vm.pageSize;
         }
-        vm.documents = [];
-        vm.currentPage = page + 1;
-        documentsSrvc.getDocumentList(changedParams).then(success);
-
+        var queryParameters = queryHelper.getTenantDocs(offset, $stateParams.id, vm.currentFilter);
+        //TODO: Pagination activate once total is set
+        //$state.go($state.current, queryParameters, {reload : true});
     }
 
     function success(response) {
@@ -203,16 +97,13 @@ tenantViewCtrl.$inject = [
     "$state",
     "$stateParams",
     //API
-    "documentsApi",
     "tenantsApi",
     //SERVICES
-    "documentsHelper",
     "hoaDialogService",
     "hoaToastService",
-    "REPORTS_ROUTES",
     //UTILS
     //RESOLVE
     "tenantDocs",
     "viewTenantModel",
-    "userDetails"
+    "queryParams"
 ];

@@ -45,6 +45,7 @@ function documentApi($q, $resource, linksApi) {
 
     //Gets document list
     function getDocumentList(query) {
+        console.log(query);
         var deferred = $q.defer();
 
         var success = function(response) {

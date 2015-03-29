@@ -8,7 +8,6 @@ angular
 function appRun($rootScope, $window, $location, $cookies, $urlRouter, linksApi, tokenHandler) {
     $rootScope.initialized = linksApi.isUrlSet();
     $rootScope.targetUrl = $location.absUrl();
-    console.log($rootScope.initialized);
     var deregister = $rootScope.$on("$locationChangeStart", function(event){
         event.preventDefault();
 

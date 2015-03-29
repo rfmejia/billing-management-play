@@ -2,7 +2,10 @@
             ng-include="'app/components/tenants/list/partials-tenants-list-toolbar.html'">
 </md-toolbar>
 
-<md-content flex class="md-padding" >
+<md-content class="main" flex>
+    <div ng-if="stateIsLoading" layout="column" layout-align="center-center" flex="10">
+        <md-progress-linear md-mode="indeterminate"></md-progress-linear>
+    </div>
     <div layout="column" class="max-width">
         <md-whiteframe layout="column" class="md-whiteframe-z1 cards-margin">
             <md-content layout="row">

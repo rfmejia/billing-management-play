@@ -12,7 +12,6 @@ function tenantEditCtrl($state, $stateParams, tenantsSrvc, toastSrvc, tenantHelp
     //region FUNCTION_CALL
     function onEditTenantClicked() {
         var postData = tenantHelper.formatPostData(tenantModel);
-        console.log(postData);
         tenantsSrvc.editTenant($stateParams.id, postData)
             .then(success, error);
     }

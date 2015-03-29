@@ -5,7 +5,7 @@ angular
     .module('app.mailbox')
     .controller('approvalsController', approvalsCtrl);
 
-function approvalsCtrl($state, $location, $anchorScroll, documentsApi, documentsHelper, commentsHelper, dialogProvider, toastsProvider, dateUtils, documentsResponse, userDetails, tenantsResponse) {
+function approvalsCtrl($state, $location, $anchorScroll, documentsApi, documentsHelper, commentsHelper, dialogProvider, toastsProvider, dateUtils, documentsResponse, userDetails, tenantsResponse, queryHelper) {
     var vm = this;
     vm.document = documentsResponse.viewModel;
     /** Current comment made in this phase of the workflow **/
@@ -81,7 +81,8 @@ function approvalsCtrl($state, $location, $anchorScroll, documentsApi, documents
     }
 
     function returnToList() {
-        $state.go("workspace.pending.drafts", documentsHelper.getQueryParameters(), {reload : true});
+        var params = queryHelper.getDocsListParams("drafts", 0, "all");
+        $state.go("workspace.pending.drafts", params, {reload : true})
     }
 
     function onRejectClicked() {
@@ -155,5 +156,6 @@ approvalsCtrl.$inject = [
     //RESOLVES
     'documentResponse',
     'userDetails',
-    'tenantResponse'
+    'tenantResponse',
+    "queryParams"
 ];

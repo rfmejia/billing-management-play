@@ -41,7 +41,7 @@
 </div>
 
 <div ng-if="!initialized" layout="column" flex layout-align="center center">
-    <md-progress-circular class="md-accent" md-mode="indeterminate"></md-progress-circular>
+    <md-progress-linear md-mode="indeterminate"></md-progress-linear>
     <h6>Hobbies of Asia</h6>
 </div>
 
@@ -71,6 +71,7 @@
 <script src="app/hoaapp.config.js"></script>
 <script src="app/hoaapp.routes.js"></script>
 <script src="app/hoaapp.run.js"></script>
+<script src="app/hoaapp.queryparams.js"></script>
 
 <!-- Core -->
 <script src="app/components/core/hoaapp.core.js"></script>
@@ -87,7 +88,11 @@
 <script src="app/components/authentication/hoaapp.auth.module.js"></script>
 <script src="app/components/authentication/hoaapp.http-interceptor.service.js"></script>
 <script src="app/components/authentication/hoaapp.token-handler.service.js"></script>
-<script src="app/components/authentication/hoaapp.current-user.service.js"></script>
+
+<!-- User -->
+<script src="app/components/user/hoaapp.user.module.js"></script>
+<script src="app/components/user/hoaapp.current-user.service.js"></script>
+<script src="app/components/user/hoaapp.user.js"></script>
 
 <!-- widgets -->
 <script src="http://fgnass.github.io/spin.js/spin.min.js"></script>

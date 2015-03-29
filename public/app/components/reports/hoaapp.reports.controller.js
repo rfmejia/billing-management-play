@@ -5,136 +5,69 @@ angular
     .module("app.reports")
     .controller("reportsController", controller);
 
-
-function controller($state, $stateParams, docsSrvc, docsHelper, reportsRoutes, dialogProvider, dateUtils, documentsList, reportResponse, userDetails) {
+function controller($state, $stateParams, dateUtils, documentsList, reportResponse, queryHelper) {
     var vm = this;
     vm.pageTitle = $state.current.data.title;
     vm.documents = documentsList._embedded.item;
-    vm.isPaid = null;
-    vm.selectedFilter = null;
     vm.report = reportResponse;
-    vm.pageSize = $stateParams.limit;
-    vm.count = 10;
-    vm.total = documentsList.count;
-    vm.currentPage = 1;
+
+    //Filters
     vm.currentParams = {};
-    var filters = [];
+    vm.filters = [];
+
+    //Pagination
+    //Pagination
+    vm.currentPage = 1;
+    vm.pageSize;
+    vm.total;
 
     //function mapping
     vm.onFilterClicked = onFilterClicked;
     vm.onReportMonthSelected = onReportMonthSelected;
-    vm.onDocumentItemClicked = onDocumentItemClicked;
-    vm.onUpdateItemClicked = onUpdateItemClicked;
     vm.onChangePageClicked = onChangePageClicked;
 
     activate();
 
     //region FUNCTION_CALL
     function activate() {
-        vm.allFilter = {
-            title    : "All",
-            isActive : true,
-            params   : {
-                mailbox : "delivered",
-                year    : vm.report.date.year,
-                month   : vm.report.date.month,
-                offset  : 0,
-                limit   : vm.pageSize
-            }
-        };
-        vm.paidFilter = {
-            title    : "Paid",
-            isActive : false,
-            params   : {
-                mailbox : "delivered",
-                isPaid  : true,
-                year    : vm.report.date.year,
-                month   : vm.report.date.month,
-                offset  : 0,
-                limit   : vm.pageSize
-            }
-        };
-        vm.unpaidFilter = {
-            title    : "Unpaid",
-            isActive : false,
-            params   : {
-                mailbox : "delivered",
-                isPaid  : false,
-                year    : vm.report.date.year,
-                month   : vm.report.date.month,
-                offset  : 0,
-                limit   : vm.pageSize
-            }
-        };
-        filters = [vm.allFilter, vm.paidFilter, vm.unpaidFilter];
-        vm.currentParams = vm.allFilter.params;
+        //Filter setup
+        vm.filters = queryHelper.getReportsFilters();
+        vm.currentFilter = queryHelper.getReportsFiltersById($stateParams.filterId);
+
+        angular.forEach(vm.filters, function(filter) {
+            filter.isActive = (filter.id === vm.currentFilter.id);
+        });
+
+        //Pagination setup
+        vm.currentPage = $stateParams.offset % $stateParams.limit;
+        vm.total = 500; //TODO: Pagination activate once total is set
+        vm.pageSize = $stateParams.limit;
     }
 
     function onFilterClicked(filter) {
-        vm.currentParams = filter.params;
-        angular.forEach(filters, function(value) {
-            value.isActive = (value.title === filter.title);
-        });
-
-        refreshDocuments(vm.currentParams);
-    }
-
-    function onReportMonthSelected(newDate, oldDate) {
-        var year = dateUtils.getLocalYear(newDate);
-        var month = dateUtils.getLocalMonth(newDate);
-        var params = {mailbox : "delivered", year : year, month : month};
+        var dateString = dateUtils.getMomentFromString($stateParams.month, $stateParams.year);
+        var params = queryHelper.getReportsParams(0, dateString, filter.id);
         $state.go($state.current, params, {reload : true});
     }
 
-    function refreshDocuments(params) {
-        vm.documents = [];
-        docsSrvc.getDocumentList(params)
-            .then(success);
-        function success(response) {
-            vm.documents = response._embedded.item;
-            vm.total = response.count;
-        }
+    function onReportMonthSelected(newDate, oldDate) {
+        var dateString = dateUtils.dateToStringDisplay(newDate, null);
+        var params = queryHelper.getReportsParams(0, dateString, "all");
+        $state.go($state.current, params, {reload : true});
     }
 
-    function onDocumentItemClicked(item) {
-        $state.go(docsHelper.resolveViewer(item), {id : item.id});
-    }
-
-    function onUpdateItemClicked(item) {
-        var title = "Sorry";
-        var message = "This document is being edited by another user.";
-        if(item.assigned == null) {
-            docsSrvc.assignDocument(item._links["hoa:assign"].href).then(viewDocument, error);
-        }
-        else if(userDetails.userId == item.assigned.userId) {
-            viewDocument();
-        }
-        else if(item._links.hasOwnProperty("hoa:assign")) {
-
-            docsSrvc.assignDocument(item._links["hoa:assign"].href).then(viewDocument, error);
-        }
-        else {
-            error();
-        }
-
-        function viewDocument() {
-            $state.go(reportsRoutes.reportUpdate, {id : item.id});
-        }
-
-        function error(reason) {
-
-            dialogProvider.getInformDialog(null,  title, message, "Okay");
-        }
-    }
 
     function onChangePageClicked(page) {
-        page -= 1;
-        var offset = (page == null) ? 0 : vm.pageSize * page;
-        if (vm.currentParams.hasOwnProperty("offset")) {
-            vm.currentParams.offset = offset;
+        var offset = 0;
+        if(page !== null) {
+            var newPage = page - 1;
+            offset = newPage * vm.pageSize;
         }
-        vm.currentPage = page + 1;
-        refreshDocuments(vm.currentParams);
+        console.log(offset);
+        var dateString = dateUtils.getMomentFromString($stateParams.month, $stateParams.year);
+        var queryParameters = queryHelper.getReportsParams(offset, dateString, vm.currentFilter.id);
+        //TODO: Pagination activate once total is set
+        //$state.go($state.current, queryParameters, {reload : true});
     }
 
     //endregion
@@ -144,15 +77,11 @@ controller.$inject = [
     "$state",
     "$stateParams",
     //API
-    "documentsApi",
     //SERVICES
-    "documentsHelper",
-    "REPORTS_ROUTES",
-    'hoaDialogService',
     //UTILS
     "nvl-dateutils",
     //RESOLVE
     "documentsList",
     "reportResponse",
-    'userDetails'
+    "queryParams"
 ];

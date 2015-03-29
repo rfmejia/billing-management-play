@@ -7,7 +7,7 @@ angular
 
 function config($stateProvider, reportsRoutes) {
     var reports = {
-        url     : "reports?year&month&limit&offset",
+        url     : "reports?year&month&limit&offset&filterId&mailbox&isPaid",
         resolve : {
             documentsList   : unparsedDocumentsList,
             unparsedReport  : getReport,
@@ -43,31 +43,22 @@ function config($stateProvider, reportsRoutes) {
 config.$inject = ["$stateProvider", "REPORTS_ROUTES"];
 
 //region LIST
-function unparsedDocumentsList($stateParams, docsHelper, docsSrvc, mailboxParams, dateUtils) {
-    var queryParams;
-    if (angular.equals({}, $stateParams)) {
-        queryParams = docsHelper.getQueryParameters();
-        queryParams.others = null;
-        queryParams.isAssigned = null;
-        queryParams.year = dateUtils.getLocalYear(moment().format());
-        queryParams.month = dateUtils.getLocalMonth(moment().format());
-    }
-    else {
-        queryParams = $stateParams;
-    }
-    queryParams.mailbox = mailboxParams.delivered;
-    return docsSrvc.getDocumentList(queryParams);
+function unparsedDocumentsList($stateParams, docsSrvc) {
+    var params = {};
+    angular.copy($stateParams, params);
+    delete params.filterId;
+    console.log(params);
+    return docsSrvc.getDocumentList(params);
 }
-unparsedDocumentsList.$inject = ["$stateParams", "documentsHelper", "documentsApi", "mailboxQueryParams", "nvl-dateutils"];
+unparsedDocumentsList.$inject = ["$stateParams", "documentsApi"];
 
-function getReport($stateParams, reportsService, reportsHelper) {
-    var queryParams = $stateParams;
-    if (angular.equals({}, queryParams)) {
-        queryParams = reportsHelper.getQueryParams();
-    }
-    return reportsService.getReport(queryParams);
+function getReport($stateParams, reportsService) {
+    var params = {};
+    params.month = $stateParams.month;
+    params.year = $stateParams.year;
+    return reportsService.getReport(params);
 }
-getReport.$inject = ["$stateParams", "reports.service", "reports.helper"];
+getReport.$inject = ["$stateParams", "reports.service"];
 
 function parseReport(apiResponse, reportsHelper) {
     return reportsHelper.parseReports(apiResponse);

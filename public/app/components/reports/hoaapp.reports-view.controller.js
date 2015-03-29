@@ -5,7 +5,7 @@ angular
     .module("app.reports")
     .controller("reportUpdateController", reportUpdateController);
 
-function reportUpdateController($location, $anchorScroll, $state, docsSrvc, reportsRoutes, toastProvider, dialogProvider,  commentsHelper, documentsHelper,  dateUtils, document, userDetails) {
+function reportUpdateController($location, $anchorScroll, $state, docsSrvc, reportsRoutes, toastProvider, dialogProvider, commentsHelper, documentsHelper, dateUtils, document, userDetails, queryHelper) {
     var vm = this;
     vm.payments = document.viewModel.amounts;
     vm.links = document.viewModel.links;
@@ -76,12 +76,13 @@ function reportUpdateController($location, $anchorScroll, $state, docsSrvc, repo
         if (vm.assigned != null && vm.assigned.userId == vm.currentUser.userId) {
             docsSrvc.unassignDocument(unassignLink).then(returnToReports)
         }
-        else returnToReports();
+        else {
+            returnToReports();
+        }
     }
 
     function onUnlinkClicked() {
         if (vm.links.hasOwnProperty("hoa:unassign")) {
-            var url = vm.links["hoa:unassign"].href;
             dialogProvider.getConfirmDialog(unassignDocument, null, "This will no longer be assigned to you", "Are you sure?")
         }
     }
@@ -104,9 +105,10 @@ function reportUpdateController($location, $anchorScroll, $state, docsSrvc, repo
         console.log(error);
     }
 
-
     function returnToReports() {
-        $state.go(reportsRoutes.report, {}, {reload : true});
+        var filter = queryHelper.getReportsFilters();
+        var params = queryHelper.getReportsParams(0, dateUtils.getLocalDateNow(), filter[0].id);
+        $state.go(reportsRoutes.report, params, {reload : true});
     }
 
 }
@@ -126,4 +128,6 @@ reportUpdateController.$inject = [
     "nvl-dateutils",
     //RESOLVE
     "document",
-    "userDetails"];
+    "userDetails",
+    "queryParams"
+];

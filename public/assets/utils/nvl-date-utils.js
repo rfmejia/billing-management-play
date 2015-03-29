@@ -16,6 +16,7 @@ function nvlDateUtils(moment) {
         getLocalStringDisplay : getLocalStringDisplay,
         getMomentFromString   : getMomentFromString,
         momentToStringDisplay : momentToStringDisplay,
+        dateToStringDisplay   : dateToStringDisplay,
         stringTimeStamp       : stringTimeStamp
     };
 
@@ -43,8 +44,12 @@ function nvlDateUtils(moment) {
         return momentToStringDisplay(moment(), format)
     }
 
-    function momentToStringDisplay(date, format) {
-        return date.format(format);
+    function momentToStringDisplay(mom, format) {
+        return mom.format(format);
+    }
+
+    function dateToStringDisplay(date, format) {
+        return moment(date).format(format);
     }
 
     function getLocalStringDisplay(stringDate, format) {

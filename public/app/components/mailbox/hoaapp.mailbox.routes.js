@@ -21,10 +21,9 @@ function mailboxConfig($stateProvider) {
 
     var list = {
         abstract : true,
-        url      : 'list?mailbox&limit&offset&forTenant&creator&assigned&forMonth&isPaid&isAssigned&others',
+        url      : 'list?mailbox&limit&offset&forTenant&creator&assigned&forMonth&isPaid&isAssigned&others&filterId',
         template : "<ui-view/>",
         resolve  : {
-            requestedParams   : listGetRequestedParams,
             documentsResponse : listGetDocuments
         },
         views    : {
@@ -130,28 +129,7 @@ createGetDocumentTemplate.$inject = ["documentsHelper", "createDocsData"];
 //endregion
 
 //region RESOLVE_FUNCTIONS_LIST
-function listGetRequestedParams($stateParams, docsHelper) {
-    var queryParams = docsHelper.getQueryParameters();
-    for (var key in $stateParams) {
-        if ($stateParams[key] === "true") {
-            queryParams[key] = true;
-        }
-        else if ($stateParams[key] === "false") {
-            queryParams[key] = false;
-        }
-        else if ($stateParams[key] == undefined || $stateParams[key] == null) {
-            queryParams[key] = null;
-        }
-        else {
-            queryParams[key] = $stateParams[key];
-        }
-    }
-
-    return queryParams;
-}
-listGetRequestedParams.$inject = ["$stateParams", "documentsHelper"];
-
-function listGetDocuments($q, docsSrvc, requestedParams) {
+function listGetDocuments($q, $stateParams, docsSrvc) {
     var deferred = $q.defer();
     var success = function(response) {
         deferred.resolve(response);
@@ -159,11 +137,11 @@ function listGetDocuments($q, docsSrvc, requestedParams) {
     var error = function(error) {
         //TODO: show error
     };
-    docsSrvc.getDocumentList(requestedParams).then(success, error);
+    docsSrvc.getDocumentList($stateParams).then(success, error);
 
     return deferred.promise;
 }
-listGetDocuments.$inject = ["$q", "documentsApi", "requestedParams"];
+listGetDocuments.$inject = ["$q", "$stateParams", "documentsApi"];
 
 //endregion
 
@@ -179,7 +157,6 @@ function makeApiCallDocs($stateParams, $q, docsSrvc) {
         //TODO: show error message
         deferred.reject(error);
     };
-
     docsSrvc.getDocument($stateParams.id).then(success, error);
 
     return deferred.promise

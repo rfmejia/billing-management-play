@@ -13,5 +13,6 @@ angular
                 "app.tenants",
                 "app.mailbox",
                 "app.reports",
-                "app.layout"
+                "app.layout",
+                "app.user"
             ]);

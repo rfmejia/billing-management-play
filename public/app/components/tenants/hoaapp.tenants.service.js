@@ -12,7 +12,6 @@ function tenantsApi($resource, $q, linksApi) {
     };
 
     var url = linksApi.getTenantsLinks() + "/:id";
-    console.log(url);
 
     var resource = $resource(url, {}, {
         get    : {method : "GET", isArray : false},
@@ -83,7 +82,7 @@ function tenantsApi($resource, $q, linksApi) {
         var error = function(error) {
             deferred.reject(error);
         };
-        resource.edit(id, tenantData).$promise.then(success, error);
+        resource.edit(tenantId, tenantData).$promise.then(success, error);
         return deferred.promise
     }
 

@@ -3,6 +3,9 @@
 </md-toolbar>
 
 <md-content class="drafts main" flex>
+    <div ng-if="stateIsLoading" layout="column" layout-align="center-center" flex="10">
+        <md-progress-linear md-mode="indeterminate"></md-progress-linear>
+    </div>
     <div class="max-width" layout="column">
         <div class="invoice-view">
             <h2 class="hoa-out-title">Tenant details</h2>

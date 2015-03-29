@@ -35,7 +35,7 @@
             "queryKey": "mailbox",
             "queryParam": "drafts",
             "link" : "drafts",
-            "type" : "hoa:mailbox-link",
+            "type" : "mailbox",
             "subFolders": []
           },
           {
@@ -44,7 +44,7 @@
             "queryKey": "mailbox",
             "queryParam": "forChecking",
             "link": "forChecking",
-            "type" : "hoa:mailbox-link",
+            "type" : "mailbox",
             "subFolders": []
           },
           {
@@ -53,7 +53,7 @@
             "queryKey": "mailbox",
             "queryParam": "forApproval",
             "link": "forApproval",
-            "type" : "hoa:mailbox-link",
+            "type" : "mailbox",
             "subFolders": []
           },
           {
@@ -62,7 +62,7 @@
             "queryKey": "mailbox",
             "queryParam": "forSending",
             "link": "forSending",
-            "type" : "hoa:mailbox-link",
+            "type" : "mailbox",
             "subFolders": []
           }
         ]
@@ -78,10 +78,8 @@
           {
             "title": "Monthly Reports",
             "path": "workspace.reports",
-            "link" : "delivered",
-            "queryKey": "mailbox",
-            "queryParam": "delivered",
-            "type" : "hoa:mailbox-link",
+            "link" : "reports",
+            "type" : "reports",
             "subFolders": [
               {
                 "title": "Paid",
@@ -104,10 +102,8 @@
           {
             "title": "Tenants",
             "path": "workspace.tenants-list",
-            "queryKey": "",
-            "queryParam": "",
             "link": "tenants",
-            "type" : "hoa:mailbox-link",
+            "type" : "tenants",
             "subFolders": []
           }
         ]

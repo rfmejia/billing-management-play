@@ -38,9 +38,8 @@ function tenantsRoutes($stateProvider) {
     };
 
     var tenantView = {
-        url     : "tenant-view/:id?limit&offset",
+        url     : "tenant-view/:id?limit&offset&filterId&mailbox&isPaid",
         resolve : {
-            tenantDocsParams : getTenantDocsParams,
             tenantDocs       : getTenantDocs,
             viewTenantModel  : getTenantModel
         },
@@ -91,34 +90,27 @@ function parseCreateTemplate(createTemplate, tenantHelper) {
 }
 parseCreateTemplate.$inject = ["createTemplate", "tenantHelper"];
 
-function getTenantDocsParams($stateParams, documentsHelper) {
-    var queryParams = documentsHelper.getQueryParameters();
-    if (queryParams.hasOwnProperty("others")) queryParams.others = null;
-    if (queryParams.hasOwnProperty("mailbox")) queryParams.mailbox = null;
-    if (queryParams.hasOwnProperty("isAssigned")) queryParams.isAssigned = null;
-    if (queryParams.hasOwnProperty("forTenant")) queryParams.forTenant = $stateParams.id;
-    if (queryParams.hasOwnProperty("limit")) queryParams.limit = $stateParams.limit;
-    if (queryParams.hasOwnProperty("offset")) queryParams.offset = $stateParams.offset;
-    return queryParams;
-}
-getTenantDocsParams.$inject = ["$stateParams", "documentsHelper"];
-
-function getTenantDocs($q, docsSrvc, tenantDocsParams) {
+function getTenantDocs($q, $stateParams, docsSrvc) {
     var deferred = $q.defer();
-
+    var params = {};
+    angular.copy($stateParams, params);
+    params.forTenant = params.id;
+    delete params.id;
+    delete params.filterId;
+    console.log($stateParams);
     var success = function(response) {
         deferred.resolve(response);
-    }
+    };
 
     var error = function(error) {
         deferred.reject(error)
     };
 
-    docsSrvc.getDocumentList(tenantDocsParams).then(success, error);
+    docsSrvc.getDocumentList(params).then(success, error);
 
     return deferred.promise;
 }
-getTenantDocs.$inject = ["$q", "documentsApi", "tenantDocsParams"];
+getTenantDocs.$inject = ["$q", "$stateParams", "documentsApi"];
 
 
 function getTenantModel($q, $stateParams, tenantsSrvc, tenantHelper) {
