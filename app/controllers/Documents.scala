@@ -45,36 +45,40 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
     // others == Some(true) => filterNot(me)
     // others == Some(false) => filter(me)
 
-    val ds: List[Document] = ConnectionFactory.connect withSession { implicit session =>
-      // Filtering level 1: Query-level filters
-      // Filter values by comparing to their default values in the router
-      // (workaround to Slick limitations)
-      val query = documents
-        .filter(d => (d.mailbox inSetBind Mailbox.getSubboxes(mailbox)) || mailbox.isEmpty)
-        .filter(d => d.forTenant === forTenant || forTenant < 1)
-        .filter(d => d.creator === creator || creator.isEmpty)
-        .filter(d => d.year === year || year.isEmpty)
-        .filter(d => d.month === month || month.isEmpty)
+    val (docs, totalHits): (List[Document], Int) = 
+      ConnectionFactory.connect withSession { implicit session =>
+        // Filtering level 1: Query-level filters
+        // Filter values by comparing to their default values in the router
+        // (workaround to Slick limitations)
+        val query = documents
+          .filter(d => (d.mailbox inSetBind Mailbox.getSubboxes(mailbox)) || mailbox.isEmpty)
+          .filter(d => d.forTenant === forTenant || forTenant < 1)
+          .filter(d => d.creator === creator || creator.isEmpty)
+          .filter(d => d.year === year || year.isEmpty)
+          .filter(d => d.month === month || month.isEmpty)
+          .filter(d => d.isPaid === isPaid || isPaid.isEmpty)
 
-      val withIsAssigned = isAssigned map {
-        flag => query.filter(d => d.assigned.isDefined === flag)
-      } getOrElse query
+        val withIsAssigned = isAssigned map {
+          flag => query.filter(d => d.assigned.isDefined === flag)
+        } getOrElse query
 
-      val withAssigned = assigned map {
-        user => withIsAssigned.filter(d => d.assigned === assigned)
-      } getOrElse withIsAssigned
+        val withAssigned = assigned map {
+          user => withIsAssigned.filter(d => d.assigned === assigned)
+        } getOrElse withIsAssigned
 
-      val withOthers = others map {
-        flag => 
-          val userSet: Set[String] = Set(request.user.userId)
-          if(flag) withAssigned.filterNot(d => d.assigned inSetBind userSet)
-          else withAssigned.filter(d => d.assigned inSetBind userSet)
-      } getOrElse withAssigned
+        val withOthers = others map {
+          flag => 
+            val userSet: Set[String] = Set(request.user.userId)
+            if(flag) withAssigned.filterNot(d => d.assigned inSetBind userSet)
+            else withAssigned.filter(d => d.assigned inSetBind userSet)
+        } getOrElse withAssigned
 
-      withOthers.drop(offset).take(limit).sortBy(_.created.desc).list
-    }
+        val total = withOthers.length.run 
+        val results = withOthers.drop(offset).take(limit).sortBy(_.created.desc).list
+        (results, total) 
+      }
 
-    val objs = ds
+    val objs = docs
       .map { d =>
         implicit val doc = d
 
@@ -98,11 +102,6 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
         withAssignLinks.asJsValue
       }
 
-    // Filtering level 3: Post-mapping to JS value
-    val withIsPaid = isPaid map { b =>
-      objs.filter(d => d \ "amounts" \ "isPaid" == JsBoolean(b))
-    } getOrElse objs
-
     val self = routes.Documents.list(offset, limit, mailbox, forTenant, creator, assigned, year, month, isPaid, others, isAssigned)
     val blank = HalJsObject.create(self.absoluteURL())
       .withCurie("hoa", Application.defaultCurie)
@@ -112,14 +111,14 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       .withLink("hoa:templates", routes.Templates.list().absoluteURL(),
         Some("List of document templates"))
       .withField("_template", createForm)
-      .withField("count", withIsPaid.length)
+      .withField("count", objs.length)
       .withField("offset", offset)
       .withField("limit", limit)
-      .withField("total", ds.size)
+      .withField("total", totalHits)
 
-    val withList = blank.withEmbedded(HalJsObject.empty.withField("item", withIsPaid))
+    val withList = blank.withEmbedded(HalJsObject.empty.withField("item", objs))
 
-    val withNavLinks = listNavLinks(self.absoluteURL(), offset, limit, ds.length)
+    val withNavLinks = listNavLinks(self.absoluteURL(), offset, limit, totalHits)
       .foldLeft(withList) {
         (obj, pair) => obj.withLink(pair._1, pair._2.href)
       }
@@ -166,11 +165,20 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
               case (None, None, None) =>
                 BadRequest("No editable fields matched. Please check your request.")
               case (bodyOpt, commentsOpt, amountPaidOpt) =>
-                val newDoc =
-                  existingDoc.copy(
+                
+                val newDoc: Document = {
+                  val a = existingDoc.copy(
                     body = bodyOpt getOrElse existingDoc.body,
-                    comments = commentsOpt getOrElse existingDoc.comments,
-                    amountPaid = amountPaidOpt getOrElse existingDoc.amountPaid)
+                    comments = commentsOpt getOrElse existingDoc.comments)
+                  val b = amountPaidOpt map {
+                    amountJson =>
+                      val (_, _, _, _, _, isPaid) = Templates.extractDefaultAmounts(a)
+                      a.copy(
+                        isPaid = isPaid,
+                        amountPaid = amountJson)
+                  } getOrElse a
+                  b
+                }
 
                 Document.update(newDoc) match {
                   case Success(updateDoc) =>
@@ -325,15 +333,8 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
 
   def appendAmounts(obj: HalJsObject)(implicit doc: Document): HalJsObject = {
     if (doc.docType == "invoice-1") {
-      val previous = Templates.extractSection(doc, "previous")
-      val rent = Templates.extractSection(doc, "rent")
-      val electricity = Templates.extractSection(doc, "electricity")
-      val water = Templates.extractSection(doc, "water")
-      val cusa = Templates.extractSection(doc, "cusa")
-
-      val isPaid: Boolean =
-        List(previous, rent, electricity, water, cusa)
-          .foldLeft(true)(_ && _.isPaid)
+      val (previous, rent, electricity, water, cusa, isPaid) =
+        Templates.extractDefaultAmounts(doc)
 
       obj.withField("amounts",
         HalJsObject.empty

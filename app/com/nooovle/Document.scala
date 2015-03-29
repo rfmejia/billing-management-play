@@ -4,6 +4,7 @@ import com.nooovle.ModelInfo._
 import com.nooovle.slick.ConnectionFactory
 import com.nooovle.slick.models.{ actionLogs, documents }
 import com.nooovle.slick.DocumentsModel
+import controllers.Templates
 import org.joda.time.{ DateTime, YearMonth }
 import play.api.libs.json.{ JsNumber, JsObject }
 import play.api.Logger
@@ -20,6 +21,7 @@ case class Document(
   forTenant: Int,
   year: Int,
   month: Int,
+  isPaid: Boolean,
   amountPaid: JsObject,
   body: JsObject,
   comments: JsObject,
@@ -29,7 +31,7 @@ case class Document(
   checkedAction: Option[Int] = None,
   approvedAction: Option[Int] = None)
 
-object Document extends ((Int, Option[Int], String, String, String, DateTime, Int, Int, Int, JsObject, JsObject, JsObject, Option[String], Option[Int], Option[Int], Option[Int], Option[Int]) => Document) with ModelTemplate {
+object Document extends ((Int, Option[Int], String, String, String, DateTime, Int, Int, Int, Boolean, JsObject, JsObject, JsObject, Option[String], Option[Int], Option[Int], Option[Int], Option[Int]) => Document) with ModelTemplate {
 
   private val defaultAmountPaid: JsObject =
     JsObject(Seq(
@@ -53,16 +55,19 @@ object Document extends ((Int, Option[Int], String, String, String, DateTime, In
     val creationTime = new DateTime()
     val doc = Document(0, None, docType, Mailbox.start.name,
       creator.userId, creationTime, forTenant, forMonth.getYear,
-      forMonth.getMonthOfYear, defaultAmountPaid, body,
+      forMonth.getMonthOfYear, true, defaultAmountPaid, body,
       JsObject(Seq.empty), Some(creator.userId))
+
+    val (_, _, _, _, _, isPaid) = Templates.extractDefaultAmounts(doc)
+    val docWithIsPaid = doc.copy(isPaid = isPaid) 
 
     ConnectionFactory.connect withSession { implicit session =>
       // Return ID of newly inserted tenant
-      val id = (documents returning documents.map(_.id)) += doc
+      val id = (documents returning documents.map(_.id)) += docWithIsPaid
 
       // Log this action like this, because we need the new document's generated ID
       ActionLog.log(creator.userId, id, "Created document") map { log =>
-        val newDoc = doc.copy(id = id, lastAction = Some(log.id))
+        val newDoc = docWithIsPaid.copy(id = id, lastAction = Some(log.id))
         update(newDoc).get
       }
     }

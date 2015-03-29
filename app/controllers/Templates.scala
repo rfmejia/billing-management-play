@@ -90,6 +90,20 @@ object Templates {
       } else Left(s"The document type '${doc.docType}' is not registered")
   })(d)
 
+  def extractDefaultAmounts(doc: Document): (Amounts, Amounts, Amounts, Amounts, Amounts, Boolean) = {
+    val previous = Templates.extractSection(doc, "previous")
+    val rent = Templates.extractSection(doc, "rent")
+    val electricity = Templates.extractSection(doc, "electricity")
+    val water = Templates.extractSection(doc, "water")
+    val cusa = Templates.extractSection(doc, "cusa")
+
+    val isPaid: Boolean =
+      List(previous, rent, electricity, water, cusa)
+        .foldLeft(true)(_ && _.isPaid)
+
+    (previous, rent, electricity, water, cusa, isPaid)
+  }
+
   lazy val invoice1: JsObject = {
     val filename = "public/assets/templates/invoice-1.json"
     Play.current.resourceAsStream(filename) match {
