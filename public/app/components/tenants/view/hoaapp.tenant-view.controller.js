@@ -2,18 +2,19 @@ angular
     .module('app.tenants')
     .controller('tenantViewCtrl', tenantViewCtrl);
 
-function tenantViewCtrl($state, $stateParams, documentsSrvc, tenantsSrvc, docsHelper, dialogProvider, toastProvider, reportsRoutes, tenantDocs, tenant, userDetails, queryHelper) {
+function tenantViewCtrl($state, $stateParams, tenantsSrvc, dialogProvider, toastProvider, tenantDocs, tenant, queryHelper) {
     var vm = this;
     vm.tenant = tenant.viewModel;
     vm.documents = tenantDocs._embedded.item;
     vm.isInfoOpen = true;
-    vm.tradeNameColor = {color : "#689F38"};
+
     vm.pageTitle = $state.current.data.title;
     vm.currentFilter = {};
+
+    //Pagination
     vm.currentPage = 1;
-    vm.pageSize = tenantDocs.limit;
-    //TODO: CHANGE TO TOTAL
-    vm.total = tenantDocs.total;
+    vm.pageSize;
+    vm.total;
 
     vm.onEditClicked = onEditClicked;
     vm.onFilterClicked = onFilterClicked;
@@ -24,6 +25,12 @@ function tenantViewCtrl($state, $stateParams, documentsSrvc, tenantsSrvc, docsHe
 
     //region FUNCTION_CALL
     function activate() {
+        //Pagination setup
+        vm.currentPage = $stateParams.offset % $stateParams.limit;
+        vm.total = 500; //TODO: Pagination activate once total is set
+        vm.pageSize = $stateParams.limit;
+
+        //Filter setup
         resolveFilter();
     }
 
@@ -68,16 +75,14 @@ function tenantViewCtrl($state, $stateParams, documentsSrvc, tenantsSrvc, docsHe
     }
 
     function onChangePageClicked(page) {
-        page -= 1;
-        var offset = (page == null) ? 0 : (page * vm.pageSize);
-        var changedParams = vm.currentFilter.params;
-        if (changedParams.hasOwnProperty("offset")) {
-            changedParams.offset = offset;
+        var offset = 0;
+        if(page !== null) {
+            var newPage = page - 1;
+            offset = newPage * vm.pageSize;
         }
-        vm.documents = [];
-        vm.currentPage = page + 1;
-        documentsSrvc.getDocumentList(changedParams).then(success);
-
+        var queryParameters = queryHelper.getTenantDocs(offset, $stateParams.id, vm.currentFilter);
+        //TODO: Pagination activate once total is set
+        //$state.go($state.current, queryParameters, {reload : true});
     }
 
     function success(response) {
@@ -92,17 +97,13 @@ tenantViewCtrl.$inject = [
     "$state",
     "$stateParams",
     //API
-    "documentsApi",
     "tenantsApi",
     //SERVICES
-    "documentsHelper",
     "hoaDialogService",
     "hoaToastService",
-    "REPORTS_ROUTES",
     //UTILS
     //RESOLVE
     "tenantDocs",
     "viewTenantModel",
-    "userDetails",
     "queryParams"
 ];

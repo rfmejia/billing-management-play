@@ -2,35 +2,35 @@ angular
     .module("app.mailbox")
     .controller("documentsListController", documentsListController);
 
-function documentsListController($state, $stateParams, documentsApi, documentsHelper, dialogProvider, userDetails, docsResponse, queryHelper) {
+function documentsListController($state, $stateParams, docsResponse, queryHelper) {
     var vm = this;
     vm.documents = [];
-    vm.pages = [];
-    vm.pagesSliced = [];
-    vm.currentPage = 1;
-    vm.total = docsResponse.count;
-    vm.pageSize = $stateParams.limit;
+
     vm.filters = [];
     vm.currentFilter = null;
 
-    vm.requestNewPage = requestNewPage;
-    vm.isIncrementPagePossible = isIncrementPagePossible;
-    vm.isDecrementPagePossible = isDecrementPagePossible;
+    //Pagination
+    vm.currentPage = 0;
+    vm.total = 500;
+    vm.pageSize = $stateParams.limit;
+
     vm.onChangePageClicked = onChangePageClicked;
-    vm.onChangeSliceClicked = onChangeSliceClicked;
     vm.onFilterTabClicked = onFilterTabClicked;
     vm.pageTitle = $state.current.data.title;
     vm.isForSending = false;
 
-    var maxPages = 0;
-    var minSlice = 0;
-    var maxSlice = 0;
-    var limitRequest = 0;
     activate();
 
     function activate() {
         vm.documents = docsResponse._embedded.item;
         vm.isForSending = $stateParams.mailbox == 'forSending';
+
+        //Pagination setup
+        vm.currentPage = $stateParams.offset % $stateParams.limit;
+        vm.total = 500; //TODO: Pagination activate once total is set
+        vm.pageSize = $stateParams.limit;
+
+        //filter setup
         resolveFilter();
     }
 
@@ -47,50 +47,29 @@ function documentsListController($state, $stateParams, documentsApi, documentsHe
         }
     }
 
-    function requestNewPage(page) {
-        var offset = (page == null) ? 0 : (page * vm.pageSize);
-        var queryParameters = queryHelper.getDocsListParams($stateParams.mailbox, offset, vm.currentFilter);
-        $state.go($state.current, queryParameters, {reload : true});
-    }
-
-    function isIncrementPagePossible() {
-        return vm.pagesSliced[vm.pagesSliced.length - 1] != maxPages;
-    }
-
-    function isDecrementPagePossible() {
-        return vm.pagesSliced[0] != 1;
-    }
-
     function onChangePageClicked(page) {
-        requestNewPage(page - 1);
-        vm.currentPage = page;
+        var offset = 0;
+        if(page !== null) {
+            var newPage = page - 1;
+            offset = newPage * vm.pageSize;
+        }
+        var queryParameters = queryHelper.getDocsListParams($stateParams.mailbox, offset, vm.currentFilter);
+        //TODO: Pagination activate once total is set
+        //$state.go($state.current, queryParameters, {reload : true});
     }
 
     function onFilterTabClicked(filter) {
         var params = queryHelper.getDocsListParams($stateParams.mailbox, 0, filter.id);
         $state.go($state.current, params, {reload : true});
     }
-
-    function onChangeSliceClicked(step) {
-        if (!vm.isDecrementPagePossible() && step < 0) return;
-        if (!vm.isIncrementPagePossible() && step > 0) return;
-        minSlice += step;
-        maxSlice += step;
-        vm.pagesSliced = vm.pages.slice(minSlice, (maxSlice > maxPages - 1) ? maxPages : maxSlice);
-        vm.onChangePageClicked(vm.pagesSliced[0]);
-    }
 }
 documentsListController.$inject = [
     "$state",
     "$stateParams",
     //API
-    "documentsApi",
     //SERVICES
-    "documentsHelper",
-    'hoaDialogService',
     //UTILS
     //RESOLVES
-    "userDetails",
     "documentsResponse",
     "queryParams"
 ];

@@ -9,15 +9,17 @@ function controller($state, $stateParams, docsSrvc, docsHelper, reportsRoutes, d
     var vm = this;
     vm.pageTitle = $state.current.data.title;
     vm.documents = documentsList._embedded.item;
-    vm.isPaid = null;
-    vm.selectedFilter = null;
     vm.report = reportResponse;
-    vm.pageSize = $stateParams.limit;
-    vm.count = 10;
-    vm.total = documentsList.count;
-    vm.currentPage = 1;
+
+    //Filters
     vm.currentParams = {};
     vm.filters = [];
+
+    //Pagination
+    //Pagination
+    vm.currentPage = 1;
+    vm.pageSize;
+    vm.total;
 
     //function mapping
     vm.onFilterClicked = onFilterClicked;
@@ -28,12 +30,18 @@ function controller($state, $stateParams, docsSrvc, docsHelper, reportsRoutes, d
 
     //region FUNCTION_CALL
     function activate() {
+        //Filter setup
         vm.filters = queryHelper.getReportsFilters();
         vm.currentFilter = queryHelper.getReportsFiltersById($stateParams.filterId);
 
         angular.forEach(vm.filters, function(filter) {
             filter.isActive = (filter.id === vm.currentFilter.id);
-        })
+        });
+
+        //Pagination setup
+        vm.currentPage = $stateParams.offset % $stateParams.limit;
+        vm.total = 500; //TODO: Pagination activate once total is set
+        vm.pageSize = $stateParams.limit;
     }
 
     function onFilterClicked(filter) {
@@ -48,24 +56,18 @@ function controller($state, $stateParams, docsSrvc, docsHelper, reportsRoutes, d
         $state.go($state.current, params, {reload : true});
     }
 
-    function refreshDocuments(params) {
-        vm.documents = [];
-        docsSrvc.getDocumentList(params)
-            .then(success);
-        function success(response) {
-            vm.documents = response._embedded.item;
-            vm.total = response.count;
-        }
-    }
 
     function onChangePageClicked(page) {
-        page -= 1;
-        var offset = (page == null) ? 0 : vm.pageSize * page;
-        if (vm.currentParams.hasOwnProperty("offset")) {
-            vm.currentParams.offset = offset;
+        var offset = 0;
+        if(page !== null) {
+            var newPage = page - 1;
+            offset = newPage * vm.pageSize;
         }
-        vm.currentPage = page + 1;
-        refreshDocuments(vm.currentParams);
+        console.log(offset);
+        var dateString = dateUtils.getMomentFromString($stateParams.month, $stateParams.year);
+        var queryParameters = queryHelper.getReportsParams(offset, dateString, vm.currentFilter.id);
+        //TODO: Pagination activate once total is set
+        //$state.go($state.current, queryParameters, {reload : true});
     }
 
     //endregion

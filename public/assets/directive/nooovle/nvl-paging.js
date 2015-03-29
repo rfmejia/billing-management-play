@@ -292,7 +292,7 @@ function paging() {
             pagingAction: '&'
         },
         template:
-        '<ul ng-hide="Hide" ng-class="ulClass"> ' +
+        '<ul ng-hide="Hide" ng-class="ulClass" class="pagination-sm"> ' +
         '<li ' +
         'title="{{Item.title}}" ' +
         'ng-class="Item.liClass" ' +
