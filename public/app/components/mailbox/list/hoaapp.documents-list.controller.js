@@ -16,7 +16,6 @@ function documentsListController($state, $stateParams, documentsApi, documentsHe
     vm.requestNewPage = requestNewPage;
     vm.isIncrementPagePossible = isIncrementPagePossible;
     vm.isDecrementPagePossible = isDecrementPagePossible;
-    vm.onDocumentItemClicked = onDocumentItemClicked;
     vm.onChangePageClicked = onChangePageClicked;
     vm.onChangeSliceClicked = onChangeSliceClicked;
     vm.onFilterTabClicked = onFilterTabClicked;
@@ -60,33 +59,6 @@ function documentsListController($state, $stateParams, documentsApi, documentsHe
 
     function isDecrementPagePossible() {
         return vm.pagesSliced[0] != 1;
-    }
-
-    function onDocumentItemClicked(item) {
-        var state = documentsHelper.resolveViewer(item);
-        var title = "Sorry";
-        var message = "This document is being edited by another user.";
-        //Check if clicked document is assigned
-        if(item.assigned == null) {
-            documentsApi.assignDocument(item._links["hoa:assign"].href).then(goToViewer, error);
-        }
-        else if (userDetails.userId == item.assigned.userId){
-            goToViewer();
-        }
-        else if(item._links.hasOwnProperty("hoa:assign")) {
-            documentsApi.assignDocument(item._links["hoa:assign"].href).then(goToViewer, error);
-        }
-        else {
-            error();
-        }
-
-        function goToViewer(response) {
-            $state.go(state, {id : item.id}, {reload : true});
-        }
-
-        function error(dialogContent) {
-            dialogProvider.getInformDialog(null,  title, message, "Okay");
-        }
     }
 
     function onChangePageClicked(page) {

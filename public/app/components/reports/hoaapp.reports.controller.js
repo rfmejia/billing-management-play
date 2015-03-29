@@ -22,8 +22,6 @@ function controller($state, $stateParams, docsSrvc, docsHelper, reportsRoutes, d
     //function mapping
     vm.onFilterClicked = onFilterClicked;
     vm.onReportMonthSelected = onReportMonthSelected;
-    vm.onDocumentItemClicked = onDocumentItemClicked;
-    vm.onUpdateItemClicked = onUpdateItemClicked;
     vm.onChangePageClicked = onChangePageClicked;
 
     activate();
@@ -57,37 +55,6 @@ function controller($state, $stateParams, docsSrvc, docsHelper, reportsRoutes, d
         function success(response) {
             vm.documents = response._embedded.item;
             vm.total = response.count;
-        }
-    }
-
-    function onDocumentItemClicked(item) {
-        $state.go(docsHelper.resolveViewer(item), {id : item.id});
-    }
-
-    function onUpdateItemClicked(item) {
-        var title = "Sorry";
-        var message = "This document is being edited by another user.";
-        if (item.assigned == null) {
-            docsSrvc.assignDocument(item._links["hoa:assign"].href).then(viewDocument, error);
-        }
-        else if (userDetails.userId == item.assigned.userId) {
-            viewDocument();
-        }
-        else if (item._links.hasOwnProperty("hoa:assign")) {
-
-            docsSrvc.assignDocument(item._links["hoa:assign"].href).then(viewDocument, error);
-        }
-        else {
-            error();
-        }
-
-        function viewDocument() {
-            $state.go(reportsRoutes.reportUpdate, {id : item.id});
-        }
-
-        function error(reason) {
-
-            dialogProvider.getInformDialog(null, title, message, "Okay");
         }
     }
 

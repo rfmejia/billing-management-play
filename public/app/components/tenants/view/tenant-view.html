@@ -66,9 +66,7 @@
                     <md-list ng-if="viewCtrl.total > 0">
                         <hoa-embedded-items
                                 layout="row" ng-repeat="document in viewCtrl.documents"
-                                item="document"
-                                on-click="viewCtrl.onDocumentItemClicked(item)"
-                                on-update-clicked="viewCtrl.onUpdateItemClicked(item)"></hoa-embedded-items>
+                                item="document"></hoa-embedded-items>
                     </md-list>
                     <div ng-if="viewCtrl.total < 1" class="no-items" layout="column" layout-align="center center">
                         <h2>0 invoice found</h2>

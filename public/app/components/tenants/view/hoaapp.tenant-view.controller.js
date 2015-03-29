@@ -18,8 +18,6 @@ function tenantViewCtrl($state, $stateParams, documentsSrvc, tenantsSrvc, docsHe
     vm.onEditClicked = onEditClicked;
     vm.onFilterClicked = onFilterClicked;
     vm.onDeleteClicked = onDeleteClicked;
-    vm.onDocumentItemClicked = onDocumentItemClicked;
-    vm.onUpdateItemClicked = onUpdateItemClicked;
     vm.onChangePageClicked = onChangePageClicked;
 
     activate();
@@ -62,59 +60,6 @@ function tenantViewCtrl($state, $stateParams, documentsSrvc, tenantsSrvc, docsHe
         function cancelFn() {}
 
         dialogProvider.getConfirmDialog(okayFn, cancelFn, message, title);
-    }
-
-    function onDocumentItemClicked(item) {
-        var title = "Sorry";
-        var message = "This document is being edited by another user.";
-        if (item.mailbox == 'paid' || item.mailbox == 'unpaid') {
-            viewDocument();
-        }
-        else {
-            //Check if clicked document is assigned
-            if (item._links.hasOwnProperty("hoa:assign")) {
-                documentsSrvc.assignDocument(item._links["hoa:assign"].href).then(viewDocument, error);
-            }
-            else if (userDetails.userId == item.assigned.userId) {
-                viewDocument();
-            }
-            else {
-                error();
-            }
-        }
-
-        function viewDocument() {
-            $state.go(docsHelper.resolveViewer(item), {id : item.id}, {reload : true});
-        }
-
-        function error(dialogContent) {
-            dialogProvider.getInformDialog(null, title, message, "Okay");
-        }
-    }
-
-    function onUpdateItemClicked(item) {
-        var title = "Sorry";
-        var message = "This document is being edited by another user.";
-        if (item.assigned == null) {
-            documentsSrvc.assignDocument(item._links["hoa:assign"].href).then(viewDocument, error);
-        }
-        else if (userDetails.userId == item.assigned.userId) {
-            viewDocument();
-        }
-        else if (item._links.hasOwnProperty("hoa:assign")) {
-            documentsSrvc.assignDocument(item._links["hoa:assign"].href).then(viewDocument, error);
-        }
-        else {
-            error();
-        }
-
-        function viewDocument() {
-            $state.go(reportsRoutes.reportUpdate, {id : item.id});
-        }
-
-        function error(reason) {
-            dialogProvider.getInformDialog(null, title, message, "Okay");
-        }
     }
 
     function onFilterClicked(filter) {
