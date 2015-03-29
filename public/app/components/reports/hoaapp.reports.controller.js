@@ -5,7 +5,7 @@ angular
     .module("app.reports")
     .controller("reportsController", controller);
 
-function controller($state, $stateParams, docsSrvc, docsHelper, reportsRoutes, dialogProvider, dateUtils, documentsList, reportResponse, userDetails, queryHelper) {
+function controller($state, $stateParams, dateUtils, documentsList, reportResponse, queryHelper) {
     var vm = this;
     vm.pageTitle = $state.current.data.title;
     vm.documents = documentsList._embedded.item;
@@ -77,16 +77,11 @@ controller.$inject = [
     "$state",
     "$stateParams",
     //API
-    "documentsApi",
     //SERVICES
-    "documentsHelper",
-    "REPORTS_ROUTES",
-    'hoaDialogService',
     //UTILS
     "nvl-dateutils",
     //RESOLVE
     "documentsList",
     "reportResponse",
-    'userDetails',
     "queryParams"
 ];
