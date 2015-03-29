@@ -7,6 +7,9 @@
     </div>
 </md-toolbar>
 <md-content layout="column" flex class="main">
+    <div ng-if="stateIsLoading" layout="column" layout-align="center-center" flex="10">
+        <md-progress-linear md-mode="indeterminate"></md-progress-linear>
+    </div>
     <div class="max-width">
         <md-card class="form-view">
             <md-card-content>

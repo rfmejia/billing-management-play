@@ -5,7 +5,7 @@ angular
     .module("app.layout")
     .controller('workspaceController', workspaceController);
 
-function workspaceController($state, $location, queryHelper) {
+function workspaceController($state, $rootScope, $location, queryHelper) {
     var vm = this;
     activate();
 
@@ -16,7 +16,20 @@ function workspaceController($state, $location, queryHelper) {
             var params = queryHelper.getDocsListParams("drafts", 0, filter[0].id);
             $state.go("workspace.pending.drafts", params, {reload : true});
         }
+
+        $rootScope.$on("$stateChangeStart", function(event, toState, toParams, fromState, fromParams) {
+            $rootScope.stateIsLoading = true;
+        });
+
+        $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
+            $rootScope.stateIsLoading = false;
+        })
+
+        $rootScope.$on('$stateChangeError', function(event, toState, toParams, fromState, fromParams) {
+            $rootScope.stateIsLoading = false;
+        })
     }
+
     //endregion
 }
-workspaceController.$inject = ["$state", "$location", "queryParams"];
+workspaceController.$inject = ["$state", "$rootScope", "$location", "queryParams"];
