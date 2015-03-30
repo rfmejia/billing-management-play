@@ -99,7 +99,7 @@ mailboxConfig.$inject = ["$stateProvider"];
 //region RESOLVE_FUNCTIONS_CREATE
 function createGetData($q, docsSrvc, tenantsSrvc, templatesSrvc) {
     var deferred = $q.defer();
-    var tenantsPromise = tenantsSrvc.getList();
+    var tenantsPromise = tenantsSrvc.getAllTenants();
     var templatesPromise = templatesSrvc.getLocal();
     var docsPromise = docsSrvc.getDocumentList(null, 0);
 
