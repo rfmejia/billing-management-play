@@ -4,11 +4,12 @@ angular.module("app.tenants").factory("tenantsApi", tenantsApi)
 
 function tenantsApi($resource, $q, linksApi) {
     var service = {
-        getList      : getList,
-        getTenant    : getTenant,
-        createTenant : createTenant,
-        editTenant   : editTenant,
-        deleteTenant : deleteTenant
+        getList       : getList,
+        getAllTenants : getAllTenants,
+        getTenant     : getTenant,
+        createTenant  : createTenant,
+        editTenant    : editTenant,
+        deleteTenant  : deleteTenant
     };
 
     var url = linksApi.getTenantsLinks() + "/:id";
@@ -23,11 +24,10 @@ function tenantsApi($resource, $q, linksApi) {
     return service;
 
     //Returns a list of tenants and also a template to create a tenant
-    function getList() {
+    function getList(queryParams) {
         var deferred = $q.defer();
 
         var success = function(response) {
-            console.log(response);
             deferred.resolve(response);
         };
 
@@ -35,7 +35,25 @@ function tenantsApi($resource, $q, linksApi) {
             deferred.reject(error);
         };
 
-        resource.get().$promise.then(success, error);
+        resource.get(queryParams).$promise.then(success, error);
+        return deferred.promise;
+    }
+
+    function getAllTenants() {
+        var deferred = $q.defer();
+
+        var success = function(response) {
+            deferred.resolve(response);
+        };
+
+        var error = function(error) {
+            deferred.reject(error);
+        };
+
+        resource.get().$promise.then(function(response) {
+            getList({limit : response.total}).then(success, error);
+        }, error);
+
         return deferred.promise;
     }
 

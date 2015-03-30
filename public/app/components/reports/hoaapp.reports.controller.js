@@ -16,7 +16,6 @@ function controller($state, $stateParams, dateUtils, documentsList, reportRespon
     vm.filters = [];
 
     //Pagination
-    //Pagination
     vm.currentPage = 1;
     vm.pageSize;
     vm.total;
@@ -63,7 +62,6 @@ function controller($state, $stateParams, dateUtils, documentsList, reportRespon
             var newPage = page - 1;
             offset = newPage * vm.pageSize;
         }
-        console.log(offset);
         var dateString = dateUtils.getMomentFromString($stateParams.month, $stateParams.year);
         var queryParameters = queryHelper.getReportsParams(offset, dateString, vm.currentFilter.id);
         //TODO: Pagination activate once total is set

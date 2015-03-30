@@ -30,12 +30,22 @@
                 <div ng-if="viewCtrl.profile === 'collection'">
                     <md-list>
                         <hoa-embedded-items layout="row"
-                                            ng-repeat="tenant in viewCtrl.tenants | filter: query"
+                                            ng-repeat="tenant in viewCtrl.currentListShown | filter: query"
                                             item="tenant"
                                             on-click="viewCtrl.onTenantClicked(tenant)">
                         </hoa-embedded-items>
                     </md-list>
                 </div>
+                <section ng-if="viewCtrl.total > viewCtrl.pageSize">
+                    <md-divider></md-divider>
+                    <div layout="row"
+                         layout-align="center center"
+                         paging
+                         page="viewCtrl.currentPage"
+                         paging-action="viewCtrl.onChangePageClicked(page)"
+                         page-size="viewCtrl.pageSize"
+                         total="viewCtrl.total"></div>
+                </section>
             </md-content>
 
         </md-whiteframe>
