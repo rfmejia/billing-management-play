@@ -34,7 +34,7 @@ class Users(override implicit val env: RuntimeEnvironment[User])
             .withField("firstName", u.firstName)
             .withField("lastName", u.lastName)
             .withField("fullName", u.fullName)
-            .withField("roles", rs)
+            .withField("roles", roleSetToJsArray(rs))
 
           val withEditRoleLink =
             if (User.findRoles(request.user.userId).contains(Roles.Admin))
@@ -137,8 +137,18 @@ class Users(override implicit val env: RuntimeEnvironment[User])
         .withField("firstName", u.firstName)
         .withField("lastName", u.lastName)
         .withField("fullName", u.fullName)
-        .withField("roles", rs)
+        .withField("roles", roleSetToJsArray(rs))
       obj.asJsValue
     }
+  }
+  
+  def roleSetToJsArray(roles: Set[Role]): JsArray = {
+    val items: Set[JsValue] = for(role <- roles) yield {
+      JsObject(Seq(
+        "id" -> JsString(role.id),
+        "name" -> JsString(role.name)
+      ))
+    }
+    JsArray(items.toList)
   }
 }

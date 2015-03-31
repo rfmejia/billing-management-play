@@ -39,6 +39,11 @@ class Tenants(override implicit val env: RuntimeEnvironment[User])
           .withField("rentalPeriod", t.rentalPeriod)
           .withField("basicRentalRate", t.basicRentalRate)
           .withField("escalation", t.escalation)
+          .withField("cusaDefault", t.cusaDefault)
+          .withField("waterMeterDefault", t.waterMeterDefault)
+          .withField("electricityMeterDefault", t.electricityMeterDefault)
+          .withField("baseRentDefault", t.baseRentDefault)
+          .withField("standardMultiplierDefault", t.standardMultiplierDefault)
         Ok(obj.asJsValue)
       case None => NotFound
     }
@@ -88,10 +93,22 @@ class Tenants(override implicit val env: RuntimeEnvironment[User])
       (json \ "size").asOpt[String],
       (json \ "rentalPeriod").asOpt[String],
       (json \ "basicRentalRate").asOpt[String],
-      (json \ "escalation").asOpt[String]) match {
-        case (Some(tradeName), Some(address), Some(contactPerson), Some(contactNumber), Some(email), Some(area), Some(size), Some(rentalPeriod), Some(basicRentalRate), Some(escalation)) =>
+      (json \ "escalation").asOpt[String],
+      (json \ "cusaDefault").asOpt[String],
+      (json \ "waterMeterDefault").asOpt[String],
+      (json \ "electricityMeterDefault").asOpt[String],
+      (json \ "baseRentDefault").asOpt[String],
+      (json \ "standardMultiplierDefault").asOpt[Double]) match {
+        case (Some(tradeName), Some(address), Some(contactPerson), 
+          Some(contactNumber), Some(email), Some(area), Some(size), 
+          Some(rentalPeriod), Some(basicRentalRate), Some(escalation),
+          cusaDefaultOpt, waterMeterDefaultOpt, electricityMeterDefaultOpt,
+          baseRentDefaultOpt, standardMultiplierDefaultOpt) =>
           val result = ConnectionFactory.connect withSession { implicit session =>
-            Tenant.insert(tradeName, address, contactPerson, contactNumber, email, area, size, rentalPeriod, basicRentalRate, escalation)
+            Tenant.insert(tradeName, address, contactPerson, contactNumber, email, 
+              area, size, rentalPeriod, basicRentalRate, escalation, cusaDefaultOpt, 
+              waterMeterDefaultOpt, electricityMeterDefaultOpt, baseRentDefaultOpt, 
+              standardMultiplierDefaultOpt)
           }
           result match {
             case Success(tenant) =>
@@ -119,8 +136,17 @@ class Tenants(override implicit val env: RuntimeEnvironment[User])
           (json \ "size").asOpt[String],
           (json \ "rentalPeriod").asOpt[String],
           (json \ "basicRentalRate").asOpt[String],
-          (json \ "escalation").asOpt[String]) match {
-            case (Some(tradeName), Some(address), Some(contactPerson), Some(contactNumber), Some(email), Some(area), Some(size), Some(rentalPeriod), Some(basicRentalRate), Some(escalation)) =>
+          (json \ "escalation").asOpt[String],
+          (json \ "cusaDefault").asOpt[String],
+          (json \ "waterMeterDefault").asOpt[String],
+          (json \ "electricityMeterDefault").asOpt[String],
+          (json \ "baseRentDefault").asOpt[String],
+          (json \ "standardMultiplierDefault").asOpt[Double]) match {
+          case (Some(tradeName), Some(address), Some(contactPerson), 
+            Some(contactNumber), Some(email), Some(area), Some(size), 
+            Some(rentalPeriod), Some(basicRentalRate), Some(escalation),
+            cusaDefaultOpt, waterMeterDefaultOpt, electricityMeterDefaultOpt,
+            baseRentDefaultOpt, standardMultiplierDefaultOpt) =>
               val result = ConnectionFactory.connect withSession { implicit session =>
                 val newTenant =
                   existingTenant.copy(
@@ -133,7 +159,13 @@ class Tenants(override implicit val env: RuntimeEnvironment[User])
                     size = size,
                     rentalPeriod = rentalPeriod,
                     basicRentalRate = basicRentalRate,
-                    escalation = escalation)
+                    escalation = escalation,
+                    cusaDefault = cusaDefaultOpt orElse existingTenant.cusaDefault, 
+                    waterMeterDefault = waterMeterDefaultOpt orElse existingTenant.waterMeterDefault, 
+                    electricityMeterDefault = electricityMeterDefaultOpt orElse existingTenant.electricityMeterDefault,
+                    baseRentDefault = baseRentDefaultOpt orElse existingTenant.baseRentDefault,
+                    standardMultiplierDefault = standardMultiplierDefaultOpt orElse existingTenant.standardMultiplierDefault
+                  )
                 Tenant.update(newTenant)
               }
               result match {
