@@ -307,11 +307,6 @@ input[type=number]::-webkit-outer-spin-button {
     color: #FF80AB;
 }
 
-.text-accented {
-    color: #E040FB;
-    margin-left: 2px;
-    margin-right: 2px;
-}
 
 #documentControls {
     margin-left: 0px;

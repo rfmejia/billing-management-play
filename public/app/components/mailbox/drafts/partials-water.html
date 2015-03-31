@@ -1,0 +1,128 @@
+<md-whiteframe class="entry md-whiteframe-z1 unpadded" layout="column">
+    <div layout-gt-md="row" layout="column">
+        <section flex="50" class="draft-field" ng-form="water">
+            <h4 class="entry-title" flex>Water charges input</h4>
+            <section layout="row">
+                <div flex>
+                    <md-input-container>
+                        <label>{{drafts.water.dates.start.title}}</label> <input name="waterStartDate"
+                                                                                 type="date"
+                                                                                 ng-model="drafts.water.dates.start.value"
+                                                                                 ng-disabled="isDisabled"
+                                                                                 ng-change="drafts.onWaterChanged(water)"/>
+
+                        <div ng-messages="water.waterStartDate.$error">
+                            <div ng-message="date">Invalid date</div>
+                        </div>
+                    </md-input-container>
+                </div>
+                <div flex>
+                    <md-input-container>
+                        <label>{{drafts.water.dates.end.title}}</label> <input name="waterEndDate"
+                                                                               type="date"
+                                                                               ng-model="drafts.water.dates.end.value"
+                                                                               ng-disabled="isDisabled"
+                                                                               ng-change="drafts.onWaterChanged(water)"/>
+
+                        <div ng-messages="water.waterEndDate.$error">
+                            <div ng-message="date">Invalid date</div>
+                        </div>
+                </div>
+            </section>
+            <md-input-container>
+                <label>{{drafts.water.prevReading.title}} (0 if none)</label> <input name="waterPrevReading"
+                                                                                     required
+                                                                                     type="number"
+                                                                                     min="0" step="1"
+                                                                                     ng-disabled="isDisabled"
+                                                                                     ng-model="drafts.water.prevReading.value"
+                                                                                     ng-change="drafts.onWaterChanged(water)"
+                    />
+
+                <div ng-messages="water.waterPrevReading.$error">
+                    <div ng-message="required">This is required</div>
+                    <div ng-message="number">Oops! Numbers only please.</div>
+                    <div ng-message="min">Positive numbers only</div>
+                </div>
+            </md-input-container>
+            <md-input-container>
+                <label>{{drafts.water.currentReading.title}} (0 if none)</label> <input name="waterCurrentReading"
+                                                                                        required
+                                                                                        type="number"
+                                                                                        min="0" step="1"
+                                                                                        ng-disabled="isDisabled"
+                                                                                        ng-model="drafts.water.currentReading.value"
+                                                                                        ng-change="drafts.onWaterChanged(water)"
+                    />
+
+                <div ng-messages="water.waterCurrentReading.$error">
+                    <div ng-message="required">This is required</div>
+                    <div ng-message="number">Oops! Numbers only please.</div>
+                    <div ng-message="min">Positive numbers only</div>
+                </div>
+            </md-input-container>
+            <md-input-container>
+                <label>{{drafts.water.rate.title}} (0 if none)</label> <input name="waterRate"
+                                                                              required
+                                                                              type="number"
+                                                                              min="0.0" step="0.1"
+                                                                              ng-disabled="isDisabled"
+                                                                              ng-model="drafts.water.rate.value"
+                                                                              ng-change="drafts.onWaterChanged(water)"
+                    />
+
+                <div ng-messages="water.waterRate.$error">
+                    <div ng-message="required">This is required</div>
+                    <div ng-message="number">Oops! Numbers only please.</div>
+                    <div ng-message="min">Positive numbers only</div>
+                </div>
+            </md-input-container>
+        </section>
+        <section flex="10"></section>
+        <section ng-if="!water.$invalid" flex="40" layout="column" layout-align="start end" class="draft-calculation">
+            <div>
+                {{drafts.water.dates.start.value | momentString: "MMM. DD, YYYY"}} to {{drafts.water.dates.end.value |
+                momentString : "MMM. DD, YYYY"}}
+            </div>
+            <section flex layout="column" layout-align="center end">
+                <div class="entry-pair">
+                    <div class="value">{{drafts.water.meterNumber.value}}</div>
+                    <div class="title">{{drafts.water.meterNumber.title}}</div>
+                </div>
+                <div class="entry-pair">
+                    <div class="value">{{drafts.water.prevReading.value}}</div>
+                    <div class="title">{{drafts.water.prevReading.title}}</div>
+                </div>
+                <div class="entry-pair">
+                    <div class="value">{{drafts.water.currentReading.value}}</div>
+                    <div class="title">{{drafts.water.currentReading.title}}</div>
+                </div>
+                <div class="entry-pair">
+                    <div class="value">{{drafts.water.grossUsage.value}}</div>
+                    <div class="title">{{drafts.water.grossUsage.title}}</div>
+                </div>
+                <div class="entry-pair">
+                    <div class="value">{{drafts.water.rate.value}}</div>
+                    <div class="title">{{drafts.water.rate.title}}</div>
+                </div>
+                <div class="entry-pair">
+                    <div class="value">{{drafts.water.consumption.value | currency : "PHP "}}</div>
+                    <div class="title">{{drafts.water.consumption.title}}</div>
+                </div>
+            </section>
+            <div class="full-width total" layout-align="center end">
+                <div class="entry-pair">
+                    <div class="value">{{drafts.water.sectionTotal.value | currency : "PHP "}}</div>
+                    <div class="title">Water charges</div>
+                </div>
+            </div>
+        </section>
+        <section ng-if="water.$invalid"
+                 flex="40"
+                 layout="column"
+                 layout-align="center center"
+                 class="draft-calculation">
+            <h2 class="incomplete">Incomplete details</h2>
+        </section>
+    </div>
+</md-whiteframe>

@@ -1,3 +1,7 @@
+.text-accented {
+    color: #00BCD4;
+}
+
 /*
 TOOLBARS
 */
@@ -495,4 +499,60 @@ Animation css
 
 [ui-view].ng-leave-active {
     opacity: 0;
+}
+
+/*
+DRAFTS
+*/
+.draft-field {
+    padding: 16px;
+}
+
+.draft-calculation {
+    background-color: #61615D;
+    padding: 16px;
+    color: rgba(255, 255, 255, .87);
+}
+
+.draft-calculation .entry-pair{
+    margin-top: 12px;
+    margin-bottom: 12px;
+}
+
+.draft-calculation .title {
+    font-weight: 400;
+    text-align: right;
+    line-height: 1em;
+    color: rgba(255, 255, 255, .54);
+}
+
+.draft-calculation .value {
+    font-weight: 400;
+    text-align: right;
+    line-height: 1em;
+}
+
+.draft-calculation .total .entry-pair .value {
+    font-weight: 700;
+}
+
+.draft-calculation .total {
+    font-weight: 700;
+    text-align: right;
+    margin-left: 0;
+    margin-right: 0;
+    border-top: 1px solid rgba(182, 182, 182, .54);
+}
+
+.draft-calculation .incomplete {
+    color: rgba(255, 255, 255, .54);
+}
+
+h1.header-marginless,
+h2.header-marginless,
+h3.header-marginless,
+h4.header-marginless,
+h5.header-marginless,
+h6.header-marginless {
+  margin: 0px;
 }

@@ -2,7 +2,7 @@
     <md-card-content id="printable" ng-class="{'added-padding': printCtrl.isPrintable}">
         <div class="header" ng-if="printCtrl.isPrintable" layout="row" layout-align="start start">
             <div flex="50" class="tenant-info">
-                <h4>Statement of Account for {{printCtrl.document.billDate | momentString:"MMMM-YYYY"}}</h4>
+                <h4>Statement of Account for {{printCtrl.billDate | momentString:"MMMM-YYYY"}}</h4>
 
                 <div class="info-container"><span>{{printCtrl.document.tenant.tradeName}}</span></div>
                 <div class="info-container"><span>{{printCtrl.document.tenant.contactPerson}}</span></div>
@@ -16,7 +16,7 @@
             </div>
             <br/>
         </div>
-        <h5 class="main-section-title">PREVIOUS CHARGES</h5>
+        <h6 class="main-section-title">PREVIOUS CHARGES</h6>
 
         <div ng-repeat="detail in printCtrl.document.body.previous.sections">
             <div layout="row" class="static-bill-entries">
@@ -27,12 +27,6 @@
                             </div>
                             <div flex class="static-bill-entry-guide"></div>
                             <div class="static-bill-entry-value"><span>{{field.value | currency : "PHP "}}</span>
-                            </div>
-                        </section>
-                        <section ng-if="field.datatype == 'dateperiod'" layout="row">
-                            <div flex="40" class="static-bill-entry-title" primary-text><span>Date period</span></div>
-                            <div flex class="static-bill-entry-guide"></div>
-                            <div class="static-bill-entry-value"><span>{{field.dates.from.value}} to  {{field.dates.to.value}}</span>
                             </div>
                         </section>
                         <section ng-if="field.datatype != 'dateperiod' && field.datatype != 'currency'" layout="row">
@@ -62,20 +56,20 @@
             <div layout="row" class="static-bill-entries">
                 <div flex="70">
                     <div class="static-bill-entry" ng-repeat="field in detail.fields">
-                        <section ng-if="field.datatype == 'currency'" layout="row">
+                        <section ng-if="field.datatype === 'currency'" layout="row">
                             <div flex="40" class="static-bill-entry-title" primary-text><span>{{field.title}}</span>
                             </div>
                             <div flex class="static-bill-entry-guide"></div>
                             <div class="static-bill-entry-value"><span>{{field.value | currency : "PHP "}}</span>
                             </div>
                         </section>
-                        <section ng-if="field.datatype == 'dateperiod'" layout="row">
+                        <section ng-if="field.datatype === 'dateperiod'" layout="row">
                             <div flex="40" class="static-bill-entry-title" primary-text><span>Date period</span></div>
                             <div flex class="static-bill-entry-guide"></div>
-                            <div class="static-bill-entry-value"><span ng-if="field.dates.from.value != ''">{{field.dates.from.value}} to  {{field.dates.to.value}}</span>
+                            <div class="static-bill-entry-value"><span ng-if="field.start.value != ''">{{field.start.value | momentString: "MMM DD, YYYY"}} to  {{field.end.value | momentString: "MMM DD, YYYY"}}</span>
                             </div>
                         </section>
-                        <section ng-if="field.datatype != 'dateperiod' && field.datatype != 'currency'" layout="row">
+                        <section ng-if="field.datatype !== 'dateperiod' && field.datatype !== 'currency'" layout="row">
                             <div flex="40" class="static-bill-entry-title" primary-text><span>{{field.title}}</span>
                             </div>
                             <div flex class="static-bill-entry-guide"></div>

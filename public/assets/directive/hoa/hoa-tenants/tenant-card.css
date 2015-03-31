@@ -1,14 +1,8 @@
-.tenant-card p.tenant-tradename {
-    font-size: 24px;
-    margin-bottom: 0px;
-    text-align: center;
+.tenant-card .tenant-tradename {
+    color: #00BCD4;
 }
 
 .tenant-card p.billdate {
     font-size: 16px;
     margin-bottom: 0px;
-}
-
-.tenant-card .tenant-details {
-    border-left: 1px solid #B6B6B6;
 }

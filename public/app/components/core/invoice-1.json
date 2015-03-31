@@ -13,7 +13,7 @@
             "id": "_previous_total",
             "title": "Previous charges total",
             "datatype": "currency",
-            "value": null,
+            "value": 0,
             "required": true
           },
           "fields": [
@@ -51,7 +51,7 @@
             "id": "_rent_total",
             "title": "Rent total",
             "datatype": "currency",
-            "value": null,
+            "value": 0,
             "required": true
           },
           "fields": [
@@ -91,28 +91,26 @@
             "id": "_electricity_total",
             "title": "Electricity total",
             "datatype": "currency",
-            "value": null,
+            "value": 0,
             "required": true
           },
           "fields": [
             {
               "datatype": "dateperiod",
               "required" : false,
-              "dates": {
-                "from": {
-                  "id": "elec_bill_start",
-                  "title": "Billing from",
-                  "datatype": "date",
-                  "required": false,
-                  "value": ""
-                },
-                "to": {
-                  "id": "elec_bill_until",
-                  "title": "Billing until",
-                  "datatype": "date",
-                  "required": false,
-                  "value": ""
-                }
+              "start": {
+                "id": "elec_bill_start",
+                "title": "Billing from",
+                "datatype": "date",
+                "required": false,
+                "value": ""
+              },
+              "end": {
+                "id": "elec_bill_until",
+                "title": "Billing until",
+                "datatype": "date",
+                "required": false,
+                "value": ""
               }
             },
             {
@@ -179,28 +177,26 @@
             "id": "_water_total",
             "title": "Water total",
             "datatype": "currency",
-            "value": null,
+            "value": 0,
             "required": true
           },
           "fields": [
             {
               "datatype": "dateperiod",
               "required" : false,
-              "dates": {
-                "from": {
-                  "id": "water_bill_start",
-                  "title": "Billing from",
-                  "datatype": "date",
-                  "required": false,
-                  "value": ""
-                },
-                "to": {
-                  "id": "water_bill_until",
-                  "title": "Billing until",
-                  "datatype": "date",
-                  "required": false,
-                  "value": ""
-                }
+              "start": {
+                "id": "water_bill_start",
+                "title": "Billing from",
+                "datatype": "date",
+                "required": false,
+                "value": ""
+              },
+              "end": {
+                "id": "water_bill_until",
+                "title": "Billing until",
+                "datatype": "date",
+                "required": false,
+                "value": ""
               }
             },
             {
@@ -253,13 +249,13 @@
             "id": "_cusa_total",
             "title": "Cusa total",
             "datatype": "currency",
-            "value": null,
+            "value": 0,
             "required": true
           },
           "fields": [
             {
               "id": "cusa_total",
-              "title": "Total",
+              "title": "Cusa",
               "datatype": "currency",
               "required": true,
               "value": null

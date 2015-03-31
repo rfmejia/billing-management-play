@@ -62,7 +62,6 @@ function tenantsApi($resource, $q, linksApi) {
         var deferred = $q.defer();
         var tenantId = {id : id};
         var success = function(response) {
-            console.log(response);
             deferred.resolve(response);
         };
 

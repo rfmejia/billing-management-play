@@ -1,36 +1,29 @@
 <md-card class="tenant-card">
     <md-card-content>
         <div layout="row">
-            <div flex="30" layout="column" layout-align="center center">
-                <div>
-                    <p class="tenant-tradename">{{cardCtrl.tradeName}}</p>
-                </div>
-
-                <div>
-                    <p ng-if="cardCtrl.forBilling" class="billdate secondary-text">{{ cardCtrl.billDate | momentString:
-                                                                                   cardCtrl.format}}</p>
-                </div>
-
-            </div>
-            <div flex="60" class="tenant-details" layout-padding layout="column">
-                <div ng-if="detail.name != 'tradeName'" layout="row" ng-repeat="detail in cardCtrl.tenant">
-                    <div flex="30" class="static-bill-entry-title" primary-text>{{detail.title}}</div>
-                    <div flex="70" clsss="static-bill-entry-value">{{detail.value}}</div>
-                </div>
-            </div>
-            <div ng-if="cardCtrl.isTenantControlsShown" layout="column" layout-align="start center" flex="10">
-                <md-button class="icon-button inverse-button"
-                           ng-click="cardCtrl.onEditClicked()"
-                           remove-focus>
-                    <i class="fa fa-pencil-square-o"></i>
-                    <md-tooltip md-delay="400">Edit tenant</md-tooltip>
-                </md-button>
-                <md-button class="icon-button inverse-button"
-                           ng-click="cardCtrl.onDeleteClicked()"
-                           remove-focus>
-                    <i class="fa fa-trash-o"></i>
-                    <md-tooltip md-delay="400">Delete tenant</md-tooltip>
-                </md-button>
+            <h3 class="tenant-tradename">{{cardCtrl.tradeName}}</h3>
+            <section flex></section>
+            <md-button
+                    ng-if="cardCtrl.isTenantControlsShown"
+                    class="icon-button inverse-button"
+                    ng-click="cardCtrl.onEditClicked()"
+                    remove-focus>
+                <i class="fa fa-pencil-square-o"></i>
+                <md-tooltip md-delay="400">Edit tenant</md-tooltip>
+            </md-button>
+            <md-button
+                    ng-if="cardCtrl.isTenantControlsShown"
+                    class="icon-button inverse-button"
+                    ng-click="cardCtrl.onDeleteClicked()"
+                    remove-focus>
+                <i class="fa fa-trash-o"></i>
+                <md-tooltip md-delay="400">Delete tenant</md-tooltip>
+            </md-button>
+        </div>
+        <div class="tenant-details" layout="column">
+            <div ng-if="detail.name != 'tradeName'" layout="row" ng-repeat="detail in cardCtrl.tenant">
+                <div flex="30">{{detail.title}}</div>
+                <div flex="70">{{detail.value}}</div>
             </div>
         </div>
     </md-card-content>

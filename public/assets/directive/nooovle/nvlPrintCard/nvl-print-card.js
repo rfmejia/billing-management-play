@@ -27,5 +27,7 @@ function nvlPrintCard() {
 printCtrl.$inject = ["nvl-dateutils"];
 function printCtrl(dateUtils) {
     var vm = this;
+    vm.billDate = dateUtils.getMomentFromString(vm.document.month, vm.document.year);
+
     vm.currentDate = dateUtils.getLocalDateNow("MMMM DD, YYYY");
 }
