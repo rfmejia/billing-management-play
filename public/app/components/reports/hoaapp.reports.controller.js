@@ -38,8 +38,8 @@ function controller($state, $stateParams, dateUtils, documentsList, reportRespon
         });
 
         //Pagination setup
-        vm.currentPage = $stateParams.offset % $stateParams.limit;
-        vm.total = 500; //TODO: Pagination activate once total is set
+        vm.currentPage = $stateParams.offset / $stateParams.limit;
+        vm.total = documentsList.total; //TODO: Pagination activate once total is set
         vm.pageSize = $stateParams.limit;
     }
 

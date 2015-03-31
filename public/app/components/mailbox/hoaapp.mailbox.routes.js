@@ -62,8 +62,8 @@ function mailboxConfig($stateProvider) {
     };
 
     var readOnlyView = {
-        url     : '/readonly',
-        views   : {
+        url   : '/readonly',
+        views : {
             "contentArea@workspace" : {
                 templateUrl : "app/components/mailbox/approvals/document-approvals.html",
                 controller  : "approvalsController as approvals"
@@ -72,8 +72,8 @@ function mailboxConfig($stateProvider) {
     };
 
     var printView = {
-        url : "/print",
-        views   : {
+        url   : "/print",
+        views : {
             "contentArea@workspace" : {
                 templateUrl : "app/components/mailbox/sending/document-sending.html",
                 controller  : "printController as printCtrl"
@@ -94,7 +94,6 @@ function mailboxConfig($stateProvider) {
         .state("workspace.viewer.print", printView);
 }
 mailboxConfig.$inject = ["$stateProvider"];
-
 
 //region RESOLVE_FUNCTIONS_CREATE
 function createGetData($q, docsSrvc, tenantsSrvc, templatesSrvc) {

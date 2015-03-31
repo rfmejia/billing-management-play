@@ -90,10 +90,13 @@ function parseCreateTemplate(createTemplate, tenantHelper) {
 }
 parseCreateTemplate.$inject = ["createTemplate", "tenantHelper"];
 
-function getTenantDocs($q, docsSrvc) {
+function getTenantDocs($q, $stateParams, docsSrvc) {
     var deferred = $q.defer();
     var params = {};
-    params.forTenant = params.id;
+    angular.forEach($stateParams, function(value, key) {
+        params[key] = value;
+    });
+    params.forTenant = $stateParams.id;
     delete params.id;
     delete params.filterId;
     var success = function(response) {
@@ -108,7 +111,7 @@ function getTenantDocs($q, docsSrvc) {
 
     return deferred.promise;
 }
-getTenantDocs.$inject = ["$q", "documentsApi"];
+getTenantDocs.$inject = ["$q", "$stateParams", "documentsApi"];
 
 
 function getTenantModel($q, $stateParams, tenantsSrvc, tenantHelper) {

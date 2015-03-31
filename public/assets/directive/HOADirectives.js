@@ -62,7 +62,6 @@ hoaDirectives.directive('hoaActivate', function ($location) {
             var path = attrs.path;
             scope.$location = $location;
             scope.$watch('$location.path()', function (locationPath) {
-                console.log(locationPath);
                 locationPath.search(path) != -1
                     ? element.addClass('active')
                     : element.removeClass('active');

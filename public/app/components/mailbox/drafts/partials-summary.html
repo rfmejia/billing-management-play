@@ -1,0 +1,41 @@
+<md-whiteframe class="entry md-whiteframe-z1 unpadded" layout="column">
+    <div layout-gt-md="row" layout="column">
+        <section flex="40" class="draft-field">
+            <h4 class="entry-title md-title">{{drafts.tradeName}} for {{drafts.billDate}}</h4>
+            <h5 class="header-marginless">Remarks</h5>
+            <p>{{drafts.remarks}}</p>
+        </section>
+        <section flex="20"></section>
+        <section flex="40" layout="column" layout-align="start end" class="draft-calculation">
+            <section flex layout="column" layout-align="center end">
+                <div class="entry-pair">
+                    <div class="value">{{drafts.previousCharges.sectionTotal.value | currency : "PHP "}}</div>
+                    <div class="title">Previous charges</div>
+                </div>
+                <div class="entry-pair">
+                    <div class="value">{{drafts.rent.sectionTotal.value | currency : "PHP "}}</div>
+                    <div class="title">Rent charges</div>
+                </div>
+                <div class="entry-pair">
+                    <div class="value">{{drafts.electricity.sectionTotal.value | currency : "PHP "}}</div>
+                    <div class="title">Electricity charges</div>
+                </div>
+                <div class="entry-pair">
+                    <div class="value">{{drafts.water.sectionTotal.value | currency : "PHP "}}</div>
+                    <div class="title">Water charges</div>
+                </div>
+                <div class="entry-pair">
+                    <div class="value">{{drafts.cusa.sectionTotal.value | currency : "PHP "}}</div>
+                    <div class="title">Cusa charges</div>
+                </div>
+            </section>
+            <div class="full-width total" layout-align="center end">
+                <div class="entry-pair">
+                    <div class="value">{{drafts.summaryValue | currency : "PHP "}}</div>
+                    <div class="title">Total charges</div>
+                </div>
+            </div>
+
+        </section>
+    </div>
+</md-whiteframe>

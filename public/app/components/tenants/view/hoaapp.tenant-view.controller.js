@@ -26,9 +26,9 @@ function tenantViewCtrl($state, $stateParams, tenantsSrvc, dialogProvider, toast
     //region FUNCTION_CALL
     function activate() {
         //Pagination setup
-        vm.currentPage = $stateParams.offset % $stateParams.limit;
-        vm.total = 500; //TODO: Pagination activate once total is set
+        vm.total = tenantDocs.total;
         vm.pageSize = $stateParams.limit;
+        vm.currentPage = ($stateParams.offset / $stateParams.limit) + 1;
 
         //Filter setup
         resolveFilter();
@@ -80,9 +80,8 @@ function tenantViewCtrl($state, $stateParams, tenantsSrvc, dialogProvider, toast
             var newPage = page - 1;
             offset = newPage * vm.pageSize;
         }
-        var queryParameters = queryHelper.getTenantDocs(offset, $stateParams.id, vm.currentFilter);
-        //TODO: Pagination activate once total is set
-        //$state.go($state.current, queryParameters, {reload : true});
+        var queryParameters = queryHelper.getTenantDocs(offset, $stateParams.id, vm.currentFilter.id);
+        $state.go($state.current, queryParameters, {reload : true});
     }
 
     function success(response) {

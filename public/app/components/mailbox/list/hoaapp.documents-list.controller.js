@@ -26,8 +26,8 @@ function documentsListController($state, $stateParams, docsResponse, queryHelper
         vm.isForSending = $stateParams.mailbox == 'forSending';
 
         //Pagination setup
-        vm.currentPage = $stateParams.offset % $stateParams.limit;
-        vm.total = 500; //TODO: Pagination activate once total is set
+        vm.currentPage = ($stateParams.offset / $stateParams.limit) + 1;
+        vm.total = docsResponse.total; //TODO: Pagination activate once total is set
         vm.pageSize = $stateParams.limit;
 
         //filter setup
@@ -53,9 +53,8 @@ function documentsListController($state, $stateParams, docsResponse, queryHelper
             var newPage = page - 1;
             offset = newPage * vm.pageSize;
         }
-        var queryParameters = queryHelper.getDocsListParams($stateParams.mailbox, offset, vm.currentFilter);
-        //TODO: Pagination activate once total is set
-        //$state.go($state.current, queryParameters, {reload : true});
+        var queryParameters = queryHelper.getDocsListParams($stateParams.mailbox, offset, vm.currentFilter.id);
+        $state.go($state.current, queryParameters, {reload : true});
     }
 
     function onFilterTabClicked(filter) {

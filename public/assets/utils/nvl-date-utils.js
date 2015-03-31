@@ -17,10 +17,29 @@ function nvlDateUtils(moment) {
         getMomentFromString   : getMomentFromString,
         momentToStringDisplay : momentToStringDisplay,
         dateToStringDisplay   : dateToStringDisplay,
-        stringTimeStamp       : stringTimeStamp
+        stringTimeStamp       : stringTimeStamp,
+        convertToMoment       : convertToMoment,
+        draftsFormatDate      : draftsFormatDate,
+        draftsStringToDate    : draftsStringToDate
     };
 
     return service;
+
+    function draftsFormatDate(date) {
+        if(date == null) return null;
+
+        var converted = moment.utc([date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0]);
+        return converted.isValid() ? converted.clone().toDate() : null;
+    }
+
+    function draftsStringToDate(stringDate) {
+        var momentObj = moment(stringDate);
+        return momentObj.toDate();
+    }
+
+    function convertToMoment(date) {
+        return moment(date);
+    }
 
     function getLocalMonth(dateString) {
         var tz = moment.parseZone(dateString).zone();
