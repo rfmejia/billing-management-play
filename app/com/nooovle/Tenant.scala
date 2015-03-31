@@ -8,16 +8,22 @@ import scala.util.Try
 
 case class Tenant(id: Int, tradeName: String, address: String,
   contactPerson: String, contactNumber: String, email: String, area: String,
-  size: String, rentalPeriod: String, basicRentalRate: String, escalation: String)
+  size: String, rentalPeriod: String, basicRentalRate: String, escalation: String,
+  cusaDefault: Option[String], waterMeterDefault: Option[String], electricityMeterDefault: Option[String], 
+  baseRentDefault: Option[String], standardMultiplierDefault: Option[Double])
 
-object Tenant extends ((Int, String, String, String, String, String, String, String, String, String, String) => Tenant)
+object Tenant extends ((Int, String, String, String, String, String, String, String, String, String, String, Option[String], Option[String], Option[String], Option[String], Option[Double]) => Tenant)
   with ModelTemplate {
 
   def insert(tradeName: String, address: String, contactPerson: String,
     contactNumber: String, email: String, area: String, size: String,
-    rentalPeriod: String, basicRentalRate: String,
-    escalation: String)(implicit session: Session): Try[Tenant] = Try {
-    val newTenant = Tenant(0, tradeName, address, contactPerson, contactNumber, email, area, size, rentalPeriod, basicRentalRate, escalation)
+    rentalPeriod: String, basicRentalRate: String, escalation: String, 
+    cusaDefault: Option[String], waterMeterDefault: Option[String], 
+    electricityMeterDefault: Option[String], baseRentDefault: Option[String], 
+    standardMultiplierDefault: Option[Double])(implicit session: Session): Try[Tenant] = Try {
+    val newTenant = Tenant(0, tradeName, address, contactPerson, contactNumber, 
+      email, area, size, rentalPeriod, basicRentalRate, escalation, cusaDefault, 
+      waterMeterDefault, electricityMeterDefault, baseRentDefault, standardMultiplierDefault)
     val id = (tenants returning tenants.map(_.id)) += newTenant
     newTenant.copy(id = id)
   }
@@ -51,5 +57,11 @@ object Tenant extends ((Int, String, String, String, String, String, String, Str
     ModelInfo("TENANTS", "size", "string", Required, Required, Some("Size")),
     ModelInfo("TENANTS", "rentalPeriod", "string", Required, Required, Some("Rental period")),
     ModelInfo("TENANTS", "basicRentalRate", "string", Required, Required, Some("Basic rental rate")),
-    ModelInfo("TENANTS", "escalation", "string", Required, Required, Some("Escalation")))
+    ModelInfo("TENANTS", "escalation", "string", Required, Required, Some("Escalation")),
+    
+    ModelInfo("TENANTS", "cusaDefault", "string", Required, Required, Some("Cusa (default)")),
+    ModelInfo("TENANTS", "waterMeterDefault", "string", Required, Required, Some("Water meter (default)")),
+    ModelInfo("TENANTS", "electricityMeterDefault", "string", Required, Required, Some("Electricity meter (default)")),
+    ModelInfo("TENANTS", "baseRentDefault", "string", Required, Required, Some("Base rent (default)")),
+    ModelInfo("TENANTS", "standardMultiplierDefault", "number", Required, Required, Some("Standard multiplier (default)")))
 }
