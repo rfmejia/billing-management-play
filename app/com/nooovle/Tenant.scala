@@ -59,9 +59,9 @@ object Tenant extends ((Int, String, String, String, String, String, String, Str
     ModelInfo("TENANTS", "basicRentalRate", "string", Required, Required, Some("Basic rental rate")),
     ModelInfo("TENANTS", "escalation", "string", Required, Required, Some("Escalation")),
     
-    ModelInfo("TENANTS", "cusaDefault", "string", Required, Required, Some("Cusa (default)")),
-    ModelInfo("TENANTS", "waterMeterDefault", "string", Required, Required, Some("Water meter (default)")),
-    ModelInfo("TENANTS", "electricityMeterDefault", "string", Required, Required, Some("Electricity meter (default)")),
-    ModelInfo("TENANTS", "baseRentDefault", "string", Required, Required, Some("Base rent (default)")),
-    ModelInfo("TENANTS", "standardMultiplierDefault", "number", Required, Required, Some("Standard multiplier (default)")))
+    ModelInfo("TENANTS", "cusaDefault", "string", Editable, Editable, Some("Cusa (default)")),
+    ModelInfo("TENANTS", "waterMeterDefault", "string", Editable, Editable, Some("Water meter (default)")),
+    ModelInfo("TENANTS", "electricityMeterDefault", "string", Editable, Editable, Some("Electricity meter (default)")),
+    ModelInfo("TENANTS", "baseRentDefault", "string", Editable, Editable, Some("Base rent (default)")),
+    ModelInfo("TENANTS", "standardMultiplierDefault", "number", Editable, Editable, Some("Standard multiplier (default)")))
 }

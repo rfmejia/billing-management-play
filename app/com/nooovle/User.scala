@@ -47,14 +47,14 @@ object User extends ((String, String, Option[String], Option[String], Option[Str
       (for (u <- users if u.userId === userId) yield u).firstOption
     }
 
-  def findByUserIdWithRoles(userId: String): Option[(User, Set[String])] =
+  def findByUserIdWithRoles(userId: String): Option[(User, Set[Role])] =
     ConnectionFactory.connect withSession { implicit session =>
       val user = for (u <- users if u.userId === userId) yield u
       val rs = for {
         ur <- userRoles if ur.userId === userId
         rs <- roles if rs.name === ur.roleName
       } yield rs
-      user.firstOption map (u => (u, rs.list.toSet))
+      user.firstOption map (u => (u, Roles.fromStringSet(rs.list.toSet)))
     }
 
   def findRoles(userId: String): Set[Role] =
