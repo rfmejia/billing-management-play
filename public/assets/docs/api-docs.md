@@ -198,9 +198,9 @@ The following sections are default routes supplied by [SecureSocial](http://secu
 - [x] Changed amountPaid from double to JsObject, as the basis of reports
 - [-] Eliminate in-memory document filtering by moving relevant fields into database model
 - [x] Remove title from document model
-- [ ] Use typesafe role, serial number in document model
+- [ ] Use typesafe serial number in document model
 - [ ] Create/use separate DB for user accounts (to survive database refreshes, increase security, etc.)
-- [ ] Figure out a way to put the isPaid flag inside the database to correctly filter docs
+- [x] Figure out a way to put the isPaid flag inside the database to correctly filter docs
 
 ### Logging
 
