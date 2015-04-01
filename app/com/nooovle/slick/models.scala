@@ -107,9 +107,7 @@ class TenantsModel(tag: Tag) extends Table[Tenant](tag, "TENANTS") {
   def area = column[String]("AREA", O.NotNull)
   def size = column[String]("SIZE", O.NotNull)
   def rentalPeriod = column[String]("RENTAL_PERIOD", O.NotNull)
-  def basicRentalRate = column[String]("BASIC_RENTAL_RATE", O.NotNull)
   def escalation = column[String]("ESCALATION", O.NotNull)
-
 
   def cusaDefault = column[Option[String]]("CUSA_DEFAULT", O.NotNull)
   def waterMeterDefault = column[Option[String]]("WATER_METER_DEFAULT", O.NotNull)
@@ -117,7 +115,7 @@ class TenantsModel(tag: Tag) extends Table[Tenant](tag, "TENANTS") {
   def baseRentDefault = column[Option[String]]("BASE_RENT_DEFAULT", O.NotNull)
   def standardMultiplierDefault = column[Option[Double]]("STANDARD_MULTIPLIER_DEFAULT", O.NotNull)
 
-  def * = (id, tradeName, address, contactPerson, contactNumber, email, area, size, rentalPeriod, basicRentalRate, escalation, cusaDefault, waterMeterDefault, electricityMeterDefault, baseRentDefault, standardMultiplierDefault) <>
+  def * = (id, tradeName, address, contactPerson, contactNumber, email, area, size, rentalPeriod, escalation, cusaDefault, waterMeterDefault, electricityMeterDefault, baseRentDefault, standardMultiplierDefault) <>
     (Tenant.tupled, Tenant.unapply)
 }
 

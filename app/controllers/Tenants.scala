@@ -37,7 +37,6 @@ class Tenants(override implicit val env: RuntimeEnvironment[User])
           .withField("area", t.area)
           .withField("size", t.size)
           .withField("rentalPeriod", t.rentalPeriod)
-          .withField("basicRentalRate", t.basicRentalRate)
           .withField("escalation", t.escalation)
           .withField("cusaDefault", t.cusaDefault)
           .withField("waterMeterDefault", t.waterMeterDefault)
@@ -92,7 +91,6 @@ class Tenants(override implicit val env: RuntimeEnvironment[User])
       (json \ "area").asOpt[String],
       (json \ "size").asOpt[String],
       (json \ "rentalPeriod").asOpt[String],
-      (json \ "basicRentalRate").asOpt[String],
       (json \ "escalation").asOpt[String],
       (json \ "cusaDefault").asOpt[String],
       (json \ "waterMeterDefault").asOpt[String],
@@ -101,12 +99,12 @@ class Tenants(override implicit val env: RuntimeEnvironment[User])
       (json \ "standardMultiplierDefault").asOpt[Double]) match {
         case (Some(tradeName), Some(address), Some(contactPerson), 
           Some(contactNumber), Some(email), Some(area), Some(size), 
-          Some(rentalPeriod), Some(basicRentalRate), Some(escalation),
+          Some(rentalPeriod), Some(escalation),
           cusaDefaultOpt, waterMeterDefaultOpt, electricityMeterDefaultOpt,
           baseRentDefaultOpt, standardMultiplierDefaultOpt) =>
           val result = ConnectionFactory.connect withSession { implicit session =>
             Tenant.insert(tradeName, address, contactPerson, contactNumber, email, 
-              area, size, rentalPeriod, basicRentalRate, escalation, cusaDefaultOpt, 
+              area, size, rentalPeriod, escalation, cusaDefaultOpt, 
               waterMeterDefaultOpt, electricityMeterDefaultOpt, baseRentDefaultOpt, 
               standardMultiplierDefaultOpt)
           }
@@ -135,7 +133,6 @@ class Tenants(override implicit val env: RuntimeEnvironment[User])
           (json \ "area").asOpt[String],
           (json \ "size").asOpt[String],
           (json \ "rentalPeriod").asOpt[String],
-          (json \ "basicRentalRate").asOpt[String],
           (json \ "escalation").asOpt[String],
           (json \ "cusaDefault").asOpt[String],
           (json \ "waterMeterDefault").asOpt[String],
@@ -144,7 +141,7 @@ class Tenants(override implicit val env: RuntimeEnvironment[User])
           (json \ "standardMultiplierDefault").asOpt[Double]) match {
           case (Some(tradeName), Some(address), Some(contactPerson), 
             Some(contactNumber), Some(email), Some(area), Some(size), 
-            Some(rentalPeriod), Some(basicRentalRate), Some(escalation),
+            Some(rentalPeriod), Some(escalation),
             cusaDefaultOpt, waterMeterDefaultOpt, electricityMeterDefaultOpt,
             baseRentDefaultOpt, standardMultiplierDefaultOpt) =>
               val result = ConnectionFactory.connect withSession { implicit session =>
@@ -158,7 +155,6 @@ class Tenants(override implicit val env: RuntimeEnvironment[User])
                     area = area,
                     size = size,
                     rentalPeriod = rentalPeriod,
-                    basicRentalRate = basicRentalRate,
                     escalation = escalation,
                     cusaDefault = cusaDefaultOpt orElse existingTenant.cusaDefault, 
                     waterMeterDefault = waterMeterDefaultOpt orElse existingTenant.waterMeterDefault, 
