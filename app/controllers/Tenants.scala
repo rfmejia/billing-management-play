@@ -35,7 +35,6 @@ class Tenants(override implicit val env: RuntimeEnvironment[User])
           .withField("contactNumber", t.contactNumber)
           .withField("email", t.email)
           .withField("area", t.area)
-          .withField("size", t.size)
           .withField("rentalPeriod", t.rentalPeriod)
           .withField("escalation", t.escalation)
           .withField("cusaDefault", t.cusaDefault)
@@ -88,23 +87,22 @@ class Tenants(override implicit val env: RuntimeEnvironment[User])
       (json \ "contactPerson").asOpt[String],
       (json \ "contactNumber").asOpt[String],
       (json \ "email").asOpt[String],
-      (json \ "area").asOpt[String],
-      (json \ "size").asOpt[String],
+      (json \ "area").asOpt[Double],
       (json \ "rentalPeriod").asOpt[String],
-      (json \ "escalation").asOpt[String],
-      (json \ "cusaDefault").asOpt[String],
+      (json \ "escalation").asOpt[Double],
+      (json \ "cusaDefault").asOpt[Double],
       (json \ "waterMeterDefault").asOpt[String],
       (json \ "electricityMeterDefault").asOpt[String],
-      (json \ "baseRentDefault").asOpt[String],
+      (json \ "baseRentDefault").asOpt[Double],
       (json \ "standardMultiplierDefault").asOpt[Double]) match {
         case (Some(tradeName), Some(address), Some(contactPerson), 
-          Some(contactNumber), Some(email), Some(area), Some(size), 
+          Some(contactNumber), Some(email), Some(area), 
           Some(rentalPeriod), Some(escalation),
           cusaDefaultOpt, waterMeterDefaultOpt, electricityMeterDefaultOpt,
           baseRentDefaultOpt, standardMultiplierDefaultOpt) =>
           val result = ConnectionFactory.connect withSession { implicit session =>
             Tenant.insert(tradeName, address, contactPerson, contactNumber, email, 
-              area, size, rentalPeriod, escalation, cusaDefaultOpt, 
+              area, rentalPeriod, escalation, cusaDefaultOpt, 
               waterMeterDefaultOpt, electricityMeterDefaultOpt, baseRentDefaultOpt, 
               standardMultiplierDefaultOpt)
           }
@@ -130,17 +128,16 @@ class Tenants(override implicit val env: RuntimeEnvironment[User])
           (json \ "contactPerson").asOpt[String],
           (json \ "contactNumber").asOpt[String],
           (json \ "email").asOpt[String],
-          (json \ "area").asOpt[String],
-          (json \ "size").asOpt[String],
+          (json \ "area").asOpt[Double],
           (json \ "rentalPeriod").asOpt[String],
-          (json \ "escalation").asOpt[String],
-          (json \ "cusaDefault").asOpt[String],
+          (json \ "escalation").asOpt[Double],
+          (json \ "cusaDefault").asOpt[Double],
           (json \ "waterMeterDefault").asOpt[String],
           (json \ "electricityMeterDefault").asOpt[String],
-          (json \ "baseRentDefault").asOpt[String],
+          (json \ "baseRentDefault").asOpt[Double],
           (json \ "standardMultiplierDefault").asOpt[Double]) match {
           case (Some(tradeName), Some(address), Some(contactPerson), 
-            Some(contactNumber), Some(email), Some(area), Some(size), 
+            Some(contactNumber), Some(email), Some(area), 
             Some(rentalPeriod), Some(escalation),
             cusaDefaultOpt, waterMeterDefaultOpt, electricityMeterDefaultOpt,
             baseRentDefaultOpt, standardMultiplierDefaultOpt) =>
@@ -153,7 +150,6 @@ class Tenants(override implicit val env: RuntimeEnvironment[User])
                     contactNumber = contactNumber,
                     email = email,
                     area = area,
-                    size = size,
                     rentalPeriod = rentalPeriod,
                     escalation = escalation,
                     cusaDefault = cusaDefaultOpt orElse existingTenant.cusaDefault, 

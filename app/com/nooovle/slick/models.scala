@@ -104,18 +104,17 @@ class TenantsModel(tag: Tag) extends Table[Tenant](tag, "TENANTS") {
   def contactNumber = column[String]("CONTACT_NUMBER", O.NotNull)
   def email = column[String]("EMAIL", O.NotNull)
 
-  def area = column[String]("AREA", O.NotNull)
-  def size = column[String]("SIZE", O.NotNull)
+  def area = column[Double]("AREA", O.NotNull)
   def rentalPeriod = column[String]("RENTAL_PERIOD", O.NotNull)
-  def escalation = column[String]("ESCALATION", O.NotNull)
+  def escalation = column[Double]("ESCALATION", O.NotNull)
 
-  def cusaDefault = column[Option[String]]("CUSA_DEFAULT", O.NotNull)
-  def waterMeterDefault = column[Option[String]]("WATER_METER_DEFAULT", O.NotNull)
-  def electricityMeterDefault = column[Option[String]]("ELECTRICITY_METER_DEFAULT", O.NotNull)
-  def baseRentDefault = column[Option[String]]("BASE_RENT_DEFAULT", O.NotNull)
-  def standardMultiplierDefault = column[Option[Double]]("STANDARD_MULTIPLIER_DEFAULT", O.NotNull)
+  def cusaDefault = column[Option[Double]]("CUSA_DEFAULT")
+  def waterMeterDefault = column[Option[String]]("WATER_METER_DEFAULT")
+  def electricityMeterDefault = column[Option[String]]("ELECTRICITY_METER_DEFAULT")
+  def baseRentDefault = column[Option[Double]]("BASE_RENT_DEFAULT")
+  def standardMultiplierDefault = column[Option[Double]]("STANDARD_MULTIPLIER_DEFAULT")
 
-  def * = (id, tradeName, address, contactPerson, contactNumber, email, area, size, rentalPeriod, escalation, cusaDefault, waterMeterDefault, electricityMeterDefault, baseRentDefault, standardMultiplierDefault) <>
+  def * = (id, tradeName, address, contactPerson, contactNumber, email, area, rentalPeriod, escalation, cusaDefault, waterMeterDefault, electricityMeterDefault, baseRentDefault, standardMultiplierDefault) <>
     (Tenant.tupled, Tenant.unapply)
 }
 
