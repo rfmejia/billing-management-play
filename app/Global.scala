@@ -4,16 +4,17 @@ import com.nooovle.slick.ConnectionFactory
 import com.nooovle.slick.models.modelTemplates
 import filters._
 import java.lang.reflect.Constructor
+import java.nio.file.{ Files, Paths }
 import org.locker47.json.play.HalJsObject
 import play.api.libs.json._
 import play.api.mvc.Results._
 import play.api.mvc.{ RequestHeader, WithFilters }
-import play.api.{ Application, GlobalSettings, Logger }
+import play.api.{ Application, GlobalSettings, Logger, Play }
 import play.filters.gzip.GzipFilter
 import play.mvc.Http.Status
 import scala.collection.immutable.ListMap
-import scala.concurrent.Future
-import scala.slick.driver.H2Driver.simple._
+import scala.concurrent.{ ExecutionContext, Future }
+import scala.slick.driver.PostgresDriver.simple._
 import scala.util.{ Try, Success, Failure }
 import securesocial.core.providers._
 import securesocial.core.RuntimeEnvironment
@@ -23,16 +24,35 @@ import views.CustomViewTemplates
 object Global extends WithFilters(CorsFilter, new GzipFilter()) with GlobalSettings {
   val logger = Logger(this.getClass.getName)
 
-  override def onStart(app: Application) = {
+  private def exportSchemaStatements(pathKey: String, statements: Iterator[String]): Try[String] =
+    Try {
+      val path = Paths.get(Play.current.configuration.getString(pathKey).get)
+      Files.write(path, statements.map(_ + ";").mkString("\n").getBytes) 
+      s"Successfully exported to ${path}"
+    }
+
+  private val initializeDB: Try[String] = 
     Try {
       ConnectionFactory.connect withSession { implicit session =>
-        com.nooovle.slick.models.buildTables
-        insertModelInfos
+        val msgs = com.nooovle.slick.models.buildTables
+        msgs foreach(msg => logger.info(msg.toString))
+        //insertModelInfos
       }
-    } match {
-      case Success(_) => logger.info("Successfully initialized database")
-      case Failure(t) =>
-        logger.error(s"Could not initialize the database", t)
+      "Successfully initialized the database"
+    } 
+
+  override def onStart(app: Application) = {
+    val bootSequence: Try[List[String]] = for {
+      msg1 <- exportSchemaStatements("schema.create.path", slick.models.ddl.createStatements)
+      msg2 <- exportSchemaStatements("schema.drop.path", slick.models.ddl.dropStatements)
+      msg3 <- Success("")//initializeDB
+    } yield List(msg1, msg2, msg3)
+    
+    bootSequence match {
+      case Success(msgs) => msgs.foreach(logger.info(_))
+      case Failure(err) =>
+        logger.error(s"Could not initialize the database", err)
+        err.printStackTrace()
     }
   }
 

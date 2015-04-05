@@ -3,7 +3,7 @@ package com.nooovle
 import com.nooovle.ModelInfo._
 import com.nooovle.slick.ConnectionFactory
 import com.nooovle.slick.models.tenants
-import scala.slick.driver.H2Driver.simple._
+import scala.slick.driver.PostgresDriver.simple._
 import scala.util.Try
 
 case class Tenant(id: Int, tradeName: String, address: String,

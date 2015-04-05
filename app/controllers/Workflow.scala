@@ -8,7 +8,7 @@ import play.api._
 import play.api.i18n.Messages
 import play.api.libs.json._
 import play.api.mvc.{ Action, Controller, RequestHeader }
-import scala.slick.driver.H2Driver.simple._
+import scala.slick.driver.PostgresDriver.simple._
 import scala.util.{ Try, Success, Failure }
 import securesocial.core.RuntimeEnvironment
 

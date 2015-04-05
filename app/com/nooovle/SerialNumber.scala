@@ -3,7 +3,7 @@ package com.nooovle
 import com.nooovle.slick.ConnectionFactory
 import com.nooovle.slick.models.serialNumbers
 import play.api.Logger
-import scala.slick.driver.H2Driver.simple._
+import scala.slick.driver.PostgresDriver.simple._
 import scala.util.Try
 
 case class SerialNumber(id: Int, docId: Int)

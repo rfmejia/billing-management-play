@@ -5,7 +5,7 @@ import com.nooovle.slick.ConnectionFactory
 import com.nooovle.slick.models.roles
 import com.nooovle.slick.models.userRoles
 import com.nooovle.slick.models.users
-import scala.slick.driver.H2Driver.simple._
+import scala.slick.driver.PostgresDriver.simple._
 import scala.util.Try
 import securesocial.core.AuthenticationMethod
 import securesocial.core.BasicProfile

@@ -8,7 +8,7 @@ import org.locker47.json.play._
 import play.api._
 import play.api.libs.json._
 import play.api.mvc.{ Action, Controller }
-import scala.slick.driver.H2Driver.simple._
+import scala.slick.driver.PostgresDriver.simple._
 import securesocial.core.RuntimeEnvironment
 
 import play.api.mvc.Result

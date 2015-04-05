@@ -14,7 +14,7 @@ import play.api.mvc.{ Action, RequestHeader }
 import play.filters.csrf._
 import play.twirl.api.Html
 import scala.concurrent.Future
-import scala.slick.driver.H2Driver.simple._
+import scala.slick.driver.PostgresDriver.simple._
 import securesocial.controllers.ViewTemplates
 import securesocial.core._
 import securesocial.core.authenticator.CookieAuthenticator

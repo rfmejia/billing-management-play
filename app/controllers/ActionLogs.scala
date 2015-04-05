@@ -7,7 +7,7 @@ import org.joda.time.DateTime
 import org.locker47.json.play._
 import play.api.libs.json._
 import play.api._
-import scala.slick.driver.H2Driver.simple._
+import scala.slick.driver.PostgresDriver.simple._
 import securesocial.core.RuntimeEnvironment
 
 class ActionLogs(override implicit val env: RuntimeEnvironment[User])

@@ -6,7 +6,7 @@ import com.nooovle.User
 import controllers.InvitationMailToken
 import org.joda.time.DateTime
 import scala.concurrent.Future
-import scala.slick.driver.H2Driver.simple._
+import scala.slick.driver.PostgresDriver.simple._
 import scala.util.Try
 import securesocial.core.providers.MailToken
 import securesocial.core.services.{ SaveMode, UserService }

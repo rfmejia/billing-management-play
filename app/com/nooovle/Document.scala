@@ -8,7 +8,7 @@ import controllers.Templates
 import org.joda.time.{ DateTime, YearMonth }
 import play.api.libs.json.{ JsNumber, JsObject }
 import play.api.Logger
-import scala.slick.driver.H2Driver.simple._
+import scala.slick.driver.PostgresDriver.simple._
 import scala.util.{ Try, Success, Failure }
 
 case class Document(

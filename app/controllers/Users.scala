@@ -9,7 +9,7 @@ import play.api.libs.json._
 import play.api._
 import play.api.mvc.{ Action, Controller }
 import play.api.mvc.BodyParsers._
-import scala.slick.driver.H2Driver.simple._
+import scala.slick.driver.PostgresDriver.simple._
 import scala.util.{ Try, Success, Failure }
 import securesocial.core.{ RuntimeEnvironment, SecureSocial }
 
