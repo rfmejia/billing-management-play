@@ -5,7 +5,7 @@ import com.nooovle.slick.ConnectionFactory
 import com.nooovle.slick.models.roles
 import com.nooovle.slick.models.userRoles
 import com.nooovle.slick.models.users
-import scala.slick.driver.H2Driver.simple._
+import scala.slick.driver.PostgresDriver.simple._
 import scala.util.Try
 import securesocial.core.AuthenticationMethod
 import securesocial.core.BasicProfile
@@ -67,14 +67,13 @@ object User extends ((String, String, Option[String], Option[String], Option[Str
     }
 
   // TODO: Simplify when removing role editing in the original PUT request
-  def update(userId: String, firstName: Option[String], lastName: Option[String],
-    email: Option[String]): Try[User] = Try {
+  def update(userId: String, firstName: Option[String], lastName: Option[String]): Try[User] = Try {
     ConnectionFactory.connect withSession { implicit session =>
       val query = for (u <- users if u.userId === userId) yield u
 
       if (!query.exists.run) throw new IndexOutOfBoundsException
       else { // Update user
-        val _user = query.first.copy(firstName = firstName, lastName = lastName, email = email)
+        val _user = query.first.copy(firstName = firstName, lastName = lastName)
         query.update(_user)
         query.first
       }

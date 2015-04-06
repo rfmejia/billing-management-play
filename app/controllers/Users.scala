@@ -9,7 +9,7 @@ import play.api.libs.json._
 import play.api._
 import play.api.mvc.{ Action, Controller }
 import play.api.mvc.BodyParsers._
-import scala.slick.driver.H2Driver.simple._
+import scala.slick.driver.PostgresDriver.simple._
 import scala.util.{ Try, Success, Failure }
 import securesocial.core.{ RuntimeEnvironment, SecureSocial }
 
@@ -81,10 +81,9 @@ class Users(override implicit val env: RuntimeEnvironment[User])
     // TODO: Only same user, or admin can edit
     val json = request.body
     ((json \ "firstName").as[Option[String]],
-      (json \ "lastName").as[Option[String]],
-      (json \ "email").as[Option[String]]) match {
-        case (firstName, lastName, email) =>
-          User.update(userId, firstName, lastName, email) match {
+      (json \ "lastName").as[Option[String]]) match {
+        case (Some(firstName), Some(lastName)) =>
+          User.update(userId, Some(firstName), Some(lastName)) match {
             case Success(_) => NoContent
             case Failure(err) => err match {
               case e: IndexOutOfBoundsException => NotFound

@@ -2,7 +2,7 @@ package com.nooovle.slick
 
 import controllers.InvitationInfo
 
-import scala.slick.driver.H2Driver.simple._
+import scala.slick.driver.PostgresDriver.simple._
 import scala.slick.jdbc.meta.MTable
 import scala.util.{ Success, Try }
 
@@ -26,8 +26,13 @@ object models {
   val invitations = TableQuery[InvitationsModel]
   val actionLogs = TableQuery[ActionLogsModel]
   val serialNumbers = TableQuery[SerialNumbersModel]
+
   val tables = List(modelTemplates, roles, settings, tenants, users, documents,
     userRoles, mailTokens, invitations, actionLogs, serialNumbers)
+  lazy val ddl = {
+    val ts = tables.map(_.ddl)
+    ts.tail.foldLeft(ts.head)(_ ++ _)
+  }
 
   /**
    *  Builds tables one by one if they do not exist.
@@ -75,22 +80,20 @@ class ModelInfosModel(tag: Tag) extends Table[ModelInfo](tag,
   def prompt = column[Option[String]]("PROMPT")
   def tooltip = column[Option[String]]("TOOLTIP")
 
-  def pk = primaryKey("PK", (modelName, fieldName))
+  def pk = primaryKey("MODEL_INFOS_PK", (modelName, fieldName))
 
   def * = (modelName, fieldName, datatype, (createForm, createRequired), (editForm, editRequired), prompt, tooltip) <> (ModelInfo.tupled, ModelInfo.unapply)
 }
 
 class UsersModel(tag: Tag) extends Table[User](tag, "USERS") {
+  def userId = column[String]("USER_ID", O.PrimaryKey)
   def providerId = column[String]("PROVIDER_ID", O.NotNull)
-  def userId = column[String]("USER_ID", O.NotNull)
   def firstName = column[Option[String]]("FIRST_NAME")
   def lastName = column[Option[String]]("LAST_NAME")
   def email = column[Option[String]]("EMAIL")
   def hasher = column[String]("HASHER", O.NotNull)
   def password = column[String]("PASSWORD", O.NotNull)
   def salt = column[Option[String]]("SALT")
-
-  def pk = primaryKey("PK", (providerId, userId))
 
   def * = (providerId, userId, firstName, lastName, email, hasher, password, salt) <>
     (User.tupled, User.unapply)
@@ -128,7 +131,7 @@ class UserRolesModel(tag: Tag) extends Table[(String, String)](tag, "USER_ROLES"
   def userId = column[String]("USERNAME", O.NotNull)
   def roleName = column[String]("ROLE_NAME", O.NotNull)
 
-  def pk = primaryKey("PK", (userId, roleName))
+  def pk = primaryKey("USER_ROLES_PK", (userId, roleName))
   def user = foreignKey("USER_FK", userId, models.users)(_.userId, onDelete = ForeignKeyAction.Cascade)
   def role = foreignKey("ROLE_FK", roleName, models.roles)(_.name, onDelete = ForeignKeyAction.Cascade)
 

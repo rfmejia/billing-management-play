@@ -1,7 +1,7 @@
 package com.nooovle
 
 import org.joda.time.DateTime
-import scala.slick.driver.H2Driver.simple._
+import scala.slick.driver.PostgresDriver.simple._
 import com.nooovle.slick.ConnectionFactory
 import com.nooovle.slick.models.actionLogs
 import scala.util.Try

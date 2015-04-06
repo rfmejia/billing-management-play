@@ -29,6 +29,7 @@ val jodaTimeDependencies = Seq(
 val repositoryDependencies = Seq(
   "com.typesafe.play.plugins" %% "play-plugins-mailer" % "2.3.1",
   "com.typesafe.play" %% "play-slick" % "0.8.1",
+  "org.postgresql" % "postgresql" % "9.4-1201-jdbc41",
   "org.slf4j" % "slf4j-nop" % "1.6.4"
 ) ++ jodaTimeDependencies
 

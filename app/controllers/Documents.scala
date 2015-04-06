@@ -10,7 +10,7 @@ import play.api.i18n.Messages
 import play.api.libs.json._
 import play.api.mvc.BodyParsers._
 import play.api.mvc.{ Action, Controller, RequestHeader }
-import scala.slick.driver.H2Driver.simple._
+import scala.slick.driver.PostgresDriver.simple._
 import scala.util.{ Try, Success, Failure }
 import securesocial.core.RuntimeEnvironment
 
@@ -47,7 +47,6 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
 
     val (docs, totalHits): (List[Document], Int) = 
       ConnectionFactory.connect withSession { implicit session =>
-        // Filtering level 1: Query-level filters
         // Filter values by comparing to their default values in the router
         // (workaround to Slick limitations)
         val query = documents

@@ -9,7 +9,7 @@ import org.locker47.json.play._
 import play.api.libs.json.{ JsObject, Json }
 import play.api.mvc.{ Request, RequestHeader, Result }
 import scala.concurrent.Future
-import scala.slick.driver.H2Driver.simple._
+import scala.slick.driver.PostgresDriver.simple._
 import securesocial.core.Authorization
 
 trait ApiController[T] extends securesocial.core.SecureSocial[T] {

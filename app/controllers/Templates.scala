@@ -4,7 +4,7 @@ import com.nooovle._
 import org.locker47.json.play._
 import play.api._
 import play.api.libs.json._
-import scala.slick.driver.H2Driver.simple._
+import scala.slick.driver.PostgresDriver.simple._
 import scala.util.{ Try, Success, Failure }
 import securesocial.core.RuntimeEnvironment
 
