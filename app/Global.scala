@@ -45,8 +45,7 @@ object Global extends WithFilters(CorsFilter, new GzipFilter()) with GlobalSetti
     val bootSequence: Try[List[String]] = for {
       msg1 <- exportSchemaStatements("schema.create.path", slick.models.ddl.createStatements)
       msg2 <- exportSchemaStatements("schema.drop.path", slick.models.ddl.dropStatements)
-      msg3 <- Success("")//initializeDB
-    } yield List(msg1, msg2, msg3)
+    } yield List(msg1, msg2)
     
     bootSequence match {
       case Success(msgs) => msgs.foreach(logger.info(_))
@@ -132,11 +131,5 @@ object Global extends WithFilters(CorsFilter, new GzipFilter()) with GlobalSetti
       _.asInstanceOf[Constructor[A]].newInstance(MyRuntimeEnvironment)
     }
     instance.getOrElse(super.getControllerInstance(controllerClass))
-  }
-
-  def insertModelInfos(implicit session: Session) = {
-    Tenant.modelInfos foreach (modelTemplates.insertOrUpdate(_))
-    User.modelInfos foreach (modelTemplates.insertOrUpdate(_))
-    Document.modelInfos foreach (modelTemplates.insertOrUpdate(_))
   }
 }

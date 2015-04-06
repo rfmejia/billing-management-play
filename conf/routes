@@ -44,7 +44,7 @@ GET      /api/templates                @controllers.Templates.list(offset: Int ?
 GET      /api/templates/:docType       @controllers.Templates.show(docType: String)
 
 # Test routes
-GET      /api/testFail                 @controllers.TestEnvironment.fail
+GET      /api/test/fail                @controllers.TestEnvironment.fail
 POST     /api/test/tenants             @controllers.TestEnvironment.uploadTenants(timeout: Int ?= 10000)
 POST     /api/test/documents           @controllers.TestEnvironment.uploadDocuments(timeout: Int ?= 10000)
 
@@ -53,6 +53,7 @@ GET      /api/reports                  @controllers.Reports.show(year: Option[In
 
 # Admin routes
 PUT      /api/admin/users/:userId/roles @controllers.Users.editRoles(userId: String)
+POST     /api/admin/initDB              @controllers.TestEnvironment.initializeDatabase
 
 # ---- SecureSocial (master-SNAPSHOT) routes ----
 # Note: Many SecureSocial LOCs come from http://www.filtercode.com/play/play-scala-securesocial
