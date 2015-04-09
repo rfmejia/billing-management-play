@@ -13,14 +13,15 @@ import securesocial.core.GenericProfile
 import securesocial.core.PasswordInfo
 
 case class User(
-  providerId: String,
-  userId: String,
-  firstName: Option[String],
-  lastName: Option[String],
-  email: Option[String],
-  hasher: String,
-  password: String,
-  salt: Option[String]) extends GenericProfile {
+    providerId: String,
+    userId: String,
+    firstName: Option[String],
+    lastName: Option[String],
+    email: Option[String],
+    hasher: String,
+    password: String,
+    salt: Option[String]
+) extends GenericProfile {
   val fullName = Some((firstName.getOrElse("") + " " + lastName.getOrElse("")).trim)
   val authMethod = AuthenticationMethod.UserPassword
   val avatarUrl = None
@@ -33,7 +34,7 @@ case class User(
 }
 
 object User extends ((String, String, Option[String], Option[String], Option[String], String, String, Option[String]) => User)
-  with ModelTemplate {
+    with ModelTemplate {
 
   def fromBasicProfile(p: BasicProfile) = {
     val hasher = p.passwordInfo.map(_.hasher).getOrElse("")
@@ -82,7 +83,8 @@ object User extends ((String, String, Option[String], Option[String], Option[Str
 
   def updateRoles(userId: String, rs: Set[Role]): Try[String] = Try {
     if (!(rs subsetOf Roles.All)) throw new IllegalStateException(
-      "Some roles are not valid: " + (rs -- Roles.All))
+      "Some roles are not valid: " + (rs -- Roles.All)
+    )
 
     ConnectionFactory.connect withTransaction { implicit session =>
       val query = for (u <- users if u.userId === userId) yield u
@@ -109,6 +111,7 @@ object User extends ((String, String, Option[String], Option[String], Option[Str
     ModelInfo("USERS", "roles", "string[]", Uneditable, Uneditable, Some("Roles")),
     ModelInfo("USERS", "firstName", "string", Uneditable, Required, Some("First name")),
     ModelInfo("USERS", "lastName", "string", Uneditable, Required, Some("Last name")),
-    ModelInfo("USERS", "validationCode", "string", Uneditable, Uneditable, Some("Validation code")))
+    ModelInfo("USERS", "validationCode", "string", Uneditable, Uneditable, Some("Validation code"))
+  )
   // TODO: Remove validation code from model
 }

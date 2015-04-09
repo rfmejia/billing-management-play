@@ -67,8 +67,10 @@ class SettingsModel(tag: Tag) extends Table[(String, String)](tag, "SETTINGS") {
   def * = (key, value)
 }
 
-class ModelInfosModel(tag: Tag) extends Table[ModelInfo](tag,
-  "MODEL_INFOS") {
+class ModelInfosModel(tag: Tag) extends Table[ModelInfo](
+  tag,
+  "MODEL_INFOS"
+) {
   def modelName = column[String]("MODEL_NAME", O.NotNull)
   def fieldName = column[String]("FIELD_NAME", O.NotNull)
   def datatype = column[String]("DATATYPE", O.NotNull)

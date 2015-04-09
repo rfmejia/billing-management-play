@@ -14,7 +14,7 @@ import scala.util.{ Try, Success, Failure }
 import securesocial.core._
 
 class Reports(override implicit val env: RuntimeEnvironment[User])
-  extends ApiController[User] {
+    extends ApiController[User] {
 
   def show(year: Option[Int], month: Option[Int]) = SecuredAction { implicit request =>
     (year, month) match {
@@ -47,7 +47,8 @@ class Reports(override implicit val env: RuntimeEnvironment[User])
           JsObject(Seq(
             "name" -> JsString(ym.monthOfYear.getAsText),
             "month" -> JsNumber(ym.getMonthOfYear),
-            "year" -> JsNumber(ym.getYear)))
+            "year" -> JsNumber(ym.getYear)
+          ))
 
         val self = routes.Reports.show(year, month)
         val forMonth = new YearMonth(_year, _month)
@@ -60,21 +61,34 @@ class Reports(override implicit val env: RuntimeEnvironment[User])
           .withField("forMonth", expandDate(forMonth))
           .withField("generated", expandDate(generationTime))
           .withField("count", docs.size)
-          .withField("amounts",
+          .withField(
+            "amounts",
             HalJsObject.empty
-              .withField("isPaid", JsBoolean(isPaid))
-              .withField("sections", JsArray(List(
-                JsObject(Seq("name" -> JsString("previous"),
-                  "amounts" -> previous.asJsObject)),
-                JsObject(Seq("name" -> JsString("rent"),
-                  "amounts" -> rent.asJsObject)),
-                JsObject(Seq("name" -> JsString("electricity"),
-                  "amounts" -> electricity.asJsObject)),
-                JsObject(Seq("name" -> JsString("water"),
-                  "amounts" -> water.asJsObject)),
-                JsObject(Seq("name" -> JsString("cusa"),
-                  "amounts" -> cusa.asJsObject)))))
-              .asJsValue)
+            .withField("isPaid", JsBoolean(isPaid))
+            .withField("sections", JsArray(List(
+              JsObject(Seq(
+                "name" -> JsString("previous"),
+                "amounts" -> previous.asJsObject
+              )),
+              JsObject(Seq(
+                "name" -> JsString("rent"),
+                "amounts" -> rent.asJsObject
+              )),
+              JsObject(Seq(
+                "name" -> JsString("electricity"),
+                "amounts" -> electricity.asJsObject
+              )),
+              JsObject(Seq(
+                "name" -> JsString("water"),
+                "amounts" -> water.asJsObject
+              )),
+              JsObject(Seq(
+                "name" -> JsString("cusa"),
+                "amounts" -> cusa.asJsObject
+              ))
+            )))
+            .asJsValue
+          )
         Ok(obj.asJsValue)
     }
   }

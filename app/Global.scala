@@ -27,26 +27,26 @@ object Global extends WithFilters(CorsFilter, new GzipFilter()) with GlobalSetti
   private def exportSchemaStatements(pathKey: String, statements: Iterator[String]): Try[String] =
     Try {
       val path = Paths.get(Play.current.configuration.getString(pathKey).get)
-      Files.write(path, statements.map(_ + ";").mkString("\n").getBytes) 
+      Files.write(path, statements.map(_ + ";").mkString("\n").getBytes)
       s"Successfully exported to ${path}"
     }
 
-  private val initializeDB: Try[String] = 
+  private val initializeDB: Try[String] =
     Try {
       ConnectionFactory.connect withSession { implicit session =>
         val msgs = com.nooovle.slick.models.buildTables
-        msgs foreach(msg => logger.info(msg.toString))
+        msgs foreach (msg => logger.info(msg.toString))
         //insertModelInfos
       }
       "Successfully initialized the database"
-    } 
+    }
 
   override def onStart(app: Application) = {
     val bootSequence: Try[List[String]] = for {
       msg1 <- exportSchemaStatements("schema.create.path", slick.models.ddl.createStatements)
       msg2 <- exportSchemaStatements("schema.drop.path", slick.models.ddl.dropStatements)
     } yield List(msg1, msg2)
-    
+
     bootSequence match {
       case Success(msgs) => msgs.foreach(logger.info(_))
       case Failure(err) =>
@@ -112,7 +112,8 @@ object Global extends WithFilters(CorsFilter, new GzipFilter()) with GlobalSetti
     override lazy val userService: CustomUserService = new CustomUserService
     override lazy val routes = new CustomRoutesService
     override lazy val providers = ListMap(
-      include(new UsernamePasswordProvider[User](userService, avatarService, viewTemplates, passwordHashers)))
+      include(new UsernamePasswordProvider[User](userService, avatarService, viewTemplates, passwordHashers))
+    )
     override lazy val viewTemplates = new CustomViewTemplates(this)
   }
 

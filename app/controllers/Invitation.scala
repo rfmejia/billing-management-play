@@ -66,7 +66,9 @@ trait BaseInvitation[U] extends securesocial.controllers.BaseRegistration[U] wit
       Roles.Encoder.id -> boolean,
       Roles.Checker.id -> boolean,
       Roles.Approver.id -> boolean,
-      Roles.Admin.id -> boolean)(InvitationInfo.apply)(InvitationInfo.unapply))
+      Roles.Admin.id -> boolean
+    )(InvitationInfo.apply)(InvitationInfo.unapply)
+  )
 
   lazy val customViewTemplate = env.viewTemplates match {
     case custom: CustomViewTemplates => custom
@@ -101,7 +103,8 @@ trait BaseInvitation[U] extends securesocial.controllers.BaseRegistration[U] wit
               }
               handleStartResult().flashing(Success -> Messages("hoa.invite.inviteSent"), Email -> email)
           }
-        })
+        }
+      )
     }
   }
 
@@ -144,7 +147,8 @@ trait BaseInvitation[U] extends securesocial.controllers.BaseRegistration[U] wit
                   Some(t.email),
                   None,
                   AuthenticationMethod.UserPassword,
-                  passwordInfo = Some(env.currentHasher.hash(info.password)))
+                  passwordInfo = Some(env.currentHasher.hash(info.password))
+                )
 
                 val withAvatar = env.avatarService.map {
                   _.urlFor(t.email).map { url =>
@@ -176,7 +180,8 @@ trait BaseInvitation[U] extends securesocial.controllers.BaseRegistration[U] wit
                   }
                 }
                 result.flatMap(f => f)
-              })
+              }
+            )
         })
     }
   }
@@ -193,15 +198,16 @@ trait BaseInvitationInfo {
 case class InvitationInfo(email: String, isEncoder: Boolean, isChecker: Boolean, isApprover: Boolean, isAdmin: Boolean) extends BaseInvitationInfo
 
 class InvitationMailToken(
-  override val uuid: String,
-  override val email: String,
-  override val creationTime: DateTime,
-  override val expirationTime: DateTime,
-  override val isSignUp: Boolean,
-  val isEncoder: Boolean,
-  val isChecker: Boolean,
-  val isApprover: Boolean,
-  val isAdmin: Boolean) extends MailToken(uuid, email, creationTime, expirationTime, isSignUp) with BaseInvitationInfo {
+    override val uuid: String,
+    override val email: String,
+    override val creationTime: DateTime,
+    override val expirationTime: DateTime,
+    override val isSignUp: Boolean,
+    val isEncoder: Boolean,
+    val isChecker: Boolean,
+    val isApprover: Boolean,
+    val isAdmin: Boolean
+) extends MailToken(uuid, email, creationTime, expirationTime, isSignUp) with BaseInvitationInfo {
 
   lazy val invitationInfo = InvitationInfo(email, isEncoder, isChecker, isApprover, isAdmin)
 }
@@ -211,6 +217,7 @@ object InvitationMailToken {
     val inv = invitationInfo getOrElse InvitationInfo(token.email, false, false, false, false)
     new InvitationMailToken(
       token.uuid, token.email, token.creationTime, token.expirationTime, token.isSignUp,
-      inv.isEncoder, inv.isChecker, inv.isApprover, inv.isAdmin)
+      inv.isEncoder, inv.isChecker, inv.isApprover, inv.isAdmin
+    )
   }
 }

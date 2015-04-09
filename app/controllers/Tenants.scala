@@ -13,7 +13,7 @@ import scala.util.{ Try, Success, Failure }
 import securesocial.core.RuntimeEnvironment
 
 class Tenants(override implicit val env: RuntimeEnvironment[User])
-  extends ApiController[User] {
+    extends ApiController[User] {
 
   lazy val createForm: JsObject = getCreateTemplate("TENANTS")
   lazy val editForm: JsObject = getEditTemplate("TENANTS")
@@ -82,7 +82,8 @@ class Tenants(override implicit val env: RuntimeEnvironment[User])
 
   def create() = SecuredAction(parse.json) { implicit request =>
     val json = request.body
-    ((json \ "tradeName").asOpt[String],
+    (
+      (json \ "tradeName").asOpt[String],
       (json \ "address").asOpt[String],
       (json \ "contactPerson").asOpt[String],
       (json \ "contactNumber").asOpt[String],
@@ -94,16 +95,17 @@ class Tenants(override implicit val env: RuntimeEnvironment[User])
       (json \ "waterMeterDefault").asOpt[String],
       (json \ "electricityMeterDefault").asOpt[String],
       (json \ "baseRentDefault").asOpt[Double],
-      (json \ "standardMultiplierDefault").asOpt[Double]) match {
-        case (Some(tradeName), Some(address), Some(contactPerson), 
-          Some(contactNumber), Some(email), Some(area), 
+      (json \ "standardMultiplierDefault").asOpt[Double]
+    ) match {
+        case (Some(tradeName), Some(address), Some(contactPerson),
+          Some(contactNumber), Some(email), Some(area),
           Some(rentalPeriod), Some(escalation),
           cusaDefaultOpt, waterMeterDefaultOpt, electricityMeterDefaultOpt,
           baseRentDefaultOpt, standardMultiplierDefaultOpt) =>
           val result = ConnectionFactory.connect withSession { implicit session =>
-            Tenant.insert(tradeName, address, contactPerson, contactNumber, email, 
-              area, rentalPeriod, escalation, cusaDefaultOpt, 
-              waterMeterDefaultOpt, electricityMeterDefaultOpt, baseRentDefaultOpt, 
+            Tenant.insert(tradeName, address, contactPerson, contactNumber, email,
+              area, rentalPeriod, escalation, cusaDefaultOpt,
+              waterMeterDefaultOpt, electricityMeterDefaultOpt, baseRentDefaultOpt,
               standardMultiplierDefaultOpt)
           }
           result match {
@@ -123,7 +125,8 @@ class Tenants(override implicit val env: RuntimeEnvironment[User])
       case None => NotFound
       case Some(existingTenant) =>
         val json = request.body
-        ((json \ "tradeName").asOpt[String],
+        (
+          (json \ "tradeName").asOpt[String],
           (json \ "address").asOpt[String],
           (json \ "contactPerson").asOpt[String],
           (json \ "contactNumber").asOpt[String],
@@ -135,12 +138,13 @@ class Tenants(override implicit val env: RuntimeEnvironment[User])
           (json \ "waterMeterDefault").asOpt[String],
           (json \ "electricityMeterDefault").asOpt[String],
           (json \ "baseRentDefault").asOpt[Double],
-          (json \ "standardMultiplierDefault").asOpt[Double]) match {
-          case (Some(tradeName), Some(address), Some(contactPerson), 
-            Some(contactNumber), Some(email), Some(area), 
-            Some(rentalPeriod), Some(escalation),
-            cusaDefaultOpt, waterMeterDefaultOpt, electricityMeterDefaultOpt,
-            baseRentDefaultOpt, standardMultiplierDefaultOpt) =>
+          (json \ "standardMultiplierDefault").asOpt[Double]
+        ) match {
+            case (Some(tradeName), Some(address), Some(contactPerson),
+              Some(contactNumber), Some(email), Some(area),
+              Some(rentalPeriod), Some(escalation),
+              cusaDefaultOpt, waterMeterDefaultOpt, electricityMeterDefaultOpt,
+              baseRentDefaultOpt, standardMultiplierDefaultOpt) =>
               val result = ConnectionFactory.connect withSession { implicit session =>
                 val newTenant =
                   existingTenant.copy(
@@ -152,8 +156,8 @@ class Tenants(override implicit val env: RuntimeEnvironment[User])
                     area = area,
                     rentalPeriod = rentalPeriod,
                     escalation = escalation,
-                    cusaDefault = cusaDefaultOpt orElse existingTenant.cusaDefault, 
-                    waterMeterDefault = waterMeterDefaultOpt orElse existingTenant.waterMeterDefault, 
+                    cusaDefault = cusaDefaultOpt orElse existingTenant.cusaDefault,
+                    waterMeterDefault = waterMeterDefaultOpt orElse existingTenant.waterMeterDefault,
                     electricityMeterDefault = electricityMeterDefaultOpt orElse existingTenant.electricityMeterDefault,
                     baseRentDefault = baseRentDefaultOpt orElse existingTenant.baseRentDefault,
                     standardMultiplierDefault = standardMultiplierDefaultOpt orElse existingTenant.standardMultiplierDefault

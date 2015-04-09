@@ -19,7 +19,7 @@ import play.api.libs.ws.ning._
 import play.api.Play.current
 
 class TestEnvironment(override implicit val env: RuntimeEnvironment[User])
-  extends ApiController[User] {
+    extends ApiController[User] {
 
   private def bulkUpload(url: String, data: JsArray, token: String,
     timeout: Int)(f: Seq[WSResponse] => Result): Future[Result] = {
@@ -78,7 +78,7 @@ class TestEnvironment(override implicit val env: RuntimeEnvironment[User])
 
   def initializeDatabase = SecuredAction(WithRoles(Roles.Admin)) {
     ConnectionFactory.connect withSession { implicit session =>
-      com.nooovle.slick.models.buildTables foreach(msg => Logger.info(msg.toString))
+      com.nooovle.slick.models.buildTables foreach (msg => Logger.info(msg.toString))
 
       Tenant.modelInfos map (mi => modelTemplates += mi) foreach (msg => Logger.info(msg.toString))
       User.modelInfos map (mi => modelTemplates += mi)

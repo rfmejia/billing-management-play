@@ -11,7 +11,7 @@ import scala.slick.driver.PostgresDriver.simple._
 import securesocial.core.RuntimeEnvironment
 
 class ActionLogs(override implicit val env: RuntimeEnvironment[User])
-  extends ApiController[User] {
+    extends ApiController[User] {
 
   lazy val createForm: JsObject = getCreateTemplate("DOCUMENTS")
   lazy val editForm: JsObject = getEditTemplate("DOCUMENTS")
@@ -24,7 +24,8 @@ class ActionLogs(override implicit val env: RuntimeEnvironment[User])
           "who" -> JsString(log.who),
           "what" -> JsNumber(log.what),
           "when" -> JsString(log.when.toString),
-          "why" -> JsString(log.why)))
+          "why" -> JsString(log.why)
+        ))
     }
 
     val self = routes.ActionLogs.show(id).absoluteURL()

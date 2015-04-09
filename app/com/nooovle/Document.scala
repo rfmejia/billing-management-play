@@ -29,7 +29,8 @@ case class Document(
   lastAction: Option[Int] = None,
   preparedAction: Option[Int] = None,
   checkedAction: Option[Int] = None,
-  approvedAction: Option[Int] = None)
+  approvedAction: Option[Int] = None
+)
 
 object Document extends ((Int, Option[Int], String, String, String, DateTime, Int, Int, Int, Boolean, JsObject, JsObject, JsObject, Option[String], Option[Int], Option[Int], Option[Int], Option[Int]) => Document) with ModelTemplate {
 
@@ -39,7 +40,8 @@ object Document extends ((Int, Option[Int], String, String, String, DateTime, In
       "rent" -> JsNumber(0.0),
       "electricity" -> JsNumber(0.0),
       "water" -> JsNumber(0.0),
-      "cusa" -> JsNumber(0.0)))
+      "cusa" -> JsNumber(0.0)
+    ))
 
   def findById(id: Int): Option[Document] =
     ConnectionFactory.connect withSession { implicit session =>
@@ -59,7 +61,7 @@ object Document extends ((Int, Option[Int], String, String, String, DateTime, In
       JsObject(Seq.empty), Some(creator.userId))
 
     val (_, _, _, _, _, isPaid) = Templates.extractDefaultAmounts(doc)
-    val docWithIsPaid = doc.copy(isPaid = isPaid) 
+    val docWithIsPaid = doc.copy(isPaid = isPaid)
 
     ConnectionFactory.connect withSession { implicit session =>
       // Return ID of newly inserted tenant
@@ -148,5 +150,6 @@ object Document extends ((Int, Option[Int], String, String, String, DateTime, In
     ModelInfo("DOCUMENTS", "amountPaid", "json", Uneditable, Editable, Some("Amount paid")),
     ModelInfo("DOCUMENTS", "body", "json", Required, Editable, Some("Document body (free-form JSON object)")),
     ModelInfo("DOCUMENTS", "comments", "json", Uneditable, Editable, Some("Comments (free-form JSON object)")),
-    ModelInfo("DOCUMENTS", "assigned", "string", Uneditable, Uneditable, Some("Currently assigned to")))
+    ModelInfo("DOCUMENTS", "assigned", "string", Uneditable, Uneditable, Some("Currently assigned to"))
+  )
 }

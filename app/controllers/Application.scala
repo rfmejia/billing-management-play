@@ -16,7 +16,7 @@ object Application {
 }
 
 class Application(override implicit val env: RuntimeEnvironment[User])
-  extends ApiController[User] {
+    extends ApiController[User] {
 
   def index = SecuredAction { implicit request =>
     Ok {

@@ -13,7 +13,7 @@ import scala.util.{ Try, Success, Failure }
 import securesocial.core.RuntimeEnvironment
 
 class Workflow(override implicit val env: RuntimeEnvironment[User])
-  extends ApiController[User] {
+    extends ApiController[User] {
 
   def listMailboxes = SecuredAction { implicit request =>
     Ok {
@@ -85,7 +85,9 @@ class Workflow(override implicit val env: RuntimeEnvironment[User])
                           newDoc.copy(
                             preparedAction = if (clearPrepared) None else newDoc.preparedAction,
                             checkedAction = if (clearChecked) None else newDoc.checkedAction,
-                            approvedAction = if (clearApproved) None else newDoc.approvedAction)) match {
+                            approvedAction = if (clearApproved) None else newDoc.approvedAction
+                          )
+                        ) match {
                             case Success(_) => Document.logLastAction(log)
                             case Failure(err) => InternalServerError(err.getMessage)
                           }
@@ -109,7 +111,8 @@ class Workflow(override implicit val env: RuntimeEnvironment[User])
         "title" -> JsString(box.title),
         "queryKey" -> JsString("mailbox"),
         "queryParam" -> JsString(box.name),
-        "subFolders" -> JsArray(subFolders)))
+        "subFolders" -> JsArray(subFolders)
+      ))
     }
 
     val pendingBoxes = boxAsJson(pending, pendingSubboxes.map(boxAsJson(_)))

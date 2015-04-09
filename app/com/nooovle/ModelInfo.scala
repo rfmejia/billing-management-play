@@ -12,7 +12,8 @@ object ModelInfo extends ((String, String, String, (Boolean, Boolean), (Boolean,
     fields map { f =>
       val o1 = Json.obj(
         "name" -> f.fieldName,
-        "datatype" -> f.datatype)
+        "datatype" -> f.datatype
+      )
       val o2 = if (f.prompt.isDefined) o1 + ("title" -> JsString(f.prompt.get)) else o1
       val o3 = if (f.tooltip.isDefined) o2 + ("tooltip" -> JsString(f.tooltip.get)) else o2
       val o4 = {

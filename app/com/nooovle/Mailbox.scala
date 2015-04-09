@@ -7,7 +7,8 @@ case class Mailbox(name: String, title: String) {
   lazy val asJsObject: JsObject = {
     JsObject(Seq(
       "name" -> JsString(name),
-      "title" -> JsString(title)))
+      "title" -> JsString(title)
+    ))
   }
 }
 

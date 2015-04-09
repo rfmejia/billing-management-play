@@ -14,7 +14,7 @@ object SerialNumber extends ((Int, Int) => SerialNumber) {
 
   def get(id: Int): Option[SerialNumber] =
     ConnectionFactory.connect withSession { implicit session =>
-      (for(sn <- serialNumbers if sn.id === id) yield sn).firstOption
+      (for (sn <- serialNumbers if sn.id === id) yield sn).firstOption
     }
 
   def create(docId: Int): Try[SerialNumber] = Try {
