@@ -16,7 +16,6 @@ import securesocial.core.providers.MailToken
 
 object models {
   val modelTemplates = TableQuery[ModelInfosModel]
-  val roles = TableQuery[RolesModel]
   val settings = TableQuery[SettingsModel]
   val tenants = TableQuery[TenantsModel]
   val users = TableQuery[UsersModel]
@@ -27,7 +26,7 @@ object models {
   val actionLogs = TableQuery[ActionLogsModel]
   val serialNumbers = TableQuery[SerialNumbersModel]
 
-  val tables = List(modelTemplates, roles, settings, tenants, users, documents,
+  val tables = List(modelTemplates, settings, tenants, users, documents,
     userRoles, mailTokens, invitations, actionLogs, serialNumbers)
   lazy val ddl = {
     val ts = tables.map(_.ddl)
@@ -123,19 +122,12 @@ class TenantsModel(tag: Tag) extends Table[Tenant](tag, "TENANTS") {
     (Tenant.tupled, Tenant.unapply)
 }
 
-class RolesModel(tag: Tag) extends Table[String](tag, "ROLES") {
-  def name = column[String]("NAME", O.PrimaryKey)
-
-  def * = (name)
-}
-
 class UserRolesModel(tag: Tag) extends Table[(String, String)](tag, "USER_ROLES") {
   def userId = column[String]("USERNAME", O.NotNull)
   def roleName = column[String]("ROLE_NAME", O.NotNull)
 
   def pk = primaryKey("USER_ROLES_PK", (userId, roleName))
   def user = foreignKey("USER_FK", userId, models.users)(_.userId, onDelete = ForeignKeyAction.Cascade)
-  def role = foreignKey("ROLE_FK", roleName, models.roles)(_.name, onDelete = ForeignKeyAction.Cascade)
 
   def * = (userId, roleName)
 }

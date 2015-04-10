@@ -2,15 +2,10 @@ package com.nooovle
 
 import com.nooovle.ModelInfo._
 import com.nooovle.slick.ConnectionFactory
-import com.nooovle.slick.models.roles
-import com.nooovle.slick.models.userRoles
-import com.nooovle.slick.models.users
+import com.nooovle.slick.models.{ users, userRoles }
 import scala.slick.driver.PostgresDriver.simple._
 import scala.util.Try
-import securesocial.core.AuthenticationMethod
-import securesocial.core.BasicProfile
-import securesocial.core.GenericProfile
-import securesocial.core.PasswordInfo
+import securesocial.core._
 
 case class User(
     providerId: String,
@@ -51,20 +46,19 @@ object User extends ((String, String, Option[String], Option[String], Option[Str
   def findByUserIdWithRoles(userId: String): Option[(User, Set[Role])] =
     ConnectionFactory.connect withSession { implicit session =>
       val user = for (u <- users if u.userId === userId) yield u
-      val rs = for {
+      val query = for {
         ur <- userRoles if ur.userId === userId
-        rs <- roles if rs.name === ur.roleName
-      } yield rs
-      user.firstOption map (u => (u, Roles.fromStringSet(rs.list.toSet)))
+      } yield ur
+      val roles: Set[String] = query.list.map(_._2).toSet
+      user.firstOption map (u => (u, Roles.fromStringSet(roles)))
     }
 
   def findRoles(userId: String): Set[Role] =
     ConnectionFactory.connect withSession { implicit session =>
       val query = for {
         ur <- userRoles if ur.userId === userId
-        rs <- roles if rs.name === ur.roleName
-      } yield rs
-      query.list.map(Roles.find).flatten.toSet
+      } yield ur
+      query.list.map(ur => Roles.find(ur._2)).flatten.toSet
     }
 
   // TODO: Simplify when removing role editing in the original PUT request
@@ -94,7 +88,6 @@ object User extends ((String, String, Option[String], Option[String], Option[Str
         // Delete existing roles
         userRoles.filter(ur => ur.userId === userId).delete
 
-        rs foreach (role => roles.insertOrUpdate(role.id))
         // The following does not use insertOrUpdate because userId is an
         // auto-incrementing foreign key (bug exists)
         rs foreach (role => userRoles += ((userId, role.id)))
