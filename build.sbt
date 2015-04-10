@@ -57,5 +57,5 @@ herokuJdkVersion in Compile := "1.8"
 herokuAppName in Compile := "hoa-play-scala"
 
 herokuProcessTypes in Compile := Map(
-  "web" -> "target/universal/stage/bin/metabodb -Dhttp.port=${PORT} -DapplyEvolutions.default=true -Ddb.default.driver=org.postgresql.Driver -Ddb.default.url=${DATABASE_URL}"
+  "web" -> "target/universal/stage/bin/hoa-play-scala -Dhttp.port=${PORT} -DapplyEvolutions.default=true -Ddb.default.driver=org.postgresql.Driver -Ddb.default.url=${DATABASE_URL}"
 )
