@@ -81,7 +81,7 @@ object HalJsObject {
  * are two or more links assigned to a relation.
  */
 case class HalJsLinks(
-  links: immutable.Map[String, List[Link]],
+    links: immutable.Map[String, List[Link]],
     curies: List[Curie]
 ) {
 

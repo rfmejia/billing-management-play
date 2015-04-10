@@ -64,30 +64,30 @@ class Reports(override implicit val env: RuntimeEnvironment[User])
           .withField(
             "amounts",
             HalJsObject.empty
-            .withField("isPaid", JsBoolean(isPaid))
-            .withField("sections", JsArray(List(
-              JsObject(Seq(
-                "name" -> JsString("previous"),
-                "amounts" -> previous.asJsObject
-              )),
-              JsObject(Seq(
-                "name" -> JsString("rent"),
-                "amounts" -> rent.asJsObject
-              )),
-              JsObject(Seq(
-                "name" -> JsString("electricity"),
-                "amounts" -> electricity.asJsObject
-              )),
-              JsObject(Seq(
-                "name" -> JsString("water"),
-                "amounts" -> water.asJsObject
-              )),
-              JsObject(Seq(
-                "name" -> JsString("cusa"),
-                "amounts" -> cusa.asJsObject
-              ))
-            )))
-            .asJsValue
+              .withField("isPaid", JsBoolean(isPaid))
+              .withField("sections", JsArray(List(
+                JsObject(Seq(
+                  "name" -> JsString("previous"),
+                  "amounts" -> previous.asJsObject
+                )),
+                JsObject(Seq(
+                  "name" -> JsString("rent"),
+                  "amounts" -> rent.asJsObject
+                )),
+                JsObject(Seq(
+                  "name" -> JsString("electricity"),
+                  "amounts" -> electricity.asJsObject
+                )),
+                JsObject(Seq(
+                  "name" -> JsString("water"),
+                  "amounts" -> water.asJsObject
+                )),
+                JsObject(Seq(
+                  "name" -> JsString("cusa"),
+                  "amounts" -> cusa.asJsObject
+                ))
+              )))
+              .asJsValue
           )
         Ok(obj.asJsValue)
     }
