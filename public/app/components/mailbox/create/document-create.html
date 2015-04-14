@@ -21,10 +21,7 @@
                         </p>
 
                         <p class="vertical-align" ng-show="documentCreate.isDocumentReady()">
-                            Workflow for
-                            <span class="text-accented"> {{documentCreate.selectedTenant.tradeName}} </span>
-                            on
-                            <span class="text-accented"> {{documentCreate.billingDate | momentString:documentCreate.format}} </span>
+                            <span class="text-accented"> {{documentCreate.selectedTenant.tradeName}} billing for {{documentCreate.billingDate | momentString:documentCreate.format}}</span>
                         </p>
                     </div>
                     <div layout="row" layout-align="end center">
