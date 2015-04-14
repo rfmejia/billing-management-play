@@ -42,8 +42,6 @@ function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, 
     vm.remarks = doc.remarks;
     vm.isCusaIncluded = false;
 
-    console.log(doc.summaryValue);
-
     //Function mapping
     vm.onUnlinkClicked = onUnlinkClicked;
     vm.validateDateRange = validateDateRange;
@@ -105,7 +103,7 @@ function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, 
     }
 
     function returnToList() {
-        var params = queryHelper.getDocsListParams("drafts", 0, "all");
+        var params = queryHelper.getDocsListParams("drafts", 0, "mine");
         $state.go("workspace.pending.drafts", params, {reload : true})
     }
 

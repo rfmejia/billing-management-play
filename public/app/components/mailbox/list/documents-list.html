@@ -93,8 +93,8 @@
                 <md-button
                         ng-repeat="filter in docsList.filters"
                         class="options no-uppercase"
-                           ng-click="docsList.onFilterTabClicked(filter)"
-                           ng-class="{true: 'active', false: ''}[filter.isActive]">
+                        ng-click="docsList.onFilterTabClicked(filter)"
+                        ng-class="{true: 'active', false: ''}[filter.isActive]">
                     <span>{{filter.title}}</span>
                 </md-button>
             </md-whiteframe>
