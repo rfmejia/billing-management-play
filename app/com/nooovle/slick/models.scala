@@ -57,6 +57,13 @@ object models {
       case _ => throw new IllegalStateException("Malformed JSON object")
     }
   })
+
+  implicit val snToString = MappedColumnType.base[SerialNumber, Int](_.id, {
+    SerialNumber.get(_) match {
+      case Some(sn) => sn
+      case None => throw new IllegalStateException("Malformed JSON object")
+    }
+  })
 }
 
 class SettingsModel(tag: Tag) extends Table[(String, String)](tag, "SETTINGS") {
@@ -66,10 +73,7 @@ class SettingsModel(tag: Tag) extends Table[(String, String)](tag, "SETTINGS") {
   def * = (key, value)
 }
 
-class ModelInfosModel(tag: Tag) extends Table[ModelInfo](
-  tag,
-  "MODEL_INFOS"
-) {
+class ModelInfosModel(tag: Tag) extends Table[ModelInfo](tag, "MODEL_INFOS") {
   def modelName = column[String]("MODEL_NAME", O.NotNull)
   def fieldName = column[String]("FIELD_NAME", O.NotNull)
   def datatype = column[String]("DATATYPE", O.NotNull)
@@ -135,7 +139,7 @@ class UserRolesModel(tag: Tag) extends Table[(String, String)](tag, "USER_ROLES"
 class DocumentsModel(tag: Tag) extends Table[Document](tag, "DOCUMENTS") {
   import models._
   def id = column[Int]("ID", O.PrimaryKey, O.AutoInc)
-  def serialId = column[Option[Int]]("SERIAL_ID")
+  def serialId = column[Option[SerialNumber]]("SERIAL_ID")
   def docType = column[String]("DOC_TYPE", O.NotNull)
   def mailbox = column[String]("MAILBOX", O.NotNull)
   def creator = column[String]("CREATOR", O.NotNull)

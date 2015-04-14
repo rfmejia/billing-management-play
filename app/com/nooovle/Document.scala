@@ -13,7 +13,7 @@ import scala.util.{ Try, Success, Failure }
 
 case class Document(
   id: Int,
-  serialId: Option[Int],
+  serialId: Option[SerialNumber],
   docType: String, // Type of subdocument
   mailbox: String,
   creator: String,
@@ -32,7 +32,7 @@ case class Document(
   approvedAction: Option[Int] = None
 )
 
-object Document extends ((Int, Option[Int], String, String, String, DateTime, Int, Int, Int, Boolean, JsObject, JsObject, JsObject, Option[String], Option[Int], Option[Int], Option[Int], Option[Int]) => Document) with ModelTemplate {
+object Document extends ((Int, Option[SerialNumber], String, String, String, DateTime, Int, Int, Int, Boolean, JsObject, JsObject, JsObject, Option[String], Option[Int], Option[Int], Option[Int], Option[Int]) => Document) with ModelTemplate {
 
   private val defaultAmountPaid: JsObject =
     JsObject(Seq(
@@ -95,7 +95,7 @@ object Document extends ((Int, Option[Int], String, String, String, DateTime, In
             case (forApproval, forSending, None) =>
               SerialNumber.create(doc.id) map {
                 sn =>
-                  Document.update(withNewBox.copy(serialId = Some(sn.id))) match {
+                  Document.update(withNewBox.copy(serialId = Some(sn))) match {
                     case Success(withSerialNumber) => withSerialNumber
                     case Failure(msg) =>
                       Logger.warn(s"Unable to generate serial ID for document ${doc.id}")

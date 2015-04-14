@@ -198,7 +198,7 @@ The following sections are default routes supplied by [SecureSocial](http://secu
 - [x] Changed amountPaid from double to JsObject, as the basis of reports
 - [x] Eliminate in-memory document filtering by moving relevant fields into database model
 - [x] Remove title from document model
-- [ ] Use typesafe serial number in document model
+- [x] Use typesafe serial number in document model
 - [ ] Create/use separate DB for user accounts (to survive database refreshes, increase security, etc.)
 - [x] Figure out a way to put the isPaid flag inside the database to correctly filter docs
 - [-] Migrate Slick to use PostgreSQL or MySQL 
@@ -207,7 +207,7 @@ The following sections are default routes supplied by [SecureSocial](http://secu
 
 - [x] Setup logservice API
 - [x] Separate logging folder into YYYY/MM/DD
-- [ ] Setup logstash in @deadpool
+- [ ] Change logging to save into S3 or to insert into a database
 
 ### Testing
 

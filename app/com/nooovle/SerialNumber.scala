@@ -6,12 +6,11 @@ import play.api.Logger
 import scala.slick.driver.PostgresDriver.simple._
 import scala.util.Try
 
-case class SerialNumber(id: Int, docId: Int)
+case class SerialNumber(id: Int, docId: Int) {
+  override def toString = f"${id}%05d"
+}
 
 object SerialNumber extends ((Int, Int) => SerialNumber) {
-
-  def format(id: Int) = f"${id}%05d"
-
   def get(id: Int): Option[SerialNumber] =
     ConnectionFactory.connect withSession { implicit session =>
       (for (sn <- serialNumbers if sn.id === id) yield sn).firstOption
