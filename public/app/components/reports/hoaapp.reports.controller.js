@@ -39,8 +39,17 @@ function controller($state, $stateParams, dateUtils, documentsList, reportRespon
 
         //Pagination setup
         vm.currentPage = $stateParams.offset / $stateParams.limit;
-        vm.total = documentsList.total; //TODO: Pagination activate once total is set
+        vm.total = documentsList.total;
         vm.pageSize = $stateParams.limit;
+
+        //Compute total
+        angular.forEach(vm.report.sections, function(section) {
+            var total = 0;
+            angular.forEach(section.entries, function(value, key) {
+                total += value;
+            });
+            section["total"] = total;
+        });
     }
 
     function onFilterClicked(filter) {
@@ -64,8 +73,7 @@ function controller($state, $stateParams, dateUtils, documentsList, reportRespon
         }
         var dateString = dateUtils.getMomentFromString($stateParams.month, $stateParams.year);
         var queryParameters = queryHelper.getReportsParams(offset, dateString, vm.currentFilter.id);
-        //TODO: Pagination activate once total is set
-        //$state.go($state.current, queryParameters, {reload : true});
+        $state.go($state.current, queryParameters, {reload : true});
     }
 
     //endregion
