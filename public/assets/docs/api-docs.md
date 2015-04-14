@@ -192,31 +192,20 @@ The following sections are default routes supplied by [SecureSocial](http://secu
 ### Backend
 
 - [x] Generate serial number upon approval
-- [ ] Limited deletion **after issuing serial number** (must not be permanently deleted)
 - [x] Log document updates (as specific as possible)
 - [x] Audit cascade deletions in models
 - [x] Changed amountPaid from double to JsObject, as the basis of reports
 - [x] Eliminate in-memory document filtering by moving relevant fields into database model
 - [x] Remove title from document model
-- [ ] Use typesafe serial number in document model
-- [ ] Create/use separate DB for user accounts (to survive database refreshes, increase security, etc.)
+- [x] Use typesafe serial number in document model
 - [x] Figure out a way to put the isPaid flag inside the database to correctly filter docs
-- [-] Migrate Slick to use PostgreSQL or MySQL 
+- [x] Migrate Slick to use PostgreSQL 
 
 ### Logging
 
 - [x] Setup logservice API
 - [x] Separate logging folder into YYYY/MM/DD
-- [ ] Setup logstash in @deadpool
-
-### Testing
-
-- [ ] Transfer data manipulation logic into services (leave controllers as HTTP-only tasks)
-- [ ] Write automated tests for API
-- [ ] Write test scripts for each 
-- [ ] Setup Jenkins in @deadpool
-- [ ] Generate test data
-- [ ] Add action to inject test data
+- [ ] Change logging to save into S3 or to insert into a database
 
 ### Authentication
 

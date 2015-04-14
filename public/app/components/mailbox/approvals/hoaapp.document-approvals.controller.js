@@ -81,7 +81,7 @@ function approvalsCtrl($state, $location, $anchorScroll, documentsApi, documents
     }
 
     function returnToList() {
-        var params = queryHelper.getDocsListParams("drafts", 0, "all");
+        var params = queryHelper.getDocsListParams("drafts", 0, "mine");
         $state.go("workspace.pending.drafts", params, {reload : true})
     }
 

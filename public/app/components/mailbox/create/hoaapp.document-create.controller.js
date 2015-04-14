@@ -24,9 +24,10 @@ function createController($state, documentsApi, documentsHelper, hoaToast, dateU
     vm.onTenantSelected = onTenantSelected;
     vm.onCreateDocumentClicked = onCreateDocumentClicked;
     vm.isDocumentReady = isDocumentReady;
-    vm.title = title;
+    vm.removeUtc = removeUtc;
     vm.prepareDraftPost = prepareDraftPost;
     vm.getMatches = getMatches;
+
 
     activate();
 
@@ -76,10 +77,8 @@ function createController($state, documentsApi, documentsHelper, hoaToast, dateU
      * Creates the title for our document.
      * @returns {string}
      */
-    function title() {
-        return (vm.isDocumentReady())
-            ? vm.selectedTenant.tradeName + " - " + dateUtils.getLocalStringDisplay(vm.billingDate, vm.format)
-            : '';
+    function removeUtc(newDate) {
+        dateUtils.draftsFormatDate(newDate);
     }
 
     function prepareDraftPost() {

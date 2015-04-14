@@ -15,7 +15,7 @@ import scala.util.{ Try, Success, Failure }
 import securesocial.core.RuntimeEnvironment
 
 class Documents(override implicit val env: RuntimeEnvironment[User])
-  extends ApiController[User] {
+    extends ApiController[User] {
 
   lazy val createForm: JsObject = getCreateTemplate("DOCUMENTS")
   lazy val editForm: JsObject = getEditTemplate("DOCUMENTS")
@@ -28,16 +28,16 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
     }
   }
 
-  def list(offset: Int = 0, limit: Int = 10, mailbox: String, forTenant: Int, 
-    creator: String, assigned: Option[String], year: Option[Int], month: Option[Int], 
-    isPaid: Option[Boolean], others: Option[Boolean], 
+  def list(offset: Int = 0, limit: Int = 10, mailbox: String, forTenant: Int,
+    creator: String, assigned: Option[String], year: Option[Int], month: Option[Int],
+    isPaid: Option[Boolean], others: Option[Boolean],
     isAssigned: Option[Boolean]) = SecuredAction { implicit request =>
 
     // Assigned filters: 
     // isAssigned == None => _
     // isAssigned == Some(true) => isAssigned.isDefined
     // isAssigned == Some(false) => isAssigned.isEmpty
-    
+
     // assigned == None => _
     // assigned == Some(user) => filter(user)
 
@@ -45,7 +45,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
     // others == Some(true) => filterNot(me)
     // others == Some(false) => filter(me)
 
-    val (docs, totalHits): (List[Document], Int) = 
+    val (docs, totalHits): (List[Document], Int) =
       ConnectionFactory.connect withSession { implicit session =>
         // Filter values by comparing to their default values in the router
         // (workaround to Slick limitations)
@@ -66,15 +66,15 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
         } getOrElse withIsAssigned
 
         val withOthers = others map {
-          flag => 
+          flag =>
             val userSet: Set[String] = Set(request.user.userId)
-            if(flag) withAssigned.filterNot(d => d.assigned inSetBind userSet)
+            if (flag) withAssigned.filterNot(d => d.assigned inSetBind userSet)
             else withAssigned.filter(d => d.assigned inSetBind userSet)
         } getOrElse withAssigned
 
-        val total = withOthers.length.run 
+        val total = withOthers.length.run
         val results = withOthers.drop(offset).take(limit).sortBy(_.created.desc).list
-        (results, total) 
+        (results, total)
       }
 
     val objs = docs
@@ -85,7 +85,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
         val obj = HalJsObject.create(link.absoluteURL())
           .withLink("profile", "hoa:document")
           .withField("id", d.id)
-          .withField("serialId", d.serialId.map(sn => JsString(SerialNumber.format(sn))))
+          .withField("serialId", d.serialId)
           .withField("docType", d.docType)
           .withField("mailbox", d.mailbox)
           .withField("forTenant", tenantToJsObject(d.forTenant))
@@ -127,11 +127,13 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
 
   def create() = SecuredAction(parse.json) { implicit request =>
     val json = request.body
-    ((json \ "docType").asOpt[String],
+    (
+      (json \ "docType").asOpt[String],
       (json \ "forTenant").asOpt[Int],
       (json \ "year").asOpt[Int],
       (json \ "month").asOpt[Int],
-      (json \ "body").asOpt[JsObject]) match {
+      (json \ "body").asOpt[JsObject]
+    ) match {
         case (Some(docType), Some(forTenant), Some(year), Some(month), Some(body)) => {
           val yearMonth = new YearMonth(year, month)
           Document.insert(request.user, docType, forTenant, yearMonth, body) match {
@@ -158,23 +160,27 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
             + s" (Assigned to '${existingDoc.assigned}')")
         } else {
           val json = request.body
-          ((json \ "body").asOpt[JsObject],
+          (
+            (json \ "body").asOpt[JsObject],
             (json \ "comments").asOpt[JsObject],
-            (json \ "amountPaid").asOpt[JsObject]) match {
+            (json \ "amountPaid").asOpt[JsObject]
+          ) match {
               case (None, None, None) =>
                 BadRequest("No editable fields matched. Please check your request.")
               case (bodyOpt, commentsOpt, amountPaidOpt) =>
-                
+
                 val newDoc: Document = {
                   val a = existingDoc.copy(
                     body = bodyOpt getOrElse existingDoc.body,
-                    comments = commentsOpt getOrElse existingDoc.comments)
+                    comments = commentsOpt getOrElse existingDoc.comments
+                  )
                   val b = amountPaidOpt map {
                     amountJson =>
                       val (_, _, _, _, _, isPaid) = Templates.extractDefaultAmounts(a)
                       a.copy(
                         isPaid = isPaid,
-                        amountPaid = amountJson)
+                        amountPaid = amountJson
+                      )
                   } getOrElse a
                   b
                 }
@@ -184,7 +190,8 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
                     val changes = Seq(
                       amountPaidOpt.map(v => s"Amount paid: '${existingDoc.amountPaid}' -> '${v}'"),
                       bodyOpt.map(v => "Body updated"),
-                      commentsOpt.map(v => "Comments updated"))
+                      commentsOpt.map(v => "Comments updated")
+                    )
                       .flatten
                       .mkString(", ")
 
@@ -280,7 +287,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       .withLink("edit", routes.Documents.edit(d.id).absoluteURL())
       .withLink("hoa:logs", routes.ActionLogs.show(d.id).absoluteURL())
       .withField("id", d.id)
-      .withField("serialId", d.serialId.map(sn => JsString(SerialNumber.format(sn))))
+      .withField("serialId", d.serialId)
       .withField("docType", d.docType)
       .withField("mailbox", d.mailbox)
       .withField("created", d.created)
@@ -335,21 +342,34 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       val (previous, rent, electricity, water, cusa, isPaid) =
         Templates.extractDefaultAmounts(doc)
 
-      obj.withField("amounts",
+      obj.withField(
+        "amounts",
         HalJsObject.empty
           .withField("isPaid", JsBoolean(isPaid))
           .withField("sections", JsArray(List(
-            JsObject(Seq("name" -> JsString("previous"),
-              "amounts" -> previous.asJsObject)),
-            JsObject(Seq("name" -> JsString("rent"),
-              "amounts" -> rent.asJsObject)),
-            JsObject(Seq("name" -> JsString("electricity"),
-              "amounts" -> electricity.asJsObject)),
-            JsObject(Seq("name" -> JsString("water"),
-              "amounts" -> water.asJsObject)),
-            JsObject(Seq("name" -> JsString("cusa"),
-              "amounts" -> cusa.asJsObject)))))
-          .asJsValue)
+            JsObject(Seq(
+              "name" -> JsString("previous"),
+              "amounts" -> previous.asJsObject
+            )),
+            JsObject(Seq(
+              "name" -> JsString("rent"),
+              "amounts" -> rent.asJsObject
+            )),
+            JsObject(Seq(
+              "name" -> JsString("electricity"),
+              "amounts" -> electricity.asJsObject
+            )),
+            JsObject(Seq(
+              "name" -> JsString("water"),
+              "amounts" -> water.asJsObject
+            )),
+            JsObject(Seq(
+              "name" -> JsString("cusa"),
+              "amounts" -> cusa.asJsObject
+            ))
+          )))
+          .asJsValue
+      )
     } else obj
   }
 
@@ -358,7 +378,8 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       case Some(u) =>
         JsObject(Seq(
           "userId" -> JsString(u.userId),
-          "fullName" -> JsString(u.fullName getOrElse "")))
+          "fullName" -> JsString(u.fullName getOrElse "")
+        ))
       case None => JsObject(Seq("userId" -> JsString(userId)))
     }
 
@@ -367,7 +388,8 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       case Some(t) =>
         JsObject(Seq(
           "id" -> JsNumber(t.id),
-          "tradeName" -> JsString(t.tradeName)))
+          "tradeName" -> JsString(t.tradeName)
+        ))
       case None => JsObject(Seq("id" -> JsNumber(tenantId)))
     }
 
@@ -377,6 +399,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       "who" -> userToJsObject(log.who),
       "what" -> JsNumber(log.what),
       "when" -> JsString(log.when.toString),
-      "why" -> JsString(log.why)))
+      "why" -> JsString(log.why)
+    ))
   }
 }

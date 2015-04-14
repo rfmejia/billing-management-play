@@ -12,8 +12,7 @@ scalacOptions ++= Seq(
   "-Xfatal-warnings",
   "-feature", 
   "-unchecked", 
-  "-encoding", 
-  "utf8")
+  "-encoding", "utf8")
 
 // Sonatype resolvers
 resolvers += Resolver.sonatypeRepo("releases")
@@ -48,3 +47,14 @@ libraryDependencies ++= repositoryDependencies ++ playDependencies ++ Seq(
 libraryDependencies += filters
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
+
+defaultScalariformSettings
+
+// Heroku-specific options
+herokuJdkVersion in Compile := "1.8"
+
+herokuAppName in Compile := "hoa-play-scala"
+
+herokuProcessTypes in Compile := Map(
+  "web" -> "target/universal/stage/bin/hoa-play-scala -Dhttp.port=${PORT} -DapplyEvolutions.default=true -Ddb.default.driver=org.postgresql.Driver -Ddb.default.url=${DATABASE_URL}"
+)

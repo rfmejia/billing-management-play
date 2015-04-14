@@ -1,12 +1,12 @@
-<md-toolbar layout="row" layout-align="start center">
-    <div class="md-toolbar-tools">
+<md-toolbar>
+    <div class="md-toolbar-tools" layout="row" layout-align="start center">
         <button hide-gt-md class="menuBtn menuBtn-hamburger" toggle-side-nav>
             <span class="visually-hidden">Menu</span>
         </button>
         <h3 flex class="toolbar-title">Create invoice</h3>
     </div>
 </md-toolbar>
-<md-content layout="column" flex class="main">
+<md-content flex class="main">
     <div ng-if="stateIsLoading" layout="column" layout-align="center-center" flex="10">
         <md-progress-linear md-mode="indeterminate"></md-progress-linear>
     </div>
@@ -21,10 +21,7 @@
                         </p>
 
                         <p class="vertical-align" ng-show="documentCreate.isDocumentReady()">
-                            Workflow for
-                            <span class="text-accented"> {{documentCreate.selectedTenant.tradeName}} </span>
-                            on
-                            <span class="text-accented"> {{documentCreate.billingDate | momentString:documentCreate.format}} </span>
+                            <span class="text-accented"> {{documentCreate.selectedTenant.tradeName}} billing for {{documentCreate.billingDate | momentString:documentCreate.format}}</span>
                         </p>
                     </div>
                     <div layout="row" layout-align="end center">
@@ -50,7 +47,8 @@
                     <h6 class="text-muted text-center">Select billing period</h6>
                     <datetimepicker class="center-block"
                                     data-ng-model="documentCreate.billingDate"
-                                    data-datetimepicker-config="{startView: 'month', minView:'month'}">
+                                    data-datetimepicker-config="{startView: 'month', minView:'month'}"
+                                    data-on-set-time="documentCreate.removeUtc(newDate)">
                     </datetimepicker>
                 </div>
             </md-card-content>

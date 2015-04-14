@@ -8,6 +8,7 @@ function queryParams(dateUtils) {
         getDocsListParams        : getDocsListParams,
         getDocsListFilters       : getListFilters,
         getDocsListFilterById    : getListFilter,
+        getTenantListParams      : getTenantListParams,
         getTenantDocs            : getTenantDocsParams,
         getTenantsDocsFilters    : getTenantsFilters,
         getTenantsDocsFilterById : getTenantListFilter,
@@ -95,6 +96,14 @@ function queryParams(dateUtils) {
         return params;
     }
 
+    function getTenantListParams(limit, offset) {
+        if(limit === null) limit = 10;
+        return {
+            limit  : limit,
+            offset : offset
+        }
+    }
+
     function getTenantDocsParams(offset, tenantId, filterId) {
 
         if (filterId === "all") {
@@ -169,8 +178,12 @@ function queryParams(dateUtils) {
         var year = dateUtils.getLocalYear(date);
         var month = dateUtils.getLocalMonth(date);
         var paid;
-        if(filterId === "all") paid = null;
-        else paid = filterId === "paid";
+        if (filterId === "all") {
+            paid = null;
+        }
+        else {
+            paid = filterId === "paid";
+        }
 
         var params = {};
         angular.copy(reportsDocsParams, params);

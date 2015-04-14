@@ -5,21 +5,14 @@ angular
     .module('app.mailbox')
     .controller('draftsController', draftsCtrl);
 
-function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, commentsHelper, dialogProvider, toastsProvider, dateUtils, docsResponse, userDetails, tenantsResponse, queryHelper) {
+function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, commentsHelper, dialogProvider, toastsProvider, dateUtils, docsResponse, userDetails, tenantsResponse, queryHelper, Invoice, document, tenantResponse) {
     var vm = this;
-    /** Previous months template **/
-    vm.previous = docsResponse.viewModel.body.previous;
-    /** This months template **/
-    vm.thisMonth = docsResponse.viewModel.body.thisMonth;
-    /** Summary template **/
-    vm.summary = docsResponse.viewModel.body.summary;
     /** Current comment made in this phase of the workflow **/
     vm.currentComment = "";
     /** Previous comments made in different phases of the workflow **/
     vm.comments;
     /** Next box **/
     vm.nextAction = docsResponse.viewModel.nextAction.nextBox;
-    /** Document title for display **/
     /** Format used for all dates **/
     vm.format = "MMMM-YYYY";
     /** Display for month **/
@@ -34,10 +27,20 @@ function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, 
     vm.currentUser = userDetails.userId;
     /** Links **/
     vm.links = docsResponse.viewModel.links;
-    /** Disables the editing of this document if it's not locked to the user **/
-    vm.tradeNameColor = {color : "#009688"};
     /** Mailbox **/
     vm.mailbox = docsResponse.viewModel.mailbox;
+
+    var doc = Invoice.build(document.body, tenantResponse);
+    vm.previousCharges = doc.previous;
+    vm.rent = doc.rent;
+    vm.electricity = doc.electricity;
+    vm.water = doc.water;
+    vm.cusa = doc.cusa;
+    vm.summaryValue = doc.summaryValue;
+    vm.previousSummary = doc.previousSummary;
+    vm.thisMonthSummary = doc.thisMonthSummary;
+    vm.remarks = doc.remarks;
+    vm.isCusaIncluded = false;
 
     //Function mapping
     vm.onUnlinkClicked = onUnlinkClicked;
@@ -46,7 +49,12 @@ function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, 
     vm.onSaveClicked = onSaveClicked;
     vm.onCancelClicked = onCancelClicked;
     vm.onDeleteClicked = onDeleteClicked;
-    vm.computeSubtotal = computeSubtotal;
+    vm.onPreviousChanged = onPreviousChanged;
+    vm.onRentChanged = onRentChanged;
+    vm.onElectricityChanged = onElectricityChanged;
+    vm.onWaterChanged = onWaterChanged;
+    vm.onCusaChanged = onCusaChanged;
+
     activate();
 
     function activate() {
@@ -67,8 +75,17 @@ function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, 
         else {
             vm.isDisabled = (vm.assigned.userId != vm.currentUser);
         }
-        var date = dateUtils.getMomentFromString(docsResponse.viewModel.month, docsResponse.viewModel.year)
+        var date = dateUtils.getMomentFromString(docsResponse.viewModel.month, docsResponse.viewModel.year);
         vm.billDate = dateUtils.momentToStringDisplay(date, "MMMM-YYYY");
+
+        angular.forEach(vm.tenant, function(value) {
+            if (value.name == 'tradeName') vm.tradeName = value.value;
+        });
+
+        if (vm.cusa.sectionTotal.value != 0) vm.isCusaIncluded = true;
+
+        calculatePreviousTotal();
+        calculateThisMonthTotal();
     }
 
     //region FUNCTIONS
@@ -86,7 +103,7 @@ function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, 
     }
 
     function returnToList() {
-        var params = queryHelper.getDocsListParams("drafts", 0, "all");
+        var params = queryHelper.getDocsListParams("drafts", 0, "mine");
         $state.go("workspace.pending.drafts", params, {reload : true})
     }
 
@@ -118,7 +135,7 @@ function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, 
         }
 
         var success = function(response) {
-            var params = queryHelper.getDocsListParams("drafts", 0, "all");
+            var params = queryHelper.getDocsListParams("drafts", 0, "mine");
             $state.go("workspace.pending.drafts", params, {reload : true})
         };
 
@@ -192,28 +209,6 @@ function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, 
         dialogProvider.getConfirmDialog(okFxn, null, message, title);
     }
 
-    /**
-     * Called when one of the total values is changed to compute the summary value of the whole billing
-     * @param section
-     */
-    function computeSubtotal() {
-        var total = 0;
-        angular.forEach(vm.previous.sections, function(subsection) {
-            if (subsection.hasOwnProperty("sectionTotal")) total += subsection.sectionTotal.value;
-        });
-        vm.previous.summary.value = total;
-
-        total = 0;
-        angular.forEach(vm.thisMonth.sections, function(subsection) {
-            if (subsection.hasOwnProperty("sectionTotal")) total += subsection.sectionTotal.value;
-        });
-        vm.thisMonth.summary.value = total;
-
-        if (isFinite(vm.previous.summary.value) && isFinite(vm.thisMonth.summary.value)) {
-            vm.summary.value = vm.previous.summary.value + vm.thisMonth.summary.value;
-        }
-    }
-
     function goToComments() {
         var oldHash = $location.hash();
         $location.hash("comments");
@@ -222,11 +217,82 @@ function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, 
     }
 
     function preparePostData() {
-        docsResponse.viewModel.body.previous = vm.previous;
-        docsResponse.viewModel.body.thisMonth = vm.thisMonth;
-        docsResponse.viewModel.body.summary = vm.summary;
+        doc.remarks = vm.remarks;
+        doc.summaryValue = vm.summaryValue;
+        var compiled = doc.compile();
+        docsResponse.viewModel.body = compiled.body;
         docsResponse.viewModel.comments = commentsHelper.parseComments(vm.currentComment, vm.comments);
         docsResponse.viewModel.assigned = vm.currentUser;
+    }
+
+    function onPreviousChanged(form) {
+        if (!form.$invalid) {
+            doc.previous.compute();
+        }
+        else {
+            doc.previous.clear();
+        }
+        calculatePreviousTotal();
+    }
+
+    function onRentChanged(form) {
+        if (!form.$invalid) {
+            doc.rent.compute();
+        }
+        else {
+            doc.rent.clear();
+        }
+        calculateThisMonthTotal();
+    }
+
+    function onElectricityChanged(form) {
+        if (!form.$invalid) {
+            doc.electricity.compute();
+        }
+        else {
+            doc.electricity.clear();
+        }
+
+        calculateThisMonthTotal();
+    }
+
+    function onWaterChanged(form) {
+        if (!form.$invalid) {
+            doc.water.compute();
+        }
+        else {
+            doc.water.clear();
+        }
+
+        calculateThisMonthTotal();
+    }
+
+    function onCusaChanged() {
+        if (vm.isCusaIncluded) {
+            doc.cusa.compute();
+        }
+        else {
+            doc.cusa.clear();
+        }
+
+        calculateThisMonthTotal();
+    }
+
+    function calculatePreviousTotal() {
+        vm.previousSummary.value = vm.previousCharges.sectionTotal.value;
+        calculateSummaryTotal();
+    }
+
+    function calculateThisMonthTotal() {
+        vm.thisMonthSummary.value = vm.rent.sectionTotal.value +
+        vm.electricity.sectionTotal.value +
+        vm.water.sectionTotal.value +
+        vm.cusa.sectionTotal.value;
+        calculateSummaryTotal();
+    }
+
+    function calculateSummaryTotal() {
+        vm.summaryValue = doc.previousSummary.value + doc.thisMonthSummary.value;
     }
 
     //endregion
@@ -250,5 +316,8 @@ draftsCtrl.$inject = [
     "documentResponse",
     "userDetails",
     "tenantResponse",
-    "queryParams"
+    "queryParams",
+    "Invoice",
+    "apiDocResponse",
+    "apiTenantRequest"
 ];

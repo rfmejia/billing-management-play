@@ -9,7 +9,7 @@ import scala.util.{ Try, Success, Failure }
 import securesocial.core.RuntimeEnvironment
 
 class Templates(override implicit val env: RuntimeEnvironment[User])
-  extends ApiController[User] {
+    extends ApiController[User] {
 
   val templates: Seq[JsObject] = Seq(Templates.invoice1)
 
@@ -71,7 +71,8 @@ object Templates {
         warning => {
           Logger.warn(warning)
           Amounts.Zero
-        }, amount => amount)
+        }, amount => amount
+      )
 
   def extractSection(d: Document, s: String): Amounts = extractWith({
     doc =>

@@ -1,0 +1,24 @@
+<md-whiteframe class="entry md-whiteframe-z1 unpadded" layout="column">
+    <div layout-gt-md="row" layout="column">
+        <section flex="40" class="draft-field">
+            <h4 class="entry-title">Cusa calculation</h4>
+            <md-checkbox class="md-primary" ng-model="drafts.isCusaIncluded" ng-change="drafts.onCusaChanged()">Include cusa?</md-checkbox>
+        </section>
+        <section flex="20"></section>
+        <section ng-if="drafts.isCusaIncluded" flex="40" layout="column" layout-align="start end" class="draft-calculation">
+            <section flex layout="column" layout-align="center end">
+                <div class="entry-pair">
+                    <div class="value">{{drafts.cusa.subField.value}}</div>
+                    <div class="title">{{drafts.cusa.subField.title}}</div>
+                </div>
+            </section>
+            <div class="full-width total" layout-align="center end">
+                <div class="entry-pair">
+                    <div class="value">{{drafts.cusa.sectionTotal.value | currency : "PHP "}}</div>
+                    <div class="title">Cusa charges</div>
+                </div>
+            </div>
+
+        </section>
+    </div>
+</md-whiteframe>

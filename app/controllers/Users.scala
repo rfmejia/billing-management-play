@@ -14,7 +14,7 @@ import scala.util.{ Try, Success, Failure }
 import securesocial.core.{ RuntimeEnvironment, SecureSocial }
 
 class Users(override implicit val env: RuntimeEnvironment[User])
-  extends ApiController[User] {
+    extends ApiController[User] {
 
   lazy val editForm: JsObject = getEditTemplate("USERS")
 
@@ -80,8 +80,10 @@ class Users(override implicit val env: RuntimeEnvironment[User])
   def edit(userId: String) = SecuredAction(parse.json) { implicit request =>
     // TODO: Only same user, or admin can edit
     val json = request.body
-    ((json \ "firstName").as[Option[String]],
-      (json \ "lastName").as[Option[String]]) match {
+    (
+      (json \ "firstName").as[Option[String]],
+      (json \ "lastName").as[Option[String]]
+    ) match {
         case (Some(firstName), Some(lastName)) =>
           User.update(userId, Some(firstName), Some(lastName)) match {
             case Success(_) => NoContent
@@ -140,9 +142,9 @@ class Users(override implicit val env: RuntimeEnvironment[User])
       obj.asJsValue
     }
   }
-  
+
   def roleSetToJsArray(roles: Set[Role]): JsArray = {
-    val items: Set[JsValue] = for(role <- roles) yield {
+    val items: Set[JsValue] = for (role <- roles) yield {
       JsObject(Seq(
         "id" -> JsString(role.id),
         "name" -> JsString(role.name)

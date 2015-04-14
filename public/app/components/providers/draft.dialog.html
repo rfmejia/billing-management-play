@@ -1,0 +1,18 @@
+<md-dialog>
+    <md-content>
+        <h3 class="md-title">Summary</h3>
+        <h5>{{draft.tradeName}} for {{draft.billDate}}</h5>
+        <section layout="row" layout-align="end start">
+            <div>
+                <div class="entry-pair">
+                    <div class="value">{{draft.doc.previous.sectionTotal.value}}</div>
+                    <div class="title">{{draft.doc.previous.sectionTotal.title}}</div>
+                </div>
+            </div>
+        </section>
+    </md-content>
+    <div class="md-actions" layout="row">
+        <md-button  ng-click="dialogCtrl.cancel()" remove-focus>Cancel</md-button>
+        <md-button class="md-primary" ng-click="dialogCtrl.confirm()" remove-focus>Okay</md-button>
+    </div>
+</md-dialog>

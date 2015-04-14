@@ -5,7 +5,7 @@ import scala.collection.{ immutable, mutable }
 import scala.language.implicitConversions
 
 case class HalJsObject(fields: immutable.Map[String, JsValue], links: HalJsLinks,
-  embedded: Option[HalJsObject]) {
+    embedded: Option[HalJsObject]) {
 
   val self = links.self
   def self(href: String) = this.withLink("self", href)
@@ -80,8 +80,10 @@ object HalJsObject {
  * Holds the '_links' reserved field. Automatically renders as an array if there
  * are two or more links assigned to a relation.
  */
-case class HalJsLinks(links: immutable.Map[String, List[Link]],
-  curies: List[Curie]) {
+case class HalJsLinks(
+    links: immutable.Map[String, List[Link]],
+    curies: List[Curie]
+) {
 
   val isEmpty = links.isEmpty && curies.isEmpty
 
@@ -119,8 +121,10 @@ case class HalJsLinks(links: immutable.Map[String, List[Link]],
     }
   }
 
-  def merge(that: HalJsLinks): HalJsLinks = HalJsLinks(this.links ++ that.links,
-    this.curies ++ that.curies)
+  def merge(that: HalJsLinks): HalJsLinks = HalJsLinks(
+    this.links ++ that.links,
+    this.curies ++ that.curies
+  )
 
   def ++(that: HalJsLinks): HalJsLinks = merge(that)
 }

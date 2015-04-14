@@ -5,7 +5,7 @@ angular.module("app.tenants").config(tenantsRoutes);
 
 function tenantsRoutes($stateProvider) {
     var tenantsList = {
-        url     : "tenants",
+        url     : "tenants?offset&limit",
         resolve : {
             tenantsList : tenantsGetTenantList
         },
@@ -80,10 +80,10 @@ function tenantsRoutes($stateProvider) {
 tenantsRoutes.$inject = ["$stateProvider"];
 
 //region FUNCTION_CALL
-function tenantsGetTenantList(tenantsSrvc) {
-    return tenantsSrvc.getList();
+function tenantsGetTenantList($stateParams, tenantsSrvc) {
+    return tenantsSrvc.getAllTenants();
 }
-tenantsGetTenantList.$inject = ["tenantsApi"];
+tenantsGetTenantList.$inject = ["$stateParams", "tenantsApi"];
 
 function parseCreateTemplate(createTemplate, tenantHelper) {
     return tenantHelper.formatResponse(createTemplate);
@@ -93,11 +93,12 @@ parseCreateTemplate.$inject = ["createTemplate", "tenantHelper"];
 function getTenantDocs($q, $stateParams, docsSrvc) {
     var deferred = $q.defer();
     var params = {};
-    angular.copy($stateParams, params);
-    params.forTenant = params.id;
+    angular.forEach($stateParams, function(value, key) {
+        params[key] = value;
+    });
+    params.forTenant = $stateParams.id;
     delete params.id;
     delete params.filterId;
-    console.log($stateParams);
     var success = function(response) {
         deferred.resolve(response);
     };

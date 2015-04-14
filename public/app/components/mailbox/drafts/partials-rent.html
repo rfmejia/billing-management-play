@@ -1,0 +1,53 @@
+<md-whiteframe class="entry md-whiteframe-z1 unpadded" layout="column">
+    <div layout-gt-md="row" layout="column">
+        <section flex="40" class="draft-field" ng-form="rent">
+            <h4 class="entry-title">Rent charges input</h4>
+            <md-input-container>
+                <label>{{drafts.rent.whTax.title}} (0 if none)</label> <input name="whTax"
+                                                                              required
+                                                                              type="number"
+                                                                              min="0.0" step="0.1"
+                                                                              ng-disabled="isDisabled"
+                                                                              ng-model="drafts.rent.whTax.value"
+                                                                              ng-change="drafts.onRentChanged(rent)"
+                    />
+
+                <div ng-messages="rent.whTax.$error">
+                    <div ng-message="required">This is required</div>
+                    <div ng-message="number">Oops! Numbers only please.</div>
+                    <div ng-message="min">Positive numbers only</div>
+                </div>
+            </md-input-container>
+        </section>
+        <section flex="20"></section>
+        <section ng-show="!rent.$invalid" flex="40" layout="column" layout-align="start end" class="draft-calculation">
+            <section flex layout="column" layout-align="center end">
+                <div class="entry-pair">
+                    <div class="value">{{drafts.rent.baseRent.value | currency : "PHP "}}</div>
+                    <div class="title">{{drafts.rent.baseRent.title}}</div>
+                </div>
+                <div class="entry-pair">
+                    <div class="value">{{drafts.rent.vat.value | currency : "PHP "}}</div>
+                    <div class="title">{{drafts.rent.vat.title}}</div>
+                </div>
+                <div class="entry-pair">
+                    <div class="value">{{drafts.rent.subtotal.value | currency : "PHP "}}</div>
+                    <div class="title">{{drafts.rent.subtotal.title}}</div>
+                </div>
+                <div class="entry-pair">
+                    <div class="value">{{drafts.rent.whTax.value | currency : "PHP "}}</div>
+                    <div class="title">{{drafts.rent.whTax.title}}</div>
+                </div>
+            </section>
+            <div class="full-width total" layout-align="center end">
+                <div class="entry-pair">
+                    <div class="value">{{drafts.rent.sectionTotal.value | currency : "PHP "}}</div>
+                    <div class="title">Rent charges</div>
+                </div>
+            </div>
+        </section>
+        <section ng-hide="!rent.$invalid" flex="40" layout="column" layout-align="center center" class="draft-calculation">
+            <h2 class="incomplete">Incomplete details</h2>
+        </section>
+    </div>
+</md-whiteframe>

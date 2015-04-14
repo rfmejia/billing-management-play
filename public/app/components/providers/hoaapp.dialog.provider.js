@@ -10,7 +10,8 @@ function hoaDialogProvider($mdDialog) {
     var service = {
         getConfirmDialog : getConfirmDialog,
         getInformDialog  : getInformDialog,
-        getCommentDialog : getCommentDialog
+        getCommentDialog : getCommentDialog,
+        getDraftDialog   : getDraftDialog
     };
 
     return service;
@@ -52,6 +53,22 @@ function hoaDialogProvider($mdDialog) {
         );
     }
 
+    function getDraftDialog(document, tenant, billDate) {
+        return $mdDialog
+            .show(
+            {
+                templateUrl  : "app/components/providers/draft.dialog.html",
+                controller   : draftDialogCtrl,
+                controllerAs : "draft",
+                locals       : {
+                    doc      : document,
+                    tenant   : tenant,
+                    billDate : billDate
+                }
+            }
+        );
+    }
+
     //endregion
 }
 
@@ -86,3 +103,20 @@ function dialogCommentCtrl($mdDialog, message, box) {
         $mdDialog.hide(comment);
     }
 }
+
+function draftDialogCtrl($mdDialog, doc, tenant, billDate) {
+    var vm = this;
+    vm.doc = doc;
+    vm.tradeName = tenant;
+    vm.billDate = billDate;
+
+
+    function cancel() {
+        $mdDialog.cancel();
+    }
+
+    function send(comment) {
+        $mdDialog.hide(comment);
+    }
+}
+

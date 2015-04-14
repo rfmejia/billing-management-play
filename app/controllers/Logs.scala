@@ -15,7 +15,7 @@ import scala.util.{ Try, Success, Failure }
 import securesocial.core.RuntimeEnvironment
 
 class Logs(override implicit val env: RuntimeEnvironment[User])
-  extends ApiController[User] {
+    extends ApiController[User] {
 
   def log = SecuredAction(parse.json) { implicit request =>
     implicit val timeout = Timeout(1 second)
@@ -26,7 +26,7 @@ class Logs(override implicit val env: RuntimeEnvironment[User])
   def writeText(text: String): Future[String] =
     Play.current.configuration.getString("logservice.path") map {
       logFolderName =>
-        Try { 
+        Try {
           val ld = LocalDate.now
           val year = f"${ld.getYear}"
           val month = f"${ld.getMonthOfYear}%02d"
@@ -35,16 +35,16 @@ class Logs(override implicit val env: RuntimeEnvironment[User])
           Files.createDirectories(Paths.get(logFolderName, year, month, day))
 
           val fileName = UUID.randomUUID().toString().replaceAll("-", "")
-          val file: Path = Paths.get(logFolderName, year, month, day, fileName) 
+          val file: Path = Paths.get(logFolderName, year, month, day, fileName)
 
           Files.write(file, text.getBytes)
           val msg = s"(${DateTime.now.toString}) Logged to ${file.toString}"
           Logger.info(msg)
           msg
-       } 
-     } match {
-       case Some(Success(result)) => Future.successful(result)
-       case Some(Failure(err)) => Future.failed[String](err)
-       case None => Future.failed[String](throw new NullPointerException("Setting 'logservice.path' is not defined"))
-     }
+        }
+    } match {
+      case Some(Success(result)) => Future.successful(result)
+      case Some(Failure(err)) => Future.failed[String](err)
+      case None => Future.failed[String](throw new NullPointerException("Setting 'logservice.path' is not defined"))
+    }
 }

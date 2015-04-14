@@ -16,7 +16,6 @@ import securesocial.core.providers.MailToken
 
 object models {
   val modelTemplates = TableQuery[ModelInfosModel]
-  val roles = TableQuery[RolesModel]
   val settings = TableQuery[SettingsModel]
   val tenants = TableQuery[TenantsModel]
   val users = TableQuery[UsersModel]
@@ -27,7 +26,7 @@ object models {
   val actionLogs = TableQuery[ActionLogsModel]
   val serialNumbers = TableQuery[SerialNumbersModel]
 
-  val tables = List(modelTemplates, roles, settings, tenants, users, documents,
+  val tables = List(modelTemplates, settings, tenants, users, documents,
     userRoles, mailTokens, invitations, actionLogs, serialNumbers)
   lazy val ddl = {
     val ts = tables.map(_.ddl)
@@ -58,6 +57,13 @@ object models {
       case _ => throw new IllegalStateException("Malformed JSON object")
     }
   })
+
+  implicit val snToString = MappedColumnType.base[SerialNumber, Int](_.id, {
+    SerialNumber.get(_) match {
+      case Some(sn) => sn
+      case None => throw new IllegalStateException("Malformed JSON object")
+    }
+  })
 }
 
 class SettingsModel(tag: Tag) extends Table[(String, String)](tag, "SETTINGS") {
@@ -67,8 +73,7 @@ class SettingsModel(tag: Tag) extends Table[(String, String)](tag, "SETTINGS") {
   def * = (key, value)
 }
 
-class ModelInfosModel(tag: Tag) extends Table[ModelInfo](tag,
-  "MODEL_INFOS") {
+class ModelInfosModel(tag: Tag) extends Table[ModelInfo](tag, "MODEL_INFOS") {
   def modelName = column[String]("MODEL_NAME", O.NotNull)
   def fieldName = column[String]("FIELD_NAME", O.NotNull)
   def datatype = column[String]("DATATYPE", O.NotNull)
@@ -121,19 +126,12 @@ class TenantsModel(tag: Tag) extends Table[Tenant](tag, "TENANTS") {
     (Tenant.tupled, Tenant.unapply)
 }
 
-class RolesModel(tag: Tag) extends Table[String](tag, "ROLES") {
-  def name = column[String]("NAME", O.PrimaryKey)
-
-  def * = (name)
-}
-
 class UserRolesModel(tag: Tag) extends Table[(String, String)](tag, "USER_ROLES") {
   def userId = column[String]("USERNAME", O.NotNull)
   def roleName = column[String]("ROLE_NAME", O.NotNull)
 
   def pk = primaryKey("USER_ROLES_PK", (userId, roleName))
   def user = foreignKey("USER_FK", userId, models.users)(_.userId, onDelete = ForeignKeyAction.Cascade)
-  def role = foreignKey("ROLE_FK", roleName, models.roles)(_.name, onDelete = ForeignKeyAction.Cascade)
 
   def * = (userId, roleName)
 }
@@ -141,7 +139,7 @@ class UserRolesModel(tag: Tag) extends Table[(String, String)](tag, "USER_ROLES"
 class DocumentsModel(tag: Tag) extends Table[Document](tag, "DOCUMENTS") {
   import models._
   def id = column[Int]("ID", O.PrimaryKey, O.AutoInc)
-  def serialId = column[Option[Int]]("SERIAL_ID")
+  def serialId = column[Option[SerialNumber]]("SERIAL_ID")
   def docType = column[String]("DOC_TYPE", O.NotNull)
   def mailbox = column[String]("MAILBOX", O.NotNull)
   def creator = column[String]("CREATOR", O.NotNull)

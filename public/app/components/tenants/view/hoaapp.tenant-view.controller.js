@@ -2,7 +2,7 @@ angular
     .module('app.tenants')
     .controller('tenantViewCtrl', tenantViewCtrl);
 
-function tenantViewCtrl($state, $stateParams, tenantsSrvc, dialogProvider, toastProvider, tenantDocs, tenant, queryHelper) {
+function tenantViewCtrl($state, $stateParams, tenantsSrvc, dialogProvider, toastProvider, userDetails, tenantDocs, tenant, queryHelper) {
     var vm = this;
     vm.tenant = tenant.viewModel;
     vm.documents = tenantDocs._embedded.item;
@@ -10,6 +10,8 @@ function tenantViewCtrl($state, $stateParams, tenantsSrvc, dialogProvider, toast
 
     vm.pageTitle = $state.current.data.title;
     vm.currentFilter = {};
+
+    vm.isAdmin = false;
 
     //Pagination
     vm.currentPage = 1;
@@ -26,12 +28,16 @@ function tenantViewCtrl($state, $stateParams, tenantsSrvc, dialogProvider, toast
     //region FUNCTION_CALL
     function activate() {
         //Pagination setup
-        vm.currentPage = $stateParams.offset % $stateParams.limit;
-        vm.total = 500; //TODO: Pagination activate once total is set
+        vm.total = tenantDocs.total;
         vm.pageSize = $stateParams.limit;
+        vm.currentPage = ($stateParams.offset / $stateParams.limit) + 1;
 
         //Filter setup
         resolveFilter();
+
+        angular.forEach(userDetails.roles, function(role) {
+           vm.isAdmin = (role.id === "admin");
+        });
     }
 
     function resolveFilter() {
@@ -80,9 +86,8 @@ function tenantViewCtrl($state, $stateParams, tenantsSrvc, dialogProvider, toast
             var newPage = page - 1;
             offset = newPage * vm.pageSize;
         }
-        var queryParameters = queryHelper.getTenantDocs(offset, $stateParams.id, vm.currentFilter);
-        //TODO: Pagination activate once total is set
-        //$state.go($state.current, queryParameters, {reload : true});
+        var queryParameters = queryHelper.getTenantDocs(offset, $stateParams.id, vm.currentFilter.id);
+        $state.go($state.current, queryParameters, {reload : true});
     }
 
     function success(response) {
@@ -101,6 +106,7 @@ tenantViewCtrl.$inject = [
     //SERVICES
     "hoaDialogService",
     "hoaToastService",
+    "userDetails",
     //UTILS
     //RESOLVE
     "tenantDocs",
