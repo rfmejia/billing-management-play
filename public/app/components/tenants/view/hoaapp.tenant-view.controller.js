@@ -2,7 +2,7 @@ angular
     .module('app.tenants')
     .controller('tenantViewCtrl', tenantViewCtrl);
 
-function tenantViewCtrl($state, $stateParams, tenantsSrvc, dialogProvider, toastProvider, tenantDocs, tenant, queryHelper) {
+function tenantViewCtrl($state, $stateParams, tenantsSrvc, dialogProvider, toastProvider, userDetails, tenantDocs, tenant, queryHelper) {
     var vm = this;
     vm.tenant = tenant.viewModel;
     vm.documents = tenantDocs._embedded.item;
@@ -10,6 +10,8 @@ function tenantViewCtrl($state, $stateParams, tenantsSrvc, dialogProvider, toast
 
     vm.pageTitle = $state.current.data.title;
     vm.currentFilter = {};
+
+    vm.isAdmin = false;
 
     //Pagination
     vm.currentPage = 1;
@@ -32,6 +34,10 @@ function tenantViewCtrl($state, $stateParams, tenantsSrvc, dialogProvider, toast
 
         //Filter setup
         resolveFilter();
+
+        angular.forEach(userDetails.roles, function(role) {
+           vm.isAdmin = (role.id === "admin");
+        });
     }
 
     function resolveFilter() {
@@ -100,6 +106,7 @@ tenantViewCtrl.$inject = [
     //SERVICES
     "hoaDialogService",
     "hoaToastService",
+    "userDetails",
     //UTILS
     //RESOLVE
     "tenantDocs",
