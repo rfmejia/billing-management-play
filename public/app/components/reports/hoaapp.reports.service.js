@@ -14,7 +14,6 @@ function reportsSrvc($resource, $q, hoalinks, queryKeys){
     return service;
 
     function getReport(queryParams) {
-        console.log(queryParams);
         var url = hoalinks.getApiLink();
         url += "reports";
         var resource = $resource(url, {}, {
