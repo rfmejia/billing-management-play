@@ -47,7 +47,6 @@ function unparsedDocumentsList($stateParams, docsSrvc) {
     var params = {};
     angular.copy($stateParams, params);
     delete params.filterId;
-    console.log(params);
     return docsSrvc.getDocumentList(params);
 }
 unparsedDocumentsList.$inject = ["$stateParams", "documentsApi"];

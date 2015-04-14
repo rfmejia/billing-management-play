@@ -21,11 +21,11 @@
 
         <section flex>
             <ul>
-                <li class="main-secton" ng-repeat="children in sidebar.mailboxItems.mailbox.subFolders">
+                <li class="main-secton" ng-repeat="children in sidebar.mailboxItems.subFolders">
                     <section ng-if="children.type == 'hoa:mailbox-heading'">
                         <h6 class="nav-sidebar-heading">{{children.title}}</h6>
                         <ul>
-                            <li ng-repeat="grandchildren in children.subFolders">
+                            <li ng-if="grandchildren.isVisible" ng-repeat="grandchildren in children.subFolders">
                                 <a hoa-activate path="{{grandchildren.link}}"
                                    class="md-button md-default-theme nav-sidebar-button"
                                    ng-click="sidebar.onSidebarItemClicked(grandchildren)">{{grandchildren.title}}
