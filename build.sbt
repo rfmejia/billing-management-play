@@ -12,8 +12,7 @@ scalacOptions ++= Seq(
   "-Xfatal-warnings",
   "-feature", 
   "-unchecked", 
-  "-encoding", 
-  "utf8")
+  "-encoding", "utf8")
 
 // Sonatype resolvers
 resolvers += Resolver.sonatypeRepo("releases")
