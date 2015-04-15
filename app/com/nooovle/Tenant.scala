@@ -17,13 +17,13 @@ object Tenant extends ((Int, String, String, String, String, String, Double, Str
 
   def insert(tradeName: String, address: String, contactPerson: String,
     contactNumber: String, email: String, area: Double,
-    rentalPeriod: String, escalation: Double, cusaDefault: Option[Double],
-    waterMeterDefault: Option[String], electricityMeterDefault: Option[String],
-    baseRentDefault: Option[Double], standardMultiplierDefault: Option[Double])(implicit session: Session): Try[Tenant] =
+    rentalPeriod: String, escalation: Double, cusaDefault: Double,
+    waterMeterDefault: String, electricityMeterDefault: String,
+    baseRentDefault: Double, standardMultiplierDefault: Double)(implicit session: Session): Try[Tenant] =
     Try {
       val newTenant = Tenant(0, tradeName, address, contactPerson, contactNumber,
-        email, area, rentalPeriod, escalation, cusaDefault, waterMeterDefault,
-        electricityMeterDefault, baseRentDefault, standardMultiplierDefault)
+        email, area, rentalPeriod, escalation, Option(cusaDefault), Option(waterMeterDefault),
+        Option(electricityMeterDefault), Option(baseRentDefault), Option(standardMultiplierDefault))
       val id = (tenants returning tenants.map(_.id)) += newTenant
       newTenant.copy(id = id)
     }
@@ -57,10 +57,10 @@ object Tenant extends ((Int, String, String, String, String, String, Double, Str
     ModelInfo("TENANTS", "rentalPeriod", "string", Required, Required, Some("Rental period")),
     ModelInfo("TENANTS", "escalation", "number", Required, Required, Some("Escalation")),
 
-    ModelInfo("TENANTS", "cusaDefault", "number", Editable, Editable, Some("Cusa (default)")),
-    ModelInfo("TENANTS", "waterMeterDefault", "string", Editable, Editable, Some("Water meter (default)")),
-    ModelInfo("TENANTS", "electricityMeterDefault", "string", Editable, Editable, Some("Electricity meter (default)")),
-    ModelInfo("TENANTS", "baseRentDefault", "number", Editable, Editable, Some("Base rent (default)")),
-    ModelInfo("TENANTS", "standardMultiplierDefault", "number", Editable, Editable, Some("Standard multiplier (default)"))
+    ModelInfo("TENANTS", "cusaDefault", "number", Required, Editable, Some("Cusa (default)")),
+    ModelInfo("TENANTS", "waterMeterDefault", "string", Required, Editable, Some("Water meter (default)")),
+    ModelInfo("TENANTS", "electricityMeterDefault", "string", Required, Editable, Some("Electricity meter (default)")),
+    ModelInfo("TENANTS", "baseRentDefault", "number", Required, Editable, Some("Base rent (default)")),
+    ModelInfo("TENANTS", "standardMultiplierDefault", "number", Required, Editable, Some("Standard multiplier (default)"))
   )
 }

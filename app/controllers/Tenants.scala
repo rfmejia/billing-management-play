@@ -100,13 +100,13 @@ class Tenants(override implicit val env: RuntimeEnvironment[User])
         case (Some(tradeName), Some(address), Some(contactPerson),
           Some(contactNumber), Some(email), Some(area),
           Some(rentalPeriod), Some(escalation),
-          cusaDefaultOpt, waterMeterDefaultOpt, electricityMeterDefaultOpt,
-          baseRentDefaultOpt, standardMultiplierDefaultOpt) =>
+          Some(cusaDefault), Some(waterMeterDefault), Some(electricityMeterDefault),
+          Some(baseRentDefault), Some(standardMultiplierDefault)) =>
           val result = ConnectionFactory.connect withSession { implicit session =>
             Tenant.insert(tradeName, address, contactPerson, contactNumber, email,
-              area, rentalPeriod, escalation, cusaDefaultOpt,
-              waterMeterDefaultOpt, electricityMeterDefaultOpt, baseRentDefaultOpt,
-              standardMultiplierDefaultOpt)
+              area, rentalPeriod, escalation, cusaDefault,
+              waterMeterDefault, electricityMeterDefault, baseRentDefault,
+              standardMultiplierDefault)
           }
           result match {
             case Success(tenant) =>
