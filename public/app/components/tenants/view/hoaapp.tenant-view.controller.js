@@ -36,7 +36,9 @@ function tenantViewCtrl($state, $stateParams, tenantsSrvc, dialogProvider, toast
         resolveFilter();
 
         angular.forEach(userDetails.roles, function(role) {
-           vm.isAdmin = (role.id === "admin");
+            if(role.id === "admin") {
+                vm.isAdmin = true;
+            }
         });
     }
 

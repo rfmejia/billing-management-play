@@ -5,7 +5,7 @@ angular
     .module("app.reports")
     .constant("REPORTS_ROUTES", {
                   report       : "workspace.reports",
-                  reportUpdate : "workspace.reports.view"
+                  reportUpdate : "workspace.update"
               })
     .constant("REPORTS_QUERY_KEY", {
                  month : "month",

@@ -82,7 +82,7 @@ function hoaDocumentItemCtrl($state, docsHelper, docsApi, dialogProvider, userAp
     }
 
     function goToEditor() {
-        $state.go(reportsRoutes.reportUpdate, {id : vm.document.id});
+        $state.go(reportsRoutes.reportUpdate, {id : vm.document.id}, {reload : true});
     }
 
     function goToViewer(response) {

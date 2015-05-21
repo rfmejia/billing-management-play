@@ -23,7 +23,7 @@ function config($stateProvider, reportsRoutes) {
     };
 
     var reportUpdate = {
-        url     : "view/:id",
+        url     : "update/:id",
         resolve : {
             unparsedDocument : getDocument,
             document         : parseDocument
