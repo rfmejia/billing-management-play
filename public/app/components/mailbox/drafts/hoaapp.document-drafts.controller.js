@@ -120,7 +120,7 @@ function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, 
      * Submits the current document to the next box
      */
     function onSubmitClicked() {
-        dialogProvider.getCommentDialog("Move document to ", vm.nextAction.title).then(okayClicked);
+        dialogProvider.getCommentDialog("Submitting to next phase.", vm.nextAction.title).then(okayClicked);
 
         //Save the document first, then submit
         function okayClicked(comment) {

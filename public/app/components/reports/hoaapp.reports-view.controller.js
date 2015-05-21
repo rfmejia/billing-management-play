@@ -60,7 +60,11 @@ function reportUpdateController($location, $anchorScroll, $state, docsSrvc, repo
     }
 
     function onUpdateClicked() {
-        dialogProvider.getCommentDialog("update ", vm.documentTitle).then(okayClicked);
+        var title = isPaymentComplete()
+            ? "Payment complete!"
+            : "Updating balance.";
+
+        dialogProvider.getCommentDialog(title, vm.documentTitle).then(okayClicked);
 
         function okayClicked(comment) {
             var parsedComments = commentsHelper.parseComments(comment, vm.comments);
@@ -95,6 +99,15 @@ function reportUpdateController($location, $anchorScroll, $state, docsSrvc, repo
         angular.forEach(vm.payments.sections, function(value) {
             value.amounts.unpaid = value.amounts.total - value.amounts.paid;
         });
+    }
+
+    function isPaymentComplete() {
+        var due = 0;
+        angular.forEach(vm.payments.sections, function(value) {
+            due += value.amounts.total - value.amounts.paid;
+        });
+
+        return due == 0;
     }
 
     function showToast() {

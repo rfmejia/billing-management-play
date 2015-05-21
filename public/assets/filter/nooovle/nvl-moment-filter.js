@@ -7,7 +7,11 @@ angular
         "moment",
         function() {
             return function(dateString, format) {
-                return moment(dateString).format(format);
+                if(moment(dateString).isValid()) {
+                    return moment(dateString).format(format);
+                }
+                else return "N/A"
+
             }
         }
     ]);

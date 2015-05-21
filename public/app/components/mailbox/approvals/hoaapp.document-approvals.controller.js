@@ -86,7 +86,7 @@ function approvalsCtrl($state, $location, $anchorScroll, documentsApi, documents
     }
 
     function onRejectClicked() {
-        dialogProvider.getCommentDialog("Move document to ", vm.prevAction.title).then(okayClicked);
+        dialogProvider.getCommentDialog("Returning to next phase.", vm.prevAction.title).then(okayClicked);
 
         //Save the document first, then submit
         function okayClicked(comment) {
@@ -102,7 +102,7 @@ function approvalsCtrl($state, $location, $anchorScroll, documentsApi, documents
     }
 
     function onSubmitClicked() {
-        dialogProvider.getCommentDialog("Move document to ", vm.nextAction.title).then(okayClicked);
+        dialogProvider.getCommentDialog("Submitting to next phase.", vm.nextAction.title).then(okayClicked);
 
         //Save the document first, then submit
         function okayClicked(comment) {
