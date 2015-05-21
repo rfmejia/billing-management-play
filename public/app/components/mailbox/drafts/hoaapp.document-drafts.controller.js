@@ -5,7 +5,7 @@ angular
     .module('app.mailbox')
     .controller('draftsController', draftsCtrl);
 
-function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, commentsHelper, dialogProvider, toastsProvider, dateUtils, docsResponse, userDetails, tenantsResponse, queryHelper, Invoice, document, tenantResponse) {
+function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, commentsHelper, dialogProvider, toastsProvider, dateUtils, numPrecisionFilter, docsResponse, userDetails, tenantsResponse, queryHelper, Invoice, document, tenantResponse) {
     var vm = this;
     /** Current comment made in this phase of the workflow **/
     vm.currentComment = "";
@@ -280,6 +280,7 @@ function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, 
 
     function calculatePreviousTotal() {
         vm.previousSummary.value = vm.previousCharges.sectionTotal.value;
+        vm.previousSummary.value = numPrecisionFilter(vm.previousSummary.value, 2);
         calculateSummaryTotal();
     }
 
@@ -288,11 +289,12 @@ function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, 
         vm.electricity.sectionTotal.value +
         vm.water.sectionTotal.value +
         vm.cusa.sectionTotal.value;
+        vm.thisMonthSummary.value = numPrecisionFilter(vm.thisMonthSummary.value);
         calculateSummaryTotal();
     }
 
     function calculateSummaryTotal() {
-        vm.summaryValue = doc.previousSummary.value + doc.thisMonthSummary.value;
+        vm.summaryValue = numPrecisionFilter(doc.previousSummary.value + doc.thisMonthSummary.value, 2);
     }
 
     //endregion
@@ -312,6 +314,7 @@ draftsCtrl.$inject = [
     "hoaToastService",
     //UTILS
     "nvl-dateutils",
+    "numPrecisionFilter",
     //RESOLVE
     "documentResponse",
     "userDetails",

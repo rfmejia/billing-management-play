@@ -3,7 +3,7 @@
  */
 angular.module("app.mailbox").factory("Water", waterCreator);
 
-function waterCreator(InvoiceEntry, dateUtils) {
+function waterCreator(InvoiceEntry, dateUtils, roundOff) {
 
     function Water(date, meterNumber, prevReading, currentReading, grossUsage, rate, consumption, sectionTotal, tenant) {
         this.dates = date;
@@ -44,9 +44,9 @@ function waterCreator(InvoiceEntry, dateUtils) {
             var endDate = this.dates.end.value;
             this.dates.end.value = dateUtils.draftsFormatDate(endDate);
 
-            this.grossUsage.value = this.currentReading.value - this.prevReading.value;
-            this.consumption.value = this.rate.value * this.grossUsage.value;
-            this.sectionTotal.value = this.consumption.value;
+            this.grossUsage.value = roundOff(this.currentReading.value - this.prevReading.value, 2);
+            this.consumption.value = roundOff(this.rate.value * this.grossUsage.value, 2);
+            this.sectionTotal.value = roundOff(this.consumption.value, 2);
         },
         clear : function() {
             this.sectionTotal.value = 0;
@@ -81,4 +81,4 @@ function waterCreator(InvoiceEntry, dateUtils) {
     return Water;
 }
 
-waterCreator.$inject = ["InvoiceEntry", "nvl-dateutils"];
+waterCreator.$inject = ["InvoiceEntry", "nvl-dateutils", "numPrecisionFilter"];

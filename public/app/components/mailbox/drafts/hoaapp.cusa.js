@@ -3,7 +3,7 @@
  */
 angular.module("app.mailbox").factory("Cusa", cusaCreator);
 
-function cusaCreator(InvoiceEntry) {
+function cusaCreator(InvoiceEntry, roundOff) {
 
     function Cusa(subField, sectionTotal, tenant) {
         this.subField = subField;
@@ -20,8 +20,8 @@ function cusaCreator(InvoiceEntry) {
             }
         },
         compute : function() {
-            this.subField.value = this.tenant.cusaDefault;
-            this.sectionTotal.value = this.subField.value * this.tenant.area;
+            this.subField.value = roundOff(this.tenant.cusaDefault, 2);
+            this.sectionTotal.value = roundOff(this.subField.value * this.tenant.area, 2);
         },
         clear : function() {
             this.sectionTotal.value = 0;
@@ -37,4 +37,4 @@ function cusaCreator(InvoiceEntry) {
 
     return Cusa;
 }
-cusaCreator.$inject = ["InvoiceEntry"];
+cusaCreator.$inject = ["InvoiceEntry", "numPrecisionFilter"];

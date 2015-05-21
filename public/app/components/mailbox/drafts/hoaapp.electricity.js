@@ -3,7 +3,7 @@
  */
 angular.module("app.mailbox").factory("Electricity", electricityCreator);
 
-function electricityCreator(InvoiceEntry, dateUtils) {
+function electricityCreator(InvoiceEntry, dateUtils, roundOff) {
 
     /**
      * Constructor
@@ -50,10 +50,11 @@ function electricityCreator(InvoiceEntry, dateUtils) {
             var endDate = this.dates.end.value;
             this.dates.end.value = dateUtils.draftsFormatDate(endDate);
 
-            this.kwUsed.value = this.currentReading.value - this.prevReading.value;
-            this.grossUsage.value = this.kwUsed.value *  this.tenant.standardMultiplierDefault;
-            this.consumption.value = this.grossUsage.value * this.meralco.value;
-            this.sectionTotal.value = this.consumption.value;
+            this.kwUsed.value = roundOff(this.currentReading.value - this.prevReading.value, 2);
+
+            this.grossUsage.value = roundOff(this.kwUsed.value *  this.tenant.standardMultiplierDefault, 2);
+            this.consumption.value = roundOff(this.grossUsage.value * this.meralco.value, 2);
+            this.sectionTotal.value = roundOff(this.consumption.value, 2);
         },
         clear   : function() {
             this.sectionTotal.value = 0;
@@ -90,4 +91,4 @@ function electricityCreator(InvoiceEntry, dateUtils) {
 
     return Electricity;
 }
-electricityCreator.$inject = ["InvoiceEntry", "nvl-dateutils"];
+electricityCreator.$inject = ["InvoiceEntry", "nvl-dateutils", "numPrecisionFilter"];

@@ -3,7 +3,7 @@
  */
 angular.module("app.mailbox").factory("Previous", previousCreator);
 
-function previousCreator(InvoiceEntry) {
+function previousCreator(InvoiceEntry, roundOff) {
     function Previous(overdue, other, sectionTotal) {
         this.overdue = overdue;
         this.other = other;
@@ -30,7 +30,7 @@ function previousCreator(InvoiceEntry) {
             }
         },
         compute : function() {
-            this.sectionTotal.value = this.overdue.value + this.other.value;
+            this.sectionTotal.value = roundOff(this.overdue.value + this.other.value, 2);
         },
         clear : function() {
             this.sectionTotal.value = null;
@@ -47,4 +47,4 @@ function previousCreator(InvoiceEntry) {
 
     return Previous;
 }
-previousCreator.$inject = ["InvoiceEntry"];
+previousCreator.$inject = ["InvoiceEntry", "numPrecisionFilter"];

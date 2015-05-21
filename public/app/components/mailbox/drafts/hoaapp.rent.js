@@ -3,7 +3,7 @@
  */
 angular.module("app.mailbox").factory("Rent", rentCreator);
 
-function rentCreator(InvoiceEntry) {
+function rentCreator(InvoiceEntry, roundOff) {
 
     function Rent(baseRent, vat, subtotal, whTax, sectionTotal, tenant) {
         this.baseRent = baseRent;
@@ -37,7 +37,7 @@ function rentCreator(InvoiceEntry) {
             }
         },
         compute : function() {
-            this.sectionTotal.value = this.subtotal.value + this.whTax.value;
+            this.sectionTotal.value = roundOff(this.subtotal.value + this.whTax.value, 2);
         },
         clear : function() {
             this.sectionTotal.value = 0;
@@ -51,12 +51,13 @@ function rentCreator(InvoiceEntry) {
         var whTax = InvoiceEntry.build(getEntry(rent.fields, "rent_whtax"));
         var sectionTotal = InvoiceEntry.build(rent.sectionTotal);
 
-        rentBase.value = tenant.baseRentDefault * tenant.area;
-        vat.value = rentBase.value * vatPercentage;
-        subtotal.value = rentBase.value + vat.value;
+        rentBase.value = roundOff(tenant.baseRentDefault * tenant.area, 2);
+        vat.value = roundOff(rentBase.value * vatPercentage, 2);
+        subtotal.value = roundOff(rentBase.value + vat.value, 2);
 
         return new Rent(rentBase, vat, subtotal, whTax, sectionTotal, tenant);
     };
 
     return Rent;
 }
+rentCreator.$inject = ["InvoiceEntry", "numPrecisionFilter"];
