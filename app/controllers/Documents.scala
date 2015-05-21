@@ -170,32 +170,33 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
               case (bodyOpt, commentsOpt, amountPaidOpt) =>
 
                 val newDoc: Document = {
-                  val a = existingDoc.copy(
+                  val a: Document = existingDoc.copy(
                     body = bodyOpt getOrElse existingDoc.body,
-                    comments = commentsOpt getOrElse existingDoc.comments
+                    comments = commentsOpt getOrElse existingDoc.comments,
+                    amountPaid = amountPaidOpt getOrElse existingDoc.amountPaid
                   )
-                  val b = amountPaidOpt map {
-                    amountJson =>
-                      val (_, _, _, _, _, isPaid) = Templates.extractDefaultAmounts(a)
-                      a.copy(
-                        isPaid = isPaid,
-                        amountPaid = amountJson
-                      )
+
+                  // If the payment resolves the bill, automatically move the document to paid mailbox
+                  val b: Document = amountPaidOpt map { _ =>
+                    val (_, _, _, _, _, paid) = Templates.extractDefaultAmounts(a)
+                    if (paid && a.mailbox == Mailbox.unpaid.name)
+                      a.copy(isPaid = paid, mailbox = Mailbox.paid.name)
+                    else if(!paid && a.mailbox == Mailbox.paid.name)
+                      a.copy(isPaid = paid, mailbox = Mailbox.unpaid.name)
+                    else a.copy(isPaid = paid)
                   } getOrElse a
                   b
                 }
 
                 Document.update(newDoc) match {
-                  case Success(updateDoc) =>
+                  case Success(updatedDoc) =>
                     val changes = Seq(
                       amountPaidOpt.map(v => s"Amount paid: '${existingDoc.amountPaid}' -> '${v}'"),
                       bodyOpt.map(v => "Body updated"),
                       commentsOpt.map(v => "Comments updated")
-                    )
-                      .flatten
-                      .mkString(", ")
+                    ).flatten.mkString(", ")
 
-                    ActionLog.log(request.user.userId, updateDoc.id, "Updates: " + changes) match {
+                    ActionLog.log(request.user.userId, updatedDoc.id, "Updates: " + changes) match {
                       case Success(log) =>
                         Document.logLastAction(log)
                         NoContent
