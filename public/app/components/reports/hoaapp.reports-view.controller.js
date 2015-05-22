@@ -24,6 +24,7 @@ function reportUpdateController($location, $anchorScroll, $state, docsSrvc, repo
     vm.onCalculateClicked = onCalculateClicked;
     vm.onCancelClicked = onCancelClicked;
     vm.onUnlinkClicked = onUnlinkClicked;
+    vm.onFullPayClicked = onFullyPayClicked;
 
     activate();
 
@@ -108,6 +109,15 @@ function reportUpdateController($location, $anchorScroll, $state, docsSrvc, repo
         });
 
         return due == 0;
+    }
+
+    function onFullyPayClicked() {
+        angular.forEach(vm.payments.sections, function(value) {
+            value.amounts.paid = value.amounts.total;
+            value.amounts.unpaid = 0;
+        });
+
+        onUpdateClicked();
     }
 
     function showToast() {

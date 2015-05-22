@@ -7,7 +7,7 @@
 
         <div>
             <md-button ng-if="!updateCtrl.isDisabled"
-                       class="toolbar-text no-uppercase"
+                       class="options toolbar-text no-uppercase"
                        ng-show="!drafts.isDisabled"
                        remove-focus
                        ng-click="updateCtrl.onUnlinkClicked()">
@@ -79,9 +79,19 @@
                                     remove-focus
                                     type="submit"
                                     class="pull-right no-uppercase md-primary"
+                                    ng-click="updateCtrl.onFullPayClicked()">
+                                <span>Full payment <i class="fa fa-check iconed-text"></i></span>
+                                <md-tooltip md-delay="200">Auto-fills all fields and saves.</md-tooltip>
+                            </md-button>
+                            <md-button
+                                    ng-if="!updateCtrl.isDisabled"
+                                    remove-focus
+                                    type="submit"
+                                    class="pull-right no-uppercase md-primary"
                                     ng-click="updateCtrl.onUpdateClicked()"
                                     ng-disabled="updateForm.$invalid">
                                 <span>Save<i class="fa fa-floppy-o iconed-text"></i></span>
+                                <md-tooltip md-delay="200">Updates current report.</md-tooltip>
                             </md-button>
                             <md-button
                                     ng-if="!updateCtrl.isDisabled"
@@ -91,6 +101,7 @@
                                     ng-click="updateCtrl.onCalculateClicked()"
                                     ng-disabled="updateForm.$invalid">
                                 <span>Calculate<i class="fa fa-calculator iconed-text"></i></span>
+                                <md-tooltip md-delay="200">Calculates without saving.</md-tooltip>
                             </md-button>
                         </div>
                     </div>
