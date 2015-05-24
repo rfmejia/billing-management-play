@@ -16,7 +16,8 @@ function hoaTenantCard() {
             forBilling            : '=',
             billDate              : '=',
             format                : '=',
-            isTenantControlsShown : '=',
+            isDeleteControlShown : '=',
+            isEditControlShown : '=',
             onEditClicked         : '&',
             onDeleteClicked       : '&'
         },

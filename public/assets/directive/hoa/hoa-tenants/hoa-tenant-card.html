@@ -4,6 +4,7 @@
             <h3 class="tenant-tradename">{{cardCtrl.tradeName}}</h3>
             <section flex></section>
             <md-button
+                    ng-if="cardCtrl.isEditControlShown"
                     class="icon-button inverse-button"
                     ng-click="cardCtrl.onEditClicked()"
                     remove-focus>
@@ -11,7 +12,7 @@
                 <md-tooltip md-delay="400">Edit tenant</md-tooltip>
             </md-button>
             <md-button
-                    ng-if="cardCtrl.isTenantControlsShown"
+                    ng-if="cardCtrl.isDeleteControlShown"
                     class="icon-button inverse-button"
                     ng-click="cardCtrl.onDeleteClicked()"
                     remove-focus>
