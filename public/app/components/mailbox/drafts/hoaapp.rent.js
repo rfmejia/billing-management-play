@@ -37,7 +37,14 @@ function rentCreator(InvoiceEntry, roundOff) {
             }
         },
         compute : function() {
-            this.sectionTotal.value = roundOff(this.subtotal.value + this.whTax.value, 2);
+            this.vat.value = roundOff(this.baseRent.value * vatPercentage, 2);
+            this.subtotal.value = roundOff(this.baseRent.value + this.vat.value, 2);
+            this.sectionTotal.value = roundOff(this.subtotal.value - this.whTax.value, 2);
+        },
+        computeNoTax : function() {
+            this.vat.value = 0;
+            this.subtotal.value = roundOff(this.baseRent.value + this.vat.value, 2);
+            this.sectionTotal.value = roundOff(this.subtotal.value - this.whTax.value, 2);
         },
         clear : function() {
             this.sectionTotal.value = 0;
@@ -52,8 +59,6 @@ function rentCreator(InvoiceEntry, roundOff) {
         var sectionTotal = InvoiceEntry.build(rent.sectionTotal);
 
         rentBase.value = roundOff(tenant.baseRentDefault * tenant.area, 2);
-        vat.value = roundOff(rentBase.value * vatPercentage, 2);
-        subtotal.value = roundOff(rentBase.value + vat.value, 2);
 
         return new Rent(rentBase, vat, subtotal, whTax, sectionTotal, tenant);
     };

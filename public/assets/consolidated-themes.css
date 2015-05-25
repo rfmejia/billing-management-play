@@ -508,6 +508,11 @@ DRAFTS
     padding: 16px;
 }
 
+.draft-field md-checkbox.left-aligned {
+    margin-left: 0px;
+}
+
+
 .draft-calculation {
     background-color: #61615D;
     padding: 16px;

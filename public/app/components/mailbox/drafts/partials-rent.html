@@ -18,6 +18,12 @@
                     <div ng-message="min">Positive numbers only</div>
                 </div>
             </md-input-container>
+            <md-checkbox
+                    class="md-primary left-aligned"
+                    ng-model="drafts.isTaxed"
+                    ng-change="drafts.onTaxChanged()">
+                    Include 12% Tax
+            </md-checkbox>
         </section>
         <section flex="20"></section>
         <section ng-show="!rent.$invalid" flex="40" layout="column" layout-align="start end" class="draft-calculation">
