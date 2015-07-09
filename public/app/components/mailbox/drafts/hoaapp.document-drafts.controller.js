@@ -41,6 +41,7 @@ function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, 
     vm.thisMonthSummary = doc.thisMonthSummary;
     vm.remarks = doc.remarks;
     vm.isCusaIncluded = false;
+    vm.isTaxed = true;
 
     //Function mapping
     vm.onUnlinkClicked = onUnlinkClicked;
@@ -54,6 +55,7 @@ function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, 
     vm.onElectricityChanged = onElectricityChanged;
     vm.onWaterChanged = onWaterChanged;
     vm.onCusaChanged = onCusaChanged;
+    vm.onTaxChanged = onTaxChanged;
 
     activate();
 
@@ -237,7 +239,8 @@ function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, 
 
     function onRentChanged(form) {
         if (!form.$invalid) {
-            doc.rent.compute();
+            if(vm.isTaxed) doc.rent.compute();
+            else doc.rent.computeNoTax();
         }
         else {
             doc.rent.clear();
@@ -273,6 +276,19 @@ function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, 
         }
         else {
             doc.cusa.clear();
+        }
+
+        calculateThisMonthTotal();
+    }
+
+    function onTaxChanged() {
+        console.log(vm.isTaxed);
+        if(vm.isTaxed) {
+            doc.rent.clear();
+            doc.rent.compute();
+        }
+        else {
+            doc.rent.computeNoTax();
         }
 
         calculateThisMonthTotal();
