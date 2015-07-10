@@ -1,3 +1,5 @@
+import com.github.play2war.plugin._
+
 name := "hoa-play-scala"
 
 organization := "com.nooovle"
@@ -46,6 +48,10 @@ libraryDependencies ++= repositoryDependencies ++ playDependencies ++ Seq(
 // Enable Play HTTP filters (cors, gzip, etc.)
 libraryDependencies += filters
 
+Play2WarPlugin.play2WarSettings
+
+Play2WarKeys.servletVersion := "3.1"
+
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
 defaultScalariformSettings
@@ -58,3 +64,4 @@ herokuAppName in Compile := "hoa-play-scala"
 herokuProcessTypes in Compile := Map(
   "web" -> "target/universal/stage/bin/hoa-play-scala -Dhttp.port=${PORT} -DapplyEvolutions.default=true -Ddb.default.driver=org.postgresql.Driver -Ddb.default.url=${DATABASE_URL}"
 )
+
