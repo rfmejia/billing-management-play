@@ -26,10 +26,10 @@ md-toolbar.greyed {
 MDCONTENT MAIN
 */
 md-content.main {
-    padding-top: 16px;
+    /*padding-top: 16px;*/
     padding-bottom: 16px;
-    padding-left: 32px;
-    padding-right: 32px;
+    /*padding-left: 32px;*/
+    /*padding-right: 32px;*/
 }
 
 
@@ -561,3 +561,13 @@ h5.header-marginless,
 h6.header-marginless {
   margin: 0px;
 }
+
+.invisible {
+    visibility: hidden;
+}
+
+/*ICONS*/
+.s24 {
+    width: 24px;
+    height: 24px;
+    color: #FFFFFF; }

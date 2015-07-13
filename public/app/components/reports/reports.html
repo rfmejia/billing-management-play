@@ -8,9 +8,9 @@
 </md-toolbar>
 
 <md-content flex class="reports main">
-    <div ng-if="stateIsLoading" layout="column" layout-align="center-center" flex="10">
-        <md-progress-linear md-mode="indeterminate"></md-progress-linear>
-    </div>
+    <!--Progress bar that hides after loading-->
+    <md-progress-linear ng-class="{'invisible' : !stateIsLoading}" md-mode="indeterminate"></md-progress-linear>
+
     <div layout="column" class="max-width">
         <md-card>
             <md-card-content>
