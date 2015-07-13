@@ -86,7 +86,7 @@ function approvalsCtrl($state, $location, $anchorScroll, documentsApi, documents
     }
 
     function onRejectClicked() {
-        dialogProvider.getCommentDialog("Returning to next phase.", vm.prevAction.title).then(okayClicked);
+        dialogProvider.getCommentDialog("Returning to previous phase.", vm.prevAction.title).then(okayClicked);
 
         //Save the document first, then submit
         function okayClicked(comment) {
@@ -99,6 +99,12 @@ function approvalsCtrl($state, $location, $anchorScroll, documentsApi, documents
         function submit() {
             documentsApi.moveToBox(vm.prevAction.url).then(success, error);
         }
+
+        function success (response) {
+            toastsProvider.showSimpleToast('Your document was sent to the previous phase.');
+            returnToList();
+        }
+
     }
 
     function onSubmitClicked() {
@@ -115,14 +121,17 @@ function approvalsCtrl($state, $location, $anchorScroll, documentsApi, documents
         function submit() {
             documentsApi.moveToBox(vm.nextAction.url).then(success, error);
         }
+
+        function success (response) {
+            toastsProvider.showSimpleToast('Your document was sent to the next phase.');
+            returnToList();
+        }
+
     }
 
-    function success (response) {
-        toastsProvider.showSimpleToast('Your document was sent to the next phase.');
-        returnToList();
+    function error(error) {
+        dialogProvider.getInformDialog(returnToList, "Error", error.message, "Okay");
     }
-
-    function error(error) {}
 
     function goToComments() {
         var oldHash = $location.hash();

@@ -7,10 +7,10 @@
     </div>
 </md-toolbar>
 <md-content flex class="main">
-    <div ng-if="stateIsLoading" layout="column" layout-align="center-center" flex="10">
-        <md-progress-linear md-mode="indeterminate"></md-progress-linear>
-    </div>
-    <div class="max-width">
+    <!--Progress bar that hides after loading-->
+    <md-progress-linear ng-class="{'invisible' : !stateIsLoading}" md-mode="indeterminate"></md-progress-linear>
+
+    <div layout="column" class="max-width">
         <md-card class="form-view">
             <md-card-content>
                 <div class="workflow-info" layout="row" layout-align="space-between center">
