@@ -28,8 +28,6 @@ class Workflow(override implicit val env: RuntimeEnvironment[User])
 
   def matchRole(box: Mailbox, roles: Set[Role]): Option[String] = box match {
     case Mailbox.drafts => roles.find(_ == Roles.Encoder).map(_.id)
-    case Mailbox.forChecking => roles.find(_ == Roles.Checker).map(_.id)
-    case Mailbox.forApproval => roles.find(_ == Roles.Approver).map(_.id)
     case _ => Some(s"Mailbox ${box} does not need any special permissions")
   }
 
@@ -67,25 +65,17 @@ class Workflow(override implicit val env: RuntimeEnvironment[User])
                         oldBox match {
                           case Mailbox.drafts =>
                             Document.logPreparedAction(log)
-                          case Mailbox.forChecking =>
-                            Document.logCheckedAction(log)
-                          case Mailbox.forApproval =>
-                            Document.logApprovedAction(log)
                           case _ => Document.logLastAction(log)
                         }
                       } else { // Clear existing logs, if any
                         val (clearPrepared, clearChecked, clearApproved) = newBox match {
                           case Mailbox.drafts => (true, true, true)
-                          case Mailbox.forChecking => (false, true, true)
-                          case Mailbox.forApproval => (false, false, true)
                           case _ => (false, false, false)
                         }
 
                         Document.update(
                           newDoc.copy(
-                            preparedAction = if (clearPrepared) None else newDoc.preparedAction,
-                            checkedAction = if (clearChecked) None else newDoc.checkedAction,
-                            approvedAction = if (clearApproved) None else newDoc.approvedAction
+                            preparedAction = if (clearPrepared) None else newDoc.preparedAction
                           )
                         ) match {
                             case Success(_) => Document.logLastAction(log)
