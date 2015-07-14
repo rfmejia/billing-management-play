@@ -20,8 +20,6 @@ as of *2015.03.02*
 Worflow roles start with a capital letter. Only administrators are allowed to change roles
 
 - `Ad` => `administrator` role
-- `Ap` => `approver` role
-- `C`  => `checker` role
 - `E`  => `encoder` role
 - `c`  => Currently logged on user
 - `x`  => User assigned to the document
