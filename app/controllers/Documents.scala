@@ -330,8 +330,6 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
     val withActions = appendAmounts(obj3)
       .withField("lastAction", d.lastAction flatMap (actionToJsObject(_)))
       .withField("preparedAction", d.preparedAction flatMap (actionToJsObject(_)))
-      .withField("checkedAction", d.checkedAction flatMap (actionToJsObject(_)))
-      .withField("approvedAction", d.approvedAction flatMap (actionToJsObject(_)))
 
     val withAssignLinks = appendAssignLinks(withActions)
 

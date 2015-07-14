@@ -27,12 +27,10 @@ case class Document(
   comments: JsObject,
   assigned: Option[String],
   lastAction: Option[Int] = None,
-  preparedAction: Option[Int] = None,
-  checkedAction: Option[Int] = None,
-  approvedAction: Option[Int] = None
+  preparedAction: Option[Int] = None
 )
 
-object Document extends ((Int, Option[SerialNumber], String, String, String, DateTime, Int, Int, Int, Boolean, JsObject, JsObject, JsObject, Option[String], Option[Int], Option[Int], Option[Int], Option[Int]) => Document) with ModelTemplate {
+object Document extends ((Int, Option[SerialNumber], String, String, String, DateTime, Int, Int, Int, Boolean, JsObject, JsObject, JsObject, Option[String], Option[Int], Option[Int]) => Document) with ModelTemplate {
 
   private val defaultAmountPaid: JsObject =
     JsObject(Seq(
@@ -123,16 +121,6 @@ object Document extends ((Int, Option[SerialNumber], String, String, String, Dat
 
   def logPreparedAction(log: ActionLog): Try[ActionLog] = {
     logAction(log, for (d <- documents if d.id === log.what) yield d.preparedAction)
-      .flatMap(logLastAction(_))
-  }
-
-  def logCheckedAction(log: ActionLog): Try[ActionLog] = {
-    logAction(log, for (d <- documents if d.id === log.what) yield d.checkedAction)
-      .flatMap(logLastAction(_))
-  }
-
-  def logApprovedAction(log: ActionLog): Try[ActionLog] = {
-    logAction(log, for (d <- documents if d.id === log.what) yield d.approvedAction)
       .flatMap(logLastAction(_))
   }
 
