@@ -5,7 +5,7 @@ angular
     .module('app.mailbox')
     .controller('draftsController', draftsCtrl);
 
-function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, commentsHelper, dialogProvider, toastsProvider, dateUtils, numPrecisionFilter, docsResponse, userDetails, tenantsResponse, queryHelper, Invoice, document, tenantResponse) {
+function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, commentsHelper, dialogProvider, toastsProvider, dateUtils, numPrecisionFilter, docsResponse, userDetails, tenantsResponse, queryHelper, Invoice, PaymentHistory, document, tenantResponse) {
     var vm = this;
     /** Current comment made in this phase of the workflow **/
     vm.currentComment = "";
@@ -85,6 +85,16 @@ function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, 
         });
 
         if (vm.cusa.sectionTotal.value != 0) vm.isCusaIncluded = true;
+
+        vm.paymentHistory = PaymentHistory.build(
+            {
+                previousUnpaid : 10,
+                rentUnpaid : 20,
+                waterUnpaid : 30,
+                electricityUnpaid : 40,
+                cusaUnpaid : 50
+            }
+        );
 
         calculatePreviousTotal();
         calculateThisMonthTotal();
@@ -282,7 +292,6 @@ function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, 
     }
 
     function onTaxChanged() {
-        console.log(vm.isTaxed);
         if(vm.isTaxed) {
             doc.rent.clear();
             doc.rent.compute();
@@ -337,6 +346,7 @@ draftsCtrl.$inject = [
     "tenantResponse",
     "queryParams",
     "Invoice",
+    "PaymentHistory",
     "apiDocResponse",
     "apiTenantRequest"
 ];

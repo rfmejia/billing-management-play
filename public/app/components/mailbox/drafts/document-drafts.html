@@ -21,14 +21,24 @@
             </div>
 
             <div class="invoice-view">
-                <h2 class="hoa-out-title">Invoice fields</h2>
+                <div class="hoa-out-title" layout="row">
+                    <h2>Invoice</h2>
+                    <md-button remove-focus=""><i class="fa fa-print"></i></md-button>
+                </div>
+                <div class="content"></div>
+            </div>
 
+            <div class="invoice-view">
+                <div class="hoa-out-title" layout="row">
+                    <h2>Invoice</h2>
+                    <md-button remove-focus=""><i class="fa fa-print"></i></md-button>
+                </div>
                 <div class="content">
                     <form name="billingForm" class="form-horizontal" novalidate form-watcher>
                         <fieldset ng-disabled="drafts.isDisabled">
                             <div class="form-group">
-                                <!-- Previous month's bill-->
-                                <section ng-include="'app/components/mailbox/drafts/partials-previous.html'"></section>
+                                <!-- Previous month's results-->
+                                <section ng-include="'app/components/mailbox/drafts/partials-previous-summary.html'"></section>
                                 <!-- This month's billing -->
                                 <section class="thisMonth">
                                     <section ng-include="'app/components/mailbox/drafts/partials-rent.html'"></section>
