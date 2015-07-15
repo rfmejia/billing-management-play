@@ -1,0 +1,141 @@
+<md-whiteframe class="entry md-whiteframe-z1 unpadded" layout="column">
+    <div layout-gt-md="row" layout="column">
+        <section flex="40" class="draft-field" ng-form="previous">
+            <h4 class="entry-title">Previous charges input</h4>
+            <md-input-container>
+                <label>Witholding Tax (0 if none) </label> <input name="whTax"
+                                                     required
+                                                     type="number"
+                                                     min="0.0" step="0.1"
+                                                     ng-disabled="isDisabled"
+                                                     ng-model="drafts.previousCharges.paymentHistory.withholdingTax"
+                                                     ng-change="drafts.onPreviousChanged(previous)"
+                    />
+
+                <div ng-messages="previous.whTax.$error">
+                    <div ng-message="required">This is required</div>
+                    <div ng-message="number">Oops! Numbers only please.</div>
+                    <div ng-message="min">Positive numbers only</div>
+                </div>
+            </md-input-container>
+            <md-input-container>
+                <label>Rent penalty % (0 if none)</label> <input name="rentPenalty"
+                                                   required
+                                                   type="number"
+                                                   min="0.0" max="100.00" step="0.1"
+                                                   ng-disabled="isDisabled"
+                                                   ng-model="drafts.previousCharges.paymentHistory.rent.penaltyPercent"
+                                                   ng-change="drafts.onPreviousChanged(previous)"
+                    />
+
+                <div ng-messages="previous.rentPenalty.$error">
+                    <div ng-message="required">This is required</div>
+                    <div ng-message="number">Oops! Numbers only please.</div>
+                    <div ng-message="min">Positive numbers only</div>
+                    <div ng-message="max">100% max</div>
+                </div>
+            </md-input-container>
+            <md-input-container>
+                <label>Water penalty % (0 if none)</label> <input name="waterPenalty"
+                                                    required
+                                                    type="number"
+                                                    min="0.0" max="100.00" step="0.1"
+                                                    ng-disabled="isDisabled"
+                                                    ng-model="drafts.previousCharges.paymentHistory.water.penaltyPercent"
+                                                    ng-change="drafts.onPreviousChanged(previous)"
+                    />
+
+                <div ng-messages="previous.waterPenalty.$error">
+                    <div ng-message="required">This is required</div>
+                    <div ng-message="number">Oops! Numbers only please.</div>
+                    <div ng-message="min">Positive numbers only</div>
+                    <div ng-message="max">100% max</div>
+                </div>
+            </md-input-container>
+            <md-input-container>
+                <label>Electricity penalty % (0 if none)</label> <input name="electricityPenalty"
+                                                          required
+                                                          type="number"
+                                                          min="0.0" max="100.00" step="0.1"
+                                                          ng-disabled="isDisabled"
+                                                          ng-model="drafts.previousCharges.paymentHistory.electricity.penaltyPercent"
+                                                          ng-change="drafts.onPreviousChanged(previous)"
+                    />
+
+                <div ng-messages="previous.electricityPenalty.$error">
+                    <div ng-message="required">This is required</div>
+                    <div ng-message="number">Oops! Numbers only please.</div>
+                    <div ng-message="min">Positive numbers only</div>
+                    <div ng-message="max">100% max</div>
+                </div>
+            </md-input-container>
+            <md-input-container>
+                <label>Cusa penalty % (0 if none)</label> <input name="cusaPenalty"
+                                                   required
+                                                   type="number"
+                                                   min="0.0" step="0.1"
+                                                   ng-disabled="isDisabled"
+                                                   ng-model="drafts.previousCharges.paymentHistory.cusa.penaltyPercent"
+                                                   ng-change="drafts.onPreviousChanged(previous)"
+                    />
+
+                <div ng-messages="previous.cusaPenalty.$error">
+                    <div ng-message="required">This is required</div>
+                    <div ng-message="number">Oops! Numbers only please.</div>
+                    <div ng-message="min">Positive numbers only</div>
+                    <div ng-message="max">100% max</div>
+                </div>
+            </md-input-container>
+        </section>
+        <section flex="20"></section>
+        <section ng-show="!previous.$invalid"
+                 flex="40"
+                 layout="column"
+                 layout-align="start end"
+                 class="draft-calculation">
+            <section flex layout="column" layout-align="center end">
+                <section class="entry-pair">
+                    <div class="value">{{drafts.previousCharges.paymentHistory.withholdingTax | currency : "PHP "}}</div>
+                    <div class="title">Withholding tax overdue</div>
+                </section>
+                <section class="entry-pair">
+                    <div class="value">{{drafts.previousCharges.paymentHistory.previousUnpaid | currency : "PHP "}}</div>
+                    <div class="title">Unpaid previous charges</div>
+                </section>
+                <section class="entry-pair">
+                    <div class="value">{{drafts.previousCharges.paymentHistory.rent.unpaid | currency : "PHP "}}</div>
+                    <div class="value">{{drafts.previousCharges.paymentHistory.rent.penaltyValue | currency : "PHP "}}</div>
+                    <div class="title">Unpaid rent + {{drafts.previousCharges.paymentHistory.rent.penaltyPercent}}% penalty</div>
+                </section>
+                <section class="entry-pair">
+                    <div class="value">{{drafts.previousCharges.paymentHistory.water.unpaid | currency : "PHP "}}</div>
+                    <div class="value">{{drafts.previousCharges.paymentHistory.water.penaltyValue | currency : "PHP "}}</div>
+                    <div class="title">Unpaid water + {{drafts.previousCharges.paymentHistory.water.penaltyPercent}}% penalty</div>
+                </section>
+                <section class="entry-pair">
+                    <div class="value">{{drafts.previousCharges.paymentHistory.electricity.unpaid | currency : "PHP "}}</div>
+                    <div class="value">{{drafts.previousCharges.paymentHistory.electricity.penaltyValue | currency : "PHP "}}</div>
+                    <div class="title">Unpaid electricity + {{drafts.previousCharges.paymentHistory.electricity.penaltyPercent}}% penalty</div>
+                </section>
+                <section class="entry-pair">
+                    <div class="value">{{drafts.previousCharges.paymentHistory.cusa.unpaid | currency : "PHP "}}</div>
+                    <div class="value">{{drafts.previousCharges.paymentHistory.cusa.penaltyValue | currency : "PHP "}}</div>
+                    <div class="title">Unpaid cusa + {{drafts.previousCharges.paymentHistory.cusa.penaltyPercent}}% penalty</div>
+                </section>
+            </section>
+            <div class="full-width total" layout-align="center end">
+                <div class="entry-pair">
+                    <div class="value">{{drafts.previousCharges.sectionTotal.value | currency : "PHP "}}</div>
+                    <div class="title">Previous charges</div>
+                </div>
+            </div>
+        </section>
+        <section ng-show="previous.$invalid"
+                 flex="40"
+                 layout="column"
+                 layout-align="center center"
+                 class="draft-calculation">
+            <h2 class="incomplete">Incomplete details</h2>
+        </section>
+    </div>
+</md-whiteframe>

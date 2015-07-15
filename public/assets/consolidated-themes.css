@@ -513,7 +513,8 @@ DRAFTS
 }
 
 
-.draft-calculation {
+.draft-calculation,
+.previous-total {
     background-color: #61615D;
     padding: 16px;
     color: rgba(255, 255, 255, .87);
@@ -564,6 +565,15 @@ h6.header-marginless {
 
 .invisible {
     visibility: hidden;
+}
+
+.previous-value {
+    text-align: right;
+}
+
+.previous-set {
+    margin-bottom: 24px;
+    width: 100%;
 }
 
 /*ICONS*/
