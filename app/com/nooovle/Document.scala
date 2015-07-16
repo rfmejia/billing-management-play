@@ -58,8 +58,8 @@ object Document extends ((Int, Option[SerialNumber], String, String, String, Dat
       forMonth.getMonthOfYear, true, defaultAmountPaid, body,
       JsObject(Seq.empty), Some(creator.userId))
 
-    val (_, _, _, _, _, isPaid) = Templates.extractDefaultAmounts(doc)
-    val docWithIsPaid = doc.copy(isPaid = isPaid)
+    val (current, previous) = Templates.extractAmounts(doc)
+    val docWithIsPaid = doc.copy(isPaid = current.isPaid && previous.isPaid)
 
     ConnectionFactory.connect withSession { implicit session =>
       // Return ID of newly inserted tenant

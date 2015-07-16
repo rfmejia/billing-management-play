@@ -178,7 +178,8 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
 
                   // If the payment resolves the bill, automatically move the document to paid mailbox
                   val b: Document = amountPaidOpt map { _ =>
-                    val (_, _, _, _, _, paid) = Templates.extractDefaultAmounts(a)
+                    val (current, previous) = Templates.extractAmounts(a)
+                    val paid = current.isPaid && previous.isPaid
                     if (paid && a.mailbox == Mailbox.unpaid.name)
                       a.copy(isPaid = paid, mailbox = Mailbox.paid.name)
                     else if(!paid && a.mailbox == Mailbox.paid.name)
@@ -270,12 +271,6 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
     }
   }
 
-  private def appendAssignLinks(obj: HalJsObject)(implicit request: RequestHeader, doc: Document): HalJsObject =
-    doc.assigned match {
-      case Some(_) => obj.withLink("hoa:unassign", routes.Documents.unassign(doc.id).absoluteURL())
-      case None => obj.withLink("hoa:assign", routes.Documents.assignToMe(doc.id).absoluteURL())
-    }
-
   private def documentToHalJsObject(d: Document)(implicit req: RequestHeader): HalJsObject = {
     implicit val doc = d
 
@@ -336,39 +331,57 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
     withAssignLinks
   }
 
-  def appendAmounts(obj: HalJsObject)(implicit doc: Document): HalJsObject = {
-    if (doc.docType == "invoice-1") {
-      val (previous, rent, electricity, water, cusa, isPaid) =
-        Templates.extractDefaultAmounts(doc)
+  private def appendAssignLinks(obj: HalJsObject)(implicit request: RequestHeader, doc: Document): HalJsObject =
+    doc.assigned match {
+      case Some(_) => obj.withLink("hoa:unassign", routes.Documents.unassign(doc.id).absoluteURL())
+      case None => obj.withLink("hoa:assign", routes.Documents.assignToMe(doc.id).absoluteURL())
+    }
 
-      obj.withField(
-        "amounts",
-        HalJsObject.empty
-          .withField("isPaid", JsBoolean(isPaid))
-          .withField("sections", JsArray(List(
-            JsObject(Seq(
-              "name" -> JsString("previous"),
-              "amounts" -> previous.asJsObject
-            )),
-            JsObject(Seq(
-              "name" -> JsString("rent"),
-              "amounts" -> rent.asJsObject
-            )),
-            JsObject(Seq(
-              "name" -> JsString("electricity"),
-              "amounts" -> electricity.asJsObject
-            )),
-            JsObject(Seq(
-              "name" -> JsString("water"),
-              "amounts" -> water.asJsObject
-            )),
-            JsObject(Seq(
-              "name" -> JsString("cusa"),
-              "amounts" -> cusa.asJsObject
-            ))
-          )))
-          .asJsValue
-      )
+  private def appendAmounts(obj: HalJsObject)(implicit doc: Document): HalJsObject = {
+    if (doc.docType == "invoice-1") {
+      val (current, previous) = Templates.extractAmounts(doc)
+
+      val amounts = HalJsObject.empty
+        .withField("isPaid", JsBoolean(current.isPaid && previous.isPaid))
+        .withField("current", JsArray(List(
+          JsObject(Seq(
+            "name" -> JsString("rent"),
+            "amounts" -> current.rent.asJsObject
+          )),
+          JsObject(Seq(
+            "name" -> JsString("electricity"),
+            "amounts" -> current.electricity.asJsObject
+          )),
+          JsObject(Seq(
+            "name" -> JsString("water"),
+            "amounts" -> current.water.asJsObject
+          )),
+          JsObject(Seq(
+            "name" -> JsString("cusa"),
+            "amounts" -> current.cusa.asJsObject
+          ))
+        )))
+        .withField("previous", JsArray(List(
+          JsObject(Seq(
+            "name" -> JsString("rent"),
+            "amounts" -> previous.rent.asJsObject
+          )),
+          JsObject(Seq(
+            "name" -> JsString("electricity"),
+            "amounts" -> previous.electricity.asJsObject
+          )),
+          JsObject(Seq(
+            "name" -> JsString("water"),
+            "amounts" -> previous.water.asJsObject
+          )),
+          JsObject(Seq(
+            "name" -> JsString("cusa"),
+            "amounts" -> previous.cusa.asJsObject
+          ))
+        )))
+
+      obj.withField("amounts", amounts.asJsValue)
+      
     } else obj
   }
 
