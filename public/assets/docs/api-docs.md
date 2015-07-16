@@ -231,9 +231,13 @@ The following sections are default routes supplied by [SecureSocial](http://secu
 - [x] ...to **admin role**
 - [x] Unassign document after moving mailbox
 - [x] Prevent assigning if someone is already assigned
+- [ ] Create case class for grouping monthly amounts
+- [ ] Separate previous and current month's *extraction* from the template
+- [ ] Separate previous and current month's amountPaid
 
 ### Reports
 
 - [x] Summary of the *TOTAL* Rental, Electricity, Water, CUSA charged *every month*
 - [x] Summary of the *PAID* Rental, Electricity, Water, CUSA *every month*
 - [x] Summary of the *UNPAID* Rental, Electricity, Water, CUSA *every month*
+- [ ] Add current and previous month's totals
