@@ -3,14 +3,7 @@ package com.nooovle
 import org.locker47.json.play._
 import play.api.libs.json._
 
-case class Mailbox(name: String, title: String) {
-  lazy val asJsObject: JsObject = {
-    JsObject(Seq(
-      "name" -> JsString(name),
-      "title" -> JsString(title)
-    ))
-  }
-}
+case class Mailbox(name: String, title: String)
 
 object Mailbox {
   val drafts = Mailbox("drafts", "Drafts")

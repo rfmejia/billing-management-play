@@ -18,7 +18,7 @@ class Workflow(override implicit val env: RuntimeEnvironment[User])
   def listMailboxes = SecuredAction { implicit request =>
     Ok {
       val self = routes.Workflow.listMailboxes
-      val obj = HalJsObject.create(self.absoluteURL())
+      val obj = HalJsObject.self(self.absoluteURL())
         .withCurie("hoa", Application.defaultCurie)
         .withLink("profile", "collection")
         .withField("mailbox", workflowAsJsObject)

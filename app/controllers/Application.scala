@@ -21,7 +21,7 @@ class Application(override implicit val env: RuntimeEnvironment[User])
   def index = SecuredAction { implicit request =>
     Ok {
       val self = routes.Application.index
-      val obj = HalJsObject.create(self.absoluteURL())
+      val obj = HalJsObject.self(self.absoluteURL())
         .withCurie("hoa", Application.defaultCurie)
         .withLink("profile", "collection")
         .withLink("hoa:tenants", routes.Tenants.list().absoluteURL(),

@@ -20,7 +20,7 @@ class Templates(override implicit val env: RuntimeEnvironment[User])
       case Some(template) =>
         Ok {
           val link = routes.Templates.show(docType)
-          HalJsObject.create(link.absoluteURL())
+          HalJsObject.self(link.absoluteURL())
             .withLink("profile", "hoa:template")
             .asJsValue ++ template
         }
@@ -32,7 +32,7 @@ class Templates(override implicit val env: RuntimeEnvironment[User])
     val objs = templates map { t =>
       val docType = (t \ "docType").as[String]
       val link = routes.Templates.show(docType)
-      val obj = HalJsObject.create(link.absoluteURL())
+      val obj = HalJsObject.self(link.absoluteURL())
         .withLink("profile", "hoa:template")
         .withField("docType", t \ "docType")
         .withField("name", t \ "name")
@@ -40,7 +40,7 @@ class Templates(override implicit val env: RuntimeEnvironment[User])
     }
 
     val self = routes.Templates.list(offset, limit)
-    val blank = HalJsObject.create(self.absoluteURL())
+    val blank = HalJsObject.self(self.absoluteURL())
       .withCurie("hoa", Application.defaultCurie)
       .withLink("profile", "collection")
       .withLink("up", routes.Application.index().absoluteURL())
@@ -74,7 +74,7 @@ object Templates {
         }, amount => amount
       )
 
-  def extractSection(d: Document, s: String): Amounts = extractWith({
+  def extractSectionTotal(d: Document, s: String): Amounts = extractWith({
     doc =>
       if (doc.docType == "invoice-1") {
         val total: Double = {
@@ -86,20 +86,40 @@ object Templates {
             .map(doubleOrZero)
             .getOrElse(0.0)
         }
-        val paid: Double = doubleOrZero(doc.amountPaid \ s)
+        val paid: Double = doubleOrZero(doc.amountPaid \ "current" \ s)
         Right(Amounts(total, paid))
-      } else Left(s"The document type '${doc.docType}' is not registered")
+      } else Left(s"documents/${doc.id}: The document type '${doc.docType}' is not registered")
   })(d)
 
   def extractCurrentAmounts(doc: Document): MonthlyAmounts =
     MonthlyAmounts(
-      Templates.extractSection(doc, "rent"),
-      Templates.extractSection(doc, "electricity"),
-      Templates.extractSection(doc, "water"),
-      Templates.extractSection(doc, "cusa"))
+      Templates.extractSectionTotal(doc, "rent"),
+      Templates.extractSectionTotal(doc, "electricity"),
+      Templates.extractSectionTotal(doc, "water"),
+      Templates.extractSectionTotal(doc, "cusa"))
 
-  def extractPreviousAmounts(doc: Document): MonthlyAmounts = ???
+  def extractPaymentHistory(d: Document, s: String) = extractWith({
+    doc =>
+      if (doc.docType == "invoice-1") {
+        Try {
+          val paymentHistory: JsObject = (doc.body \ "previous" \\ "payment_history").head.as[JsObject]
+          val unpaid = doubleOrZero(paymentHistory \ s \ "unpaid")
+          val paid = doubleOrZero(doc.amountPaid \ "previous" \ s)
+          Amounts(unpaid, paid)
+        } match {
+          case Success(amt) => Right(amt)
+          case Failure(err) => Left(s"documents/${doc.id}: ${err.getMessage}")
+        }
+      } else Left(s"documents/${doc.id}: The document type '${doc.docType}' is not registered")
+  })(d)
 
+  def extractPreviousAmounts(doc: Document): MonthlyAmounts =
+    MonthlyAmounts(
+      extractPaymentHistory(doc, "rent"),
+      extractPaymentHistory(doc, "electricity"),
+      extractPaymentHistory(doc, "water"),
+      extractPaymentHistory(doc, "cusa"))
+ 
   def extractAmounts(doc: Document): (MonthlyAmounts, MonthlyAmounts) = 
     (extractCurrentAmounts(doc), extractPreviousAmounts(doc))
 
