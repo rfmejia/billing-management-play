@@ -186,6 +186,7 @@ The following sections are default routes supplied by [SecureSocial](http://secu
 - [x] Allow access to user invitation when there is no user with an admin role
 - [x] Add mailbox filtering using on top-level boxes (pending, delivered)
 - [x] Add descriptive error messages in JSON when returning Forbidden responses
+- [ ] Create implicit writers for case classes
 
 ### Backend
 
