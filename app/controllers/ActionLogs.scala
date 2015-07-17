@@ -18,7 +18,8 @@ class ActionLogs(override implicit val env: RuntimeEnvironment[User])
 
   def show(id: Int) = SecuredAction { implicit request =>
     val logs: List[JsObject] = Document.actionLogsOf(id) map {
-      log => JsObject(Seq(
+      log =>
+        JsObject(Seq(
           "id" -> JsNumber(log.id),
           "who" -> JsString(log.who),
           "what" -> JsNumber(log.what),

@@ -37,11 +37,10 @@ case class MonthlyAmounts(rent: Amounts, electricity: Amounts, water: Amounts, c
     this.water - that.water,
     this.cusa - that.cusa
   )
-  
+
 }
 
 object MonthlyAmounts {
   val Zero = MonthlyAmounts(Amounts.Zero, Amounts.Zero, Amounts.Zero, Amounts.Zero)
 }
-
 

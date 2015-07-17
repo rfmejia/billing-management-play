@@ -173,7 +173,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
                     val paid = current.isPaid && previous.isPaid
                     if (paid && a.mailbox == Mailbox.unpaid.name)
                       a.copy(isPaid = paid, mailbox = Mailbox.paid.name)
-                    else if(!paid && a.mailbox == Mailbox.paid.name)
+                    else if (!paid && a.mailbox == Mailbox.paid.name)
                       a.copy(isPaid = paid, mailbox = Mailbox.unpaid.name)
                     else a.copy(isPaid = paid)
                   } getOrElse a

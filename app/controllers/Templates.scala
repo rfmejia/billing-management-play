@@ -96,7 +96,8 @@ object Templates {
       Templates.extractSectionTotal(doc, "rent"),
       Templates.extractSectionTotal(doc, "electricity"),
       Templates.extractSectionTotal(doc, "water"),
-      Templates.extractSectionTotal(doc, "cusa"))
+      Templates.extractSectionTotal(doc, "cusa")
+    )
 
   def extractPaymentHistory(d: Document, s: String) = extractWith({
     doc =>
@@ -118,9 +119,10 @@ object Templates {
       extractPaymentHistory(doc, "rent"),
       extractPaymentHistory(doc, "electricity"),
       extractPaymentHistory(doc, "water"),
-      extractPaymentHistory(doc, "cusa"))
- 
-  def extractAmounts(doc: Document): (MonthlyAmounts, MonthlyAmounts) = 
+      extractPaymentHistory(doc, "cusa")
+    )
+
+  def extractAmounts(doc: Document): (MonthlyAmounts, MonthlyAmounts) =
     (extractCurrentAmounts(doc), extractPreviousAmounts(doc))
 
   lazy val invoice1: JsObject = {

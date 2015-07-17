@@ -129,7 +129,7 @@ class Users(override implicit val env: RuntimeEnvironment[User])
         .withLink("collection", routes.Users.list().absoluteURL())
         .withLink("edit", routes.Users.edit(u.userId).absoluteURL())
         .withField("_template", editForm)
-        
+
       obj.asJsValue
     }
   }
