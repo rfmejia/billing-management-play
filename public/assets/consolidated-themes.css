@@ -579,5 +579,8 @@ h6.header-marginless {
 /*ICONS*/
 .s24 {
     width: 24px;
-    height: 24px;
-    color: #FFFFFF; }
+    height: 24px; }
+
+span.info {
+    text-align: center;
+}
