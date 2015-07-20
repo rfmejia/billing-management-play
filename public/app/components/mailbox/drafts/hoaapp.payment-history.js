@@ -6,7 +6,7 @@ angular.module("app.mailbox").factory("PaymentHistory", paymentHistoryCreator);
 function paymentHistoryCreator(roundoff) {
     function PaymentHistory(paymentHistory) {
         this.withholdingTax = paymentHistory.withholdingTax;
-        this.previousUnpaid = paymentHistory.previousCharges;
+        this.previousUnpaid = paymentHistory.previousUnpaid;
         this.rent = paymentHistory.rent;
         this.water = paymentHistory.water;
         this.electricity = paymentHistory.electricity;

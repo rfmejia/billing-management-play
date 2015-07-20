@@ -32,7 +32,8 @@ function previousCreator(InvoiceEntry, PaymentHistory, roundOff) {
                 sectionTotal : this.sectionTotal,
                 fields : [
                     this.overdue, this.other
-                ]
+                ],
+                paymentHistory : this.paymentHistory
             }
         },
         compute : function() {
