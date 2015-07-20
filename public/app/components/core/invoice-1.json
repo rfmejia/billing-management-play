@@ -34,7 +34,7 @@
           ],
           "paymentHistory" : {
             "withholdingTax" : 100,
-            "previousCharges" : 100,
+            "previousUnpaid" : 100,
             "rent" : {
               "unpaid" : 100,
               "penaltyPercent" : 0,
