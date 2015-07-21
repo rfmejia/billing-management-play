@@ -94,7 +94,8 @@ object Document extends ((Int, Option[SerialNumber], String, String, String, Dat
   def update(doc: Document): Try[Document] = Try {
     ConnectionFactory.connect withSession { implicit session =>
       val query = for (d <- documents if d.id === doc.id) yield d
-      if (!query.exists.run) throw new IndexOutOfBoundsException
+      if (!query.exists.run) throw new IndexOutOfBoundsException(s"Document '${doc.id}' does not exist")
+      else if (!query.first.isEditable) throw new IllegalStateException("Document is uneditable")
       else {
         query.update(doc)
         query.first

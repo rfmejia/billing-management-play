@@ -194,7 +194,11 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
                         NoContent
                       case Failure(err) => Ok("Updates saved, but encountered error " + err.getMessage)
                     }
-                  case Failure(err) => InternalServerError(err.getMessage)
+                  case Failure(err) => err match {
+                    case ioe: IndexOutOfBoundsException => NotFound(ioe.getMessage)
+                    case ise: IllegalStateException => BadRequest(ise.getMessage)
+                    case _ => InternalServerError(err.getMessage)
+                  }
                 }
               case _ => BadRequest("Some required values are missing. Please check your request.")
             }
