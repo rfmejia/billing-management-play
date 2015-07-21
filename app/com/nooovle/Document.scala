@@ -59,6 +59,7 @@ object Document extends ((Int, Option[SerialNumber], String, String, String, Dat
       JsObject(Seq.empty), Some(creator.userId))
 
     val (current, previous) = Templates.extractAmounts(doc)
+    // TODO: Copy the unpaid charges from the previous month, if any
     val docWithIsPaid = doc.copy(isPaid = current.isPaid && previous.isPaid)
 
     ConnectionFactory.connect withSession { implicit session =>
@@ -71,6 +72,22 @@ object Document extends ((Int, Option[SerialNumber], String, String, String, Dat
         update(newDoc).get
       }
     }
+  }
+
+  /**
+   * For a given tenant, return the latest monthly amount up to the given upper bound date.
+   */
+  def getLastDocument(forTenant: Int, upperBound: Option[DateTime] = None): Option[Document] = {
+    val docs: List[Document] = ConnectionFactory.connect withSession { implicit session =>
+      documents.filter(_.forTenant === forTenant).list
+    }
+    Try {
+      val target = upperBound getOrElse DateTime.now
+      docs.map(d => (d, new DateTime(d.year, d.month, 1, 0, 0)))
+        .filter { case (_, date) => date.isBefore(target) }
+        .minBy { case (_, date) => target.getMillis - date.getMillis }
+        ._1
+    }.toOption
   }
 
   def update(doc: Document): Try[Document] = Try {
