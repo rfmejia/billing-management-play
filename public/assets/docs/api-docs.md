@@ -211,8 +211,6 @@ The following sections are default routes supplied by [SecureSocial](http://secu
 - [x] Customize login page
 - [x] Show signup (invite) routes to administrators only
 
-### Authorization
-
 #### Users
 
 - [x] Restrict deletion of user to admin role
@@ -235,6 +233,7 @@ The following sections are default routes supplied by [SecureSocial](http://secu
 - [ ] Create case class for grouping monthly amounts
 - [ ] Separate previous and current month's *extraction* from the template
 - [ ] Separate previous and current month's amountPaid
+- [x] Add isEditable flag, true upon creation, false when document for next month is created
 
 ### Reports
 

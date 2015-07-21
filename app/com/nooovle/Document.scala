@@ -21,6 +21,7 @@ case class Document(
   forTenant: Int,
   year: Int,
   month: Int,
+  isEditable: Boolean,
   isPaid: Boolean,
   amountPaid: JsObject,
   body: JsObject,
@@ -30,7 +31,7 @@ case class Document(
   preparedAction: Option[Int] = None
 )
 
-object Document extends ((Int, Option[SerialNumber], String, String, String, DateTime, Int, Int, Int, Boolean, JsObject, JsObject, JsObject, Option[String], Option[Int], Option[Int]) => Document) with ModelTemplate {
+object Document extends ((Int, Option[SerialNumber], String, String, String, DateTime, Int, Int, Int, Boolean, Boolean, JsObject, JsObject, JsObject, Option[String], Option[Int], Option[Int]) => Document) with ModelTemplate {
 
   private val defaultAmountPaid: JsObject =
     JsObject(Seq(
@@ -55,7 +56,7 @@ object Document extends ((Int, Option[SerialNumber], String, String, String, Dat
     val creationTime = new DateTime()
     val doc = Document(0, None, docType, Mailbox.start.name,
       creator.userId, creationTime, forTenant, forMonth.getYear,
-      forMonth.getMonthOfYear, true, defaultAmountPaid, body,
+      forMonth.getMonthOfYear, true, true, defaultAmountPaid, body,
       JsObject(Seq.empty), Some(creator.userId))
 
     val (current, previous) = Templates.extractAmounts(doc)
