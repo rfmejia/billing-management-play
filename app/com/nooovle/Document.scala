@@ -5,7 +5,7 @@ import com.nooovle.slick.ConnectionFactory
 import com.nooovle.slick.models.{ actionLogs, documents }
 import com.nooovle.slick.DocumentsModel
 import controllers.Templates
-import org.joda.time.{ DateTime, YearMonth }
+import org.joda.time.{ DateTime, DateTimeZone, YearMonth }
 import play.api.libs.json.{ JsNumber, JsObject }
 import play.api.Logger
 import scala.slick.driver.PostgresDriver.simple._
@@ -47,20 +47,31 @@ object Document extends ((Int, Option[SerialNumber], String, String, String, Dat
       (for (d <- documents if d.id === id) yield d).firstOption
     }
 
+  def findByTenantYearMonth(tenantId: Int, ym: YearMonth): Option[Document] =
+    ConnectionFactory.connect withSession { implicit session =>
+      (for(d <- documents if d.forTenant === tenantId && d.year === ym.getYear && d.month === ym.getMonthOfYear) yield d).firstOption
+    }
+
   def actionLogsOf(id: Int): List[ActionLog] =
     ConnectionFactory.connect withSession { implicit session =>
       (for (l <- actionLogs if l.what === id) yield l).sortBy(_.when).list
     }
 
   def insert(creator: User, docType: String, forTenant: Int, forMonth: YearMonth, body: JsObject): Try[Document] = {
+    // Check if document with the same tenant and year/month does not exist
+    if (findByTenantYearMonth(forTenant, forMonth).isDefined)
+      throw new IllegalStateException(s"Document for tenant ('${forTenant}', ${forMonth}) already exists")
+    
     val creationTime = new DateTime()
     val doc = Document(0, None, docType, Mailbox.start.name,
       creator.userId, creationTime, forTenant, forMonth.getYear,
       forMonth.getMonthOfYear, true, true, defaultAmountPaid, body,
       JsObject(Seq.empty), Some(creator.userId))
 
-    val (current, previous) = Templates.extractAmounts(doc)
     // TODO: Copy the unpaid charges from the previous month, if any
+    val date = forMonth.toDateTime(new DateTime(DateTimeZone.UTC))
+
+    val (current, previous) = Templates.extractAmounts(doc)
     val docWithIsPaid = doc.copy(isPaid = current.isPaid && previous.isPaid)
 
     ConnectionFactory.connect withSession { implicit session =>
@@ -84,7 +95,11 @@ object Document extends ((Int, Option[SerialNumber], String, String, String, Dat
     }
     Try {
       val target = upperBound getOrElse DateTime.now
-      docs.map(d => (d, new DateTime(d.year, d.month, 1, 0, 0)))
+      docs.map { 
+          d =>
+            val date = (new YearMonth(d.year, d.month))
+            (d, date.toDateTime(new DateTime(DateTimeZone.UTC)))
+        }
         .filter { case (_, date) => date.isBefore(target) }
         .minBy { case (_, date) => target.getMillis - date.getMillis }
         ._1
