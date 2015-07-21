@@ -127,6 +127,7 @@ object DomainModelWrites {
         "forMonth" -> forMonth,
         "year" -> d.year,
         "month" -> d.month,
+        "isEditable" -> d.isEditable,
         "isPaid" -> d.isPaid,
         "amountPaid" -> d.amountPaid,
         "body" -> d.body,
