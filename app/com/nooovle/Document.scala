@@ -90,7 +90,7 @@ object Document extends ((Int, Option[SerialNumber], String, String, String, Dat
       Document.update(doc.copy(mailbox = newBox.name, assigned = None)) flatMap {
         withNewBox =>
           (oldBox, newBox, doc.serialId) match {
-            case (forApproval, forSending, None) =>
+            case (Mailbox.drafts, Mailbox.unpaid, None) =>
               SerialNumber.create(doc.id) map {
                 sn =>
                   Document.update(withNewBox.copy(serialId = Some(sn))) match {
