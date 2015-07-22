@@ -32,28 +32,28 @@
               "value": null
             }
           ],
-          "paymentHistory" : {
-            "withholdingTax" : 100,
-            "previousUnpaid" : 100,
+          "payment_history" : {
+            "withholding_tax" : 0,
+            "previous_charges" : 0,
             "rent" : {
-              "unpaid" : 100,
-              "penaltyPercent" : 0,
-              "penaltyValue" : 0
+              "unpaid" : 0,
+              "penalty_percent" : 0,
+              "penalty_value" : 0
             },
             "water" : {
-              "unpaid" : 100,
-              "penaltyPercent" : 0,
-              "penaltyValue" : 0
+              "unpaid" : 0,
+              "penalty_percent" : 0,
+              "penalty_value" : 0
             },
             "electricity" : {
-              "unpaid" : 100,
-              "penaltyPercent" : 0,
-              "penaltyValue" : 0
+              "unpaid" : 0,
+              "penalty_percent" : 0,
+              "penalty_value" : 0
             },
             "cusa" : {
-              "unpaid" : 100,
-              "penaltyPercent" : 0,
-              "penaltyValue" : 0
+              "unpaid" : 0,
+              "penalty_percent" : 0,
+              "penalty_value" : 0
             }
           }
         }

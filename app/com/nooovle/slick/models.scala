@@ -147,6 +147,7 @@ class DocumentsModel(tag: Tag) extends Table[Document](tag, "DOCUMENTS") {
   def forTenant = column[Int]("FOR_TENANT", O.NotNull)
   def year = column[Int]("YEAR", O.NotNull)
   def month = column[Int]("MONTH", O.NotNull)
+  def isEditable = column[Boolean]("IS_EDITABLE", O.NotNull)
   def isPaid = column[Boolean]("IS_PAID", O.NotNull)
   def amountPaid = column[JsObject]("AMOUNT_PAID", O.NotNull)
   def body = column[JsObject]("BODY", O.NotNull)
@@ -155,10 +156,8 @@ class DocumentsModel(tag: Tag) extends Table[Document](tag, "DOCUMENTS") {
 
   def lastAction = column[Option[Int]]("LAST_ACTION_ID")
   def preparedAction = column[Option[Int]]("PREPARED_ACTION_ID")
-  def checkedAction = column[Option[Int]]("CHECKED_ACTION_ID")
-  def approvedAction = column[Option[Int]]("APPROVED_ACTION_ID")
 
-  def * = (id, serialId, docType, mailbox, creator, created, forTenant, year, month, isPaid, amountPaid, body, comments, assigned, lastAction, preparedAction, checkedAction, approvedAction) <> (Document.tupled, Document.unapply)
+  def * = (id, serialId, docType, mailbox, creator, created, forTenant, year, month, isEditable, isPaid, amountPaid, body, comments, assigned, lastAction, preparedAction) <> (Document.tupled, Document.unapply)
 }
 
 class MailTokensModel(tag: Tag) extends Table[MailToken](tag, "MAIL_TOKENS") {
@@ -175,11 +174,9 @@ class MailTokensModel(tag: Tag) extends Table[MailToken](tag, "MAIL_TOKENS") {
 class InvitationsModel(tag: Tag) extends Table[InvitationInfo](tag, "INVITATIONS") {
   def email = column[String]("EMAIL", O.PrimaryKey, O.DBType("TEXT"))
   def isEncoder = column[Boolean]("IS_ENCODER", O.NotNull)
-  def isChecker = column[Boolean]("IS_CHECKER", O.NotNull)
-  def isApprover = column[Boolean]("IS_APPROVER", O.NotNull)
   def isAdmin = column[Boolean]("IS_ADMIN", O.NotNull)
 
-  def * = (email, isEncoder, isChecker, isApprover, isAdmin) <>
+  def * = (email, isEncoder, isAdmin) <>
     (InvitationInfo.tupled, InvitationInfo.unapply)
 }
 

@@ -1,8 +1,10 @@
+import com.github.play2war.plugin._
+
 name := "hoa-play-scala"
 
 organization := "com.nooovle"
 
-version := "0.2"
+version := "0.5"
 
 scalaVersion := "2.11.1"
 
@@ -33,7 +35,7 @@ val repositoryDependencies = Seq(
 ) ++ jodaTimeDependencies
 
 val playDependencies = Seq(
-  "ws.securesocial" %% "securesocial" % "master-SNAPSHOT",
+  "ws.securesocial" %% "securesocial" % "3.0-M3",
   "com.netaporter" %% "scala-uri" % "0.4.4"
 )
 
@@ -45,6 +47,10 @@ libraryDependencies ++= repositoryDependencies ++ playDependencies ++ Seq(
 
 // Enable Play HTTP filters (cors, gzip, etc.)
 libraryDependencies += filters
+
+Play2WarPlugin.play2WarSettings
+
+Play2WarKeys.servletVersion := "3.1"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
@@ -58,3 +64,4 @@ herokuAppName in Compile := "hoa-play-scala"
 herokuProcessTypes in Compile := Map(
   "web" -> "target/universal/stage/bin/hoa-play-scala -Dhttp.port=${PORT} -DapplyEvolutions.default=true -Ddb.default.driver=org.postgresql.Driver -Ddb.default.url=${DATABASE_URL}"
 )
+
