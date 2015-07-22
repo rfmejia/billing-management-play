@@ -35,9 +35,6 @@ function mailboxConfig($stateProvider) {
     };
 
     var draftsList = {url : "/drafts", data : {title : "Drafts"}};
-    var forCheckingList = {url : "/forChecking", data : {title : "For checking"}};
-    var forApprovalList = {url : "/forApproval", data : {title : "For approval"}};
-    var forSendingList = {url : "/forSending", data : {title : 'Ready for sending'}};
 
     var viewer = {
         abstract : true,
@@ -86,9 +83,6 @@ function mailboxConfig($stateProvider) {
         .state("workspace.pending", list)
         .state("workspace.viewer", viewer)
         .state("workspace.pending.drafts", draftsList)
-        .state("workspace.pending.for-checking", forCheckingList)
-        .state("workspace.pending.for-approval", forApprovalList)
-        .state("workspace.pending.for-sending", forSendingList)
         .state("workspace.viewer.readonly", readOnlyView)
         .state("workspace.viewer.editable", editableView)
         .state("workspace.viewer.print", printView);
