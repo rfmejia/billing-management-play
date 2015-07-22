@@ -7,12 +7,11 @@ case class Mailbox(name: String, title: String)
 
 object Mailbox {
   val drafts = Mailbox("drafts", "Drafts")
-  val forSending = Mailbox("forSending", "For sending")
   val unpaid = Mailbox("unpaid", "Unpaid")
   val paid = Mailbox("paid", "Paid")
 
   val pending = Mailbox("pending", "Pending")
-  val pendingSubboxes = Vector(drafts, forSending)
+  val pendingSubboxes = Vector(drafts)
 
   val delivered = Mailbox("delivered", "Delivered")
   val deliveredSubboxes = Vector(unpaid, paid)
@@ -32,8 +31,7 @@ object Mailbox {
   }
 
   def next(box: String): Option[Mailbox] = box match {
-    case drafts.name => Some(forSending)
-    case forSending.name => Some(unpaid)
+    case drafts.name => Some(unpaid)
     case unpaid.name => Some(paid)
     case paid.name => None
     case _ => None
@@ -41,8 +39,7 @@ object Mailbox {
 
   def prev(box: String): Option[Mailbox] = box match {
     case drafts.name => None
-    case forSending.name => Some(drafts)
-    case unpaid.name => Some(forSending)
+    case unpaid.name => Some(drafts)
     case paid.name => Some(unpaid)
     case _ => None
   }
