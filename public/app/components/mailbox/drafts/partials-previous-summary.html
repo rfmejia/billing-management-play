@@ -8,7 +8,7 @@
                                                      type="number"
                                                      min="0.0" step="0.1"
                                                      ng-disabled="isDisabled"
-                                                     ng-model="drafts.previousCharges.paymentHistory.withholdingTax"
+                                                     ng-model="drafts.previousCharges.paymentHistory.withholding_tax"
                                                      ng-change="drafts.onPreviousChanged(previous)"
                     />
 
@@ -24,7 +24,7 @@
                                                    type="number"
                                                    min="0.0" max="100.00" step="0.1"
                                                    ng-disabled="isDisabled"
-                                                   ng-model="drafts.previousCharges.paymentHistory.rent.penaltyPercent"
+                                                   ng-model="drafts.previousCharges.paymentHistory.rent.penalty_percent"
                                                    ng-change="drafts.onPreviousChanged(previous)"
                     />
 
@@ -41,7 +41,7 @@
                                                     type="number"
                                                     min="0.0" max="100.00" step="0.1"
                                                     ng-disabled="isDisabled"
-                                                    ng-model="drafts.previousCharges.paymentHistory.water.penaltyPercent"
+                                                    ng-model="drafts.previousCharges.paymentHistory.water.penalty_percent"
                                                     ng-change="drafts.onPreviousChanged(previous)"
                     />
 
@@ -58,7 +58,7 @@
                                                           type="number"
                                                           min="0.0" max="100.00" step="0.1"
                                                           ng-disabled="isDisabled"
-                                                          ng-model="drafts.previousCharges.paymentHistory.electricity.penaltyPercent"
+                                                          ng-model="drafts.previousCharges.paymentHistory.electricity.penalty_percent"
                                                           ng-change="drafts.onPreviousChanged(previous)"
                     />
 
@@ -75,7 +75,7 @@
                                                    type="number"
                                                    min="0.0" step="0.1"
                                                    ng-disabled="isDisabled"
-                                                   ng-model="drafts.previousCharges.paymentHistory.cusa.penaltyPercent"
+                                                   ng-model="drafts.previousCharges.paymentHistory.cusa.penalty_percent"
                                                    ng-change="drafts.onPreviousChanged(previous)"
                     />
 
@@ -95,32 +95,32 @@
                  class="draft-calculation">
             <section flex layout="column" layout-align="center end">
                 <section class="entry-pair">
-                    <div class="value">{{drafts.previousCharges.paymentHistory.withholdingTax | currency : "PHP "}}</div>
+                    <div class="value">{{drafts.previousCharges.paymentHistory.withholding_tax | currency : "PHP "}}</div>
                     <div class="title">Withholding tax overdue</div>
                 </section>
                 <section class="entry-pair">
-                    <div class="value">{{drafts.previousCharges.paymentHistory.previousUnpaid | currency : "PHP "}}</div>
+                    <div class="value">{{drafts.previousCharges.paymentHistory.previous_charges | currency : "PHP "}}</div>
                     <div class="title">Unpaid previous charges</div>
                 </section>
                 <section class="entry-pair">
                     <div class="value">{{drafts.previousCharges.paymentHistory.rent.unpaid | currency : "PHP "}}</div>
-                    <div class="value">{{drafts.previousCharges.paymentHistory.rent.penaltyValue | currency : "PHP "}}</div>
-                    <div class="title">Unpaid rent + {{drafts.previousCharges.paymentHistory.rent.penaltyPercent}}% penalty</div>
+                    <div class="value">{{drafts.previousCharges.paymentHistory.rent.penalty_value | currency : "PHP "}}</div>
+                    <div class="title">Unpaid rent + {{drafts.previousCharges.paymentHistory.rent.penalty_percent}}% penalty</div>
                 </section>
                 <section class="entry-pair">
                     <div class="value">{{drafts.previousCharges.paymentHistory.water.unpaid | currency : "PHP "}}</div>
-                    <div class="value">{{drafts.previousCharges.paymentHistory.water.penaltyValue | currency : "PHP "}}</div>
-                    <div class="title">Unpaid water + {{drafts.previousCharges.paymentHistory.water.penaltyPercent}}% penalty</div>
+                    <div class="value">{{drafts.previousCharges.paymentHistory.water.penalty_value | currency : "PHP "}}</div>
+                    <div class="title">Unpaid water + {{drafts.previousCharges.paymentHistory.water.penalty_percent}}% penalty</div>
                 </section>
                 <section class="entry-pair">
                     <div class="value">{{drafts.previousCharges.paymentHistory.electricity.unpaid | currency : "PHP "}}</div>
-                    <div class="value">{{drafts.previousCharges.paymentHistory.electricity.penaltyValue | currency : "PHP "}}</div>
-                    <div class="title">Unpaid electricity + {{drafts.previousCharges.paymentHistory.electricity.penaltyPercent}}% penalty</div>
+                    <div class="value">{{drafts.previousCharges.paymentHistory.electricity.penalty_value | currency : "PHP "}}</div>
+                    <div class="title">Unpaid electricity + {{drafts.previousCharges.paymentHistory.electricity.penalty_percent}}% penalty</div>
                 </section>
                 <section class="entry-pair">
                     <div class="value">{{drafts.previousCharges.paymentHistory.cusa.unpaid | currency : "PHP "}}</div>
-                    <div class="value">{{drafts.previousCharges.paymentHistory.cusa.penaltyValue | currency : "PHP "}}</div>
-                    <div class="title">Unpaid cusa + {{drafts.previousCharges.paymentHistory.cusa.penaltyPercent}}% penalty</div>
+                    <div class="value">{{drafts.previousCharges.paymentHistory.cusa.penalty_value | currency : "PHP "}}</div>
+                    <div class="title">Unpaid cusa + {{drafts.previousCharges.paymentHistory.cusa.penalty_percent}}% penalty</div>
                 </section>
             </section>
             <div class="full-width total" layout-align="center end">

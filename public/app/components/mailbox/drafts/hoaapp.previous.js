@@ -21,11 +21,6 @@ function previousCreator(InvoiceEntry, PaymentHistory, roundOff) {
         return entry;
     }
 
-    function calculateOverdueCharges(paymentHistory) {
-        var compiledPaymentHistory = paymentHistory.compute();
-        return
-    }
-
     Previous.prototype = {
         compile : function() {
             return {
@@ -33,7 +28,7 @@ function previousCreator(InvoiceEntry, PaymentHistory, roundOff) {
                 fields : [
                     this.overdue, this.other
                 ],
-                paymentHistory : this.paymentHistory
+                payment_history : this.paymentHistory
             }
         },
         compute : function() {
@@ -49,7 +44,7 @@ function previousCreator(InvoiceEntry, PaymentHistory, roundOff) {
     };
 
     Previous.build = function(previous) {
-        var paymentHistory = PaymentHistory.build(previous.paymentHistory);
+        var paymentHistory = PaymentHistory.build(previous.payment_history);
         var paymentHistoryComputed = paymentHistory.compute();
 
         var overdue = InvoiceEntry.build(getEntry(previous.fields, "_overdue_charges"));

@@ -130,6 +130,7 @@
         </div>
 
     </md-card-content>
+    <!--Payment history-->
     <md-card-content id="previous" ng-class="{'added-padding': printCtrl.isPrintable}">
         <div class="page">
             <div class="header" ng-if="printCtrl.isPrintable" layout="row" layout-align="start start">
@@ -155,7 +156,7 @@
                 <div flex="40" class="static-bill-entry-title" primary-text><span>Withholding Tax</span>
                 </div>
                 <div flex class="static-bill-entry-guide"></div>
-                <div class="static-bill-entry-value"><span>{{printCtrl.paymentHistory.withholdingTax | currency : "PHP "}}</span>
+                <div class="static-bill-entry-value"><span>{{printCtrl.paymentHistory.withholding_tax | currency : "PHP "}}</span>
                 </div>
             </section>
         </div>
@@ -164,7 +165,7 @@
                 <div flex="40" class="static-bill-entry-title" primary-text><span>Previous unpaid</span>
                 </div>
                 <div flex class="static-bill-entry-guide"></div>
-                <div class="static-bill-entry-value"><span>{{printCtrl.paymentHistory.previousUnpaid | currency : "PHP "}}</span>
+                <div class="static-bill-entry-value"><span>{{printCtrl.paymentHistory.previous_charges | currency : "PHP "}}</span>
                 </div>
             </section>
         </div>
@@ -180,7 +181,7 @@
                 <div flex="40" class="static-bill-entry-title" primary-text><span>Rent penalty</span>
                 </div>
                 <div flex class="static-bill-entry-guide"></div>
-                <div class="static-bill-entry-value"><span>{{printCtrl.paymentHistory.rent.penaltyValue | currency : "PHP "}}</span>
+                <div class="static-bill-entry-value"><span>{{printCtrl.paymentHistory.rent.penalty_value | currency : "PHP "}}</span>
                 </div>
             </section>
         </div>
@@ -196,7 +197,7 @@
                 <div flex="40" class="static-bill-entry-title" primary-text><span>Water penalty</span>
                 </div>
                 <div flex class="static-bill-entry-guide"></div>
-                <div class="static-bill-entry-value"><span>{{printCtrl.paymentHistory.water.penaltyValue | currency : "PHP "}}</span>
+                <div class="static-bill-entry-value"><span>{{printCtrl.paymentHistory.water.penalty_value | currency : "PHP "}}</span>
                 </div>
             </section>
         </div>
@@ -212,7 +213,7 @@
                 <div flex="40" class="static-bill-entry-title" primary-text><span>Electricity penalty</span>
                 </div>
                 <div flex class="static-bill-entry-guide"></div>
-                <div class="static-bill-entry-value"><span>{{printCtrl.paymentHistory.electricity.penaltyValue | currency : "PHP "}}</span>
+                <div class="static-bill-entry-value"><span>{{printCtrl.paymentHistory.electricity.penalty_value | currency : "PHP "}}</span>
                 </div>
             </section>
         </div>
@@ -228,7 +229,7 @@
                 <div flex="40" class="static-bill-entry-title" primary-text><span>Cusa penalty</span>
                 </div>
                 <div flex class="static-bill-entry-guide"></div>
-                <div class="static-bill-entry-value"><span>{{printCtrl.paymentHistory.cusa.penaltyValue | currency : "PHP "}}</span>
+                <div class="static-bill-entry-value"><span>{{printCtrl.paymentHistory.cusa.penalty_value | currency : "PHP "}}</span>
                 </div>
             </section>
         </div>

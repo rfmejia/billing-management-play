@@ -181,6 +181,7 @@ function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, 
 
     function onSaveFromPrint(billinForm) {
         preparePostData();
+        var postData = documentsHelper.formatServerData(docsResponse);
         documentsHelper.formatServerData(docsResponse);
         docsApi.editDocument(documentId, postData);
     }
