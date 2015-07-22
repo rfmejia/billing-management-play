@@ -60,7 +60,12 @@ object HalJsObject {
 
   val empty = HalJsObject(immutable.Map.empty, HalJsLinks.empty, None)
 
-  def create(href: String) = empty.self(href)
+  def self(href: String) = empty.self(href)
+
+  def from(json: JsValue) = json match {
+    case JsObject(fields) => HalJsObject(fields.toMap, HalJsLinks.empty, None)
+    case _ => empty
+  }
 
   def anyToJsValue(any: Any): JsValue = any match {
     case s: String => JsString(s)

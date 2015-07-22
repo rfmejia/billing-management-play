@@ -31,7 +31,31 @@
               "required": false,
               "value": null
             }
-          ]
+          ],
+          "payment_history" : {
+            "withholding_tax" : 0,
+            "previous_charges" : 0,
+            "rent" : {
+              "unpaid" : 0,
+              "penalty_percent" : 0,
+              "penalty_value" : 0
+            },
+            "water" : {
+              "unpaid" : 0,
+              "penalty_percent" : 0,
+              "penalty_value" : 0
+            },
+            "electricity" : {
+              "unpaid" : 0,
+              "penalty_percent" : 0,
+              "penalty_value" : 0
+            },
+            "cusa" : {
+              "unpaid" : 0,
+              "penalty_percent" : 0,
+              "penalty_value" : 0
+            }
+          }
         }
       ],
       "summary": {

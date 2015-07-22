@@ -1,5 +1,6 @@
 /**
  * Created by juancarlos.yu on 3/8/15.
+ * https://dzone.com/articles/building-simple-angularjs
  */
 angular
     .module("app.directives")

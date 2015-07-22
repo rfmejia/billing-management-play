@@ -1,6 +1,7 @@
 package controllers
 
 import com.nooovle._
+import com.nooovle.DomainModelWrites._
 import com.nooovle.slick.ConnectionFactory
 import com.nooovle.slick.models.{ modelTemplates, documents }
 import org.joda.time.{ DateTime, YearMonth }
@@ -20,7 +21,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
   lazy val createForm: JsObject = getCreateTemplate("DOCUMENTS")
   lazy val editForm: JsObject = getEditTemplate("DOCUMENTS")
 
-  def show(id: Int) = SecuredAction { implicit request =>
+  def show(id: Int) = Action { implicit request =>
     Document.findById(id) match {
       case Some(doc) =>
         Ok(documentToHalJsObject(doc).asJsValue)
@@ -82,19 +83,9 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
         implicit val doc = d
 
         val link = routes.Documents.show(d.id)
-        val obj = HalJsObject.create(link.absoluteURL())
+        val obj = HalJsObject.from(Json.toJson(d))
+          .self(link.absoluteURL())
           .withLink("profile", "hoa:document")
-          .withField("id", d.id)
-          .withField("serialId", d.serialId)
-          .withField("docType", d.docType)
-          .withField("mailbox", d.mailbox)
-          .withField("forTenant", tenantToJsObject(d.forTenant))
-          .withField("forMonth", new YearMonth(d.year, d.month))
-          .withField("year", d.year)
-          .withField("month", d.month)
-          .withField("amountPaid", d.amountPaid)
-          .withField("creator", d.creator)
-          .withField("assigned", (d.assigned.map { userToJsObject(_) }))
 
         val withAssignLinks = appendAmounts(appendAssignLinks(obj))
 
@@ -102,7 +93,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       }
 
     val self = routes.Documents.list(offset, limit, mailbox, forTenant, creator, assigned, year, month, isPaid, others, isAssigned)
-    val blank = HalJsObject.create(self.absoluteURL())
+    val blank = HalJsObject.self(self.absoluteURL())
       .withCurie("hoa", Application.defaultCurie)
       .withLink("profile", "collection")
       .withLink("up", routes.Application.index().absoluteURL())
@@ -178,10 +169,11 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
 
                   // If the payment resolves the bill, automatically move the document to paid mailbox
                   val b: Document = amountPaidOpt map { _ =>
-                    val (_, _, _, _, _, paid) = Templates.extractDefaultAmounts(a)
+                    val (current, previous) = Templates.extractAmounts(a)
+                    val paid = current.isPaid && previous.isPaid
                     if (paid && a.mailbox == Mailbox.unpaid.name)
                       a.copy(isPaid = paid, mailbox = Mailbox.paid.name)
-                    else if(!paid && a.mailbox == Mailbox.paid.name)
+                    else if (!paid && a.mailbox == Mailbox.paid.name)
                       a.copy(isPaid = paid, mailbox = Mailbox.unpaid.name)
                     else a.copy(isPaid = paid)
                   } getOrElse a
@@ -202,7 +194,11 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
                         NoContent
                       case Failure(err) => Ok("Updates saved, but encountered error " + err.getMessage)
                     }
-                  case Failure(err) => InternalServerError(err.getMessage)
+                  case Failure(err) => err match {
+                    case ioe: IndexOutOfBoundsException => NotFound(ioe.getMessage)
+                    case ise: IllegalStateException => BadRequest(ise.getMessage)
+                    case _ => InternalServerError(err.getMessage)
+                  }
                 }
               case _ => BadRequest("Some required values are missing. Please check your request.")
             }
@@ -270,39 +266,18 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
     }
   }
 
-  private def appendAssignLinks(obj: HalJsObject)(implicit request: RequestHeader, doc: Document): HalJsObject =
-    doc.assigned match {
-      case Some(_) => obj.withLink("hoa:unassign", routes.Documents.unassign(doc.id).absoluteURL())
-      case None => obj.withLink("hoa:assign", routes.Documents.assignToMe(doc.id).absoluteURL())
-    }
-
   private def documentToHalJsObject(d: Document)(implicit req: RequestHeader): HalJsObject = {
     implicit val doc = d
 
-    val self = routes.Documents.show(d.id).absoluteURL()
-    val obj = HalJsObject.create(self)
+    val self = routes.Documents.show(d.id)
+    val obj = HalJsObject.from(Json.toJson(d))
+      .self(self.absoluteURL())
       .withCurie("hoa", Application.defaultCurie)
       .withLink("profile", "hoa:documents")
       .withLink("collection", routes.Documents.list().absoluteURL())
       .withField("_template", editForm)
       .withLink("edit", routes.Documents.edit(d.id).absoluteURL())
       .withLink("hoa:logs", routes.ActionLogs.show(d.id).absoluteURL())
-      .withField("id", d.id)
-      .withField("serialId", d.serialId)
-      .withField("docType", d.docType)
-      .withField("mailbox", d.mailbox)
-      .withField("created", d.created)
-      .withField("creator", d.creator)
-      .withField("assigned", (d.assigned.map { userToJsObject(_) }))
-      .withField("forTenant", tenantToJsObject(d.forTenant))
-      .withField("forMonth", new YearMonth(d.year, d.month))
-      .withField("year", d.year)
-      .withField("month", d.month)
-      .withField("amountPaid", d.amountPaid)
-      .withField("hoa:nextBox", Mailbox.next(d.mailbox).map(_.asJsObject))
-      .withField("hoa:prevBox", Mailbox.prev(d.mailbox).map(_.asJsObject))
-      .withField("body", d.body)
-      .withField("comments", d.comments)
 
     val obj1 = Mailbox.next(d.mailbox) map { box =>
       obj.withLink("hoa:nextBox", routes.Workflow.moveMailbox(d.id, box.name).absoluteURL())
@@ -313,94 +288,34 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
 
     val obj3: HalJsObject = Tenant.findById(d.forTenant) map { t =>
       val tenantUrl = routes.Tenants.show(d.forTenant).absoluteURL()
-      val tenant = HalJsObject.create(tenantUrl)
+      val tenant = HalJsObject.from(Json.toJson(t))
+        .self(tenantUrl)
         .withLink("profile", "hoa:tenant")
         .withLink("collection", routes.Tenants.list().absoluteURL())
-        .withField("id", t.id)
-        .withField("tradeName", t.tradeName)
-        .withField("address", t.address)
-        .withField("contactPerson", t.contactPerson)
-        .withField("contactNumber", t.contactNumber)
-        .withField("email", t.email)
 
       val embedded = obj2.embedded.getOrElse(HalJsObject.empty)
       obj2.withEmbedded(embedded.withField("tenant", tenant.asJsValue))
     } getOrElse obj2
 
-    val withActions = appendAmounts(obj3)
-      .withField("lastAction", d.lastAction flatMap (actionToJsObject(_)))
-      .withField("preparedAction", d.preparedAction flatMap (actionToJsObject(_)))
-      .withField("checkedAction", d.checkedAction flatMap (actionToJsObject(_)))
-      .withField("approvedAction", d.approvedAction flatMap (actionToJsObject(_)))
-
-    val withAssignLinks = appendAssignLinks(withActions)
+    val withAssignLinks = appendAssignLinks(obj3)
 
     withAssignLinks
   }
 
-  def appendAmounts(obj: HalJsObject)(implicit doc: Document): HalJsObject = {
+  private def appendAssignLinks(obj: HalJsObject)(implicit request: RequestHeader, doc: Document): HalJsObject =
+    doc.assigned match {
+      case Some(_) => obj.withLink("hoa:unassign", routes.Documents.unassign(doc.id).absoluteURL())
+      case None => obj.withLink("hoa:assign", routes.Documents.assignToMe(doc.id).absoluteURL())
+    }
+
+  private def appendAmounts(obj: HalJsObject)(implicit doc: Document): HalJsObject = {
     if (doc.docType == "invoice-1") {
-      val (previous, rent, electricity, water, cusa, isPaid) =
-        Templates.extractDefaultAmounts(doc)
+      val (current, previous) = Templates.extractAmounts(doc)
 
-      obj.withField(
-        "amounts",
-        HalJsObject.empty
-          .withField("isPaid", JsBoolean(isPaid))
-          .withField("sections", JsArray(List(
-            JsObject(Seq(
-              "name" -> JsString("previous"),
-              "amounts" -> previous.asJsObject
-            )),
-            JsObject(Seq(
-              "name" -> JsString("rent"),
-              "amounts" -> rent.asJsObject
-            )),
-            JsObject(Seq(
-              "name" -> JsString("electricity"),
-              "amounts" -> electricity.asJsObject
-            )),
-            JsObject(Seq(
-              "name" -> JsString("water"),
-              "amounts" -> water.asJsObject
-            )),
-            JsObject(Seq(
-              "name" -> JsString("cusa"),
-              "amounts" -> cusa.asJsObject
-            ))
-          )))
-          .asJsValue
-      )
+      obj.withField("amounts", Json.obj(
+        "current" -> current,
+        "previous" -> previous
+      ))
     } else obj
-  }
-
-  def userToJsObject(userId: String): JsObject =
-    User.findById(userId) match {
-      case Some(u) =>
-        JsObject(Seq(
-          "userId" -> JsString(u.userId),
-          "fullName" -> JsString(u.fullName getOrElse "")
-        ))
-      case None => JsObject(Seq("userId" -> JsString(userId)))
-    }
-
-  def tenantToJsObject(tenantId: Int): JsObject =
-    Tenant.findById(tenantId) match {
-      case Some(t) =>
-        JsObject(Seq(
-          "id" -> JsNumber(t.id),
-          "tradeName" -> JsString(t.tradeName)
-        ))
-      case None => JsObject(Seq("id" -> JsNumber(tenantId)))
-    }
-
-  def actionToJsObject(id: Int) = ActionLog.findById(id) map { log =>
-    JsObject(Seq(
-      "id" -> JsNumber(log.id),
-      "who" -> userToJsObject(log.who),
-      "what" -> JsNumber(log.what),
-      "when" -> JsString(log.when.toString),
-      "why" -> JsString(log.why)
-    ))
   }
 }

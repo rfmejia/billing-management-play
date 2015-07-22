@@ -376,6 +376,9 @@ div.static-bill-entry-guide {
     max-height: 10px;
 }
 
+.static-bill-entry .entry-pair {
+    margin-bottom: 16px;
+}
 
 .cards-margin {
     margin: 8px;

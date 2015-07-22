@@ -20,7 +20,7 @@ class Templates(override implicit val env: RuntimeEnvironment[User])
       case Some(template) =>
         Ok {
           val link = routes.Templates.show(docType)
-          HalJsObject.create(link.absoluteURL())
+          HalJsObject.self(link.absoluteURL())
             .withLink("profile", "hoa:template")
             .asJsValue ++ template
         }
@@ -32,7 +32,7 @@ class Templates(override implicit val env: RuntimeEnvironment[User])
     val objs = templates map { t =>
       val docType = (t \ "docType").as[String]
       val link = routes.Templates.show(docType)
-      val obj = HalJsObject.create(link.absoluteURL())
+      val obj = HalJsObject.self(link.absoluteURL())
         .withLink("profile", "hoa:template")
         .withField("docType", t \ "docType")
         .withField("name", t \ "name")
@@ -40,7 +40,7 @@ class Templates(override implicit val env: RuntimeEnvironment[User])
     }
 
     val self = routes.Templates.list(offset, limit)
-    val blank = HalJsObject.create(self.absoluteURL())
+    val blank = HalJsObject.self(self.absoluteURL())
       .withCurie("hoa", Application.defaultCurie)
       .withLink("profile", "collection")
       .withLink("up", routes.Application.index().absoluteURL())
@@ -74,7 +74,7 @@ object Templates {
         }, amount => amount
       )
 
-  def extractSection(d: Document, s: String): Amounts = extractWith({
+  def extractSectionTotal(d: Document, s: String): Amounts = extractWith({
     doc =>
       if (doc.docType == "invoice-1") {
         val total: Double = {
@@ -86,27 +86,47 @@ object Templates {
             .map(doubleOrZero)
             .getOrElse(0.0)
         }
-        val paid: Double = doubleOrZero(doc.amountPaid \ s)
+        val paid: Double = doubleOrZero(doc.amountPaid \ "current" \ s)
         Right(Amounts(total, paid))
-      } else Left(s"The document type '${doc.docType}' is not registered")
+      } else Left(s"documents/${doc.id}: The document type '${doc.docType}' is not registered")
   })(d)
 
-  def extractDefaultAmounts(doc: Document): (Amounts, Amounts, Amounts, Amounts, Amounts, Boolean) = {
-    val previous = Templates.extractSection(doc, "previous")
-    val rent = Templates.extractSection(doc, "rent")
-    val electricity = Templates.extractSection(doc, "electricity")
-    val water = Templates.extractSection(doc, "water")
-    val cusa = Templates.extractSection(doc, "cusa")
+  def extractCurrentAmounts(doc: Document): MonthlyAmounts =
+    MonthlyAmounts(
+      Templates.extractSectionTotal(doc, "rent"),
+      Templates.extractSectionTotal(doc, "electricity"),
+      Templates.extractSectionTotal(doc, "water"),
+      Templates.extractSectionTotal(doc, "cusa")
+    )
 
-    val isPaid: Boolean =
-      List(previous, rent, electricity, water, cusa)
-        .foldLeft(true)(_ && _.isPaid)
+  def extractPaymentHistory(d: Document, s: String) = extractWith({
+    doc =>
+      if (doc.docType == "invoice-1") {
+        Try {
+          val paymentHistory: JsObject = (doc.body \ "previous" \\ "payment_history").head.as[JsObject]
+          val unpaid = doubleOrZero(paymentHistory \ s \ "unpaid")
+          val paid = doubleOrZero(doc.amountPaid \ "previous" \ s)
+          Amounts(unpaid, paid)
+        } match {
+          case Success(amt) => Right(amt)
+          case Failure(err) => Left(s"documents/${doc.id}: ${err.getMessage}")
+        }
+      } else Left(s"documents/${doc.id}: The document type '${doc.docType}' is not registered")
+  })(d)
 
-    (previous, rent, electricity, water, cusa, isPaid)
-  }
+  def extractPreviousAmounts(doc: Document): MonthlyAmounts =
+    MonthlyAmounts(
+      extractPaymentHistory(doc, "rent"),
+      extractPaymentHistory(doc, "electricity"),
+      extractPaymentHistory(doc, "water"),
+      extractPaymentHistory(doc, "cusa")
+    )
+
+  def extractAmounts(doc: Document): (MonthlyAmounts, MonthlyAmounts) =
+    (extractCurrentAmounts(doc), extractPreviousAmounts(doc))
 
   lazy val invoice1: JsObject = {
-    val filename = "public/assets/templates/invoice-1.json"
+    val filename = "public/app/components/core/invoice-1.json"
     Play.current.resourceAsStream(filename) match {
       case Some(is) =>
         val str = scala.io.Source.fromInputStream(is).getLines().mkString

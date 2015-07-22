@@ -5,7 +5,10 @@ angular
     .module('app.mailbox')
     .controller('draftsController', draftsCtrl);
 
-function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, commentsHelper, dialogProvider, toastsProvider, dateUtils, numPrecisionFilter, docsResponse, userDetails, tenantsResponse, queryHelper, Invoice, document, tenantResponse) {
+function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, commentsHelper,
+                    dialogProvider, toastsProvider, dateUtils, numPrecisionFilter, docsResponse,
+                    userDetails, tenantsResponse, queryHelper, Invoice, document,
+                    tenantResponse) {
     var vm = this;
     /** Current comment made in this phase of the workflow **/
     vm.currentComment = "";
@@ -30,6 +33,8 @@ function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, 
     /** Mailbox **/
     vm.mailbox = docsResponse.viewModel.mailbox;
 
+    vm.document = docsResponse.viewModel;
+
     var doc = Invoice.build(document.body, tenantResponse);
     vm.previousCharges = doc.previous;
     vm.rent = doc.rent;
@@ -48,6 +53,7 @@ function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, 
     vm.validateDateRange = validateDateRange;
     vm.onSubmitClicked = onSubmitClicked;
     vm.onSaveClicked = onSaveClicked;
+    vm.onSaveFromPrint = onSaveFromPrint;
     vm.onCancelClicked = onCancelClicked;
     vm.onDeleteClicked = onDeleteClicked;
     vm.onPreviousChanged = onPreviousChanged;
@@ -77,14 +83,19 @@ function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, 
         else {
             vm.isDisabled = (vm.assigned.userId != vm.currentUser);
         }
-        var date = dateUtils.getMomentFromString(docsResponse.viewModel.month, docsResponse.viewModel.year);
+        var date = dateUtils.getMomentFromString(docsResponse.viewModel.month,
+                                                 docsResponse.viewModel.year);
         vm.billDate = dateUtils.momentToStringDisplay(date, "MMMM-YYYY");
 
-        angular.forEach(vm.tenant, function(value) {
-            if (value.name == 'tradeName') vm.tradeName = value.value;
+        angular.forEach(vm.tenant, function (value) {
+            if (value.name == 'tradeName') {
+                vm.tradeName = value.value;
+            }
         });
 
-        if (vm.cusa.sectionTotal.value != 0) vm.isCusaIncluded = true;
+        if (vm.cusa.sectionTotal.value != 0) {
+            vm.isCusaIncluded = true;
+        }
 
         calculatePreviousTotal();
         calculateThisMonthTotal();
@@ -97,7 +108,9 @@ function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, 
     function onUnlinkClicked() {
         if (vm.links.hasOwnProperty("hoa:unassign")) {
             var url = vm.links["hoa:unassign"].href;
-            dialogProvider.getConfirmDialog(unassignDocument, null, "This will no longer be assigned to you", "Are you sure?")
+            dialogProvider.getConfirmDialog(unassignDocument, null,
+                                            "This will no longer be assigned to you",
+                                            "Are you sure?")
         }
         function unassignDocument() {
             docsApi.unassignDocument(url).then(returnToList);
@@ -106,7 +119,7 @@ function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, 
 
     function returnToList() {
         var params = queryHelper.getDocsListParams("drafts", 0, "mine");
-        $state.go("workspace.pending.drafts", params, {reload : true})
+        $state.go("workspace.pending.drafts", params, {reload: true})
     }
 
     /**
@@ -122,7 +135,8 @@ function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, 
      * Submits the current document to the next box
      */
     function onSubmitClicked() {
-        dialogProvider.getCommentDialog("Submitting to next phase.", vm.nextAction.title).then(okayClicked);
+        dialogProvider.getCommentDialog("Submitting to next phase.",
+                                        vm.nextAction.title).then(okayClicked);
 
         //Save the document first, then submit
         function okayClicked(comment) {
@@ -136,12 +150,13 @@ function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, 
             docsApi.moveToBox(vm.nextAction.url).then(success, error);
         }
 
-        var success = function(response) {
+        var success = function (response) {
             var params = queryHelper.getDocsListParams("drafts", 0, "mine");
-            $state.go("workspace.pending.drafts", params, {reload : true})
+            $state.go("workspace.pending.drafts", params, {reload: true})
         };
 
-        var error = function(error) {};
+        var error = function (error) {
+        };
     }
 
     /**
@@ -151,7 +166,7 @@ function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, 
         preparePostData();
         var postData = documentsHelper.formatServerData(docsResponse);
         docsApi.editDocument(documentId, postData)
-            .then(function(response) {
+            .then(function (response) {
                       if (billingForm.$invalid) {
                           toastsProvider.showSimpleToast('Saved but there are missing fields');
                           vm.currentComment = null;
@@ -159,9 +174,15 @@ function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, 
                       else {
                           toastsProvider.showSimpleToast('Ready for submission');
                       }
-                  }, function() {
+                  }, function () {
                       toastsProvider.showSimpleToast('We couldn\t save your document');
                   });
+    }
+
+    function onSaveFromPrint(billinForm) {
+        preparePostData();
+        documentsHelper.formatServerData(docsResponse);
+        docsApi.editDocument(documentId, postData);
     }
 
     /**
@@ -170,7 +191,7 @@ function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, 
     function onCancelClicked(billingForm) {
         if (billingForm.$pristine) {
             var params = queryHelper.getDocsListParams("drafts", 0, "all");
-            $state.go("workspace.pending.drafts", params, {reload : true})
+            $state.go("workspace.pending.drafts", params, {reload: true})
         }
         else {
             openCancelModal();
@@ -183,9 +204,9 @@ function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, 
     function openCancelModal() {
         var message = "Are you sure you want to exit?";
         var title = "Changes have not been saved";
-        var okFxn = function(response) {
+        var okFxn = function (response) {
             var params = queryHelper.getDocsListParams("drafts", 0, "all");
-            $state.go("workspace.pending.drafts", params, {reload : true})
+            $state.go("workspace.pending.drafts", params, {reload: true})
         };
 
         dialogProvider.getConfirmDialog(okFxn, null, message, title);
@@ -197,13 +218,13 @@ function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, 
     function onDeleteClicked() {
         var message = "Delete document"
         var title = "This will delete the document permanently"
-        var okFxn = function(response) {
+        var okFxn = function (response) {
             docsApi.deleteDocument(documentId)
-                .then(function(response) {
+                .then(function (response) {
                           toastsProvider.showSimpleToast("Delete successful");
                           var params = queryHelper.getDocsListParams("drafts", 0, "all");
-                          $state.go("workspace.pending.drafts", params, {reload : true})
-                      }, function(error) {
+                          $state.go("workspace.pending.drafts", params, {reload: true})
+                      }, function (error) {
                           toastsProvider.showSimpleToast("We couldn't delete your document");
                       });
         };
@@ -223,7 +244,8 @@ function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, 
         doc.summaryValue = vm.summaryValue;
         var compiled = doc.compile();
         docsResponse.viewModel.body = compiled.body;
-        docsResponse.viewModel.comments = commentsHelper.parseComments(vm.currentComment, vm.comments);
+        docsResponse.viewModel.comments =
+        commentsHelper.parseComments(vm.currentComment, vm.comments);
         docsResponse.viewModel.assigned = vm.currentUser;
     }
 
@@ -239,8 +261,11 @@ function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, 
 
     function onRentChanged(form) {
         if (!form.$invalid) {
-            if(vm.isTaxed) doc.rent.compute();
-            else doc.rent.computeNoTax();
+            if (vm.isTaxed) {
+                doc.rent.compute();
+            } else {
+                doc.rent.computeNoTax();
+            }
         }
         else {
             doc.rent.clear();
@@ -282,8 +307,7 @@ function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, 
     }
 
     function onTaxChanged() {
-        console.log(vm.isTaxed);
-        if(vm.isTaxed) {
+        if (vm.isTaxed) {
             doc.rent.clear();
             doc.rent.compute();
         }
@@ -302,15 +326,16 @@ function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, 
 
     function calculateThisMonthTotal() {
         vm.thisMonthSummary.value = vm.rent.sectionTotal.value +
-        vm.electricity.sectionTotal.value +
-        vm.water.sectionTotal.value +
-        vm.cusa.sectionTotal.value;
+                                    vm.electricity.sectionTotal.value +
+                                    vm.water.sectionTotal.value +
+                                    vm.cusa.sectionTotal.value;
         vm.thisMonthSummary.value = numPrecisionFilter(vm.thisMonthSummary.value);
         calculateSummaryTotal();
     }
 
     function calculateSummaryTotal() {
-        vm.summaryValue = numPrecisionFilter(doc.previousSummary.value + doc.thisMonthSummary.value, 2);
+        vm.summaryValue =
+        numPrecisionFilter(doc.previousSummary.value + doc.thisMonthSummary.value, 2);
     }
 
     //endregion

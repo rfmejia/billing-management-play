@@ -28,9 +28,9 @@ class ActionLogs(override implicit val env: RuntimeEnvironment[User])
         ))
     }
 
-    val self = routes.ActionLogs.show(id).absoluteURL()
+    val self = routes.ActionLogs.show(id)
     Ok {
-      HalJsObject.create(self)
+      HalJsObject.self(self.absoluteURL())
         .withLink("profile", "hoa:logs")
         .withField("total", logs.length)
         .withEmbedded(HalJsObject.empty

@@ -1,6 +1,7 @@
 package controllers
 
 import com.nooovle._
+import com.nooovle.DomainModelWrites._
 import com.nooovle.slick.models.{ modelTemplates, users }
 import com.nooovle.slick.ConnectionFactory
 import org.joda.time.DateTime
@@ -23,17 +24,13 @@ class Users(override implicit val env: RuntimeEnvironment[User])
       case Some((u, rs)) =>
         Ok {
           val self = routes.Users.show(userId)
-          val obj = HalJsObject.create(self.absoluteURL())
+          val obj = HalJsObject.from(Json.toJson(u))
+            .self(self.absoluteURL())
             .withCurie("hoa", Application.defaultCurie)
             .withLink("profile", "hoa:user")
             .withLink("collection", routes.Users.list().absoluteURL())
             .withLink("edit", routes.Users.edit(userId).absoluteURL())
             .withField("_template", editForm)
-            .withField("userId", u.userId)
-            .withField("email", u.email)
-            .withField("firstName", u.firstName)
-            .withField("lastName", u.lastName)
-            .withField("fullName", u.fullName)
             .withField("roles", roleSetToJsArray(rs))
 
           val withEditRoleLink =
@@ -55,17 +52,15 @@ class Users(override implicit val env: RuntimeEnvironment[User])
     }
     val objs = us map { u =>
       val link = routes.Users.show(u.userId)
-      val obj = HalJsObject.create(link.absoluteURL())
+      val obj = HalJsObject.from(Json.toJson(u))
+        .self(link.absoluteURL())
         .withLink("profile", "hoa:user")
-        .withField("userId", u.userId)
-        .withField("firstName", u.firstName)
-        .withField("lastName", u.lastName)
       obj.asJsValue
     }
 
     Ok {
       val self = routes.Users.list(offset, limit)
-      val blank = HalJsObject.create(self.absoluteURL())
+      val blank = HalJsObject.self(self.absoluteURL())
         .withCurie("hoa", Application.defaultCurie)
         .withLink("profile", "collection")
         .withLink("up", routes.Application.index().absoluteURL())
@@ -127,18 +122,14 @@ class Users(override implicit val env: RuntimeEnvironment[User])
       val rs = User.findRoles(u.userId)
 
       val self = routes.Users.show(u.userId)
-      val obj = HalJsObject.create(self.absoluteURL())
+      val obj = HalJsObject.from(Json.toJson(u))
+        .self(self.absoluteURL())
         .withCurie("hoa", Application.defaultCurie)
         .withLink("profile", "hoa:user")
         .withLink("collection", routes.Users.list().absoluteURL())
         .withLink("edit", routes.Users.edit(u.userId).absoluteURL())
         .withField("_template", editForm)
-        .withField("userId", u.userId)
-        .withField("email", u.email)
-        .withField("firstName", u.firstName)
-        .withField("lastName", u.lastName)
-        .withField("fullName", u.fullName)
-        .withField("roles", roleSetToJsArray(rs))
+
       obj.asJsValue
     }
   }

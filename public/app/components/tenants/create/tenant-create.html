@@ -14,9 +14,9 @@
 
 </md-toolbar>
 <md-content layout="column" layout-fill flex class="md-padding">
-    <div ng-if="stateIsLoading" layout="column" layout-align="center-center" flex="10">
-        <md-progress-linear md-mode="indeterminate"></md-progress-linear>
-    </div>
+    <!--Progress bar that hides after loading-->
+    <md-progress-linear ng-class="{'invisible' : !stateIsLoading}" md-mode="indeterminate"></md-progress-linear>
+
     <div class="max-width">
         <md-card flex class="cards-margin bottom-margin">
             <md-card-content>
