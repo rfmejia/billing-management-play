@@ -137,7 +137,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
                 case clientErr: IllegalStateException =>
                   Logger.info(s"Client error in creating document", err)
                   BadRequest(clientErr.getMessage)
-                case _ => 
+                case _ =>
                   Logger.error(s"Error in creating document", err)
                   InternalServerError(err.getMessage)
               }

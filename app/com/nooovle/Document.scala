@@ -52,7 +52,7 @@ object Document extends ((Int, Option[SerialNumber], String, String, String, Dat
       (for (l <- actionLogs if l.what === id) yield l).sortBy(_.when).list
     }
 
-  /** 
+  /**
    * Check if document with the same tenant and current and future year/month do not exist
    */
   private def validCreationParams(forTenant: Int, forMonth: YearMonth): Boolean =
@@ -67,7 +67,7 @@ object Document extends ((Int, Option[SerialNumber], String, String, String, Dat
    * For a given tenant, return the latest monthly amount up to the given upper bound date.
    */
   private def findLastTenantDocument(forTenant: Int, upperBound: Option[YearMonth] = None): Option[Document] =
-     ConnectionFactory.connect withSession { implicit session =>
+    ConnectionFactory.connect withSession { implicit session =>
       val forMonth = upperBound getOrElse YearMonth.now
       val sorted = documents.filter(_.forTenant === forTenant).list
         .map(d => (d, new YearMonth(d.year, d.month)))
