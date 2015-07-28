@@ -134,12 +134,8 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
               Created(body.asJsValue).withHeaders("Location" -> link)
             case Failure(err) =>
               err match {
-                case clientErr: IllegalStateException =>
-                  Logger.info(s"Client error in creating document", err)
-                  BadRequest(clientErr.getMessage)
-                case _ =>
-                  Logger.error(s"Error in creating document", err)
-                  InternalServerError(err.getMessage)
+                case ise: IllegalStateException => BadRequest(ise.getMessage)
+                case _ => InternalServerError(err.getMessage)
               }
           }
         }
@@ -164,8 +160,8 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
           ) match {
               case (None, None, None) =>
                 BadRequest("No editable fields matched. Please check your request.")
-              case (bodyOpt, commentsOpt, amountPaidOpt) =>
 
+              case (bodyOpt, commentsOpt, amountPaidOpt) =>
                 val newDoc: Document = {
                   val a: Document = existingDoc.copy(
                     body = bodyOpt getOrElse existingDoc.body,
@@ -242,7 +238,11 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
             val newDoc = d.copy(assigned = Some(request.user.userId))
             Document.update(newDoc) match {
               case Success(id) => NoContent
-              case Failure(err) => InternalServerError(err.getMessage)
+              case Failure(err) => err match {
+                case ioe: IndexOutOfBoundsException => NotFound(ioe.getMessage)
+                case ise: IllegalStateException => BadRequest(ise.getMessage)
+                case _ => InternalServerError(err.getMessage)
+              }
             }
           case Some(user) => Forbidden(Messages("hoa.documents.forbidden.NotAssigned")
             + s" (Assigned to '${user}')")
