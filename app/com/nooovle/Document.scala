@@ -47,7 +47,7 @@ object Document extends ((Int, Option[SerialNumber], String, String, String, Dat
       (for (d <- documents if d.id === id) yield d).firstOption
     }
 
- def actionLogsOf(id: Int): List[ActionLog] =
+  def actionLogsOf(id: Int): List[ActionLog] =
     ConnectionFactory.connect withSession { implicit session =>
       (for (l <- actionLogs if l.what === id) yield l).sortBy(_.when).list
     }
@@ -147,7 +147,6 @@ object Document extends ((Int, Option[SerialNumber], String, String, String, Dat
     ConnectionFactory.connect withSession { implicit session =>
       val query = for (d <- documents if d.id === doc.id) yield d
       if (!query.exists.run) throw new IndexOutOfBoundsException(s"Document '${doc.id}' does not exist")
-      else if (!query.first.isEditable) throw new IllegalStateException("Document is uneditable")
       else {
         query.update(doc)
         query.first
