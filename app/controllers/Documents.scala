@@ -134,7 +134,11 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
               Created(body.asJsValue).withHeaders("Location" -> link)
             case Failure(err) =>
               Logger.error(s"Error in creating document", err)
-              InternalServerError(err.getMessage)
+              err match {
+                case clientErr: IllegalStateException =>
+                  BadRequest(clientErr.getMessage)
+                case _ => InternalServerError(err.getMessage)
+              }
           }
         }
         case _ =>

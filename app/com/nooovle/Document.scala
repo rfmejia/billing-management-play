@@ -76,61 +76,68 @@ object Document extends ((Int, Option[SerialNumber], String, String, String, Dat
   }
 
   def insert(creator: User, docType: String, forTenant: Int, forMonth: YearMonth, body: JsObject): Try[Document] = {
-    // Check if document with the same tenant and year/month does not exist
-    if (findByTenantYearMonth(forTenant, forMonth).isDefined)
-      throw new IllegalStateException(s"Document for tenant ('${forTenant}', ${forMonth}) already exists")
-    
-    // Copy the unpaid charges from the previous month, if any
-    val previousDoc = findLastTenantDocument(forTenant, Some(forMonth))
-    val newBody: JsObject = previousDoc.map { prevDoc =>
-      val (prevCurr, _) = Templates.extractAmounts(prevDoc)
-      val paymentHistory = Json.obj(
-        "witholding_tax" -> 0,
-        "previous_charges" -> 0,
-        "rent" -> Json.obj(
-          "unpaid" -> prevCurr.rent.unpaid,
-          "penalty_percent" -> 0,
-          "penalty_value" -> 0),
-        "electricity" -> Json.obj(
-          "unpaid" -> prevCurr.water.unpaid,
-          "penalty_percent" -> 0,
-          "penalty_value" -> 0),
-        "water" -> Json.obj(
-          "unpaid" -> prevCurr.water.unpaid,
-          "penalty_percent" -> 0,
-          "penalty_value" -> 0),
-        "cusa" -> Json.obj(
-          "unpaid" -> prevCurr.cusa.unpaid,
-          "penalty_percent" -> 0,
-          "penalty_value" -> 0)
-      )
-      body ++ Json.obj(
-        "previous" -> Json.obj(
-          "sections" -> Json.arr(
-            Json.obj("payment_history" -> paymentHistory)
-          )))
-    } getOrElse body
+    // Check if document with the same tenant and current & future year/month do not exist
+    if (findByTenantYearMonth(forTenant, forMonth).isDefined) {
+      Failure(new IllegalStateException(s"Document for tenant ('${forTenant}', ${forMonth}) already exists"))
+    } else {
+      // Copy the unpaid charges from the previous month, if any
+      val previousDoc = findLastTenantDocument(forTenant, Some(forMonth))
+      val newBody: JsObject = previousDoc.map { prevDoc =>
+        val (prevCurr, _) = Templates.extractAmounts(prevDoc)
+        val paymentHistory = Json.obj(
+          "witholding_tax" -> 0,
+          "previous_charges" -> 0,
+          "rent" -> Json.obj(
+            "unpaid" -> prevCurr.rent.unpaid,
+            "penalty_percent" -> 0,
+            "penalty_value" -> 0
+          ),
+          "electricity" -> Json.obj(
+            "unpaid" -> prevCurr.water.unpaid,
+            "penalty_percent" -> 0,
+            "penalty_value" -> 0
+          ),
+          "water" -> Json.obj(
+            "unpaid" -> prevCurr.water.unpaid,
+            "penalty_percent" -> 0,
+            "penalty_value" -> 0
+          ),
+          "cusa" -> Json.obj(
+            "unpaid" -> prevCurr.cusa.unpaid,
+            "penalty_percent" -> 0,
+            "penalty_value" -> 0
+          )
+        )
+        body ++ Json.obj(
+          "previous" -> Json.obj(
+            "sections" -> Json.arr(
+              Json.obj("payment_history" -> paymentHistory)
+            )
+          )
+        )
+      } getOrElse body
 
-    val creationTime = new DateTime()
-    val doc = Document(0, None, docType, Mailbox.start.name,
-      creator.userId, creationTime, forTenant, forMonth.getYear,
-      forMonth.getMonthOfYear, true, true, defaultAmountPaid, newBody,
-      JsObject(Seq.empty), Some(creator.userId))
+      val creationTime = new DateTime()
+      val doc = Document(0, None, docType, Mailbox.start.name,
+        creator.userId, creationTime, forTenant, forMonth.getYear,
+        forMonth.getMonthOfYear, true, true, defaultAmountPaid, newBody,
+        JsObject(Seq.empty), Some(creator.userId))
 
-    val (current, previous) = Templates.extractAmounts(doc)
-    val docWithIsPaid = doc.copy(isPaid = current.isPaid && previous.isPaid)
+      val (current, previous) = Templates.extractAmounts(doc)
+      val docWithIsPaid = doc.copy(isPaid = current.isPaid && previous.isPaid)
 
-    ConnectionFactory.connect withSession { implicit session =>
-      // Return ID of newly inserted tenant
-      val id = (documents returning documents.map(_.id)) += docWithIsPaid
+      ConnectionFactory.connect withSession { implicit session =>
+        // Return ID of newly inserted tenant
+        val id = (documents returning documents.map(_.id)) += docWithIsPaid
 
-      // Make previous document uneditable
-      if (previousDoc.isDefined) update(previousDoc.get.copy(isEditable = false))
+        // Make previous document uneditable
+        if (previousDoc.isDefined) update(previousDoc.get.copy(isEditable = false))
 
-      // Log this action like this, because we need the new document's generated ID
-      ActionLog.log(creator.userId, id, "Created document") map { log =>
-        val newDoc = docWithIsPaid.copy(id = id, lastAction = Some(log.id))
-        update(newDoc).get
+        // Log this action like this, because we need the new document's generated ID
+        ActionLog.log(creator.userId, id, "Created document") map { log =>
+          val newDoc = docWithIsPaid.copy(id = id, lastAction = Some(log.id))
+          update(newDoc).get
+        }
       }
     }
   }
