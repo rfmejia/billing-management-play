@@ -234,6 +234,7 @@ The following sections are default routes supplied by [SecureSocial](http://secu
 - [ ] Separate previous and current month's *extraction* from the template
 - [ ] Separate previous and current month's amountPaid
 - [x] Add isEditable flag, true upon creation, false when document for next month is created
+- [ ] Document should still be assignable even when not editable (?)
 
 ### Reports
 
