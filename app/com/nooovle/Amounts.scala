@@ -22,21 +22,20 @@ object Amounts {
 }
 
 case class MonthlyAmounts(rent: Amounts, electricity: Amounts, water: Amounts, cusa: Amounts) {
-  val isPaid = List(rent, electricity, water, cusa).foldLeft(true)(_ && _.isPaid)
+  val isPaid: Boolean = List(rent, electricity, water, cusa).foldLeft(true)(_ && _.isPaid)
+  val total: Double = List(rent, electricity, water, cusa).map(_.total).sum
 
   def +(that: MonthlyAmounts) = MonthlyAmounts(
     this.rent + that.rent,
     this.electricity + that.electricity,
     this.water + that.water,
-    this.cusa + that.cusa
-  )
+    this.cusa + that.cusa)
 
   def -(that: MonthlyAmounts) = MonthlyAmounts(
     this.rent - that.rent,
     this.electricity - that.electricity,
     this.water - that.water,
-    this.cusa - that.cusa
-  )
+    this.cusa - that.cusa)
 
 }
 

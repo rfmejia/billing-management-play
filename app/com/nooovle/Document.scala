@@ -86,7 +86,7 @@ object Document extends ((Int, Option[SerialNumber], String, String, String, Dat
       val newBody: JsObject = previousDoc.map { prevDoc =>
         val (prevCurr, _) = Templates.extractAmounts(prevDoc)
         val paymentHistory = Json.obj(
-          "witholding_tax" -> 0,
+          "withholding_tax" -> 0,
           "previous_charges" -> 0,
           "rent" -> Json.obj(
             "unpaid" -> prevCurr.rent.unpaid,
@@ -94,7 +94,7 @@ object Document extends ((Int, Option[SerialNumber], String, String, String, Dat
             "penalty_value" -> 0
           ),
           "electricity" -> Json.obj(
-            "unpaid" -> prevCurr.water.unpaid,
+            "unpaid" -> prevCurr.electricity.unpaid,
             "penalty_percent" -> 0,
             "penalty_value" -> 0
           ),
@@ -109,9 +109,29 @@ object Document extends ((Int, Option[SerialNumber], String, String, String, Dat
             "penalty_value" -> 0
           )
         )
+        val sectionTotal = Json.obj(
+          "id" -> "_previous_total",
+          "title" -> "Previous charges total",
+          "datatype" -> "currency",
+          "value" -> prevCurr.total)
+        val fields = Json.arr(
+          Json.obj(
+            "id" -> "_overdue_charges",
+            "title" -> "Overdue Charges",
+            "datatype" -> "currency",
+            "value" -> 0),
+          Json.obj(
+            "id" -> "_other_charges",
+            "title" -> "Other Charges",
+            "datatype" -> "currency",
+            "value" -> 0))
+    
         body ++ Json.obj(
           "previous" -> Json.obj(
+            "title" -> "Previous charges",
             "sections" -> Json.arr(
+              Json.obj("sectionTotal" -> sectionTotal),
+              Json.obj("fields" -> fields),
               Json.obj("payment_history" -> paymentHistory)
             )
           )
