@@ -230,7 +230,7 @@ The following sections are default routes supplied by [SecureSocial](http://secu
 - [x] ...to **admin role**
 - [x] Unassign document after moving mailbox
 - [x] Prevent assigning if someone is already assigned
-- [ ] Create case class for grouping monthly amounts
+- [x] Create case class for grouping monthly amounts
 - [ ] Separate previous and current month's *extraction* from the template
 - [ ] Separate previous and current month's amountPaid
 - [x] Add isEditable flag, true upon creation, false when document for next month is created
