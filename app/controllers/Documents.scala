@@ -151,11 +151,9 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
         if (!existingDoc.assigned.exists(_ == request.user.userId)) {
           Forbidden(Messages("hoa.documents.forbidden.NotAssigned")
             + s" (Assigned to '${existingDoc.assigned}')")
-        }
-        else if (!existingDoc.isEditable) {
+        } else if (!existingDoc.isEditable) {
           Forbidden("Document is no longer editable")
-        }
-        else {
+        } else {
           val json = request.body
           (
             (json \ "body").asOpt[JsObject],

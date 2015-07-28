@@ -113,19 +113,23 @@ object Document extends ((Int, Option[SerialNumber], String, String, String, Dat
           "id" -> "_previous_total",
           "title" -> "Previous charges total",
           "datatype" -> "currency",
-          "value" -> prevCurr.total)
+          "value" -> prevCurr.total
+        )
         val fields = Json.arr(
           Json.obj(
             "id" -> "_overdue_charges",
             "title" -> "Overdue Charges",
             "datatype" -> "currency",
-            "value" -> 0),
+            "value" -> 0
+          ),
           Json.obj(
             "id" -> "_other_charges",
             "title" -> "Other Charges",
             "datatype" -> "currency",
-            "value" -> 0))
-    
+            "value" -> 0
+          )
+        )
+
         body ++ Json.obj(
           "previous" -> Json.obj(
             "title" -> "Previous charges",

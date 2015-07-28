@@ -29,13 +29,15 @@ case class MonthlyAmounts(rent: Amounts, electricity: Amounts, water: Amounts, c
     this.rent + that.rent,
     this.electricity + that.electricity,
     this.water + that.water,
-    this.cusa + that.cusa)
+    this.cusa + that.cusa
+  )
 
   def -(that: MonthlyAmounts) = MonthlyAmounts(
     this.rent - that.rent,
     this.electricity - that.electricity,
     this.water - that.water,
-    this.cusa - that.cusa)
+    this.cusa - that.cusa
+  )
 
 }
 
