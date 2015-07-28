@@ -47,37 +47,38 @@ object Document extends ((Int, Option[SerialNumber], String, String, String, Dat
       (for (d <- documents if d.id === id) yield d).firstOption
     }
 
-  def findByTenantYearMonth(tenantId: Int, ym: YearMonth): Option[Document] =
-    ConnectionFactory.connect withSession { implicit session =>
-      (for(d <- documents if d.forTenant === tenantId && d.year === ym.getYear && d.month === ym.getMonthOfYear) yield d).firstOption
-    }
-
   def actionLogsOf(id: Int): List[ActionLog] =
     ConnectionFactory.connect withSession { implicit session =>
       (for (l <- actionLogs if l.what === id) yield l).sortBy(_.when).list
     }
 
+  /** 
+   * Check if document with the same tenant and current and future year/month do not exist
+   */
+  private def validCreationParams(forTenant: Int, forMonth: YearMonth): Boolean =
+    ConnectionFactory.connect withSession { implicit session =>
+      documents.filter(_.forTenant === forTenant).list
+        .map(d => new YearMonth(d.year, d.month))
+        .filter(_.compareTo(forMonth) >= 0)
+        .isEmpty
+    }
+
   /**
    * For a given tenant, return the latest monthly amount up to the given upper bound date.
    */
-  def findLastTenantDocument(forTenant: Int, upperBound: Option[YearMonth] = None): Option[Document] = {
-    def yearMonthToDateTime(ym: YearMonth) = ym.toDateTime(new DateTime(DateTimeZone.UTC))
-
-    val docs: List[Document] = ConnectionFactory.connect withSession { implicit session =>
-      documents.filter(_.forTenant === forTenant).list
+  private def findLastTenantDocument(forTenant: Int, upperBound: Option[YearMonth] = None): Option[Document] =
+     ConnectionFactory.connect withSession { implicit session =>
+      val forMonth = upperBound getOrElse YearMonth.now
+      val sorted = documents.filter(_.forTenant === forTenant).list
+        .map(d => (d, new YearMonth(d.year, d.month)))
+        .filter { case (_, date) => date.compareTo(forMonth) < 0 }
+        .sortWith { (a, b) => a._2.compareTo(b._2) > 0 }
+      println(s"sorted: $sorted")
+      sorted.headOption.map(_._1)
     }
-    Try {
-      val target = (upperBound map yearMonthToDateTime) getOrElse DateTime.now
-      docs.map { d => (d, yearMonthToDateTime(new YearMonth(d.year, d.month))) }
-        .filter { case (_, date) => date.isBefore(target) }
-        .minBy { case (_, date) => target.getMillis - date.getMillis }
-        ._1
-    }.toOption
-  }
 
   def insert(creator: User, docType: String, forTenant: Int, forMonth: YearMonth, body: JsObject): Try[Document] = {
-    // Check if document with the same tenant and current & future year/month do not exist
-    if (findByTenantYearMonth(forTenant, forMonth).isDefined) {
+    if (!validCreationParams(forTenant, forMonth)) {
       Failure(new IllegalStateException(s"Document for tenant ('${forTenant}', ${forMonth}) already exists"))
     } else {
       // Copy the unpaid charges from the previous month, if any

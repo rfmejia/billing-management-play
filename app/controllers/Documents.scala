@@ -133,11 +133,13 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
               val body = documentToHalJsObject(doc)
               Created(body.asJsValue).withHeaders("Location" -> link)
             case Failure(err) =>
-              Logger.error(s"Error in creating document", err)
               err match {
                 case clientErr: IllegalStateException =>
+                  Logger.info(s"Client error in creating document", err)
                   BadRequest(clientErr.getMessage)
-                case _ => InternalServerError(err.getMessage)
+                case _ => 
+                  Logger.error(s"Error in creating document", err)
+                  InternalServerError(err.getMessage)
               }
           }
         }
