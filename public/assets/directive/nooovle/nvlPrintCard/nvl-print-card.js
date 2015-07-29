@@ -30,5 +30,5 @@ function printCtrl(dateUtils) {
     vm.billDate = dateUtils.getMomentFromString(vm.document.month, vm.document.year);
     vm.currentDate = dateUtils.getLocalDateNow("MMMM DD, YYYY");
     vm.previous = vm.document.body.previous;
-    vm.paymentHistory = vm.document.body.previous.sections[0].paymentHistory;
+    vm.paymentHistory = vm.document.body.previous.sections[0].payment_history;
 }

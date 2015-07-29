@@ -17,7 +17,7 @@ function paymentHistoryCreator(roundoff) {
     PaymentHistory.prototype = {
         compute : function() {
             var getPercentage = function(percent, total) {
-                return roundoff((percent /100) * total);
+                return roundoff(((percent /100) * total), 2);
             };
 
             var previousCharges = this.withholding_tax + this.previous_charges + this.rent.unpaid + this.water.unpaid + this.electricity.unpaid + this.cusa.unpaid;
@@ -26,7 +26,7 @@ function paymentHistoryCreator(roundoff) {
             this.electricity.penalty_value = getPercentage(this.electricity.penalty_percent, this.electricity.unpaid);
             this.cusa.penalty_value = getPercentage(this.cusa.penalty_percent, this.cusa.unpaid);
 
-            var penaltyTotal = roundoff(this.rent.penalty_value + this.water.penalty_value + this.electricity.penalty_value + this.cusa.penalty_value);
+            var penaltyTotal = roundoff((this.rent.penalty_value + this.water.penalty_value + this.electricity.penalty_value + this.cusa.penalty_value), 2);
 
             return {
                 overdueChargesTotal : roundoff(previousCharges, 2),

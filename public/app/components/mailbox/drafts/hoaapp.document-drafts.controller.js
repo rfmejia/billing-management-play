@@ -135,12 +135,11 @@ function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, 
      * Submits the current document to the next box
      */
     function onSubmitClicked() {
-        dialogProvider.getCommentDialog("Submitting to next phase.",
-                                        vm.nextAction.title).then(okayClicked);
+        var message = "Invoice will now be shown in reports.";
+        var title = "Submit invoice?";
 
         //Save the document first, then submit
-        function okayClicked(comment) {
-            vm.currentComment = comment;
+        function okayClicked() {
             preparePostData();
             var postData = documentsHelper.formatServerData(docsResponse);
             docsApi.editDocument(documentId, postData).then(submit, error);
@@ -157,6 +156,8 @@ function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, 
 
         var error = function (error) {
         };
+
+        dialogProvider.getConfirmDialog(okayClicked, null, message, title);
     }
 
     /**

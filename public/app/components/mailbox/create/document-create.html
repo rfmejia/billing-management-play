@@ -54,6 +54,14 @@
                         </md-button>
                     </div>
 
+                    <div ng-if="documentCreate.error" layout="row" layout-align="end center">
+                        <span class="info" flex="10"><i class="fa fa-exclamation-circle fa-2x error-tint"></i></span>
+                        <div flex="60" class="error-tint">
+                            {{documentCreate.errorMessage}}
+                        </div>
+                        <div flex></div>
+                    </div>
+
                 </div>
             </md-card-content>
         </md-card>

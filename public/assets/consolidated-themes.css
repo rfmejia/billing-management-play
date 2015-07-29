@@ -584,3 +584,7 @@ h6.header-marginless {
 span.info {
     text-align: center;
 }
+
+.error-tint {
+    color: rgba(244, 67, 54, .88);
+}

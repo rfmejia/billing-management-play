@@ -19,6 +19,8 @@ function createController($state, documentsApi, documentsHelper, hoaToast, dateU
     vm.format = "MMMM-YYYY";
     /** The query search text **/
     vm.searchText = null;
+    /** Error to show **/
+    vm.errorMessage = "";
 
     //Function bindings
     vm.onTenantSelected = onTenantSelected;
@@ -27,7 +29,7 @@ function createController($state, documentsApi, documentsHelper, hoaToast, dateU
     vm.removeUtc = removeUtc;
     vm.prepareDraftPost = prepareDraftPost;
     vm.getMatches = getMatches;
-
+    vm.error = false;
 
     activate();
 
@@ -57,7 +59,9 @@ function createController($state, documentsApi, documentsHelper, hoaToast, dateU
         };
 
         var error = function(response) {
-            hoaToast.showSimpleToast("Sorry, we couldn't create your document")
+            hoaToast.showSimpleToast("Sorry, we couldn't create your document");
+            vm.error = true;
+            vm.errorMessage = response.message;
         };
 
         prepareDraftPost();
