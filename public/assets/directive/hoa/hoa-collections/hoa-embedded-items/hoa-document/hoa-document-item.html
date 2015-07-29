@@ -33,11 +33,12 @@
             <h3 class="list-item-owner">{{item.document.forTenant.tradeName}}</h3>
         </div>
 
-        <div flex="20">
-            <a href class="md-button md-default-theme md-primary no-uppercase inverse-button" ng-click="item.onItemUpdateClicked($event)" remove-focus>
+        <div flex="20" >
+            <a ng-if="item.document.isEditable" href class="md-button md-default-theme md-primary no-uppercase inverse-button" ng-click="item.onItemUpdateClicked($event)" remove-focus>
                 <i class="fa fa-pencil-square-o iconed-text"></i>
                 Update
             </a>
+            <span ng-if="!item.document.isEditable"><i class="fa fa-lock"></i></span>
         </div>
 
     </md-button>
@@ -52,8 +53,11 @@
         <div flex="20">
             <h3>{{item.document.forMonth | momentString: "MMM-YYYY"}}</h3>
         </div>
-        <div flex>
+        <div flex="40">
             <h3 class="list-item-owner">{{item.document.forTenant.tradeName}}</h3>
+        </div>
+        <div flex="20" >
+            <span ng-if="!item.document.isEditable"><i class="fa fa-lock"></i></span>
         </div>
     </md-button>
 </md-item>
