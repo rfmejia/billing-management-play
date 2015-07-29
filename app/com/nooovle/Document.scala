@@ -113,6 +113,7 @@ object Document extends ((Int, Option[SerialNumber], String, String, String, Dat
           "id" -> "_previous_total",
           "title" -> "Previous charges total",
           "datatype" -> "currency",
+          "required" -> true,
           "value" -> prevCurr.total
         )
         val fields = Json.arr(
@@ -120,24 +121,33 @@ object Document extends ((Int, Option[SerialNumber], String, String, String, Dat
             "id" -> "_overdue_charges",
             "title" -> "Overdue Charges",
             "datatype" -> "currency",
-            "value" -> 0
+            "required" -> false,
+            "value" -> JsNull
           ),
           Json.obj(
             "id" -> "_other_charges",
             "title" -> "Other Charges",
             "datatype" -> "currency",
-            "value" -> 0
+            "value" -> JsNull
           )
+        )
+        val summary = Json.obj(
+          "id" -> "previous_total",
+          "title" -> "Previous Total",
+          "datatype" -> "currency",
+          "required" -> true,
+          "value" -> 0
         )
 
         body ++ Json.obj(
           "previous" -> Json.obj(
-            "title" -> "Previous charges",
-            "sections" -> Json.arr(
-              Json.obj("sectionTotal" -> sectionTotal),
-              Json.obj("fields" -> fields),
-              Json.obj("payment_history" -> paymentHistory)
-            )
+            "title" -> "Previous Charges",
+            "sections" -> Json.arr(Json.obj(
+              "sectionTotal" -> sectionTotal,
+              "fields" -> fields,
+              "payment_history" -> paymentHistory
+            )),
+            "summary" -> summary
           )
         )
       } getOrElse body
