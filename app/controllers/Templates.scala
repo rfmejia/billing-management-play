@@ -86,13 +86,16 @@ object Templates {
             .map(doubleOrZero)
             .getOrElse(0.0)
         }
+        println(">>> amountPaid bug")
         val paid: Double = doubleOrZero(doc.amountPaid \ "current" \ s)
-        Right(Amounts(total, paid))
+        val result = Right(Amounts(total, paid))
+        println("<<<")
+        result
       } else Left(s"documents/${doc.id}: The document type '${doc.docType}' is not registered")
   })(d)
 
-  def extractCurrentAmounts(doc: Document): MonthlyAmounts =
-    MonthlyAmounts(
+  def extractCurrentAmounts(doc: Document): CurrentMonth =
+    CurrentMonth(
       Templates.extractSectionTotal(doc, "rent"),
       Templates.extractSectionTotal(doc, "electricity"),
       Templates.extractSectionTotal(doc, "water"),
@@ -114,15 +117,17 @@ object Templates {
       } else Left(s"documents/${doc.id}: The document type '${doc.docType}' is not registered")
   })(d)
 
-  def extractPreviousAmounts(doc: Document): MonthlyAmounts =
-    MonthlyAmounts(
+  def extractPreviousAmounts(doc: Document): PreviousMonth =
+    PreviousMonth(
       extractPaymentHistory(doc, "rent"),
       extractPaymentHistory(doc, "electricity"),
       extractPaymentHistory(doc, "water"),
-      extractPaymentHistory(doc, "cusa")
+      extractPaymentHistory(doc, "cusa"),
+      extractPaymentHistory(doc, "withholding_tax"),
+      extractPaymentHistory(doc, "previousCharges")
     )
 
-  def extractAmounts(doc: Document): (MonthlyAmounts, MonthlyAmounts) =
+  def extractAmounts(doc: Document): (CurrentMonth, PreviousMonth) =
     (extractCurrentAmounts(doc), extractPreviousAmounts(doc))
 
   lazy val invoice1: JsObject = {

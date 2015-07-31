@@ -31,8 +31,8 @@ class Reports(override implicit val env: RuntimeEnvironment[User])
         }
 
         val amounts = docs.map(d => Templates.extractAmounts(d))
-        val current = amounts.map(_._1).foldLeft(MonthlyAmounts.Zero)(_ + _)
-        val previous = amounts.map(_._2).foldLeft(MonthlyAmounts.Zero)(_ + _)
+        val current = amounts.map(_._1).foldLeft(CurrentMonth.Zero)(_ + _)
+        val previous = amounts.map(_._2).foldLeft(PreviousMonth.Zero)(_ + _)
 
         def expandDate(ym: YearMonth): JsObject =
           JsObject(Seq(
