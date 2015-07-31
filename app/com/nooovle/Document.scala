@@ -79,7 +79,7 @@ object Document extends ((Int, Option[SerialNumber], String, String, String, Dat
 
   def insert(creator: User, docType: String, forTenant: Int, forMonth: YearMonth, body: JsObject): Try[Document] = {
     if (!validCreationParams(forTenant, forMonth)) {
-      Failure(new IllegalStateException(s"Document for tenant ('${forTenant}', ${forMonth}) already exists"))
+      Failure(new IllegalStateException(s"Document for tenant dated ${forMonth} already exists"))
     } else {
       // Copy the unpaid charges from the previous month, if any
       val previousDoc = findLastTenantDocument(forTenant, Some(forMonth))
