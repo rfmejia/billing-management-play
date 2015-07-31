@@ -61,7 +61,7 @@ object Templates {
     case JsNumber(x) => x.doubleValue
     case JsNull => 0.0
     case _ =>
-      Logger.warn(s"Supplied value '${value.toString}' is a valid number")
+      Logger.warn(s"Supplied value '${value.toString}' is not a valid number")
       0.0
   }
 
