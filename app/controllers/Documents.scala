@@ -305,9 +305,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
       obj2.withEmbedded(embedded.withField("tenant", tenant.asJsValue))
     } getOrElse obj2
 
-    val withAssignLinks = appendAssignLinks(obj3)
-
-    withAssignLinks
+    appendAmounts(appendAssignLinks(obj3))
   }
 
   private def appendAssignLinks(obj: HalJsObject)(implicit request: RequestHeader, doc: Document): HalJsObject =
