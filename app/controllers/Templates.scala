@@ -88,9 +88,8 @@ object Templates {
         }
         println(">>> amountPaid bug")
         val paid: Double = doubleOrZero(doc.amountPaid \ "current" \ s)
-        val result = Right(Amounts(total, paid))
         println("<<<")
-        result
+        Right(Amounts(total, paid))
       } else Left(s"documents/${doc.id}: The document type '${doc.docType}' is not registered")
   })(d)
 
@@ -102,14 +101,21 @@ object Templates {
       Templates.extractSectionTotal(doc, "cusa")
     )
 
-  def extractPaymentHistory(d: Document, s: String) = extractWith({
+  def extractPaymentHistory(d: Document, s: String): Amounts = extractWith({
     doc =>
       if (doc.docType == "invoice-1") {
         Try {
           val paymentHistory: JsObject = (doc.body \ "previous" \\ "payment_history").head.as[JsObject]
-          val unpaid = doubleOrZero(paymentHistory \ s \ "unpaid")
+          val obj = paymentHistory \ s
           val paid = doubleOrZero(doc.amountPaid \ "previous" \ s)
-          Amounts(unpaid, paid)
+          if (s == "withholding_tax" || s == "previous_charges") {
+            val unpaid = doubleOrZero(obj)
+            Amounts(unpaid, paid)
+          }
+          else {
+            val unpaid = doubleOrZero(obj \ "unpaid")
+            Amounts(unpaid, paid)
+          }
         } match {
           case Success(amt) => Right(amt)
           case Failure(err) => Left(s"documents/${doc.id}: ${err.getMessage}")
@@ -117,15 +123,16 @@ object Templates {
       } else Left(s"documents/${doc.id}: The document type '${doc.docType}' is not registered")
   })(d)
 
-  def extractPreviousAmounts(doc: Document): PreviousMonth =
+  def extractPreviousAmounts(doc: Document): PreviousMonth = {
     PreviousMonth(
       extractPaymentHistory(doc, "rent"),
       extractPaymentHistory(doc, "electricity"),
       extractPaymentHistory(doc, "water"),
       extractPaymentHistory(doc, "cusa"),
       extractPaymentHistory(doc, "withholding_tax"),
-      extractPaymentHistory(doc, "previousCharges")
+      extractPaymentHistory(doc, "previous_charges")
     )
+}
 
   def extractAmounts(doc: Document): (CurrentMonth, PreviousMonth) =
     (extractCurrentAmounts(doc), extractPreviousAmounts(doc))
