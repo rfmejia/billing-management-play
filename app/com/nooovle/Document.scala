@@ -73,38 +73,32 @@ object Document extends ((Int, Option[SerialNumber], String, String, String, Dat
         .map(d => (d, new YearMonth(d.year, d.month)))
         .filter { case (_, date) => date.compareTo(forMonth) < 0 }
         .sortWith { (a, b) => a._2.compareTo(b._2) > 0 }
-      println(s"sorted: $sorted")
       sorted.headOption.map(_._1)
     }
 
-  def insert(creator: User, docType: String, forTenant: Int, forMonth: YearMonth, body: JsObject): Try[Document] = {
-    if (!validCreationParams(forTenant, forMonth)) {
-      Failure(new IllegalStateException(s"Document for tenant dated ${forMonth} already exists"))
-    } else {
-      // Copy the unpaid charges from the previous month, if any
-      val previousDoc = findLastTenantDocument(forTenant, Some(forMonth))
-      val newBody: JsObject = previousDoc.map { prevDoc =>
-        val (prevCurr, _) = Templates.extractAmounts(prevDoc)
+  private def generateNewDocumentBody(origBody: JsObject, previousDoc: Document): JsObject = {
+    val (lastMonth, twoMonthsAgo) = Templates.extractAmounts(previousDoc)
+        val previousCharges = twoMonthsAgo.unpaid
         val paymentHistory = Json.obj(
           "withholding_tax" -> 0,
-          "previous_charges" -> 0,
+          "previous_charges" -> previousCharges,
           "rent" -> Json.obj(
-            "unpaid" -> prevCurr.rent.unpaid,
+            "unpaid" -> lastMonth.rent.unpaid,
             "penalty_percent" -> 0,
             "penalty_value" -> 0
           ),
           "electricity" -> Json.obj(
-            "unpaid" -> prevCurr.electricity.unpaid,
+            "unpaid" -> lastMonth.electricity.unpaid,
             "penalty_percent" -> 0,
             "penalty_value" -> 0
           ),
           "water" -> Json.obj(
-            "unpaid" -> prevCurr.water.unpaid,
+            "unpaid" -> lastMonth.water.unpaid,
             "penalty_percent" -> 0,
             "penalty_value" -> 0
           ),
           "cusa" -> Json.obj(
-            "unpaid" -> prevCurr.cusa.unpaid,
+            "unpaid" -> lastMonth.cusa.unpaid,
             "penalty_percent" -> 0,
             "penalty_value" -> 0
           )
@@ -114,7 +108,7 @@ object Document extends ((Int, Option[SerialNumber], String, String, String, Dat
           "title" -> "Previous charges total",
           "datatype" -> "currency",
           "required" -> true,
-          "value" -> prevCurr.total
+          "value" -> 0
         )
         val fields = Json.arr(
           Json.obj(
@@ -122,13 +116,13 @@ object Document extends ((Int, Option[SerialNumber], String, String, String, Dat
             "title" -> "Overdue Charges",
             "datatype" -> "currency",
             "required" -> false,
-            "value" -> JsNull
+            "value" -> 0
           ),
           Json.obj(
             "id" -> "_other_charges",
             "title" -> "Other Charges",
             "datatype" -> "currency",
-            "value" -> JsNull
+            "value" -> 0
           )
         )
         val summary = Json.obj(
@@ -139,7 +133,7 @@ object Document extends ((Int, Option[SerialNumber], String, String, String, Dat
           "value" -> 0
         )
 
-        body ++ Json.obj(
+        origBody ++ Json.obj(
           "previous" -> Json.obj(
             "title" -> "Previous Charges",
             "sections" -> Json.arr(Json.obj(
@@ -150,7 +144,16 @@ object Document extends ((Int, Option[SerialNumber], String, String, String, Dat
             "summary" -> summary
           )
         )
-      } getOrElse body
+  
+  }
+
+  def insert(creator: User, docType: String, forTenant: Int, forMonth: YearMonth, body: JsObject): Try[Document] = {
+    if (!validCreationParams(forTenant, forMonth)) {
+      Failure(new IllegalStateException(s"Document for tenant dated ${forMonth} already exists"))
+    } else {
+      // Copy the unpaid charges from the previous month, if any
+      val previousDoc = findLastTenantDocument(forTenant, Some(forMonth))
+      val newBody = previousDoc.map(generateNewDocumentBody(body, _)).getOrElse(body)
 
       val creationTime = new DateTime()
       val doc = Document(0, None, docType, Mailbox.start.name,

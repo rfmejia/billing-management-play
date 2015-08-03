@@ -21,7 +21,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
   lazy val createForm: JsObject = getCreateTemplate("DOCUMENTS")
   lazy val editForm: JsObject = getEditTemplate("DOCUMENTS")
 
-  def show(id: Int) = Action { implicit request =>
+  def show(id: Int) = SecuredAction { implicit request =>
     Document.findById(id) match {
       case Some(doc) =>
         Ok(documentToHalJsObject(doc).asJsValue)

@@ -231,10 +231,13 @@ The following sections are default routes supplied by [SecureSocial](http://secu
 - [x] Unassign document after moving mailbox
 - [x] Prevent assigning if someone is already assigned
 - [x] Create case class for grouping monthly amounts
-- [ ] Separate previous and current month's *extraction* from the template
-- [ ] Separate previous and current month's amountPaid
+- [x] Separate previous and current month's *extraction* from the template
+- [x] Separate previous and current month's amountPaid
 - [x] Add isEditable flag, true upon creation, false when document for next month is created
-- [ ] Document should still be assignable even when not editable (?)
+- [x] Document should still be un/assignable even when not editable
+- [x] Fix extraction of withholding tax, previous
+- [x] When creating the next month's document, *sum previous* section and *add previousCharges* to get *previousCharges* for next month
+- [x] When creating the next month's document, copy *current* section to get *previous* section for next month
 
 ### Reports
 
