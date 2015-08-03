@@ -21,60 +21,61 @@ object DomainModelWrites {
   }
 
   implicit val monthlyAmountWrites: Writes[MonthlyAmount] = Writes {
-    month => month match {
-      case m: CurrentMonth =>
-        Json.obj(
-          "isPaid" -> m.isPaid,
-          "sections" -> Json.arr(
-            Json.obj(
-              "name" -> "rent",
-              "amounts" -> m.rent
-            ),
-            Json.obj(
-              "name" -> "electricity",
-              "amounts" -> m.electricity
-            ),
-            Json.obj(
-              "name" -> "water",
-              "amounts" -> m.water
-            ),
-            Json.obj(
-              "name" -> "cusa",
-              "amounts" -> m.cusa
+    month =>
+      month match {
+        case m: CurrentMonth =>
+          Json.obj(
+            "isPaid" -> m.isPaid,
+            "sections" -> Json.arr(
+              Json.obj(
+                "name" -> "rent",
+                "amounts" -> m.rent
+              ),
+              Json.obj(
+                "name" -> "electricity",
+                "amounts" -> m.electricity
+              ),
+              Json.obj(
+                "name" -> "water",
+                "amounts" -> m.water
+              ),
+              Json.obj(
+                "name" -> "cusa",
+                "amounts" -> m.cusa
+              )
             )
           )
-        )
-      case m: PreviousMonth =>
-        Json.obj(
-          "isPaid" -> m.isPaid,
-          "sections" -> Json.arr(
-            Json.obj(
-              "name" -> "rent",
-              "amounts" -> m.rent
-            ),
-            Json.obj(
-              "name" -> "electricity",
-              "amounts" -> m.electricity
-            ),
-            Json.obj(
-              "name" -> "water",
-              "amounts" -> m.water
-            ),
-            Json.obj(
-              "name" -> "cusa",
-              "amounts" -> m.cusa
-            ),
-            Json.obj(
-              "name" -> "withholding_tax",
-              "amounts" -> m.withholdingTax
-            ),
-            Json.obj(
-              "name" -> "previousCharges",
-              "amounts" -> m.previousCharges
+        case m: PreviousMonth =>
+          Json.obj(
+            "isPaid" -> m.isPaid,
+            "sections" -> Json.arr(
+              Json.obj(
+                "name" -> "rent",
+                "amounts" -> m.rent
+              ),
+              Json.obj(
+                "name" -> "electricity",
+                "amounts" -> m.electricity
+              ),
+              Json.obj(
+                "name" -> "water",
+                "amounts" -> m.water
+              ),
+              Json.obj(
+                "name" -> "cusa",
+                "amounts" -> m.cusa
+              ),
+              Json.obj(
+                "name" -> "withholding_tax",
+                "amounts" -> m.withholdingTax
+              ),
+              Json.obj(
+                "name" -> "previousCharges",
+                "amounts" -> m.previousCharges
+              )
             )
           )
-        )
-  }
+      }
   }
 
   implicit val roleWrites: Writes[Role] = Writes {

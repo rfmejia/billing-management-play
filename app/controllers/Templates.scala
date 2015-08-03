@@ -109,8 +109,7 @@ object Templates {
           if (s == "withholding_tax" || s == "previous_charges") {
             val unpaid = doubleOrZero(obj)
             Amounts(unpaid, paid)
-          }
-          else {
+          } else {
             val unpaid = doubleOrZero(obj \ "unpaid")
             Amounts(unpaid, paid)
           }
@@ -130,7 +129,7 @@ object Templates {
       extractPaymentHistory(doc, "withholding_tax"),
       extractPaymentHistory(doc, "previous_charges")
     )
-}
+  }
 
   def extractAmounts(doc: Document): (CurrentMonth, PreviousMonth) =
     (extractCurrentAmounts(doc), extractPreviousAmounts(doc))

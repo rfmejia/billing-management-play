@@ -87,73 +87,73 @@ object Document extends ((Int, Option[SerialNumber], String, String, String, Dat
 
   private def generateNewDocumentBody(origBody: JsObject, previousDoc: Document): JsObject = {
     val (lastMonth, twoMonthsAgo) = Templates.extractAmounts(previousDoc)
-        val previousCharges = twoMonthsAgo.unpaid
-        val paymentHistory = Json.obj(
-          "withholding_tax" -> 0,
-          "previous_charges" -> previousCharges,
-          "rent" -> Json.obj(
-            "unpaid" -> lastMonth.rent.unpaid,
-            "penalty_percent" -> 0,
-            "penalty_value" -> 0
-          ),
-          "electricity" -> Json.obj(
-            "unpaid" -> lastMonth.electricity.unpaid,
-            "penalty_percent" -> 0,
-            "penalty_value" -> 0
-          ),
-          "water" -> Json.obj(
-            "unpaid" -> lastMonth.water.unpaid,
-            "penalty_percent" -> 0,
-            "penalty_value" -> 0
-          ),
-          "cusa" -> Json.obj(
-            "unpaid" -> lastMonth.cusa.unpaid,
-            "penalty_percent" -> 0,
-            "penalty_value" -> 0
-          )
-        )
-        val sectionTotal = Json.obj(
-          "id" -> "_previous_total",
-          "title" -> "Previous charges total",
-          "datatype" -> "currency",
-          "required" -> true,
-          "value" -> 0
-        )
-        val fields = Json.arr(
-          Json.obj(
-            "id" -> "_overdue_charges",
-            "title" -> "Overdue Charges",
-            "datatype" -> "currency",
-            "required" -> false,
-            "value" -> 0
-          ),
-          Json.obj(
-            "id" -> "_other_charges",
-            "title" -> "Other Charges",
-            "datatype" -> "currency",
-            "value" -> 0
-          )
-        )
-        val summary = Json.obj(
-          "id" -> "previous_total",
-          "title" -> "Previous Total",
-          "datatype" -> "currency",
-          "required" -> true,
-          "value" -> 0
-        )
+    val previousCharges = twoMonthsAgo.unpaid
+    val paymentHistory = Json.obj(
+      "withholding_tax" -> 0,
+      "previous_charges" -> previousCharges,
+      "rent" -> Json.obj(
+        "unpaid" -> lastMonth.rent.unpaid,
+        "penalty_percent" -> 0,
+        "penalty_value" -> 0
+      ),
+      "electricity" -> Json.obj(
+        "unpaid" -> lastMonth.electricity.unpaid,
+        "penalty_percent" -> 0,
+        "penalty_value" -> 0
+      ),
+      "water" -> Json.obj(
+        "unpaid" -> lastMonth.water.unpaid,
+        "penalty_percent" -> 0,
+        "penalty_value" -> 0
+      ),
+      "cusa" -> Json.obj(
+        "unpaid" -> lastMonth.cusa.unpaid,
+        "penalty_percent" -> 0,
+        "penalty_value" -> 0
+      )
+    )
+    val sectionTotal = Json.obj(
+      "id" -> "_previous_total",
+      "title" -> "Previous charges total",
+      "datatype" -> "currency",
+      "required" -> true,
+      "value" -> 0
+    )
+    val fields = Json.arr(
+      Json.obj(
+        "id" -> "_overdue_charges",
+        "title" -> "Overdue Charges",
+        "datatype" -> "currency",
+        "required" -> false,
+        "value" -> 0
+      ),
+      Json.obj(
+        "id" -> "_other_charges",
+        "title" -> "Other Charges",
+        "datatype" -> "currency",
+        "value" -> 0
+      )
+    )
+    val summary = Json.obj(
+      "id" -> "previous_total",
+      "title" -> "Previous Total",
+      "datatype" -> "currency",
+      "required" -> true,
+      "value" -> 0
+    )
 
-        origBody ++ Json.obj(
-          "previous" -> Json.obj(
-            "title" -> "Previous Charges",
-            "sections" -> Json.arr(Json.obj(
-              "sectionTotal" -> sectionTotal,
-              "fields" -> fields,
-              "payment_history" -> paymentHistory
-            )),
-            "summary" -> summary
-          )
-        )
-  
+    origBody ++ Json.obj(
+      "previous" -> Json.obj(
+        "title" -> "Previous Charges",
+        "sections" -> Json.arr(Json.obj(
+          "sectionTotal" -> sectionTotal,
+          "fields" -> fields,
+          "payment_history" -> paymentHistory
+        )),
+        "summary" -> summary
+      )
+    )
+
   }
 
   def insert(creator: User, docType: String, forTenant: Int, forMonth: YearMonth, body: JsObject): Try[Document] = {
