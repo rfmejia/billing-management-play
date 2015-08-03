@@ -236,8 +236,8 @@ The following sections are default routes supplied by [SecureSocial](http://secu
 - [x] Add isEditable flag, true upon creation, false when document for next month is created
 - [x] Document should still be un/assignable even when not editable
 - [x] Fix extraction of withholding tax, previous
-- [ ] When creating the next month's document, *sum previous* section and *add previousCharges* to get *previousCharges* for next month
-- [ ] When creating the next month's document, copy *current* section to get *previous* section for next month
+- [x] When creating the next month's document, *sum previous* section and *add previousCharges* to get *previousCharges* for next month
+- [x] When creating the next month's document, copy *current* section to get *previous* section for next month
 
 ### Reports
 

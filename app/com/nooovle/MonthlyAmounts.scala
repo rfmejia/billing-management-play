@@ -4,6 +4,8 @@ trait MonthlyAmount {
   val all: List[Amounts]
 
   lazy val isPaid: Boolean = all.foldLeft(true)(_ && _.isPaid)
+  lazy val unpaid: Double = all.map(_.unpaid).sum
+  lazy val paid: Double = all.map(_.paid).sum
   lazy val total: Double = all.map(_.total).sum
 }
 

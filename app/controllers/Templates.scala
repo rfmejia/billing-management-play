@@ -86,9 +86,7 @@ object Templates {
             .map(doubleOrZero)
             .getOrElse(0.0)
         }
-        println(">>> amountPaid bug")
         val paid: Double = doubleOrZero(doc.amountPaid \ "current" \ s)
-        println("<<<")
         Right(Amounts(total, paid))
       } else Left(s"documents/${doc.id}: The document type '${doc.docType}' is not registered")
   })(d)
