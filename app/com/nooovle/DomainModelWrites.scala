@@ -29,18 +29,22 @@ object DomainModelWrites {
             "sections" -> Json.arr(
               Json.obj(
                 "name" -> "rent",
+                "title" -> "Rent",
                 "amounts" -> m.rent
               ),
               Json.obj(
                 "name" -> "electricity",
+                "title" -> "Electricity",
                 "amounts" -> m.electricity
               ),
               Json.obj(
                 "name" -> "water",
+                "title" -> "Water",
                 "amounts" -> m.water
               ),
               Json.obj(
                 "name" -> "cusa",
+                "title" -> "CUSA",
                 "amounts" -> m.cusa
               )
             )
@@ -51,26 +55,32 @@ object DomainModelWrites {
             "sections" -> Json.arr(
               Json.obj(
                 "name" -> "rent",
+                "title" -> "Rent",
                 "amounts" -> m.rent
               ),
               Json.obj(
                 "name" -> "electricity",
+                "title" -> "Electricity",
                 "amounts" -> m.electricity
               ),
               Json.obj(
                 "name" -> "water",
+                "title" -> "Water",
                 "amounts" -> m.water
               ),
               Json.obj(
                 "name" -> "cusa",
+                "title" -> "CUSA",
                 "amounts" -> m.cusa
               ),
               Json.obj(
                 "name" -> "withholding_tax",
+                "title" -> "Withholding Tax",
                 "amounts" -> m.withholdingTax
               ),
               Json.obj(
-                "name" -> "previousCharges",
+                "name" -> "previous_charges",
+                "title" -> "Previous Charges",
                 "amounts" -> m.previousCharges
               )
             )
