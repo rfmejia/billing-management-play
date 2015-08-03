@@ -34,13 +34,22 @@ case class Document(
 object Document extends ((Int, Option[SerialNumber], String, String, String, DateTime, Int, Int, Int, Boolean, Boolean, JsObject, JsObject, JsObject, Option[String], Option[Int], Option[Int]) => Document) with ModelTemplate {
 
   private val defaultAmountPaid: JsObject =
-    JsObject(Seq(
-      "previous" -> JsNumber(0.0),
-      "rent" -> JsNumber(0.0),
-      "electricity" -> JsNumber(0.0),
-      "water" -> JsNumber(0.0),
-      "cusa" -> JsNumber(0.0)
-    ))
+    Json.obj(
+      "current" -> Json.obj(
+        "rent" -> 0.0,
+        "electricity" -> 0.0,
+        "water" -> 0.0,
+        "cusa" -> 0.0
+      ),
+      "previous" -> Json.obj(
+        "rent" -> 0.0,
+        "electricity" -> 0.0,
+        "water" -> 0.0,
+        "cusa" -> 0.0,
+        "withholding_tax" -> 0.0,
+        "previous_charges" -> 0.0
+      )
+    )
 
   def findById(id: Int): Option[Document] =
     ConnectionFactory.connect withSession { implicit session =>
