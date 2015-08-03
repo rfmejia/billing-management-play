@@ -130,11 +130,19 @@ function documentHelper(mailboxParam) {
     }
 
     function formatPaidPostData(amounts, amountPaid, comments) {
-        angular.forEach(amounts.sections, function(section) {
-            if (amountPaid.hasOwnProperty(section.name)) {
-                amountPaid[section.name] = section.amounts.paid;
+        angular.forEach(amounts.current.sections, function(section) {
+            if (amountPaid.current.hasOwnProperty(section.name)) {
+                amountPaid.current[section.name] = section.amounts.paid;
             }
         });
+
+        angular.forEach(amounts.previous.sections, function(section) {
+            if (amountPaid.previous.hasOwnProperty(section.name)) {
+                amountPaid.previous[section.name] = section.amounts.paid;
+            }
+        });
+
+
         return {
             amountPaid : amountPaid,
             comments   : comments

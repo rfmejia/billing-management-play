@@ -520,7 +520,8 @@ DRAFTS
     color: rgba(255, 255, 255, .87);
 }
 
-.draft-calculation .entry-pair{
+.draft-calculation .entry-pair,
+.report-block-content .entry-pair{
     margin-top: 12px;
     margin-bottom: 12px;
 }
@@ -532,7 +533,8 @@ DRAFTS
     color: rgba(255, 255, 255, .54);
 }
 
-.draft-calculation .value {
+.draft-calculation .value,
+.report-block-content .value{
     font-weight: 400;
     text-align: right;
     line-height: 1em;
@@ -587,4 +589,46 @@ span.info {
 
 .error-tint {
     color: rgba(244, 67, 54, .88);
+}
+
+md-grid-tile {
+    background-color: white;
+}
+
+.report-update-section {
+    margin-bottom: 38px;
+}
+
+.report-update-section {
+
+}
+
+.report-block-title {
+    padding: 16px;
+    height:40px;
+}
+
+.report-block-content {
+    padding: 16px;
+}
+
+.report-block-input {
+    height: 100px;
+    background: #616161;
+}
+
+.report-block-input md-input-container {
+    padding-left: 16px;
+    padding-right: 16px;
+}
+
+.report-block-input md-input-container.md-default-theme .md-input {
+    color: rgba(255, 255, 255, .84);
+}
+
+.report-block-content .title {
+    font-weight: 400;
+    text-align: right;
+    line-height: 1em;
+    color: rgba(0, 0, 0, .54);
 }
