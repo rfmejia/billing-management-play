@@ -49,7 +49,7 @@
                                         <div class="title">Unpaid</div>
                                     </section>
                                     <section class="entry-pair" layout-fill>
-                                        <div class="value">{{section.amounts.paid | currency : "PHP
+                                        <div class="value">{{section.amounts.recorded_value | currency : "PHP
                                             "}}
                                         </div>
                                         <div class="title">Paid</div>
@@ -67,7 +67,7 @@
                                         <input required ng-model="section.amounts.paid"
                                                type="number" name="paid"
                                                step="0.1"
-                                               min={{section.amounts.recorded_value}}
+                                               min="0.0"
                                                max={{section.amounts.total}}>
 
                                         <div ng-messages="pseudoForm.paid.$error">
@@ -104,7 +104,7 @@
                                         <div class="title">Unpaid</div>
                                     </section>
                                     <section class="entry-pair" layout-fill>
-                                        <div class="value">{{section.amounts.paid | currency : "PHP
+                                        <div class="value">{{section.amounts.recorded_value | currency : "PHP
                                             "}}
                                         </div>
                                         <div class="title">Paid</div>
@@ -121,7 +121,7 @@
                                         <label>Paid</label>
                                         <input required ng-model="section.amounts.paid"
                                                type="number" name="paid" step="0.1"
-                                               min={{section.amounts.recorded_value}}
+                                               min="0.0"
                                                max={{section.amounts.total}}>
 
                                         <div ng-messages="pseudoForm.paid.$error">

@@ -1,21 +1,7 @@
 <md-item flex
          class="document-items"
          layout="row">
-    <md-button ng-if="item.document.mailbox == 'paid'"
-               class="no-uppercase md-tile-content button-white"
-               layout="row"
-               ng-click="item.onItemClick()">
-        <div flex="20">
-            <h3>{{item.document.mailbox | tokenizedCamel}}</h3>
-        </div>
-        <div flex="20">
-            <h3>{{item.document.forMonth | momentString: "MMM-YYYY"}}</h3>
-        </div>
-        <div flex>
-            <h3 class="list-item-owner">{{item.document.forTenant.tradeName}}</h3>
-        </div>
-    </md-button>
-    <md-button ng-if="item.document.mailbox == 'unpaid'"
+    <md-button ng-if="item.document.mailbox == 'unpaid' || item.document.mailbox == 'paid'"
                layout="row"
                flex
                layout-align="space-between start"
