@@ -43,7 +43,7 @@ class Tenants(override implicit val env: RuntimeEnvironment[User])
         } getOrElse tenants
 
         val query = ts.drop(offset).take(limit).sortBy(_.tradeName)
-        (query.list, query.length.run)
+        (query.list, ts.length.run)
       }
 
     val objs = ts map { t =>
