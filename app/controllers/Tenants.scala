@@ -38,11 +38,12 @@ class Tenants(override implicit val env: RuntimeEnvironment[User])
   def list(offset: Int = 0, limit: Int = 10, startsWith: Option[String]) = SecuredAction { implicit request =>
     val (ts, total): (List[Tenant], Int) =
       ConnectionFactory.connect withSession { implicit session =>
-        val query = tenants.drop(offset).take(limit).sortBy(_.tradeName)
-        val withStartsWith = startsWith map {
-          s => query.filter(t => t.tradeName.toLowerCase.startsWith(s.toLowerCase))
-        } getOrElse query
-        (withStartsWith.list, withStartsWith.length.run)
+        val ts = startsWith map {
+          s => tenants.filter(t => t.tradeName.toLowerCase.startsWith(s.toLowerCase))
+        } getOrElse tenants
+
+        val query = ts.drop(offset).take(limit).sortBy(_.tradeName)
+        (query.list, query.length.run)
       }
 
     val objs = ts map { t =>
