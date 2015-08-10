@@ -17,10 +17,12 @@
                     <md-autocomplete
                             flex
                             md-selected-item="documentCreate.selectedTenant"
+                            md-selected-item-change="documentCreate.onTenantSelected(tenant, 0)"
                             md-search-text="documentCreate.searchText"
                             md-items="tenant in documentCreate.getMatches(documentCreate.searchText)"
                             md-item-text="tenant.tradeName"
-                            placeholder="Search for tenant">
+                            placeholder="Search for tenant"
+                            ng-model-options="{debounce : 500}">
                         <span md-highlight-text="documentCreate.searchText">{{tenant.tradeName}}</span>
                     </md-autocomplete>
                     <h6 class="text-muted text-center">Select billing period</h6>

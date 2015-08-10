@@ -32,26 +32,24 @@ md-content.main {
     /*padding-right: 32px;*/
 }
 
-
 /*
 BUTTONS ON TOOLBARS
 */
 .md-button.inverse-button.md-default-theme.active:not([disabled]),
 .md-button.inverse-button.md-default-theme.active:not([disabled]):focus,
-.md-button.inverse-button.md-default-theme.active:not([disabled]):hover{
+.md-button.inverse-button.md-default-theme.active:not([disabled]):hover {
     color: #00BCD4;
 }
 
 .md-button.inverse-button.md-default-theme:not([disabled]):focus,
-.md-button.inverse-button.md-default-theme:not([disabled]):hover{
+.md-button.inverse-button.md-default-theme:not([disabled]):hover {
     background-color: rgba(255, 255, 255, .87);
     color: #00BCD4;
 }
 
-.md-button.inverse-button.md-default-theme:not([disabled]){
+.md-button.inverse-button.md-default-theme:not([disabled]) {
     color: #727272;
 }
-
 
 md-toolbar.white-out .accented {
     color: #00BCD4;
@@ -64,9 +62,14 @@ md-whiteframe md-content.md-default-theme {
     background-color: #ffffff;
 }
 
+md-whiteframe.inner-padding md-content {
+    margin-left: 16px;
+    margin-right: 16px;
+}
+
 md-whiteframe:not(.unpadded) {
     padding-left: 16px;
-    padding-right:16px;
+    padding-right: 16px;
 }
 
 md-whiteframe.unpadded md-list .md-button {
@@ -85,7 +88,6 @@ AUTOCOMPLETE
 md-input-container.full-width {
     padding-bottom: 16px;
 }
-
 
 /*accordion*/
 .vAccordion--default v-accordion {
@@ -182,7 +184,6 @@ GENERIC FONT TYPES
     padding-right: 16px;
 }
 
-
 /*
 REPORTS
 */
@@ -237,7 +238,6 @@ SIDENAV
     font-weight: 700;
 }
 
-
 .main-secton a:hover,
 .main-secton a:focus {
     font-weight: 700;
@@ -270,11 +270,11 @@ md-sidenav {
     color: rgba(255, 255, 255, .87)
 }
 
-md-sidenav .md-button.dark-button.md-default-theme:not([disabled]){
+md-sidenav .md-button.dark-button.md-default-theme:not([disabled]) {
     color: rgba(255, 255, 255, .87);
 }
 
-md-sidenav .md-button.dark-button.md-default-theme:not([disabled]):hover{
+md-sidenav .md-button.dark-button.md-default-theme:not([disabled]):hover {
     color: rgba(255, 255, 255, .87);
     font-weight: 700;
 }
@@ -322,19 +322,19 @@ SIDE FILTERS FOR LISTS
 
 .side-filters .md-button.md-default-theme.active:not([disabled]),
 .side-filters .md-button.md-default-theme.active:not([disabled]):focus,
-.side-filters .md-button.md-default-theme.active:not([disabled]):hover{
+.side-filters .md-button.md-default-theme.active:not([disabled]):hover {
     color: #00BCD4;
     font-weight: 700;
 }
 
 .side-filters .md-button.md-default-theme:not([disabled]):focus,
-.side-filters .md-button.md-default-theme:not([disabled]):hover{
+.side-filters .md-button.md-default-theme:not([disabled]):hover {
     background-color: rgba(255, 255, 255, .87);
     color: #00BCD4;
     font-weight: 700;
 }
 
-.md-button.inverse-button.md-default-theme:not([disabled]){
+.md-button.inverse-button.md-default-theme:not([disabled]) {
     color: #727272;
 }
 
@@ -385,9 +385,11 @@ PAGINATION
     margin: 23px 0;
     border-radius: 3px;
 }
+
 .pagination > li {
     display: inline;
 }
+
 .pagination > li > a,
 .pagination > li > span {
     position: relative;
@@ -400,17 +402,20 @@ PAGINATION
     border: 1px solid #D8D8D8;
     margin-left: -1px;
 }
+
 .pagination > li:first-child > a,
 .pagination > li:first-child > span {
     margin-left: 0;
     border-bottom-left-radius: 3px;
     border-top-left-radius: 3px;
 }
+
 .pagination > li:last-child > a,
 .pagination > li:last-child > span {
     border-bottom-right-radius: 3px;
     border-top-right-radius: 3px;
 }
+
 .pagination > li > a:hover,
 .pagination > li > span:hover,
 .pagination > li > a:focus,
@@ -420,6 +425,7 @@ PAGINATION
     background-color: #FFFFFF;
     border-color: #D8D8D8;
 }
+
 .pagination > .active > a,
 .pagination > .active > span,
 .pagination > .active > a:hover,
@@ -432,6 +438,7 @@ PAGINATION
     border-color: #00BCD4;
     cursor: default;
 }
+
 .pagination > .disabled > span,
 .pagination > .disabled > span:hover,
 .pagination > .disabled > span:focus,
@@ -443,31 +450,37 @@ PAGINATION
     border-color: #D8D8D8;
     cursor: not-allowed;
 }
+
 .pagination-lg > li > a,
 .pagination-lg > li > span {
     padding: 10px 16px;
     font-size: 17px;
 }
+
 .pagination-lg > li:first-child > a,
 .pagination-lg > li:first-child > span {
     border-bottom-left-radius: 3px;
     border-top-left-radius: 3px;
 }
+
 .pagination-lg > li:last-child > a,
 .pagination-lg > li:last-child > span {
     border-bottom-right-radius: 3px;
     border-top-right-radius: 3px;
 }
+
 .pagination-sm > li > a,
 .pagination-sm > li > span {
     padding: 5px 10px;
     font-size: 12px;
 }
+
 .pagination-sm > li:first-child > a,
 .pagination-sm > li:first-child > span {
     border-bottom-left-radius: 3px;
     border-top-left-radius: 3px;
 }
+
 .pagination-sm > li:last-child > a,
 .pagination-sm > li:last-child > span {
     border-bottom-right-radius: 3px;
@@ -479,7 +492,7 @@ Animation css
 */
 [ui-view].ng-enter, [ui-view].ng-leave {
     position: absolute;
-    left : 0;
+    left: 0;
     right: 0;
     -webkit-transition: all .5s ease-in-out;
     transition: all .5s ease-in-out;
@@ -512,7 +525,6 @@ DRAFTS
     margin-left: 0px;
 }
 
-
 .draft-calculation,
 .previous-total {
     background-color: #61615D;
@@ -521,7 +533,7 @@ DRAFTS
 }
 
 .draft-calculation .entry-pair,
-.report-block-content .entry-pair{
+.report-block-content .entry-pair {
     margin-top: 12px;
     margin-bottom: 12px;
 }
@@ -534,7 +546,7 @@ DRAFTS
 }
 
 .draft-calculation .value,
-.report-block-content .value{
+.report-block-content .value {
     font-weight: 400;
     text-align: right;
     line-height: 1em;
@@ -562,7 +574,7 @@ h3.header-marginless,
 h4.header-marginless,
 h5.header-marginless,
 h6.header-marginless {
-  margin: 0px;
+    margin: 0px;
 }
 
 .invisible {
@@ -581,7 +593,8 @@ h6.header-marginless {
 /*ICONS*/
 .s24 {
     width: 24px;
-    height: 24px; }
+    height: 24px;
+}
 
 span.info {
     text-align: center;
@@ -605,7 +618,7 @@ md-grid-tile {
 
 .report-block-title {
     padding: 16px;
-    height:40px;
+    height: 40px;
 }
 
 .report-block-content {
