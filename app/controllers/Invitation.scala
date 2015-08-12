@@ -64,8 +64,6 @@ trait BaseInvitation[U] extends securesocial.controllers.BaseRegistration[U] wit
     mapping(
       "email" -> email.verifying(nonEmpty),
       Roles.Encoder.id -> boolean,
-      Roles.Checker.id -> boolean,
-      Roles.Approver.id -> boolean,
       Roles.Admin.id -> boolean
     )(InvitationInfo.apply)(InvitationInfo.unapply)
   )
@@ -119,8 +117,6 @@ trait BaseInvitation[U] extends securesocial.controllers.BaseRegistration[U] wit
         def f(b: Boolean, r: Role): Set[Role] = if (b) Set(r) else Set.empty
         val roles: Set[Role] =
           f(inv.isEncoder, Roles.Encoder) ++
-            f(inv.isChecker, Roles.Checker) ++
-            f(inv.isApprover, Roles.Approver) ++
             f(inv.isAdmin, Roles.Admin)
         Future.fromTry(User.updateRoles(userId, roles))
       case _ => Future.successful("Not an invitation, nothing saved")
@@ -190,12 +186,10 @@ trait BaseInvitation[U] extends securesocial.controllers.BaseRegistration[U] wit
 trait BaseInvitationInfo {
   val email: String
   val isEncoder: Boolean
-  val isChecker: Boolean
-  val isApprover: Boolean
   val isAdmin: Boolean
 }
 
-case class InvitationInfo(email: String, isEncoder: Boolean, isChecker: Boolean, isApprover: Boolean, isAdmin: Boolean) extends BaseInvitationInfo
+case class InvitationInfo(email: String, isEncoder: Boolean, isAdmin: Boolean) extends BaseInvitationInfo
 
 class InvitationMailToken(
     override val uuid: String,
@@ -204,20 +198,18 @@ class InvitationMailToken(
     override val expirationTime: DateTime,
     override val isSignUp: Boolean,
     val isEncoder: Boolean,
-    val isChecker: Boolean,
-    val isApprover: Boolean,
     val isAdmin: Boolean
 ) extends MailToken(uuid, email, creationTime, expirationTime, isSignUp) with BaseInvitationInfo {
 
-  lazy val invitationInfo = InvitationInfo(email, isEncoder, isChecker, isApprover, isAdmin)
+  lazy val invitationInfo = InvitationInfo(email, isEncoder, isAdmin)
 }
 
 object InvitationMailToken {
   def apply(token: MailToken, invitationInfo: Option[InvitationInfo]): InvitationMailToken = {
-    val inv = invitationInfo getOrElse InvitationInfo(token.email, false, false, false, false)
+    val inv = invitationInfo getOrElse InvitationInfo(token.email, false, false)
     new InvitationMailToken(
       token.uuid, token.email, token.creationTime, token.expirationTime, token.isSignUp,
-      inv.isEncoder, inv.isChecker, inv.isApprover, inv.isAdmin
+      inv.isEncoder, inv.isAdmin
     )
   }
 }

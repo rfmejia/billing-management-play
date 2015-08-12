@@ -32,14 +32,6 @@
                     '_showConstraints -> false)
 
                 @CSRF.formField
-                @checkbox(inviteForm(com.nooovle.Roles.Checker.id), '_label -> Messages("hoa.invite.roles.checker"),
-                    '_showConstraints -> false)
-
-                @CSRF.formField
-                @checkbox(inviteForm(com.nooovle.Roles.Approver.id), '_label -> Messages("hoa.invite.roles.approver"),
-                    '_showConstraints -> false)
-
-                @CSRF.formField
                 @checkbox(inviteForm(com.nooovle.Roles.Admin.id), '_label -> Messages("hoa.invite.roles.admin"),
                     '_showConstraints -> false)
             </div>

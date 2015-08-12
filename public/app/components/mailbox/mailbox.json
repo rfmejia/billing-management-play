@@ -39,39 +39,6 @@
             "permissions" : "encoder",
             "isVisible"   : false,
             "subFolders"  : []
-          },
-          {
-            "title"       : "For checking",
-            "path"        : "workspace.pending.for-checking",
-            "queryKey"    : "mailbox",
-            "queryParam"  : "forChecking",
-            "link"        : "forChecking",
-            "type"        : "mailbox",
-            "permissions" : "checker",
-            "isVisible"   : false,
-            "subFolders"  : []
-          },
-          {
-            "title"       : "For approval",
-            "path"        : "workspace.pending.for-approval",
-            "queryKey"    : "mailbox",
-            "queryParam"  : "forApproval",
-            "link"        : "forApproval",
-            "type"        : "mailbox",
-            "permissions" : "approver",
-            "isVisible"   : false,
-            "subFolders"  : []
-          },
-          {
-            "title"       : "For sending",
-            "path"        : "workspace.pending.for-sending",
-            "queryKey"    : "mailbox",
-            "queryParam"  : "forSending",
-            "link"        : "forSending",
-            "type"        : "mailbox",
-            "permissions" : "all",
-            "isVisible"   : true,
-            "subFolders"  : []
           }
         ]
       },

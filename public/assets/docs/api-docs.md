@@ -20,8 +20,6 @@ as of *2015.03.02*
 Worflow roles start with a capital letter. Only administrators are allowed to change roles
 
 - `Ad` => `administrator` role
-- `Ap` => `approver` role
-- `C`  => `checker` role
 - `E`  => `encoder` role
 - `c`  => Currently logged on user
 - `x`  => User assigned to the document
@@ -188,6 +186,7 @@ The following sections are default routes supplied by [SecureSocial](http://secu
 - [x] Allow access to user invitation when there is no user with an admin role
 - [x] Add mailbox filtering using on top-level boxes (pending, delivered)
 - [x] Add descriptive error messages in JSON when returning Forbidden responses
+- [ ] Create implicit writers for case classes
 
 ### Backend
 
@@ -212,8 +211,6 @@ The following sections are default routes supplied by [SecureSocial](http://secu
 - [x] Customize login page
 - [x] Show signup (invite) routes to administrators only
 
-### Authorization
-
 #### Users
 
 - [x] Restrict deletion of user to admin role
@@ -233,9 +230,18 @@ The following sections are default routes supplied by [SecureSocial](http://secu
 - [x] ...to **admin role**
 - [x] Unassign document after moving mailbox
 - [x] Prevent assigning if someone is already assigned
+- [x] Create case class for grouping monthly amounts
+- [x] Separate previous and current month's *extraction* from the template
+- [x] Separate previous and current month's amountPaid
+- [x] Add isEditable flag, true upon creation, false when document for next month is created
+- [x] Document should still be un/assignable even when not editable
+- [x] Fix extraction of withholding tax, previous
+- [x] When creating the next month's document, *sum previous* section and *add previousCharges* to get *previousCharges* for next month
+- [x] When creating the next month's document, copy *current* section to get *previous* section for next month
 
 ### Reports
 
 - [x] Summary of the *TOTAL* Rental, Electricity, Water, CUSA charged *every month*
 - [x] Summary of the *PAID* Rental, Electricity, Water, CUSA *every month*
 - [x] Summary of the *UNPAID* Rental, Electricity, Water, CUSA *every month*
+- [ ] Add current and previous month's totals

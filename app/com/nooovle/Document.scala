@@ -5,8 +5,8 @@ import com.nooovle.slick.ConnectionFactory
 import com.nooovle.slick.models.{ actionLogs, documents }
 import com.nooovle.slick.DocumentsModel
 import controllers.Templates
-import org.joda.time.{ DateTime, YearMonth }
-import play.api.libs.json.{ JsNumber, JsObject }
+import org.joda.time.{ DateTime, DateTimeZone, YearMonth }
+import play.api.libs.json._
 import play.api.Logger
 import scala.slick.driver.PostgresDriver.simple._
 import scala.util.{ Try, Success, Failure }
@@ -21,27 +21,35 @@ case class Document(
   forTenant: Int,
   year: Int,
   month: Int,
+  isEditable: Boolean,
   isPaid: Boolean,
   amountPaid: JsObject,
   body: JsObject,
   comments: JsObject,
   assigned: Option[String],
   lastAction: Option[Int] = None,
-  preparedAction: Option[Int] = None,
-  checkedAction: Option[Int] = None,
-  approvedAction: Option[Int] = None
+  preparedAction: Option[Int] = None
 )
 
-object Document extends ((Int, Option[SerialNumber], String, String, String, DateTime, Int, Int, Int, Boolean, JsObject, JsObject, JsObject, Option[String], Option[Int], Option[Int], Option[Int], Option[Int]) => Document) with ModelTemplate {
+object Document extends ((Int, Option[SerialNumber], String, String, String, DateTime, Int, Int, Int, Boolean, Boolean, JsObject, JsObject, JsObject, Option[String], Option[Int], Option[Int]) => Document) with ModelTemplate {
 
   private val defaultAmountPaid: JsObject =
-    JsObject(Seq(
-      "previous" -> JsNumber(0.0),
-      "rent" -> JsNumber(0.0),
-      "electricity" -> JsNumber(0.0),
-      "water" -> JsNumber(0.0),
-      "cusa" -> JsNumber(0.0)
-    ))
+    Json.obj(
+      "current" -> Json.obj(
+        "rent" -> 0.0,
+        "electricity" -> 0.0,
+        "water" -> 0.0,
+        "cusa" -> 0.0
+      ),
+      "previous" -> Json.obj(
+        "rent" -> 0.0,
+        "electricity" -> 0.0,
+        "water" -> 0.0,
+        "cusa" -> 0.0,
+        "withholding_tax" -> 0.0,
+        "previous_charges" -> 0.0
+      )
+    )
 
   def findById(id: Int): Option[Document] =
     ConnectionFactory.connect withSession { implicit session =>
@@ -53,24 +61,130 @@ object Document extends ((Int, Option[SerialNumber], String, String, String, Dat
       (for (l <- actionLogs if l.what === id) yield l).sortBy(_.when).list
     }
 
-  def insert(creator: User, docType: String, forTenant: Int, forMonth: YearMonth, body: JsObject): Try[Document] = {
-    val creationTime = new DateTime()
-    val doc = Document(0, None, docType, Mailbox.start.name,
-      creator.userId, creationTime, forTenant, forMonth.getYear,
-      forMonth.getMonthOfYear, true, defaultAmountPaid, body,
-      JsObject(Seq.empty), Some(creator.userId))
-
-    val (_, _, _, _, _, isPaid) = Templates.extractDefaultAmounts(doc)
-    val docWithIsPaid = doc.copy(isPaid = isPaid)
-
+  /**
+   * Check if document with the same tenant and current and future year/month do not exist
+   */
+  private def validCreationParams(forTenant: Int, forMonth: YearMonth): Boolean =
     ConnectionFactory.connect withSession { implicit session =>
-      // Return ID of newly inserted tenant
-      val id = (documents returning documents.map(_.id)) += docWithIsPaid
+      documents.filter(_.forTenant === forTenant).list
+        .map(d => new YearMonth(d.year, d.month))
+        .filter(_.compareTo(forMonth) >= 0)
+        .isEmpty
+    }
 
-      // Log this action like this, because we need the new document's generated ID
-      ActionLog.log(creator.userId, id, "Created document") map { log =>
-        val newDoc = docWithIsPaid.copy(id = id, lastAction = Some(log.id))
-        update(newDoc).get
+  /**
+   * For a given tenant, return the latest monthly amount up to the given upper bound date.
+   */
+  private def findLastTenantDocument(forTenant: Int, upperBound: Option[YearMonth] = None): Option[Document] =
+    ConnectionFactory.connect withSession { implicit session =>
+      val forMonth = upperBound getOrElse YearMonth.now
+      val sorted = documents.filter(_.forTenant === forTenant).list
+        .map(d => (d, new YearMonth(d.year, d.month)))
+        .filter { case (_, date) => date.compareTo(forMonth) < 0 }
+        .sortWith { (a, b) => a._2.compareTo(b._2) > 0 }
+      sorted.headOption.map(_._1)
+    }
+
+  private def generateNewDocumentBody(origBody: JsObject, previousDoc: Document): JsObject = {
+    val (lastMonth, twoMonthsAgo) = Templates.extractAmounts(previousDoc)
+    val previousCharges = twoMonthsAgo.unpaid
+    val paymentHistory = Json.obj(
+      "withholding_tax" -> 0,
+      "previous_charges" -> previousCharges,
+      "rent" -> Json.obj(
+        "unpaid" -> lastMonth.rent.unpaid,
+        "penalty_percent" -> 0,
+        "penalty_value" -> 0
+      ),
+      "electricity" -> Json.obj(
+        "unpaid" -> lastMonth.electricity.unpaid,
+        "penalty_percent" -> 0,
+        "penalty_value" -> 0
+      ),
+      "water" -> Json.obj(
+        "unpaid" -> lastMonth.water.unpaid,
+        "penalty_percent" -> 0,
+        "penalty_value" -> 0
+      ),
+      "cusa" -> Json.obj(
+        "unpaid" -> lastMonth.cusa.unpaid,
+        "penalty_percent" -> 0,
+        "penalty_value" -> 0
+      )
+    )
+    val sectionTotal = Json.obj(
+      "id" -> "_previous_total",
+      "title" -> "Previous charges total",
+      "datatype" -> "currency",
+      "required" -> true,
+      "value" -> 0
+    )
+    val fields = Json.arr(
+      Json.obj(
+        "id" -> "_overdue_charges",
+        "title" -> "Overdue Charges",
+        "datatype" -> "currency",
+        "required" -> false,
+        "value" -> 0
+      ),
+      Json.obj(
+        "id" -> "_other_charges",
+        "title" -> "Other Charges",
+        "datatype" -> "currency",
+        "value" -> 0
+      )
+    )
+    val summary = Json.obj(
+      "id" -> "previous_total",
+      "title" -> "Previous Total",
+      "datatype" -> "currency",
+      "required" -> true,
+      "value" -> 0
+    )
+
+    origBody ++ Json.obj(
+      "previous" -> Json.obj(
+        "title" -> "Previous Charges",
+        "sections" -> Json.arr(Json.obj(
+          "sectionTotal" -> sectionTotal,
+          "fields" -> fields,
+          "payment_history" -> paymentHistory
+        )),
+        "summary" -> summary
+      )
+    )
+
+  }
+
+  def insert(creator: User, docType: String, forTenant: Int, forMonth: YearMonth, body: JsObject): Try[Document] = {
+    if (!validCreationParams(forTenant, forMonth)) {
+      Failure(new IllegalStateException(s"Document for tenant dated ${forMonth} already exists"))
+    } else {
+      // Copy the unpaid charges from the previous month, if any
+      val previousDoc = findLastTenantDocument(forTenant, Some(forMonth))
+      val newBody = previousDoc.map(generateNewDocumentBody(body, _)).getOrElse(body)
+
+      val creationTime = new DateTime()
+      val doc = Document(0, None, docType, Mailbox.start.name,
+        creator.userId, creationTime, forTenant, forMonth.getYear,
+        forMonth.getMonthOfYear, true, true, defaultAmountPaid, newBody,
+        JsObject(Seq.empty), Some(creator.userId))
+
+      val (current, previous) = Templates.extractAmounts(doc)
+      val docWithIsPaid = doc.copy(isPaid = current.isPaid && previous.isPaid)
+
+      ConnectionFactory.connect withSession { implicit session =>
+        // Return ID of newly inserted tenant
+        val id = (documents returning documents.map(_.id)) += docWithIsPaid
+
+        // Make previous document uneditable
+        if (previousDoc.isDefined) update(previousDoc.get.copy(isEditable = false))
+
+        // Log this action like this, because we need the new document's generated ID
+        ActionLog.log(creator.userId, id, "Created document") map { log =>
+          val newDoc = docWithIsPaid.copy(id = id, lastAction = Some(log.id))
+          update(newDoc).get
+        }
       }
     }
   }
@@ -78,7 +192,7 @@ object Document extends ((Int, Option[SerialNumber], String, String, String, Dat
   def update(doc: Document): Try[Document] = Try {
     ConnectionFactory.connect withSession { implicit session =>
       val query = for (d <- documents if d.id === doc.id) yield d
-      if (!query.exists.run) throw new IndexOutOfBoundsException
+      if (!query.exists.run) throw new IndexOutOfBoundsException(s"Document '${doc.id}' does not exist")
       else {
         query.update(doc)
         query.first
@@ -92,7 +206,7 @@ object Document extends ((Int, Option[SerialNumber], String, String, String, Dat
       Document.update(doc.copy(mailbox = newBox.name, assigned = None)) flatMap {
         withNewBox =>
           (oldBox, newBox, doc.serialId) match {
-            case (forApproval, forSending, None) =>
+            case (Mailbox.drafts, Mailbox.unpaid, None) =>
               SerialNumber.create(doc.id) map {
                 sn =>
                   Document.update(withNewBox.copy(serialId = Some(sn))) match {
@@ -123,16 +237,6 @@ object Document extends ((Int, Option[SerialNumber], String, String, String, Dat
 
   def logPreparedAction(log: ActionLog): Try[ActionLog] = {
     logAction(log, for (d <- documents if d.id === log.what) yield d.preparedAction)
-      .flatMap(logLastAction(_))
-  }
-
-  def logCheckedAction(log: ActionLog): Try[ActionLog] = {
-    logAction(log, for (d <- documents if d.id === log.what) yield d.checkedAction)
-      .flatMap(logLastAction(_))
-  }
-
-  def logApprovedAction(log: ActionLog): Try[ActionLog] = {
-    logAction(log, for (d <- documents if d.id === log.what) yield d.approvedAction)
       .flatMap(logLastAction(_))
   }
 

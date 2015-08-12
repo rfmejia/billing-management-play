@@ -60,7 +60,7 @@ object Global extends WithFilters(CorsFilter, new GzipFilter()) with GlobalSetti
     Future.successful {
       logger.warn(s"Error on request ${request.toString}", ex)
       InternalServerError {
-        val obj = HalJsObject.create(request.uri)
+        val obj = HalJsObject.self(request.uri)
           .withCurie("hoa", controllers.Application.defaultCurie(request))
           .withLink("profile", "hoa:error")
           .withField("title", "Unexpected Runtime Error")
@@ -76,7 +76,7 @@ object Global extends WithFilters(CorsFilter, new GzipFilter()) with GlobalSetti
   override def onBadRequest(request: RequestHeader, error: String) =
     Future.successful {
       BadRequest {
-        val obj = HalJsObject.create(request.uri)
+        val obj = HalJsObject.self(request.uri)
           .withCurie("hoa", controllers.Application.defaultCurie(request))
           .withLink("profile", "hoa:error")
           .withField("title", "Bad request")
@@ -92,7 +92,7 @@ object Global extends WithFilters(CorsFilter, new GzipFilter()) with GlobalSetti
   override def onHandlerNotFound(request: RequestHeader) =
     Future.successful {
       NotFound {
-        val obj = HalJsObject.create(request.uri)
+        val obj = HalJsObject.self(request.uri)
           .withCurie("hoa", controllers.Application.defaultCurie(request))
           .withLink("profile", "hoa:error")
           .withField("title", "Action Not Found")

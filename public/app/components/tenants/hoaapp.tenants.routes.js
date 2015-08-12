@@ -5,68 +5,68 @@ angular.module("app.tenants").config(tenantsRoutes);
 
 function tenantsRoutes($stateProvider) {
     var tenantsList = {
-        url     : "tenants?offset&limit",
-        resolve : {
-            tenantsList : tenantsGetTenantList
+        url: "tenants?offset&limit",
+        resolve: {
+            tenantsList: tenantsGetTenantList
         },
-        data    : {
-            title : "Tenants list"
+        data: {
+            title: "Tenants list"
         },
-        views   : {
-            "contentArea@workspace" : {
-                templateUrl : "app/components/tenants/list/tenants-list.html",
-                controller  : "tenantsListController as viewCtrl"
+        views: {
+            "contentArea@workspace": {
+                templateUrl: "app/components/tenants/list/tenants-list.html",
+                controller: "tenantsListController as viewCtrl"
             }
         }
     };
 
     var tenantCreate = {
-        url     : "tenantCreate",
-        resolve : {
-            createTemplate    : tenantsGetTenantList,
-            createTenantModel : parseCreateTemplate
+        url: "tenantCreate",
+        resolve: {
+            createTemplate: tenantsGetTenantList,
+            createTenantModel: parseCreateTemplate
         },
-        data    : {
-            title : "Create tenant entry"
+        data: {
+            title: "Create tenant entry"
         },
-        views   : {
-            "contentArea@workspace" : {
-                templateUrl : "app/components/tenants/create/tenant-create.html",
-                controller  : "tenantCreateController as createCtrl"
+        views: {
+            "contentArea@workspace": {
+                templateUrl: "app/components/tenants/create/tenant-create.html",
+                controller: "tenantCreateController as createCtrl"
             }
         }
     };
 
     var tenantView = {
-        url     : "tenant-view/:id?limit&offset&filterId&mailbox&isPaid",
-        resolve : {
-            tenantDocs       : getTenantDocs,
-            viewTenantModel  : getTenantModel
+        url: "tenant-view/:id?limit&offset&filterId&mailbox&isPaid",
+        resolve: {
+            tenantDocs: getTenantDocs,
+            viewTenantModel: getTenantModel
         },
-        views   : {
-            "contentArea@workspace" : {
-                templateUrl : "app/components/tenants/view/tenant-view.html",
-                controller  : "tenantViewCtrl as viewCtrl"
+        views: {
+            "contentArea@workspace": {
+                templateUrl: "app/components/tenants/view/tenant-view.html",
+                controller: "tenantViewCtrl as viewCtrl"
             }
         },
-        data    : {
-            title : "Tenant"
+        data: {
+            title: "Tenant"
         }
     };
 
     var tenantEdit = {
-        url     : "/edit",
-        resolve : {
-            editTenantModel : getTenantModel
+        url: "/edit",
+        resolve: {
+            editTenantModel: getTenantModel
         },
-        views   : {
-            "contentArea@workspace" : {
-                templateUrl : "app/components/tenants/edit/tenant-edit.html",
-                controller  : "tenantEditController as editTenantCtrl"
+        views: {
+            "contentArea@workspace": {
+                templateUrl: "app/components/tenants/edit/tenant-edit.html",
+                controller: "tenantEditController as editTenantCtrl"
             }
         },
-        data    : {
-            title : "Edit tenant entry"
+        data: {
+            title: "Edit tenant entry"
         }
     };
 
@@ -81,7 +81,7 @@ tenantsRoutes.$inject = ["$stateProvider"];
 
 //region FUNCTION_CALL
 function tenantsGetTenantList($stateParams, tenantsSrvc) {
-    return tenantsSrvc.getAllTenants();
+    return tenantsSrvc.getList({"limit": 10});
 }
 tenantsGetTenantList.$inject = ["$stateParams", "tenantsApi"];
 
@@ -93,17 +93,17 @@ parseCreateTemplate.$inject = ["createTemplate", "tenantHelper"];
 function getTenantDocs($q, $stateParams, docsSrvc) {
     var deferred = $q.defer();
     var params = {};
-    angular.forEach($stateParams, function(value, key) {
+    angular.forEach($stateParams, function (value, key) {
         params[key] = value;
     });
     params.forTenant = $stateParams.id;
     delete params.id;
     delete params.filterId;
-    var success = function(response) {
+    var success = function (response) {
         deferred.resolve(response);
     };
 
-    var error = function(error) {
+    var error = function (error) {
         deferred.reject(error)
     };
 
@@ -113,19 +113,18 @@ function getTenantDocs($q, $stateParams, docsSrvc) {
 }
 getTenantDocs.$inject = ["$q", "$stateParams", "documentsApi"];
 
-
 function getTenantModel($q, $stateParams, tenantsSrvc, tenantHelper) {
     var deferred = $q.defer();
-    var success = function(response) {
+    var success = function (response) {
         deferred.resolve(response);
     };
 
-    var error = function(error) {
+    var error = function (error) {
         deferred.reject(error)
     };
 
-    var parse = function(response) {
-       return tenantHelper.formatResponse(response);
+    var parse = function (response) {
+        return tenantHelper.formatResponse(response);
     };
 
     tenantsSrvc.getTenant($stateParams.id).then(parse, error).then(success);

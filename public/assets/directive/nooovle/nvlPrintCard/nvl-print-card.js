@@ -28,6 +28,7 @@ printCtrl.$inject = ["nvl-dateutils"];
 function printCtrl(dateUtils) {
     var vm = this;
     vm.billDate = dateUtils.getMomentFromString(vm.document.month, vm.document.year);
-
     vm.currentDate = dateUtils.getLocalDateNow("MMMM DD, YYYY");
+    vm.previous = vm.document.body.previous;
+    vm.paymentHistory = vm.document.body.previous.sections[0].payment_history;
 }

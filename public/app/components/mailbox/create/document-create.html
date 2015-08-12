@@ -7,41 +7,22 @@
     </div>
 </md-toolbar>
 <md-content flex class="main">
-    <div ng-if="stateIsLoading" layout="column" layout-align="center-center" flex="10">
-        <md-progress-linear md-mode="indeterminate"></md-progress-linear>
-    </div>
-    <div class="max-width">
+    <!--Progress bar that hides after loading-->
+    <md-progress-linear ng-class="{'invisible' : !stateIsLoading}" md-mode="indeterminate"></md-progress-linear>
+
+    <div layout="column" class="max-width">
         <md-card class="form-view">
             <md-card-content>
-                <div class="workflow-info" layout="row" layout-align="space-between center">
-
-                    <div flex>
-                        <p class="vertical-align" ng-show="!documentCreate.isDocumentReady()">
-                            Please select a tenant and a billing period.
-                        </p>
-
-                        <p class="vertical-align" ng-show="documentCreate.isDocumentReady()">
-                            <span class="text-accented"> {{documentCreate.selectedTenant.tradeName}} billing for {{documentCreate.billingDate | momentString:documentCreate.format}}</span>
-                        </p>
-                    </div>
-                    <div layout="row" layout-align="end center">
-                        <md-button remove-focus
-                                   class="no-uppercase button-white"
-                                   ng-click="documentCreate.onCreateDocumentClicked()"
-                                   ng-hide="!documentCreate.isDocumentReady()">
-                            <span><i class="fa fa-file-text iconed-text"></i>Start workflow</span>
-                        </md-button>
-                    </div>
-
-                </div>
                 <div flex>
                     <md-autocomplete
                             flex
                             md-selected-item="documentCreate.selectedTenant"
+                            md-selected-item-change="documentCreate.onTenantSelected(tenant, 0)"
                             md-search-text="documentCreate.searchText"
                             md-items="tenant in documentCreate.getMatches(documentCreate.searchText)"
                             md-item-text="tenant.tradeName"
-                            placeholder="Search for tenant">
+                            placeholder="Search for tenant"
+                            ng-model-options="{debounce : 500}">
                         <span md-highlight-text="documentCreate.searchText">{{tenant.tradeName}}</span>
                     </md-autocomplete>
                     <h6 class="text-muted text-center">Select billing period</h6>
@@ -50,6 +31,39 @@
                                     data-datetimepicker-config="{startView: 'month', minView:'month'}"
                                     data-on-set-time="documentCreate.removeUtc(newDate)">
                     </datetimepicker>
+                </div>
+                <div class="workflow-info" layout="column">
+                    <div flex>
+                        <h3 class="vertical-align" ng-show="!documentCreate.isDocumentReady()">
+                            Please select a tenant and a billing period.
+                        </h3>
+
+                        <h3 class="vertical-align" ng-show="documentCreate.isDocumentReady()">
+                            <span class="text-accented"> {{documentCreate.selectedTenant.tradeName}} billing for {{documentCreate.billingDate | momentString:documentCreate.format}}</span>
+                        </h3>
+                    </div>
+                    <div layout="row" layout-align="end center">
+                        <span class="info" flex="10"><i class="fa fa-info-circle fa-2x"></i></span>
+                        <p flex="60">
+                            Please be advised that once you create a new invoice, the previous invoice for this tenant will be closed and cannot be updated anymore. Please make sure all payments are recorded first before proceeding.
+                        </p>
+                        <div flex></div>
+                        <md-button remove-focus
+                                   class="no-uppercase button-white"
+                                   ng-click="documentCreate.onCreateDocumentClicked()"
+                                   ng-hide="!documentCreate.isDocumentReady()">
+                            <span><i class="fa fa-check iconed-text"></i>Proceed</span>
+                        </md-button>
+                    </div>
+
+                    <div ng-if="documentCreate.error" layout="row" layout-align="end center">
+                        <span class="info" flex="10"><i class="fa fa-exclamation-circle fa-2x error-tint"></i></span>
+                        <div flex="60" class="error-tint">
+                            {{documentCreate.errorMessage}}
+                        </div>
+                        <div flex></div>
+                    </div>
+
                 </div>
             </md-card-content>
         </md-card>

@@ -1,130 +1,280 @@
 <md-card class="nvl-print-card">
-    <md-card-content id="printable" ng-class="{'added-padding': printCtrl.isPrintable}">
-        <div class="header" ng-if="printCtrl.isPrintable" layout="row" layout-align="start start">
-            <div flex="50" class="tenant-info">
-                <h4>Statement of Account for {{printCtrl.billDate | momentString:"MMMM-YYYY"}}</h4>
+    <!--Payment history-->
+    <md-card-content id="previous" ng-class="{'added-padding': printCtrl.isPrintable}">
+        <h2 class="hidden-print">Overdue</h2>
+        <div class="page">
+            <div class="header" ng-if="printCtrl.isPrintable" layout="row" layout-align="start start">
+                <div flex="50" class="tenant-info">
+                    <h4>Statement of Account for {{printCtrl.billDate | momentString:"MMMM-YYYY"}}</h4>
 
-                <div class="info-container"><span>{{printCtrl.document.tenant.tradeName}}</span></div>
-                <div class="info-container"><span>{{printCtrl.document.tenant.contactPerson}}</span></div>
-                <div class="info-container"><span>{{printCtrl.document.tenant.address}}</span></div>
-                <div class="info-container"><span>{{printCtrl.document.tenant.contactNumber}}</span></div>
-            </div>
-            <div flex="50" layout="column" layout-align="start end">
-                <h4>Hobbies of Asia</h4>
-                <span>{{printCtrl.currentDate}}</span>
-                {{printCtrl.document.serialId}}
-            </div>
-            <br/>
-        </div>
-        <h6 class="main-section-title">PREVIOUS CHARGES</h6>
-
-        <div ng-repeat="detail in printCtrl.document.body.previous.sections">
-            <div layout="row" class="static-bill-entries">
-                <div flex="70">
-                    <div class="static-bill-entry" ng-repeat="field in detail.fields">
-                        <section ng-if="field.datatype == 'currency'" layout="row">
-                            <div flex="40" class="static-bill-entry-title" primary-text><span>{{field.title}}</span>
-                            </div>
-                            <div flex class="static-bill-entry-guide"></div>
-                            <div class="static-bill-entry-value"><span>{{field.value | currency : "PHP "}}</span>
-                            </div>
-                        </section>
-                        <section ng-if="field.datatype != 'dateperiod' && field.datatype != 'currency'" layout="row">
-                            <div flex="40" class="static-bill-entry-title" primary-text><span>{{field.title}}</span>
-                            </div>
-                            <div flex class="static-bill-entry-guide"></div>
-                            <div class="static-bill-entry-value">
-                                <span>{{field.value}}</span></div>
-                        </section>
-                    </div>
+                    <div class="info-container"><span>{{printCtrl.document.tenant.tradeName}}</span></div>
+                    <div class="info-container"><span>{{printCtrl.document.tenant.contactPerson}}</span></div>
+                    <div class="info-container"><span>{{printCtrl.document.tenant.address}}</span></div>
+                    <div class="info-container"><span>{{printCtrl.document.tenant.contactNumber}}</span></div>
                 </div>
-                <div flex="30" layout="column" layout-align="end end">
-                    <div ng-if="detail.sectionTotal.datatype == 'currency'">{{detail.sectionTotal.value | currency: "PHP
-                                                                            "}}
-                    </div>
-                    <div ng-if="detail.sectionTotal.datatype != 'currency'">{{detail.sectionTotal.value}}</div>
-                    <div class="subtotal-title">{{detail.sectionTotal.title}}</div>
+                <div flex="50" layout="column" layout-align="start end">
+                    <h4>Hobbies of Asia</h4>
+                    <span>{{printCtrl.currentDate}}</span>
+                    {{printCtrl.document.serialId}}
                 </div>
-            </div>
-            <md-divider></md-divider>
-        </div>
-        <h5 class="main-section-title">THIS MONTH'S CHARGES</h5>
-
-        <div ng-repeat="detail in printCtrl.document.body.thisMonth.sections">
-            <h4 class="subsection-title">{{detail.title}}</h4>
-
-            <div layout="row" class="static-bill-entries">
-                <div flex="70">
-                    <div class="static-bill-entry" ng-repeat="field in detail.fields">
-                        <section ng-if="field.datatype === 'currency'" layout="row">
-                            <div flex="40" class="static-bill-entry-title" primary-text><span>{{field.title}}</span>
-                            </div>
-                            <div flex class="static-bill-entry-guide"></div>
-                            <div class="static-bill-entry-value"><span>{{field.value | currency : "PHP "}}</span>
-                            </div>
-                        </section>
-                        <section ng-if="field.datatype === 'dateperiod'" layout="row">
-                            <div flex="40" class="static-bill-entry-title" primary-text><span>Date period</span></div>
-                            <div flex class="static-bill-entry-guide"></div>
-                            <div class="static-bill-entry-value"><span ng-if="field.start.value != ''">{{field.start.value | momentString: "MMM DD, YYYY"}} to  {{field.end.value | momentString: "MMM DD, YYYY"}}</span>
-                            </div>
-                        </section>
-                        <section ng-if="field.datatype !== 'dateperiod' && field.datatype !== 'currency'" layout="row">
-                            <div flex="40" class="static-bill-entry-title" primary-text><span>{{field.title}}</span>
-                            </div>
-                            <div flex class="static-bill-entry-guide"></div>
-                            <div class="static-bill-entry-value">
-                                <span>{{field.value}}</span></div>
-                        </section>
-                    </div>
-                </div>
-                <div flex="30" layout="column" layout-align="end end">
-                    <div ng-if="detail.sectionTotal.datatype != 'currency'">{{detail.sectionTotal.value}}</div>
-                    <div ng-if="detail.sectionTotal.datatype == 'currency'">{{detail.sectionTotal.value | currency: "PHP
-                                                                            "}}
-                    </div>
-                    <div class="subtotal-title">{{detail.sectionTotal.title}}</div>
-                </div>
-            </div>
-            <md-divider></md-divider>
-        </div>
-        <h5 class="main-section-title">SUMMARY</h5>
-
-        <div>
-            <div layout="row" class="static-bill-entries">
-                <div flex="70">
-                    <div layout="row" class="static-bill-entry">
-                        <div flex="40" class="static-bill-entry-title" primary-text><span>Previous charges</span></div>
-                        <div flex class="static-bill-entry-guide"></div>
-                        <div class="static-bill-entry-value"><span>{{printCtrl.document.body.previous.summary.value | currency: "PHP "}}</span>
-                        </div>
-                    </div>
-                    <div layout="row" class="static-bill-entry">
-                        <div flex="40" class="static-bill-entry-title" primary-text><span>This month's charges</span>
-                        </div>
-                        <div flex class="static-bill-entry-guide"></div>
-                        <div class="static-bill-entry-value"><span>{{printCtrl.document.body.thisMonth.summary.value | currency: "PHP "}}</span>
-                        </div>
-                    </div>
-                </div>
-                <div flex="30" layout="column" layout-align="end end">
-                    <div><span>{{printCtrl.document.body.summary.value | currency: "PHP "}}</span></div>
-                    <div><span class="overall-total-title">Total amount due</span></div>
-                </div>
+                <br/>
             </div>
         </div>
-        <br/>
-
-        <div>
-            REMARKS:  {{printCtrl.document.body.summary.remarks}}
-
+        <h6 class="main-section-title">OVERDUE CHARGES</h6>
+        <div class="static-bill-entry">
+            <section class="entry-pair" layout="row">
+                <div flex="40" class="static-bill-entry-title" primary-text><span>Withholding Tax</span>
+                </div>
+                <div flex class="static-bill-entry-guide"></div>
+                <div class="static-bill-entry-value"><span>{{printCtrl.paymentHistory.withholding_tax | currency : "PHP "}}</span>
+                </div>
+            </section>
         </div>
-        <br/>
+        <div class="static-bill-entry">
+            <section class="entry-pair" layout="row">
+                <div flex="40" class="static-bill-entry-title" primary-text><span>Previous unpaid</span>
+                </div>
+                <div flex class="static-bill-entry-guide"></div>
+                <div class="static-bill-entry-value"><span>{{printCtrl.paymentHistory.previous_charges | currency : "PHP "}}</span>
+                </div>
+            </section>
+        </div>
+        <div class="static-bill-entry">
+            <section class="entry-pair" layout="row">
+                <div flex="40" class="static-bill-entry-title" primary-text><span>Rent unpaid</span>
+                </div>
+                <div flex class="static-bill-entry-guide"></div>
+                <div class="static-bill-entry-value"><span>{{printCtrl.paymentHistory.rent.unpaid | currency : "PHP "}}</span>
+                </div>
+            </section>
+            <section class="entry-pair" layout="row">
+                <div flex="40" class="static-bill-entry-title" primary-text><span>Rent penalty</span>
+                </div>
+                <div flex class="static-bill-entry-guide"></div>
+                <div class="static-bill-entry-value"><span>{{printCtrl.paymentHistory.rent.penalty_value | currency : "PHP "}}</span>
+                </div>
+            </section>
+        </div>
+        <div class="static-bill-entry">
+            <section class="entry-pair" layout="row">
+                <div flex="40" class="static-bill-entry-title" primary-text><span>Water unpaid</span>
+                </div>
+                <div flex class="static-bill-entry-guide"></div>
+                <div class="static-bill-entry-value"><span>{{printCtrl.paymentHistory.water.unpaid | currency : "PHP "}}</span>
+                </div>
+            </section>
+            <section class="entry-pair" layout="row">
+                <div flex="40" class="static-bill-entry-title" primary-text><span>Water penalty</span>
+                </div>
+                <div flex class="static-bill-entry-guide"></div>
+                <div class="static-bill-entry-value"><span>{{printCtrl.paymentHistory.water.penalty_value | currency : "PHP "}}</span>
+                </div>
+            </section>
+        </div>
+        <div class="static-bill-entry">
+            <section class="entry-pair" layout="row">
+                <div flex="40" class="static-bill-entry-title" primary-text><span>Electricity unpaid</span>
+                </div>
+                <div flex class="static-bill-entry-guide"></div>
+                <div class="static-bill-entry-value"><span>{{printCtrl.paymentHistory.electricity.unpaid | currency : "PHP "}}</span>
+                </div>
+            </section>
+            <section class="entry-pair" layout="row">
+                <div flex="40" class="static-bill-entry-title" primary-text><span>Electricity penalty</span>
+                </div>
+                <div flex class="static-bill-entry-guide"></div>
+                <div class="static-bill-entry-value"><span>{{printCtrl.paymentHistory.electricity.penalty_value | currency : "PHP "}}</span>
+                </div>
+            </section>
+        </div>
+        <div class="static-bill-entry">
+            <section class="entry-pair" layout="row">
+                <div flex="40" class="static-bill-entry-title" primary-text><span>Cusa unpaid</span>
+                </div>
+                <div flex class="static-bill-entry-guide"></div>
+                <div class="static-bill-entry-value"><span>{{printCtrl.paymentHistory.cusa.unpaid | currency : "PHP "}}</span>
+                </div>
+            </section>
+            <section class="entry-pair" layout="row">
+                <div flex="40" class="static-bill-entry-title" primary-text><span>Cusa penalty</span>
+                </div>
+                <div flex class="static-bill-entry-guide"></div>
+                <div class="static-bill-entry-value"><span>{{printCtrl.paymentHistory.cusa.penalty_value | currency : "PHP "}}</span>
+                </div>
+            </section>
+        </div>
+        <md-divider></md-divider>
+        <div layout="row">
+            <h6 class="main-section-title">TOTAL AMOUNT DUE (Please pay immediately)</h6>
+            <h6 flex class="total main-section-title">{{printCtrl.previous.summary.value | currency: "PHP "}}</h6>
+        </div>
+        <md-divider></md-divider>
+        <h6 class="main-section-title">Note</h6>
+        <div class="static-bill-entry">
+            <section class="entry-pair" layout="row">
+                <div flex="10" class="static-bill-entry-title" primary-text></div>
+                <div class="static-bill-entry-value"><span>1. An interest/penalty per month will be collected in case of default.</span>
+                </div>
+            </section>
+
+            <section class="entry-pair" layout="row">
+                <div flex="10" class="static-bill-entry-title" primary-text></div>
+                <div class="static-bill-entry-value"><span>2. Always bring your statement of account</span>
+                </div>
+            </section>
+
+            <section class="entry-pair" layout="row">
+                <div flex="10" class="static-bill-entry-title" primary-text></div>
+                <div class="static-bill-entry-value"><span>3. Please issue Certificate of Expanded Withholding Tax for the amount withheld therefrom.</span>
+                </div>
+            </section>
+
+            <section class="entry-pair" layout="row">
+                <div flex="10" class="static-bill-entry-title" primary-text></div>
+                <div class="static-bill-entry-value"><span>4. If payment has been made, please disregard this notice and accept our thanks.</span>
+                </div>
+            </section>
+        </div>
+        <md-divider></md-divider>
 
         <div class="action-block" layout="row" layout-align="space-between center">
-            <div><span>Prepared by {{printCtrl.document.actions.prepared.who.fullName}}</span></div>
-            <div><span>Checked by {{printCtrl.document.actions.checked.who.fullName}}</span></div>
-            <div><span>Approved by {{printCtrl.document.actions.approved.who.fullName}}</span></div>
+            <div><span>Prepared by </span></div>
+            <div><span>Checked by </span></div>
+            <div><span>Approved by </span></div>
+            <div><span>Received by </span></div>
         </div>
+    </md-card-content>
+    <!--Invoice-->
+    <md-card-content id="invoice" ng-class="{'added-padding': printCtrl.isPrintable}">
+        <h2 class="hidden-print">Invoice</h2>
+        <div class="page">
+            <div class="header" ng-if="printCtrl.isPrintable" layout="row" layout-align="start start">
+                <div flex="50" class="tenant-info">
+                    <h4>Statement of Account for {{printCtrl.billDate | momentString:"MMMM-YYYY"}}</h4>
+
+                    <div class="info-container"><span>{{printCtrl.document.tenant.tradeName}}</span></div>
+                    <div class="info-container"><span>{{printCtrl.document.tenant.contactPerson}}</span></div>
+                    <div class="info-container"><span>{{printCtrl.document.tenant.address}}</span></div>
+                    <div class="info-container"><span>{{printCtrl.document.tenant.contactNumber}}</span></div>
+                </div>
+                <div flex="50" layout="column" layout-align="start end">
+                    <h4>Hobbies of Asia</h4>
+                    <span>{{printCtrl.currentDate}}</span>
+                    {{printCtrl.document.serialId}}
+                </div>
+                <br/>
+            </div>
+            <h6 class="main-section-title">PREVIOUS CHARGES</h6>
+
+            <div ng-repeat="detail in printCtrl.document.body.previous.sections">
+                <div layout="row" class="static-bill-entries">
+                    <div flex="70">
+                        <div class="static-bill-entry" ng-repeat="field in detail.fields">
+                            <section ng-if="field.datatype == 'currency'" layout="row">
+                                <div flex="40" class="static-bill-entry-title" primary-text><span>{{field.title}}</span>
+                                </div>
+                                <div flex class="static-bill-entry-guide"></div>
+                                <div class="static-bill-entry-value"><span>{{field.value | currency : "PHP "}}</span>
+                                </div>
+                            </section>
+                            <section ng-if="field.datatype != 'dateperiod' && field.datatype != 'currency'" layout="row">
+                                <div flex="40" class="static-bill-entry-title" primary-text><span>{{field.title}}</span>
+                                </div>
+                                <div flex class="static-bill-entry-guide"></div>
+                                <div class="static-bill-entry-value">
+                                    <span>{{field.value}}</span></div>
+                            </section>
+                        </div>
+                    </div>
+                    <div flex="30" layout="column" layout-align="end end">
+                        <div ng-if="detail.sectionTotal.datatype == 'currency'">{{detail.sectionTotal.value | currency: "PHP
+                            "}}
+                        </div>
+                        <div ng-if="detail.sectionTotal.datatype != 'currency'">{{detail.sectionTotal.value}}</div>
+                        <div class="subtotal-title">{{detail.sectionTotal.title}}</div>
+                    </div>
+                </div>
+                <md-divider></md-divider>
+            </div>
+            <h5 class="main-section-title">THIS MONTH'S CHARGES</h5>
+
+            <div ng-repeat="detail in printCtrl.document.body.thisMonth.sections">
+                <h4 class="subsection-title">{{detail.title}}</h4>
+
+                <div layout="row" class="static-bill-entries">
+                    <div flex="70">
+                        <div class="static-bill-entry" ng-repeat="field in detail.fields">
+                            <section ng-if="field.datatype === 'currency'" layout="row">
+                                <div flex="40" class="static-bill-entry-title" primary-text><span>{{field.title}}</span>
+                                </div>
+                                <div flex class="static-bill-entry-guide"></div>
+                                <div class="static-bill-entry-value"><span>{{field.value | currency : "PHP "}}</span>
+                                </div>
+                            </section>
+                            <section ng-if="field.datatype === 'dateperiod'" layout="row">
+                                <div flex="40" class="static-bill-entry-title" primary-text><span>Date period</span></div>
+                                <div flex class="static-bill-entry-guide"></div>
+                                <div class="static-bill-entry-value"><span ng-if="field.start.value != ''">{{field.start.value | momentString: "MMM DD, YYYY"}} to  {{field.end.value | momentString: "MMM DD, YYYY"}}</span>
+                                </div>
+                            </section>
+                            <section ng-if="field.datatype !== 'dateperiod' && field.datatype !== 'currency'" layout="row">
+                                <div flex="40" class="static-bill-entry-title" primary-text><span>{{field.title}}</span>
+                                </div>
+                                <div flex class="static-bill-entry-guide"></div>
+                                <div class="static-bill-entry-value">
+                                    <span>{{field.value}}</span></div>
+                            </section>
+                        </div>
+                    </div>
+                    <div flex="30" layout="column" layout-align="end end">
+                        <div ng-if="detail.sectionTotal.datatype != 'currency'">{{detail.sectionTotal.value}}</div>
+                        <div ng-if="detail.sectionTotal.datatype == 'currency'">{{detail.sectionTotal.value | currency: "PHP
+                            "}}
+                        </div>
+                        <div class="subtotal-title">{{detail.sectionTotal.title}}</div>
+                    </div>
+                </div>
+                <md-divider></md-divider>
+            </div>
+            <h5 class="main-section-title">SUMMARY</h5>
+
+            <div>
+                <div layout="row" class="static-bill-entries">
+                    <div flex="70">
+                        <div layout="row" class="static-bill-entry">
+                            <div flex="40" class="static-bill-entry-title" primary-text><span>Previous charges</span></div>
+                            <div flex class="static-bill-entry-guide"></div>
+                            <div class="static-bill-entry-value"><span>{{printCtrl.document.body.previous.summary.value | currency: "PHP "}}</span>
+                            </div>
+                        </div>
+                        <div layout="row" class="static-bill-entry">
+                            <div flex="40" class="static-bill-entry-title" primary-text><span>This month's charges</span>
+                            </div>
+                            <div flex class="static-bill-entry-guide"></div>
+                            <div class="static-bill-entry-value"><span>{{printCtrl.document.body.thisMonth.summary.value | currency: "PHP "}}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div flex="30" layout="column" layout-align="end end">
+                        <div><span>{{printCtrl.document.body.summary.value | currency: "PHP "}}</span></div>
+                        <div><span class="overall-total-title">Total amount due</span></div>
+                    </div>
+                </div>
+            </div>
+            <br/>
+
+            <div>
+                REMARKS:  {{printCtrl.document.body.summary.remarks}}
+
+            </div>
+            <br/>
+
+            <div class="action-block" layout="row" layout-align="space-between center">
+                <div><span>Prepared by {{printCtrl.document.actions.prepared.who.fullName}}</span></div>
+                <div><span>Checked by </span></div>
+                <div><span>Approved by </span></div>
+            </div>
+        </div>
+
     </md-card-content>
 </md-card>

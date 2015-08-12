@@ -2,7 +2,7 @@
 
 </md-toolbar>
 
-<md-content class="drafts main" flex>
+<md-content class="drafts main hidden-print" flex layout-fill>
     <div class="max-width" layout="column">
         <div class="invoice-view">
             <h2 class="hoa-out-title">Tenant details</h2>
@@ -20,14 +20,13 @@
         </div>
 
         <div class="invoice-view">
-            <h2 class="hoa-out-title">Invoice fields</h2>
-
+            <h2 class="hoa-out-title">Invoice</h2>
             <div class="content">
                 <form name="billingForm" class="form-horizontal" novalidate form-watcher>
                     <fieldset ng-disabled="drafts.isDisabled">
                         <div class="form-group">
-                            <!-- Previous month's bill-->
-                            <section ng-include="'app/components/mailbox/drafts/partials-previous.html'"></section>
+                            <!-- Previous month's results-->
+                            <section ng-include="'app/components/mailbox/drafts/partials-previous-summary.html'"></section>
                             <!-- This month's billing -->
                             <section class="thisMonth">
                                 <section ng-include="'app/components/mailbox/drafts/partials-rent.html'"></section>
@@ -45,7 +44,7 @@
                                             </md-input-container>
                                             <div ng-messages="comment.text.$error">
                                                 <div ng-message="md-maxlength">The comment has to be less than 140
-                                                                               characters long.
+                                                    characters long.
                                                 </div>
                                             </div>
                                         </md-card-content>
@@ -89,6 +88,28 @@
                                 ng-click="drafts.onSaveClicked(billingForm)">
                             <span><i class="fa fa-floppy-o iconed-text"></i>Save </span>
                         </md-button>
+                        <md-button
+                                class="no-uppercase"
+                                md-theme="bills-dark"
+                                remove-focus
+                                type="button"
+                                nvl-print
+                                printable-id="invoice"
+                                ng-click="drafts.onSaveFromPrint(billingForm)"
+                                ng-disabled="billingForm.$invalid">
+                            <span><i class="fa fa-print iconed-text"></i>Invoice</span>
+                        </md-button>
+                        <md-button
+                                class="no-uppercase"
+                                md-theme="bills-dark"
+                                remove-focus
+                                type="button"
+                                nvl-print
+                                printable-id="previous"
+                                ng-click="drafts.onSaveFromPrint(billingForm)"
+                                ng-disabled="billingForm.$invalid">
+                            <span><i class="fa fa-print iconed-text"></i>Overdue</span>
+                        </md-button>
                         <div flex>
                             <md-button
                                     ng-if="!drafts.isDisabled"
@@ -98,18 +119,25 @@
                                     class="md-primary pull-right no-uppercase"
                                     ng-click="drafts.onSubmitClicked()"
                                     ng-disabled="billingForm.$invalid">
-                                <span>{{drafts.nextAction.title}}<i class="fa fa-arrow-right iconed-text"></i></span>
+                                <span>Submit<i class="fa fa-send-o  iconed-text"></i></span>
                             </md-button>
                         </div>
                     </div>
                     <!--<p class="md-warn" ng-show="billingForm.$invalid">Can't submit document with invalid fields</p>-->
                     <hr/>
                     <hoa-comments id="comments" comments="drafts.comments"></hoa-comments>
+
                 </md-card-content>
             </md-card>
         </div>
     </div>
 </md-content>
+
+<div layout="column" class="max-width">
+    <nvl-print-card ng-hide="true" is-printable="true" document="drafts.document"></nvl-print-card>
+</div>
+
+
 
 
 

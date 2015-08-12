@@ -16,12 +16,11 @@ function reportUpdateController($location, $anchorScroll, $state, docsSrvc, repo
     vm.currentUser = userDetails;
     vm.isDisabled = false;
     var unassignLink = null;
-    var amountPaid = document.viewModel.amountPaid;
     var documentId = document.viewModel.documentId;
+    var amountPaid = document.viewModel.amountPaid;
 
     //function bindings
     vm.onUpdateClicked = onUpdateClicked;
-    vm.onCalculateClicked = onCalculateClicked;
     vm.onCancelClicked = onCancelClicked;
     vm.onUnlinkClicked = onUnlinkClicked;
     vm.onFullPayClicked = onFullyPayClicked;
@@ -51,6 +50,21 @@ function reportUpdateController($location, $anchorScroll, $state, docsSrvc, repo
         else {
             vm.isDisabled = (vm.currentUser.userId != vm.assigned.userId)
         }
+
+        addRecorded(vm.payments.current, amountPaid.current);
+        addRecorded(vm.payments.previous, amountPaid.previous);
+    }
+
+    function addRecorded(amounts, amountsPaid) {
+        angular.forEach(amounts.sections, function(section) {
+            var name = section.name;
+
+            angular.forEach(amountsPaid, function(paidAmount, key) {
+                if(key === name) {
+                    section.amounts["recorded_value"] = paidAmount;
+                }
+            });
+        });
     }
 
     function goToComments() {
@@ -96,15 +110,13 @@ function reportUpdateController($location, $anchorScroll, $state, docsSrvc, repo
         docsSrvc.unassignDocument(unassignLink).then(returnToReports);
     }
 
-    function onCalculateClicked() {
-        angular.forEach(vm.payments.sections, function(value) {
-            value.amounts.unpaid = value.amounts.total - value.amounts.paid;
-        });
-    }
-
     function isPaymentComplete() {
         var due = 0;
-        angular.forEach(vm.payments.sections, function(value) {
+        angular.forEach(vm.payments.current.sections, function(value) {
+            due += value.amounts.total - value.amounts.paid;
+        });
+
+        angular.forEach(vm.payments.previous.sections, function(value) {
             due += value.amounts.total - value.amounts.paid;
         });
 
@@ -112,7 +124,12 @@ function reportUpdateController($location, $anchorScroll, $state, docsSrvc, repo
     }
 
     function onFullyPayClicked() {
-        angular.forEach(vm.payments.sections, function(value) {
+        angular.forEach(vm.payments.current.sections, function(value) {
+            value.amounts.paid = value.amounts.total;
+            value.amounts.unpaid = 0;
+        });
+
+        angular.forEach(vm.payments.previous.sections, function(value) {
             value.amounts.paid = value.amounts.total;
             value.amounts.unpaid = 0;
         });

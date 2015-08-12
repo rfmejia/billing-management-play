@@ -10,7 +10,7 @@ GET      /api/docs                     @controllers.Application.documentation
 POST     /api/logservice               @controllers.Logs.log
 
 # Tenants
-GET      /api/tenants                  @controllers.Tenants.list(offset: Int ?= 0, limit: Int ?= 10)
+GET      /api/tenants                  @controllers.Tenants.list(offset: Int ?= 0, limit: Int ?= 10, startsWith: Option[String] ?= None)
 GET      /api/tenants/:id              @controllers.Tenants.show(id: Int)
 POST     /api/tenants                  @controllers.Tenants.create
 PUT      /api/tenants/:id              @controllers.Tenants.edit(id: Int)

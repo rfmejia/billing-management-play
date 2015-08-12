@@ -3,11 +3,12 @@
  */
 angular.module("app.mailbox").factory("Previous", previousCreator);
 
-function previousCreator(InvoiceEntry, roundOff) {
-    function Previous(overdue, other, sectionTotal) {
+function previousCreator(InvoiceEntry, PaymentHistory, roundOff) {
+    function Previous(overdue, other, paymentHistory, sectionTotal) {
         this.overdue = overdue;
         this.other = other;
-        this.sectionTotal = sectionTotal
+        this.paymentHistory = paymentHistory;
+        this.sectionTotal = sectionTotal;
     }
 
     function getEntry(data, id) {
@@ -26,10 +27,15 @@ function previousCreator(InvoiceEntry, roundOff) {
                 sectionTotal : this.sectionTotal,
                 fields : [
                     this.overdue, this.other
-                ]
+                ],
+                payment_history : this.paymentHistory
             }
         },
         compute : function() {
+            var compiledPaymentHistory = this.paymentHistory.compute();
+            this.overdue.value = compiledPaymentHistory.overdueChargesTotal;
+            this.other.value = compiledPaymentHistory.penaltyChargesTotal;
+
             this.sectionTotal.value = roundOff(this.overdue.value + this.other.value, 2);
         },
         clear : function() {
@@ -38,13 +44,21 @@ function previousCreator(InvoiceEntry, roundOff) {
     };
 
     Previous.build = function(previous) {
-        var overdue = InvoiceEntry.build(getEntry(previous.fields, "_overdue_charges"));
-        var other = InvoiceEntry.build(getEntry(previous.fields, "_other_charges"));
-        var sectionTotal = InvoiceEntry.build(previous.sectionTotal);
+        var paymentHistory = PaymentHistory.build(previous.payment_history);
+        var paymentHistoryComputed = paymentHistory.compute();
 
-        return new Previous(overdue, other, sectionTotal);
+        var overdue = InvoiceEntry.build(getEntry(previous.fields, "_overdue_charges"));
+        overdue.value = paymentHistoryComputed.overdueChargesTotal;
+
+        var other = InvoiceEntry.build(getEntry(previous.fields, "_other_charges"));
+        other.value = paymentHistoryComputed.penaltyChargesTotal;
+
+        var sectionTotal = InvoiceEntry.build(previous.sectionTotal);
+        sectionTotal.value = roundOff(other.value + overdue.value, 2);
+
+        return new Previous(overdue, other, paymentHistory, sectionTotal);
     };
 
     return Previous;
 }
-previousCreator.$inject = ["InvoiceEntry", "numPrecisionFilter"];
+previousCreator.$inject = ["InvoiceEntry", "PaymentHistory", "numPrecisionFilter"];

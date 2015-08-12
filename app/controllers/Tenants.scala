@@ -1,6 +1,7 @@
 package controllers
 
 import com.nooovle._
+import com.nooovle.DomainModelWrites.tenantWrites
 import com.nooovle.slick.models.{ modelTemplates, tenants }
 import com.nooovle.slick.ConnectionFactory
 import org.locker47.json.play._
@@ -22,40 +23,33 @@ class Tenants(override implicit val env: RuntimeEnvironment[User])
     Tenant.findById(id) match {
       case Some(t) =>
         val self = routes.Tenants.show(id)
-        val obj = HalJsObject.create(self.absoluteURL())
+        val obj = HalJsObject.from(Json.toJson(t))
+          .self(self.absoluteURL())
           .withCurie("hoa", Application.defaultCurie)
           .withLink("profile", "hoa:tenant")
           .withLink("collection", routes.Tenants.list().absoluteURL())
           .withField("_template", editForm)
           .withLink("edit", routes.Tenants.edit(id).absoluteURL())
-          .withField("id", t.id)
-          .withField("tradeName", t.tradeName)
-          .withField("address", t.address)
-          .withField("contactPerson", t.contactPerson)
-          .withField("contactNumber", t.contactNumber)
-          .withField("email", t.email)
-          .withField("area", t.area)
-          .withField("rentalPeriod", t.rentalPeriod)
-          .withField("escalation", t.escalation)
-          .withField("cusaDefault", t.cusaDefault)
-          .withField("waterMeterDefault", t.waterMeterDefault)
-          .withField("electricityMeterDefault", t.electricityMeterDefault)
-          .withField("baseRentDefault", t.baseRentDefault)
-          .withField("standardMultiplierDefault", t.standardMultiplierDefault)
         Ok(obj.asJsValue)
       case None => NotFound
     }
   }
 
-  def list(offset: Int = 0, limit: Int = 10) = SecuredAction { implicit request =>
-    val (ts, total) = ConnectionFactory.connect withSession { implicit session =>
-      val query = tenants.drop(offset).take(limit).sortBy(_.tradeName)
-      (query.list, tenants.length.run)
-    }
+  def list(offset: Int = 0, limit: Int = 10, startsWith: Option[String]) = SecuredAction { implicit request =>
+    val (ts, total): (List[Tenant], Int) =
+      ConnectionFactory.connect withSession { implicit session =>
+        val ts = startsWith map {
+          s => tenants.filter(t => t.tradeName.toLowerCase.startsWith(s.toLowerCase))
+        } getOrElse tenants
+
+        val query = ts.drop(offset).take(limit).sortBy(_.tradeName)
+        (query.list, ts.length.run)
+      }
 
     val objs = ts map { t =>
       val link = routes.Tenants.show(t.id)
-      val obj = HalJsObject.create(link.absoluteURL())
+      val obj = HalJsObject.from(Json.toJson(t))
+        .self(link.absoluteURL())
         .withLink("profile", "hoa:tenant")
         .withField("id", t.id)
         .withField("tradeName", t.tradeName)
@@ -63,7 +57,7 @@ class Tenants(override implicit val env: RuntimeEnvironment[User])
     }
 
     val self = routes.Tenants.list(offset, limit)
-    val blank = HalJsObject.create(self.absoluteURL())
+    val blank = HalJsObject.self(self.absoluteURL())
       .withCurie("hoa", Application.defaultCurie)
       .withLink("profile", "collection")
       .withLink("up", routes.Application.index().absoluteURL())

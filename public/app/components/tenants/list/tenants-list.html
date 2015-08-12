@@ -2,27 +2,28 @@
             ng-include="'app/components/tenants/list/partials-tenants-list-toolbar.html'">
 </md-toolbar>
 
-<md-content class="main" flex>
-    <div ng-if="stateIsLoading" layout="column" layout-align="center-center" flex="10">
-        <md-progress-linear md-mode="indeterminate"></md-progress-linear>
-    </div>
+<md-content class="main" layout-fill flex>
+    <md-progress-linear ng-class="{'invisible' : !stateIsLoading}"
+                        md-mode="indeterminate"></md-progress-linear>
     <div layout="column" class="max-width">
-        <md-whiteframe layout="column" class="md-whiteframe-z1 cards-margin">
+        <md-whiteframe layout="column" class="md-whiteframe-z1 unpadded cards-margin inner-padding">
             <md-content layout="row">
                 <div flex="50" ng-if="viewCtrl.profile === 'collection'">
                     <md-input-container class="tenants-search full-width">
                         <label>
                             <i class="fa fa-search iconed-text"></i>
-                            Search tenant</label> <input type="text" ng-model="viewCtrl.query"/>
+                            Search tenant</label> <input type="text" ng-model="viewCtrl.query"
+                                                         ng-change="viewCtrl.getMatches(viewCtrl.query)"
+                                                         ng-model-options="{debounce : 500}"/>
                     </md-input-container>
                 </div>
                 <div flex></div>
-                <md-button class="inverse-button options no-uppercase" ng-click="viewCtrl.onCreateTenantClicked()">
+                <md-button class="inverse-button options no-uppercase"
+                           ng-click="viewCtrl.onCreateTenantClicked()">
                     <span><i class="fa fa-plus iconed-text"></i>Create tenant</span></md-button>
             </md-content>
-
-
-
+            <md-progress-linear ng-show="viewCtrl.loadingList"
+                                md-mode="indeterminate"></md-progress-linear>
         </md-whiteframe>
 
         <md-whiteframe layout="column" class="md-whiteframe-z1 cards-margin unpadded">
@@ -30,7 +31,7 @@
                 <div ng-if="viewCtrl.profile === 'collection'">
                     <md-list>
                         <hoa-embedded-items layout="row"
-                                            ng-repeat="tenant in viewCtrl.currentListShown | filter: viewCtrl.query"
+                                            ng-repeat="tenant in viewCtrl.currentPageShown"
                                             item="tenant"
                                             on-click="viewCtrl.onTenantClicked(tenant)">
                         </hoa-embedded-items>

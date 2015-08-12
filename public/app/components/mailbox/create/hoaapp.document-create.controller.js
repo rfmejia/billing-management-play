@@ -5,7 +5,8 @@ angular
     .module('app.mailbox')
     .controller('createController', createController);
 
-function createController($state, documentsApi, documentsHelper, hoaToast, dateUtils, template, tenantsList) {
+function createController($state, $q, documentsApi, tenantsApi, documentsHelper, hoaToast,
+                          dateUtils, template, tenantsList) {
     var vm = this;
     /** list of tenants **/
     vm.tenantsList = tenantsList._embedded.item;
@@ -19,6 +20,8 @@ function createController($state, documentsApi, documentsHelper, hoaToast, dateU
     vm.format = "MMMM-YYYY";
     /** The query search text **/
     vm.searchText = null;
+    /** Error to show **/
+    vm.errorMessage = "";
 
     //Function bindings
     vm.onTenantSelected = onTenantSelected;
@@ -27,19 +30,20 @@ function createController($state, documentsApi, documentsHelper, hoaToast, dateU
     vm.removeUtc = removeUtc;
     vm.prepareDraftPost = prepareDraftPost;
     vm.getMatches = getMatches;
-
+    vm.error = false;
 
     activate();
 
     function activate() {
-        angular.forEach(vm.tenantsList, function(tenant) {
+        angular.forEach(vm.tenantsList, function (tenant) {
             tenant.value = angular.lowercase(tenant.tradeName);
         });
     }
 
     //region FUNCTION_CALL
     /**
-     * Callback for when a tenant is selected. We also take note of the index to switch to an active state
+     * Callback for when a tenant is selected. We also take note of the index to switch to an
+     * active state
      * @param tenant
      * @param index
      */
@@ -52,12 +56,14 @@ function createController($state, documentsApi, documentsHelper, hoaToast, dateU
      * Posts a draft to the API
      */
     function onCreateDocumentClicked() {
-        var success = function(response) {
-            $state.go("workspace.viewer.editable", {id : response.id});
+        var success = function (response) {
+            $state.go("workspace.viewer.editable", {id: response.id});
         };
 
-        var error = function(response) {
-            hoaToast.showSimpleToast("Sorry, we couldn't create your document")
+        var error = function (response) {
+            hoaToast.showSimpleToast("Sorry, we couldn't create your document");
+            vm.error = true;
+            vm.errorMessage = response.message;
         };
 
         prepareDraftPost();
@@ -88,7 +94,24 @@ function createController($state, documentsApi, documentsHelper, hoaToast, dateU
     }
 
     function getMatches(queryText) {
-        return queryText ? vm.tenantsList.filter(filterTenantList(queryText)) : [];
+        var deferred = $q.defer();
+        var success = function (response) {
+            if (response.hasOwnProperty("_embedded") && response._embedded.hasOwnProperty("item")) {
+                deferred.resolve(response._embedded.item);
+            }
+            else {
+                deferred.resolve();
+            }
+        };
+        var error = function (error) {
+            hoaToast.showSimpleToast("Sorry, something went wrong while searching for tenants");
+            deferred.reject(error);
+        };
+
+        tenantsApi.getList({"startsWith": queryText, "limit": 10})
+            .then(success, error);
+
+        return deferred.promise;
     }
 
     function filterTenantList(queryText) {
@@ -103,8 +126,10 @@ function createController($state, documentsApi, documentsHelper, hoaToast, dateU
 }
 createController.$inject = [
     "$state",
+    "$q",
     //API
     "documentsApi",
+    "tenantsApi",
     //HELPERS
     "documentsHelper",
     //PROVIDERS

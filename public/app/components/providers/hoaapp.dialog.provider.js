@@ -35,7 +35,7 @@ function hoaDialogProvider($mdDialog) {
                 .title(title)
                 .content(message)
                 .ok(okayBtn)
-        );
+        ).then(okayFn);
     }
 
     function getCommentDialog(message, box) {

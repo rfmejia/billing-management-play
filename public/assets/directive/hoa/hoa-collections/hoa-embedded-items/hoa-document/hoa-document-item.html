@@ -1,21 +1,7 @@
 <md-item flex
          class="document-items"
          layout="row">
-    <md-button ng-if="item.document.mailbox == 'paid'"
-               class="no-uppercase md-tile-content button-white"
-               layout="row"
-               ng-click="item.onItemClick()">
-        <div flex="20">
-            <h3>{{item.document.mailbox | tokenizedCamel}}</h3>
-        </div>
-        <div flex="20">
-            <h3>{{item.document.forMonth | momentString: "MMM-YYYY"}}</h3>
-        </div>
-        <div flex>
-            <h3 class="list-item-owner">{{item.document.forTenant.tradeName}}</h3>
-        </div>
-    </md-button>
-    <md-button ng-if="item.document.mailbox == 'unpaid'"
+    <md-button ng-if="item.document.mailbox == 'unpaid' || item.document.mailbox == 'paid'"
                layout="row"
                flex
                layout-align="space-between start"
@@ -33,15 +19,16 @@
             <h3 class="list-item-owner">{{item.document.forTenant.tradeName}}</h3>
         </div>
 
-        <div flex="20">
-            <a href class="md-button md-default-theme md-primary no-uppercase inverse-button" ng-click="item.onItemUpdateClicked($event)" remove-focus>
+        <div flex="20" >
+            <a ng-if="item.document.isEditable" href class="md-button md-default-theme md-primary no-uppercase inverse-button" ng-click="item.onItemUpdateClicked($event)" remove-focus>
                 <i class="fa fa-pencil-square-o iconed-text"></i>
                 Update
             </a>
+            <span ng-if="!item.document.isEditable"><i class="fa fa-lock"></i></span>
         </div>
 
     </md-button>
-    <md-button ng-if="item.document.mailbox != 'paid' && item.document.mailbox != 'unpaid'"
+    <md-button layout="row" ng-if="item.document.mailbox != 'paid' && item.document.mailbox != 'unpaid'"
                flex
                class="no-uppercase md-tile-content button-white"
                layout="row"
@@ -52,8 +39,11 @@
         <div flex="20">
             <h3>{{item.document.forMonth | momentString: "MMM-YYYY"}}</h3>
         </div>
-        <div flex>
+        <div flex="40">
             <h3 class="list-item-owner">{{item.document.forTenant.tradeName}}</h3>
+        </div>
+        <div flex="20" >
+            <span ng-if="!item.document.isEditable"><i class="fa fa-lock"></i></span>
         </div>
     </md-button>
 </md-item>
