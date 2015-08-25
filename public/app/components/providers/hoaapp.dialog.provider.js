@@ -8,10 +8,11 @@ angular
 hoaDialogProvider.$inject = ["$mdDialog"];
 function hoaDialogProvider($mdDialog) {
     var service = {
-        getConfirmDialog : getConfirmDialog,
-        getInformDialog  : getInformDialog,
-        getCommentDialog : getCommentDialog,
-        getDraftDialog   : getDraftDialog
+        getConfirmDialog: getConfirmDialog,
+        getInformDialog: getInformDialog,
+        getCommentDialog: getCommentDialog,
+        getDraftDialog: getDraftDialog,
+        getOverdueDialog: getOverdueDialog
     };
 
     return service;
@@ -20,10 +21,10 @@ function hoaDialogProvider($mdDialog) {
     function getConfirmDialog(okayFn, cancelFn, message, title) {
         $mdDialog
             .show({
-                      controller   : dialogCtrl,
-                      controllerAs : "dialogCtrl",
-                      templateUrl  : 'app/components/providers/confirm-dialog.html',
-                      locals       : {message : message, title : title}
+                      controller: dialogCtrl,
+                      controllerAs: "dialogCtrl",
+                      templateUrl: 'app/components/providers/confirm-dialog.html',
+                      locals: {message: message, title: title}
 
                   })
             .then(okayFn, cancelFn);
@@ -42,12 +43,12 @@ function hoaDialogProvider($mdDialog) {
         return $mdDialog
             .show(
             {
-                templateUrl  : "app/components/providers/comment.dialog.tmpl.html",
-                controller   : dialogCommentCtrl,
-                controllerAs : "dialog",
-                locals       : {
-                    message : message,
-                    box     : box
+                templateUrl: "app/components/providers/comment.dialog.tmpl.html",
+                controller: dialogCommentCtrl,
+                controllerAs: "dialog",
+                locals: {
+                    message: message,
+                    box: box
                 }
             }
         );
@@ -57,13 +58,28 @@ function hoaDialogProvider($mdDialog) {
         return $mdDialog
             .show(
             {
-                templateUrl  : "app/components/providers/draft.dialog.html",
-                controller   : draftDialogCtrl,
-                controllerAs : "draft",
-                locals       : {
-                    doc      : document,
-                    tenant   : tenant,
-                    billDate : billDate
+                templateUrl: "app/components/providers/draft.dialog.html",
+                controller: draftDialogCtrl,
+                controllerAs: "draft",
+                locals: {
+                    doc: document,
+                    tenant: tenant,
+                    billDate: billDate
+                }
+            }
+        );
+    }
+
+    function getOverdueDialog(overdue, event) {
+        return $mdDialog
+            .show(
+            {
+                templateUrl: "app/components/providers/overdue-dialog.html",
+                controller: overdueDialogCtrl,
+                controllerAs: "overdue",
+                targetEvent: event,
+                locals: {
+                    overdue: overdue
                 }
             }
         );
@@ -110,7 +126,6 @@ function draftDialogCtrl($mdDialog, doc, tenant, billDate) {
     vm.tradeName = tenant;
     vm.billDate = billDate;
 
-
     function cancel() {
         $mdDialog.cancel();
     }
@@ -118,5 +133,29 @@ function draftDialogCtrl($mdDialog, doc, tenant, billDate) {
     function send(comment) {
         $mdDialog.hide(comment);
     }
+}
+
+function overdueDialogCtrl($mdDialog, overdue) {
+    var vm = this;
+    vm.charges = overdue;
+    vm.save = save;
+    vm.cancel = cancel;
+
+    function save() {
+        var updated = {
+            previous : vm.charges.previous_charges,
+            rent : vm.charges.rent.unpaid,
+            electricity : vm.charges.electricity.unpaid,
+            water : vm.charges.water.unpaid,
+            cusa : vm.charges.cusa.unpaid
+        };
+
+        $mdDialog.hide(updated);
+    }
+
+    function cancel() {
+        $mdDialog.cancel();
+    }
+
 }
 
