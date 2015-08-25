@@ -1,0 +1,108 @@
+<md-dialog>
+
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>Edit overdue charges</h2>
+            <span flex></span>
+            <md-button class="md-icon-button">
+                <md-icon><i class="fa fa-pencil"></i></md-icon>
+            </md-button>
+        </div>
+    </md-toolbar>
+    <md-content style="max-width:800px;max-height:810px;min-width:600px; ">
+        <form name="overdueForm">
+            <div layout="row" layout-align="end center">
+                <span class="info" flex="10"><i class="fa fa-info-circle fa-2x"></i></span>
+
+                <p flex="80">
+                    Please be careful in changing these values. Any changes made here will affect
+                    the payment history of the tenant.
+                </p>
+
+                <div flex></div>
+            </div>
+            <div ng-form="previous">
+                <md-input-container>
+                    <label>Previous charges </label> <input name="prevCharges"
+                                                            required
+                                                            type="number"
+                                                            min="0.0" step="0.1"
+                                                            ng-model="overdue.charges.previous_charges"
+                        />
+
+                    <div ng-messages="previous.prevCharges.$error">
+                        <div ng-message="required">This is required</div>
+                        <div ng-message="number">Oops! Numbers only please.</div>
+                        <div ng-message="min">Positive numbers only</div>
+                    </div>
+                </md-input-container>
+                <md-input-container>
+                    <label>Rent overdue</label> <input name="rentCharges"
+                                                       required
+                                                       type="number"
+                                                       min="0.0" step="0.1"
+                                                       ng-model="overdue.charges.rent.unpaid"
+                        />
+
+                    <div ng-messages="previous.rentCharges.$error">
+                        <div ng-message="required">This is required</div>
+                        <div ng-message="number">Oops! Numbers only please.</div>
+                        <div ng-message="min">Positive numbers only</div>
+                    </div>
+                </md-input-container>
+                <md-input-container>
+                    <label>Electricity overdue </label> <input name="elecCharges"
+                                                               required
+                                                               type="number"
+                                                               min="0.0" step="0.1"
+                                                               ng-model="overdue.charges.electricity.unpaid"
+                        />
+
+                    <div ng-messages="previous.elecCharges.$error">
+                        <div ng-message="required">This is required</div>
+                        <div ng-message="number">Oops! Numbers only please.</div>
+                        <div ng-message="min">Positive numbers only</div>
+                    </div>
+                </md-input-container>
+                <md-input-container>
+                    <label>Water overdue </label> <input name="waterCharges"
+                                                         required
+                                                         type="number"
+                                                         min="0.0" step="0.1"
+                                                         ng-model="overdue.charges.water.unpaid"
+                        />
+
+                    <div ng-messages="previous.waterCharges.$error">
+                        <div ng-message="required">This is required</div>
+                        <div ng-message="number">Oops! Numbers only please.</div>
+                        <div ng-message="min">Positive numbers only</div>
+                    </div>
+                </md-input-container>
+                <md-input-container>
+                    <label>Cusa overdue </label> <input name="cusaCharges"
+                                                        required
+                                                        type="number"
+                                                        min="0.0" step="0.1"
+                                                        ng-model="overdue.charges.cusa.unpaid"
+                        />
+
+                    <div ng-messages="previous.cusaCharges.$error">
+                        <div ng-message="required">This is required</div>
+                        <div ng-message="number">Oops! Numbers only please.</div>
+                        <div ng-message="min">Positive numbers only</div>
+                    </div>
+                </md-input-container>
+            </div>
+        </form>
+    </md-content>
+    <div class="md-actions" layout="row">
+        <span flex></span>
+        <md-button ng-click="overdue.cancel()" remove-focus>
+            Cancel
+        </md-button>
+        <md-button style="margin-right:20px;" ng-click="overdue.save()" ng-disabled="overdueForm.$invalid" remove-focus>
+            Save
+        </md-button>
+    </div>
+
+</md-dialog>
