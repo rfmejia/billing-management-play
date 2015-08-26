@@ -110,7 +110,7 @@ object Templates {
             val unpaid = doubleOrZero(obj)
             Amounts(unpaid, paid)
           } else {
-            val unpaid = doubleOrZero(obj \ "unpaid")
+            val unpaid = doubleOrZero(obj \ "unpaid") + doubleOrZero(obj \ "penalty_value")
             Amounts(unpaid, paid)
           }
         } match {
