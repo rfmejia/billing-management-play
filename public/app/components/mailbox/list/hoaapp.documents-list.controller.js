@@ -11,7 +11,6 @@ function documentsListController($state, $stateParams, docsResponse, queryHelper
 
     //Pagination
     vm.currentPage = 0;
-    vm.total = 500;
     vm.pageSize = $stateParams.limit;
 
     vm.onChangePageClicked = onChangePageClicked;
