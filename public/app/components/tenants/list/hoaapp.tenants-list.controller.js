@@ -14,6 +14,7 @@ function tenantCtrl($state, $q, $timeout, $stateParams, tenantsApi, tenantList, 
     vm.currentPageShown = tenantList._embedded.item;
     vm.getMatches = getMatches;
     vm.loadingList = false;
+    vm.startsWith = "";
 
     //Pagination
     vm.currentPage = 1;
@@ -30,15 +31,16 @@ function tenantCtrl($state, $q, $timeout, $stateParams, tenantsApi, tenantList, 
             vm.total = 10;
         }
         else {
-            vm.currentPage = $stateParams.offset % 10;
-            vm.pageSize = 10;
+            vm.currentPage = ($stateParams.offset / $stateParams.limit) + 1;
+            vm.pageSize = $stateParams.limit;
             vm.total = tenantList.total;
         }
     }
 
     function getMatches(queryText) {
-        if (queryText) {
-            queryApi({"startsWith": queryText, "limit": 10})
+        vm.startsWith = queryText;
+        if (vm.startsWith) {
+            queryApi({"startsWith": vm.startsWith, "limit": 10});
         }
         else {
             queryApi({"page": 1, "limit": 10});
@@ -51,7 +53,13 @@ function tenantCtrl($state, $q, $timeout, $stateParams, tenantsApi, tenantList, 
             var newPage = page - 1;
             offset = newPage * vm.pageSize;
         }
-        queryApi({"limit": 10, "page": page, "offset": offset});
+        var queryParams = {};
+        if(vm.startsWith) {
+            queryParams = {"limit": 10, "page": page, "offset": offset, "startsWith" : vm.startsWith};
+        } else {
+            queryParams = {"limit": 10, "page": page, "offset": offset};
+        }
+        $state.go($state.current, queryParams, {reload : true});
     }
 
     function queryApi(queryParams) {
@@ -79,7 +87,9 @@ function tenantCtrl($state, $q, $timeout, $stateParams, tenantsApi, tenantList, 
                 vm.loadingList = false;
             }, 500);
         };
-
+        vm.currentPage = queryParams.offset % 10;
+        vm.pageSize = 10;
+        vm.total = tenantList.total;
         tenantsApi.getList(queryParams)
             .then(success, error);
 

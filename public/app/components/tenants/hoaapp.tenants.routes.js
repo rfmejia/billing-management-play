@@ -5,7 +5,7 @@ angular.module("app.tenants").config(tenantsRoutes);
 
 function tenantsRoutes($stateProvider) {
     var tenantsList = {
-        url: "tenants?offset&limit",
+        url: "tenants?offset&limit&startsWith",
         resolve: {
             tenantsList: tenantsGetTenantList
         },
@@ -81,7 +81,7 @@ tenantsRoutes.$inject = ["$stateProvider"];
 
 //region FUNCTION_CALL
 function tenantsGetTenantList($stateParams, tenantsSrvc) {
-    return tenantsSrvc.getList({"limit": 10});
+    return tenantsSrvc.getList($stateParams);
 }
 tenantsGetTenantList.$inject = ["$stateParams", "tenantsApi"];
 
