@@ -40,7 +40,7 @@ function sidebarController($state, mailbox, userDetails, userService, dateUtils,
             params = queryHelper.getReportsParams(0, dateUtils.getLocalDateNow(), filter[0].id);
         }
         else if (folder.type === "tenants") {
-            params = null;
+            params = queryHelper.getTenantListParams(null, 0);
         }
 
         $state.go(folder.path, params, {reload : true});
