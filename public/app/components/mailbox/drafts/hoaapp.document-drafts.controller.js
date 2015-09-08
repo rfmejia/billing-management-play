@@ -47,7 +47,6 @@ function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, 
     vm.remarks = doc.remarks;
     vm.isCusaIncluded = false;
     vm.isTaxed = true;
-    vm.date = docsResponse
 
     //Function mapping
     vm.onUnlinkClicked = onUnlinkClicked;
@@ -340,9 +339,10 @@ function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, 
     function calculateSummaryTotal() {
         vm.summaryValue =
         numPrecisionFilter(doc.previousSummary.value + doc.thisMonthSummary.value, 2);
+        preparePostData();
     }
 
-    function editOverdue(event) {
+    function editOverdue(event, form) {
         var paymentHistory = angular.copy(vm.previousCharges.paymentHistory);
         var okayFn = function (updatedPaymentHistory) {
             vm.previousCharges.paymentHistory.previous_charges = updatedPaymentHistory.previous;
@@ -350,6 +350,7 @@ function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, 
             vm.previousCharges.paymentHistory.water.unpaid = updatedPaymentHistory.water;
             vm.previousCharges.paymentHistory.electricity.unpaid = updatedPaymentHistory.electricity;
             vm.previousCharges.paymentHistory.cusa.unpaid = updatedPaymentHistory.cusa;
+            onPreviousChanged(form);
         };
         dialogProvider.getOverdueDialog(paymentHistory, event).then(okayFn);
     }

@@ -20,7 +20,7 @@
             </section>
         </div>
         <section>
-            <nvl-print-card is-printable="false" document="approvals.document"></nvl-print-card>
+            <nvl-print-card is-printable="false" document="approvals.document" payment-history="approvals.previousCharges.paymentHistory" previous-total="approvals.document.body.previous.sections[0].sectionTotal.value"></nvl-print-card>
         </section>
 
         <div class="invoice-view">

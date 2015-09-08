@@ -134,7 +134,7 @@
 </md-content>
 
 <div layout="column" class="max-width">
-    <nvl-print-card ng-hide="true" is-printable="true" document="drafts.document"></nvl-print-card>
+    <nvl-print-card ng-hide="true" is-printable="true" document="drafts.document" payment-history="drafts.previousCharges.paymentHistory" previous-total="drafts.document.body.previous.sections[0].sectionTotal.value"></nvl-print-card>
 </div>
 
 
