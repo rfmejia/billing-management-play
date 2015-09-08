@@ -15,7 +15,9 @@ function nvlPrintCard() {
         transclude  : false,
         scope       : {
             isPrintable : '=',
-            document    : '='
+            document    : '=',
+            paymentHistory : '=',
+            previousTotal : '='
         },
         templateUrl : 'assets/directive/nooovle/nvlPrintCard/nvl-print-card.html',
         controller  : "nvl-print.controller",
@@ -29,6 +31,4 @@ function printCtrl(dateUtils) {
     var vm = this;
     vm.billDate = dateUtils.getMomentFromString(vm.document.month, vm.document.year);
     vm.currentDate = dateUtils.getLocalDateNow("MMMM DD, YYYY");
-    vm.previous = vm.document.body.previous;
-    vm.paymentHistory = vm.document.body.previous.sections[0].payment_history;
 }

@@ -1,7 +1,7 @@
 <md-whiteframe class="entry md-whiteframe-z1 unpadded" layout="column">
     <div layout-gt-md="row" layout="column">
         <section flex="40" class="draft-field" ng-form="previous">
-            <section layout="row" layout-align="start center"><h4 class="entry-title">Previous charges input</h4> <md-button md-no-ink class="md-primary" remove-focus ng-click="drafts.editOverdue($event)">Edit<i class="fa fa-pencil"></i></md-button></section>
+            <section layout="row" layout-align="start center"><h4 class="entry-title">Previous charges input</h4> <md-button md-no-ink class="md-primary" remove-focus ng-click="drafts.editOverdue($event, previous)">Edit<i class="fa fa-pencil"></i></md-button></section>
 
             <md-input-container>
                 <label>Witholding Tax (0 if none) </label> <input name="whTax"

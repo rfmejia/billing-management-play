@@ -8,6 +8,8 @@ angular
 function printCtrl($state, docsSrvc, dateUtils, userDetail, docsResponse, queryHelper) {
     var vm = this;
     vm.document = docsResponse.viewModel;
+    vm.paymentHistory = docsResponse.viewModel.body.previous.sections[0].payment_history;
+    vm.previousTotal = docsResponse.viewModel.body.previous.sections[0].sectionTotal.value;
     vm.isDisabled = true;
 
     vm.onSentClicked = onSentClicked;
