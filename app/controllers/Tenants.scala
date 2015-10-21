@@ -97,18 +97,27 @@ class Tenants(override implicit val env: RuntimeEnvironment[User])
           Some(cusaDefault), Some(waterMeterDefault), Some(electricityMeterDefault),
           Some(baseRentDefault), Some(standardMultiplierDefault)) =>
           val result = ConnectionFactory.connect withSession { implicit session =>
-            Tenant.insert(tradeName, address, contactPerson, contactNumber, email,
-              area, rentalPeriod, escalation, cusaDefault,
-              waterMeterDefault, electricityMeterDefault, baseRentDefault,
-              standardMultiplierDefault)
+            // Trade name must be unique
+            if (Tenant.findByTradeName(tradeName).isDefined) {
+              Failure(new IllegalArgumentException(s"Tenant with name '${tradeName}' already exists"))
+            } else {
+              Tenant.insert(tradeName, address, contactPerson, contactNumber, email,
+                area, rentalPeriod, escalation, cusaDefault,
+                waterMeterDefault, electricityMeterDefault, baseRentDefault,
+                standardMultiplierDefault)
+            }
           }
           result match {
             case Success(tenant) =>
               val link = routes.Tenants.show(tenant.id).absoluteURL()
               Created.withHeaders("Location" -> link)
             case Failure(err) =>
-              err.printStackTrace()
-              InternalServerError(err.getMessage)
+              err match {
+                case err: IllegalArgumentException => BadRequest(err.getMessage)
+                case _ => 
+                  err.printStackTrace()
+                  InternalServerError(err.getMessage)
+              }
           }
         case _ => BadRequest("Some required values are missing. Please check your request.")
       }
