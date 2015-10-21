@@ -124,6 +124,8 @@ class TenantsModel(tag: Tag) extends Table[Tenant](tag, "TENANTS") {
 
   def * = (id, tradeName, address, contactPerson, contactNumber, email, area, rentalPeriod, escalation, cusaDefault, waterMeterDefault, electricityMeterDefault, baseRentDefault, standardMultiplierDefault) <>
     (Tenant.tupled, Tenant.unapply)
+
+  def tradeNameIndex = index("IDX_TRADE_NAME", tradeName, unique = true)
 }
 
 class UserRolesModel(tag: Tag) extends Table[(String, String)](tag, "USER_ROLES") {
