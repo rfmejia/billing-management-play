@@ -4,7 +4,7 @@ name := "hoa-play-scala"
 
 organization := "com.nooovle"
 
-version := "0.6.3"
+version := "1.0.0"
 
 scalaVersion := "2.11.1"
 
