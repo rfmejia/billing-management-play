@@ -42,7 +42,7 @@ class Tenants(override implicit val env: RuntimeEnvironment[User])
           s => tenants.filter(t => t.tradeName.toLowerCase.startsWith(s.toLowerCase))
         } getOrElse tenants
 
-        val query = ts.drop(offset).take(limit).sortBy(_.tradeName)
+        val query = ts.sortBy(_.tradeName).drop(offset).take(limit)
         (query.list, ts.length.run)
       }
 

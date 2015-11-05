@@ -34,7 +34,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
     isPaid: Option[Boolean], others: Option[Boolean],
     isAssigned: Option[Boolean]) = SecuredAction { implicit request =>
 
-    // Assigned filters: 
+    // Assigned filters:
     // isAssigned == None => _
     // isAssigned == Some(true) => isAssigned.isDefined
     // isAssigned == Some(false) => isAssigned.isEmpty
@@ -74,7 +74,7 @@ class Documents(override implicit val env: RuntimeEnvironment[User])
         } getOrElse withAssigned
 
         val total = withOthers.length.run
-        val results = withOthers.drop(offset).take(limit).sortBy(_.created.desc).list
+        val results = withOthers.sortBy(_.created.desc).drop(offset).take(limit).list
         (results, total)
       }
 
