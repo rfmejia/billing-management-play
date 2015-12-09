@@ -51,7 +51,6 @@ object Global extends WithFilters(CorsFilter, new GzipFilter()) with GlobalSetti
       case Success(msgs) => msgs.foreach(logger.info(_))
       case Failure(err) =>
         logger.error(s"Could not initialize the database", err)
-        err.printStackTrace()
     }
   }
 
