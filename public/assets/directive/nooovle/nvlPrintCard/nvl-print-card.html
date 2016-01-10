@@ -5,17 +5,15 @@
         <div class="page">
             <div class="header" ng-if="printCtrl.isPrintable" layout="row" layout-align="start start">
                 <div flex="50" class="tenant-info">
-                    <h4>Statement of Account for {{printCtrl.billDate | momentString:"MMMM-YYYY"}}</h4>
-
+                    <h4>Statement of Account for {{printCtrl.billDate | momentString:"MMMM-YYYY"}} (No. {{printCtrl.controlNumber}})</h4>
                     <div class="info-container"><span>{{printCtrl.document.tenant.tradeName}}</span></div>
                     <div class="info-container"><span>{{printCtrl.document.tenant.contactPerson}}</span></div>
                     <div class="info-container"><span>{{printCtrl.document.tenant.address}}</span></div>
                     <div class="info-container"><span>{{printCtrl.document.tenant.contactNumber}}</span></div>
                 </div>
                 <div flex="50" layout="column" layout-align="start end">
-                    <h4>Hobbies of Asia</h4>
+                    <img src="assets/img/hobbies_logo.jpg" alt="Logo" style="width:135px;height:70px;">
                     <span>{{printCtrl.currentDate}}</span>
-                    {{printCtrl.document.serialId}}
                 </div>
                 <br/>
             </div>
@@ -150,17 +148,15 @@
         <div class="page">
             <div class="header" ng-if="printCtrl.isPrintable" layout="row" layout-align="start start">
                 <div flex="50" class="tenant-info">
-                    <h4>Statement of Account for {{printCtrl.billDate | momentString:"MMMM-YYYY"}}</h4>
-
+                    <h4>Statement of Account for {{printCtrl.billDate | momentString:"MMMM-YYYY"}} (No. {{printCtrl.controlNumber}})</h4>
                     <div class="info-container"><span>{{printCtrl.document.tenant.tradeName}}</span></div>
                     <div class="info-container"><span>{{printCtrl.document.tenant.contactPerson}}</span></div>
                     <div class="info-container"><span>{{printCtrl.document.tenant.address}}</span></div>
                     <div class="info-container"><span>{{printCtrl.document.tenant.contactNumber}}</span></div>
                 </div>
                 <div flex="50" layout="column" layout-align="start end">
-                    <h4>Hobbies of Asia</h4>
+                    <img src="assets/img/hobbies_logo.jpg" alt="Logo" style="width:135px;height:70px;">
                     <span>{{printCtrl.currentDate}}</span>
-                    {{printCtrl.document.serialId}}
                 </div>
                 <br/>
             </div>

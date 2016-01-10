@@ -11,6 +11,7 @@ function printCtrl($state, docsSrvc, dateUtils, userDetail, docsResponse, queryH
     vm.paymentHistory = docsResponse.viewModel.body.previous.sections[0].payment_history;
     vm.previousTotal = docsResponse.viewModel.body.previous.sections[0].sectionTotal.value;
     vm.isDisabled = true;
+    vm.controlNumber = 0;
 
     vm.onSentClicked = onSentClicked;
 
