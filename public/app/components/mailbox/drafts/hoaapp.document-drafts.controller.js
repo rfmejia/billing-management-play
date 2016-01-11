@@ -32,6 +32,8 @@ function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, 
     vm.links = docsResponse.viewModel.links;
     /** Mailbox **/
     vm.mailbox = docsResponse.viewModel.mailbox;
+    /**  **/
+    vm.controlNumber = 0;
 
     vm.document = docsResponse.viewModel;
 

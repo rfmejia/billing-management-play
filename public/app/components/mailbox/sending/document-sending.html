@@ -13,18 +13,6 @@
                         ng-click="printCtrl.onSentClicked()">
                     <span><i class="fa fa-paper-plane iconed-text"></i>Mark as sent</span>
                 </md-button>
-                <md-button class="options toolbar-text no-uppercase"
-                           nvl-print
-                           printable-id="invoice"
-                           remove-focus>
-                    <span><i class="fa fa-print iconed-text"></i>Invoice</span>
-                </md-button>
-                <md-button class="options toolbar-text no-uppercase"
-                           nvl-print
-                           printable-id="previous"
-                           remove-focus>
-                    <span><i class="fa fa-print iconed-text"></i>Overdue</span>
-                </md-button>
             </div>
         </section>
     </div>
@@ -34,7 +22,36 @@
         <md-progress-linear md-mode="indeterminate"></md-progress-linear>
     </div>
     <div layout="column" class="max-width">
-        <nvl-print-card is-printable="true" document="printCtrl.document" payment-history="printCtrl.paymentHistory" previous-total="printCtrl.previousTotal"></nvl-print-card>
+        <md-card>
+            <md-card-content class="md-actions">
+                <div layout="row">
+                    <md-input-container flex="66" ng-form="printForm">
+                        <label>Control Number</label>
+                        <input required name="controlNumber" ng-model="printCtrl.controlNumber">
+                        <div ng-messages="printForm.controlNumber.$error">
+                            <div ng-message="required">Required for printing.</div>
+                        </div>
+                    </md-input-container>
+                </div>
+                <div layout="row" layout-align="end center">
+                    <md-button class="options toolbar-text no-uppercase"
+                               nvl-print
+                               printable-id="invoice"
+                               remove-focus
+                               ng-disabled="printForm.$invalid">
+                        <span><i class="fa fa-print iconed-text"></i>Invoice</span>
+                    </md-button>
+                    <md-button class="options toolbar-text no-uppercase"
+                               nvl-print
+                               printable-id="previous"
+                               remove-focus
+                               ng-disabled="printForm.$invalid">
+                        <span><i class="fa fa-print iconed-text"></i>Overdue</span>
+                    </md-button>
+                </div>
+            </md-card-content>
+        </md-card>
+        <nvl-print-card is-printable="true" document="printCtrl.document" payment-history="printCtrl.paymentHistory" previous-total="printCtrl.previousTotal" control-number="printCtrl.controlNumber"></nvl-print-card>
     </div>
 
 </md-content>

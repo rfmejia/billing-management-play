@@ -17,7 +17,8 @@ function nvlPrintCard() {
             isPrintable : '=',
             document    : '=',
             paymentHistory : '=',
-            previousTotal : '='
+            previousTotal : '=',
+            controlNumber : '='
         },
         templateUrl : 'assets/directive/nooovle/nvlPrintCard/nvl-print-card.html',
         controller  : "nvl-print.controller",
