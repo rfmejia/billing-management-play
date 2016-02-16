@@ -334,13 +334,12 @@ function draftsCtrl($state, $anchorScroll, $location, docsApi, documentsHelper, 
                                     vm.electricity.sectionTotal.value +
                                     vm.water.sectionTotal.value +
                                     vm.cusa.sectionTotal.value;
-        vm.thisMonthSummary.value = numPrecisionFilter(vm.thisMonthSummary.value);
+        vm.thisMonthSummary.value = numPrecisionFilter(vm.thisMonthSummary.value, 2);
         calculateSummaryTotal();
     }
 
     function calculateSummaryTotal() {
-        vm.summaryValue =
-        numPrecisionFilter(doc.previousSummary.value + doc.thisMonthSummary.value, 2);
+        vm.summaryValue = vm.previousSummary.value + vm.thisMonthSummary.value;
         preparePostData();
     }
 

@@ -9,7 +9,7 @@ angular
  * Parse server response for views
  * Parse views data for server
  */
-function documentHelper(mailboxParam) {
+function documentHelper(mailboxParam, roundOff) {
     var helper = {
         formatCreateResponse : formatCreateResponse,
         formatEditResponse   : formatEditResponse,
@@ -18,7 +18,8 @@ function documentHelper(mailboxParam) {
         getQueryParameters   : getQueryParameters,
         formatParameters     : formatParameters,
         formatPaidPostData   : formatPaidPostData,
-        resolveViewer        : resolveViewer
+        resolveViewer        : resolveViewer,
+        summation            : summation
     };
     return helper;
 
@@ -161,6 +162,28 @@ function documentHelper(mailboxParam) {
         }
     }
 
+    function summation(previous, current) {
+        var prevTotal = 0;
+        var currTotal = 0;
+
+        angular.forEach(previous.sections, function(section) {
+            prevTotal += section.sectionTotal.value;
+        });
+
+        angular.forEach(current.sections, function(section) {
+            currTotal += section.sectionTotal.value;
+        });
+
+        prevTotal = roundOff(prevTotal, 2);
+        currTotal = roundOff(currTotal, 2);
+
+        return {
+            previousTotal : prevTotal,
+            currentTotal  : currTotal,
+            summaryTotal  : prevTotal + currTotal
+        }
+    }
+
     //endregion
 }
-documentHelper.$inject = ["mailboxQueryParams"];
+documentHelper.$inject = ["mailboxQueryParams", "numPrecisionFilter"];
