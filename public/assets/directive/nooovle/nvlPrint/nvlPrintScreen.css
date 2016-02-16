@@ -1,0 +1,69 @@
+@media screen {
+    #printSection {
+        display: none;
+    }
+
+    .nvl-print-card .header {
+        margin-bottom: 16px;
+        padding-bottom: 8px;
+        border-bottom: 2px dashed rgba(225, 225, 225, .87);
+    }
+
+    .nvl-print-card .tenant-info span{
+        font-size: 12px;
+    }
+
+    .nvl-print-card .tenant-info h6 {
+        margin: 8px 0;
+    }
+
+    .nvl-print-card .tenant-info .info-container {
+        line-height: 1;
+    }
+
+    .nvl-print-card span {
+        line-height: 1;
+    }
+
+    .nvl-print-card .main-section-title {
+        font-size: 14px;
+        margin: 8px 0;
+        font-weight: 600;
+    }
+
+    .nvl-print-card .subsection-title {
+        font-weight: 500;
+        margin-top: 8px;
+        margin-bottom: 4px;
+    }
+
+    .nvl-print-card .static-bill-entries {
+        margin-bottom: 8px;
+    }
+
+    .nvl-print-card .static-bill-entry-title {
+        font-weight: 200;
+    }
+
+    .nvl-print-card .overall-total-title {
+        font-weight: 600;
+    }
+
+    .nvl-print-card .subtotal-title {
+        font-weight: 600;
+    }
+
+
+    .nvl-print-card .action-block span {
+        font-size: 12px;
+        font-weight: 200;
+    }
+
+    #previous h6.total {
+        text-align: right;
+    }
+
+    .action-block {
+        min-height: 100px;
+    }
+}

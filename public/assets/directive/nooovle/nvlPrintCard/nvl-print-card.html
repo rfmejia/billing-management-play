@@ -160,7 +160,8 @@
                 </div>
                 <br/>
             </div>
-            <h6 class="main-section-title">PREVIOUS CHARGES</h6>
+
+            <div class="main-section-title">PREVIOUS CHARGES</div>
 
             <div ng-repeat="detail in printCtrl.document.body.previous.sections">
                 <div layout="row" class="static-bill-entries">
@@ -192,10 +193,10 @@
                 </div>
                 <md-divider></md-divider>
             </div>
-            <h5 class="main-section-title">THIS MONTH'S CHARGES</h5>
+            <div class="main-section-title">THIS MONTH'S CHARGES</div>
 
             <div ng-repeat="detail in printCtrl.document.body.thisMonth.sections">
-                <h4 class="subsection-title">{{detail.title}}</h4>
+                <div class="subsection-title">{{detail.title}}</div>
 
                 <div layout="row" class="static-bill-entries">
                     <div flex="70">
@@ -223,8 +224,8 @@
                         </div>
                     </div>
                     <div flex="30" layout="column" layout-align="end end">
-                        <div ng-if="detail.sectionTotal.datatype != 'currency'">{{detail.sectionTotal.value}}</div>
-                        <div ng-if="detail.sectionTotal.datatype == 'currency'">{{detail.sectionTotal.value | currency: "PHP
+                        <div class="subtotal-value" ng-if="detail.sectionTotal.datatype != 'currency'">{{detail.sectionTotal.value}}</div>
+                        <div class="subtotal-value" ng-if="detail.sectionTotal.datatype == 'currency'">{{detail.sectionTotal.value | currency: "PHP
                             "}}
                         </div>
                         <div class="subtotal-title">{{detail.sectionTotal.title}}</div>
@@ -232,7 +233,7 @@
                 </div>
                 <md-divider></md-divider>
             </div>
-            <h5 class="main-section-title">SUMMARY</h5>
+            <div class="main-section-title">SUMMARY</div>
 
             <div>
                 <div layout="row" class="static-bill-entries">
@@ -240,19 +241,19 @@
                         <div layout="row" class="static-bill-entry">
                             <div flex="40" class="static-bill-entry-title" primary-text><span>Previous charges</span></div>
                             <div flex class="static-bill-entry-guide"></div>
-                            <div class="static-bill-entry-value"><span>{{printCtrl.document.body.previous.summary.value | currency: "PHP "}}</span>
+                            <div class="static-bill-entry-value"><span>{{printCtrl.summations.previousTotal | currency: "PHP "}}</span>
                             </div>
                         </div>
                         <div layout="row" class="static-bill-entry">
                             <div flex="40" class="static-bill-entry-title" primary-text><span>This month's charges</span>
                             </div>
                             <div flex class="static-bill-entry-guide"></div>
-                            <div class="static-bill-entry-value"><span>{{printCtrl.document.body.thisMonth.summary.value | currency: "PHP "}}</span>
+                            <div class="static-bill-entry-value"><span>{{printCtrl.summations.currentTotal | currency: "PHP "}}</span>
                             </div>
                         </div>
                     </div>
                     <div flex="30" layout="column" layout-align="end end">
-                        <div><span>{{printCtrl.document.body.summary.value | currency: "PHP "}}</span></div>
+                        <div class="subtotal-value">{{printCtrl.summations.summaryTotal | currency: "PHP "}}</div>
                         <div><span class="overall-total-title">Total amount due</span></div>
                     </div>
                 </div>

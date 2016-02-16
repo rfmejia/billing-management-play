@@ -1,0 +1,93 @@
+@media print {
+    body * {
+        visibility:hidden;
+        font-family: "Calibri";
+        font-weight: bold;
+        text-transform: uppercase;
+        line-height: 1;
+        -webkit-print-color-adjust:exact;
+        font-size: 12px;
+    }
+
+    #printSection, #printSection * {
+        visibility:visible;
+    }
+
+    #printSection {
+        position:absolute;
+        left:0;
+        top:0;
+        width: 100%;
+    }
+
+    #printHidden {
+        display: none;
+    }
+
+    #printSection .header {
+        padding-bottom: 8px;
+        border-bottom: 2px dashed rgba(225, 225, 225, .87);
+    }
+
+    #printSection .tenant-info span{
+        font-size: 10px;
+    }
+
+    #printSection .main-section-title {
+        margin-top: 4px;
+    }
+
+    .nvl-print-card .tenant-info h6 {
+        margin: 8px 0;
+    }
+
+    .nvl-print-card .tenant-info .info-container {
+        line-height: 1;
+    }
+
+    .nvl-print-card span {
+        line-height: 1;
+    }
+
+    #printSection .subsection-title {
+        margin-top: 8px;
+        margin-bottom: 4px;
+    }
+
+    #printSection .subtotal-value {
+        font-size: 16px;
+    }
+
+    .nvl-print-card .static-bill-entries {
+        margin-bottom: 8px;
+    }
+
+    .nvl-print-card .static-bill-entry-title {
+        font-weight: 200;
+    }
+
+    .nvl-print-card .overall-total-title {
+        font-weight: 600;
+    }
+
+    .nvl-print-card .subtotal-title {
+        font-weight: 600;
+    }
+
+    .nvl-print-card .action-block span {
+        font-size: 6px;
+    }
+
+    .nvl-print-card div.page {
+        display: block;
+        page-break-inside: auto;
+    }
+
+    #previous h6.total {
+        text-align: right;
+    }
+
+    .action-block {
+        min-height: 100px;
+    }
+}
