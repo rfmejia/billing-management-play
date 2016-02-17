@@ -241,19 +241,19 @@
                         <div layout="row" class="static-bill-entry">
                             <div flex="40" class="static-bill-entry-title" primary-text><span>Previous charges</span></div>
                             <div flex class="static-bill-entry-guide"></div>
-                            <div class="static-bill-entry-value"><span>{{printCtrl.summations.previousTotal | currency: "PHP "}}</span>
+                            <div class="static-bill-entry-value"><span>{{printCtrl.document.body.previous.summary.value | currency: "PHP "}}</span>
                             </div>
                         </div>
                         <div layout="row" class="static-bill-entry">
                             <div flex="40" class="static-bill-entry-title" primary-text><span>This month's charges</span>
                             </div>
                             <div flex class="static-bill-entry-guide"></div>
-                            <div class="static-bill-entry-value"><span>{{printCtrl.summations.currentTotal | currency: "PHP "}}</span>
+                            <div class="static-bill-entry-value"><span>{{printCtrl.document.body.thisMonth.summary.value | currency: "PHP "}}</span>
                             </div>
                         </div>
                     </div>
                     <div flex="30" layout="column" layout-align="end end">
-                        <div class="subtotal-value">{{printCtrl.summations.summaryTotal | currency: "PHP "}}</div>
+                        <div class="subtotal-value">{{printCtrl.document.body.summary.value | currency: "PHP "}}</div>
                         <div><span class="overall-total-title">Total amount due</span></div>
                     </div>
                 </div>
