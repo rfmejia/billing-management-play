@@ -11,10 +11,7 @@ addSbtPlugin("org.scalastyle" %% "scalastyle-sbt-plugin" % "0.6.0")
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-scalariform" % "1.3.0")
 
-// Heroku plugins
-resolvers += Resolver.url("heroku-sbt-plugin-releases", url("http://dl.bintray.com/heroku/sbt-plugins/"))(Resolver.ivyStylePatterns)
-
-addSbtPlugin("com.heroku" % "sbt-heroku" % "0.3.0")
-
 // WAR plugin
 addSbtPlugin("com.github.play2war" % "play2-war-plugin" % "1.3-beta3")
+
+addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.1.0-RC1")
