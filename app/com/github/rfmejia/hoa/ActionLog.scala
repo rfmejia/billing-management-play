@@ -2,8 +2,8 @@ package com.github.rfmejia.hoa
 
 import org.joda.time.DateTime
 import scala.slick.driver.PostgresDriver.simple._
-import com.nooovle.slick.ConnectionFactory
-import com.nooovle.slick.models.actionLogs
+import com.github.rfmejia.hoa.slick.ConnectionFactory
+import com.github.rfmejia.hoa.slick.models.actionLogs
 import scala.util.Try
 
 case class ActionLog(id: Int, who: String, what: Int, when: DateTime, why: String)

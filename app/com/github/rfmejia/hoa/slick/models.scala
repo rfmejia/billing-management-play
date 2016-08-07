@@ -9,7 +9,7 @@ import scala.util.{ Success, Try }
 import org.joda.time.DateTime
 
 import com.github.tototoshi.slick.H2JodaSupport._
-import com.nooovle._
+import com.github.rfmejia.hoa._
 
 import play.api.libs.json._
 import securesocial.core.providers.MailToken

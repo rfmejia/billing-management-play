@@ -1,9 +1,9 @@
 package controllers
 
-import com.nooovle._
-import com.nooovle.DomainModelWrites._
-import com.nooovle.slick.models.{ modelTemplates, users }
-import com.nooovle.slick.ConnectionFactory
+import com.github.rfmejia.hoa._
+import com.github.rfmejia.hoa.DomainModelWrites._
+import com.github.rfmejia.hoa.slick.models.{ modelTemplates, users }
+import com.github.rfmejia.hoa.slick.ConnectionFactory
 import org.joda.time.DateTime
 import org.locker47.json.play._
 import play.api.libs.json._

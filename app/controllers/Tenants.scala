@@ -1,9 +1,9 @@
 package controllers
 
-import com.nooovle._
-import com.nooovle.DomainModelWrites.tenantWrites
-import com.nooovle.slick.models.{ modelTemplates, tenants }
-import com.nooovle.slick.ConnectionFactory
+import com.github.rfmejia.hoa._
+import com.github.rfmejia.hoa.DomainModelWrites.tenantWrites
+import com.github.rfmejia.hoa.slick.models.{ modelTemplates, tenants }
+import com.github.rfmejia.hoa.slick.ConnectionFactory
 import org.locker47.json.play._
 import play.api.libs.json._
 import play.api._

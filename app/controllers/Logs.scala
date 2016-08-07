@@ -1,7 +1,7 @@
 package controllers
 
 import akka.util.Timeout
-import com.nooovle.User
+import com.github.rfmejia.hoa.User
 import java.nio.file._
 import java.util.UUID
 import org.joda.time.{ DateTime, LocalDate }

@@ -1,8 +1,8 @@
 package services;
 
-import com.nooovle.slick.ConnectionFactory
-import com.nooovle.slick.models.{ invitations, mailTokens, users }
-import com.nooovle.User
+import com.github.rfmejia.hoa.slick.ConnectionFactory
+import com.github.rfmejia.hoa.slick.models.{ invitations, mailTokens, users }
+import com.github.rfmejia.hoa.User
 import controllers.InvitationMailToken
 import org.joda.time.DateTime
 import scala.concurrent.Future

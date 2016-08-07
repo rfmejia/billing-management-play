@@ -1,9 +1,9 @@
 package com.github.rfmejia.hoa
 
-import com.nooovle.ModelInfo._
-import com.nooovle.slick.ConnectionFactory
-import com.nooovle.slick.models.{ actionLogs, documents }
-import com.nooovle.slick.DocumentsModel
+import com.github.rfmejia.hoa.ModelInfo._
+import com.github.rfmejia.hoa.slick.ConnectionFactory
+import com.github.rfmejia.hoa.slick.models.{ actionLogs, documents }
+import com.github.rfmejia.hoa.slick.DocumentsModel
 import controllers.Templates
 import org.joda.time.{ DateTime, DateTimeZone, YearMonth }
 import play.api.libs.json._

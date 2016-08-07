@@ -1,8 +1,8 @@
 package com.github.rfmejia.hoa
 
-import com.nooovle.ModelInfo._
-import com.nooovle.slick.ConnectionFactory
-import com.nooovle.slick.models.{ users, userRoles }
+import com.github.rfmejia.hoa.ModelInfo._
+import com.github.rfmejia.hoa.slick.ConnectionFactory
+import com.github.rfmejia.hoa.slick.models.{ users, userRoles }
 import scala.slick.driver.PostgresDriver.simple._
 import scala.util.Try
 import securesocial.core._

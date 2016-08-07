@@ -1,8 +1,8 @@
 package controllers
 
-import com.nooovle._
-import com.nooovle.Mailbox._
-import com.nooovle.slick.models.documents
+import com.github.rfmejia.hoa._
+import com.github.rfmejia.hoa.Mailbox._
+import com.github.rfmejia.hoa.slick.models.documents
 import org.locker47.json.play._
 import play.api._
 import play.api.i18n.Messages

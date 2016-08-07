@@ -1,9 +1,9 @@
-*Note: repository history redacted for non-disclosure*
+*Note: assets redacted for non-disclosure*
 
 Billing Management Application
 ========================================
 
-Web application solution for billing management. Uses the Play! Framework on Scala for API services, Slick and H2 for database services, and AngularJS with Bootstrap for its UI Client.
+Web application solution for billing management. Uses the Play! Framework on Scala for API services, Slick and PostgreSQL for database services, and AngularJS with Bootstrap for its UI Client.
 
 ## System Requirements
 

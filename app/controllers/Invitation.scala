@@ -1,8 +1,8 @@
 package controllers
 
-import com.nooovle._
-import com.nooovle.slick.ConnectionFactory
-import com.nooovle.slick.models.userRoles
+import com.github.rfmejia.hoa._
+import com.github.rfmejia.hoa.slick.ConnectionFactory
+import com.github.rfmejia.hoa.slick.models.userRoles
 import org.joda.time.DateTime
 import play.api._
 import play.api.data.Form

@@ -1,10 +1,10 @@
 package controllers
 
 import com.netaporter.uri.dsl._
-import com.nooovle.ModelInfo._
-import com.nooovle.slick.ConnectionFactory
-import com.nooovle.slick.models.modelTemplates
-import com.nooovle.{ ModelInfo, Role, User }
+import com.github.rfmejia.hoa.ModelInfo._
+import com.github.rfmejia.hoa.slick.ConnectionFactory
+import com.github.rfmejia.hoa.slick.models.modelTemplates
+import com.github.rfmejia.hoa.{ ModelInfo, Role, User }
 import org.locker47.json.play._
 import play.api.libs.json.{ JsObject, Json }
 import play.api.mvc.{ Request, RequestHeader, Result }

@@ -1,8 +1,8 @@
 package controllers
 
-import com.nooovle._
-import com.nooovle.slick.ConnectionFactory
-import com.nooovle.slick.models._
+import com.github.rfmejia.hoa._
+import com.github.rfmejia.hoa.slick.ConnectionFactory
+import com.github.rfmejia.hoa.slick.models._
 import org.joda.time.YearMonth
 import org.locker47.json.play._
 import play.api._
@@ -78,7 +78,7 @@ class TestEnvironment(override implicit val env: RuntimeEnvironment[User])
 
   def initializeDatabase = SecuredAction(WithRoles(Roles.Admin)) {
     ConnectionFactory.connect withSession { implicit session =>
-      com.nooovle.slick.models.buildTables foreach (msg => Logger.info(msg.toString))
+      com.github.rfmejia.hoa.slick.models.buildTables foreach (msg => Logger.info(msg.toString))
 
       Tenant.modelInfos map (mi => modelTemplates += mi) foreach (msg => Logger.info(msg.toString))
       User.modelInfos map (mi => modelTemplates += mi)

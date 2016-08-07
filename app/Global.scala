@@ -1,7 +1,7 @@
 
-import com.nooovle._
-import com.nooovle.slick.ConnectionFactory
-import com.nooovle.slick.models.modelTemplates
+import com.github.rfmejia.hoa._
+import com.github.rfmejia.hoa.slick.ConnectionFactory
+import com.github.rfmejia.hoa.slick.models.modelTemplates
 import filters._
 import java.lang.reflect.Constructor
 import java.nio.file.{ Files, Paths }
@@ -34,7 +34,7 @@ object Global extends WithFilters(CorsFilter, new GzipFilter()) with GlobalSetti
   private val initializeDB: Try[String] =
     Try {
       ConnectionFactory.connect withSession { implicit session =>
-        val msgs = com.nooovle.slick.models.buildTables
+        val msgs = com.github.rfmejia.hoa.slick.models.buildTables
         msgs foreach (msg => logger.info(msg.toString))
         //insertModelInfos
       }
