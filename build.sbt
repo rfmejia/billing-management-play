@@ -2,7 +2,7 @@ import com.github.play2war.plugin._
 
 name := "hoa-play-scala"
 
-organization := "com.nooovle"
+organization := "com.github.rfmejia"
 
 version := "1.0.4"
 

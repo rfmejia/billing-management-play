@@ -1,4 +1,4 @@
-package com.nooovle
+package com.github.rfmejia.hoa
 
 import org.joda.time.DateTime
 import scala.slick.driver.PostgresDriver.simple._

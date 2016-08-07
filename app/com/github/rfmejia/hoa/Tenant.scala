@@ -1,4 +1,4 @@
-package com.nooovle
+package com.github.rfmejia.hoa
 
 import com.nooovle.ModelInfo._
 import com.nooovle.slick.ConnectionFactory

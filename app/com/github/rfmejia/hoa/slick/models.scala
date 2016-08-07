@@ -1,4 +1,4 @@
-package com.nooovle.slick
+package com.github.rfmejia.hoa.slick
 
 import controllers.InvitationInfo
 

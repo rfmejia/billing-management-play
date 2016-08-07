@@ -1,4 +1,4 @@
-package com.nooovle
+package com.github.rfmejia.hoa
 
 import org.joda.time.{ DateTime, YearMonth }
 import play.api.libs.json._

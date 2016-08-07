@@ -1,4 +1,4 @@
-package com.nooovle
+package com.github.rfmejia.hoa
 
 trait MonthlyAmount {
   val all: List[Amounts]

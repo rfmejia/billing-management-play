@@ -1,4 +1,4 @@
-package com.nooovle.slick
+package com.github.rfmejia.hoa.slick
 
 import play.api.db._
 import play.api.Play.current

@@ -1,4 +1,4 @@
-package com.nooovle
+package com.github.rfmejia.hoa
 
 import org.locker47.json.play._
 import play.api.libs.json._

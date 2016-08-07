@@ -1,4 +1,4 @@
-package com.nooovle
+package com.github.rfmejia.hoa
 
 import com.nooovle.slick.ConnectionFactory
 import com.nooovle.slick.models.serialNumbers
